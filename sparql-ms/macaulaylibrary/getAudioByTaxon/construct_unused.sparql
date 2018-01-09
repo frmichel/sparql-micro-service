@@ -1,0 +1,19 @@
+CONSTRUCT {
+    ?audioUri a schema:AudioObject;
+        schema:contentUrl ?contentUrl;
+        schema:thumbnailUrl ?thumbnail;
+        schema:sameAs ?page;
+        dce:creator ?authorName;
+        .
+}
+WHERE {
+    ?content
+        schema:contentUrl ?contentUrl;
+        schema:thumbnailUrl ?thumbnail;
+        schema:sameAs ?page;
+        dce:creator ?authorName;
+        api:assetId ?id;
+        .
+
+    bind (IRI(concat("http://erebe-vm2.i3s.unice.fr/lod/macaulaylibrary/audio/id/", ?id)) AS ?audioUri)
+}

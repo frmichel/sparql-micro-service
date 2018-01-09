@@ -1,0 +1,29 @@
+INSERT {
+    ?photoUri a schema:Photograph;
+        schema:subjectOf ?pageUrl;
+        schema:url ?img;
+        schema:thumbnailUrl ?thumbnail;
+        schema:author ?authorUrl;
+        dce:creator ?authorName;
+        dce:title ?title;
+        .
+}
+WHERE {
+    ?photo api:id ?id; api:secret ?secret; api:server ?server; api:farm ?farm; 
+        api:visibility [ api:ispublic ?public ];
+        api:title [ api:_content ?title ];
+        api:owner [ api:nsid ?authorId; api:realname ?authorName ];
+        api:urls [
+            api:url [ api:type ?photoType; api:_content ?page ]
+        ];
+    .
+
+    bind (IRI(concat("http://erebe-vm2.i3s.unice.fr/ld/flickr/photo/", ?id)) AS ?photoUri)
+    bind (IRI(?page) AS ?pageUrl)
+
+    bind (IRI(concat("https://flickr.com/photos/", ?authorId)) AS ?authorUrl)
+    bind (IRI(concat("https://farm", ?farm, ".staticflickr.com/", ?server, "/", ?id, "_", ?secret, "_z.jpg")) AS ?img)
+    bind (IRI(concat("https://farm", ?farm, ".staticflickr.com/", ?server, "/", ?id, "_", ?secret, "_q.jpg")) AS ?thumbnail)
+
+    filter(?public = "1"^^xsd:integer && ?photoType = "photopage")
+}

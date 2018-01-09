@@ -1,0 +1,63 @@
+{
+  "created": "2017-12-05T16:46:25.854Z",
+  "count": 2,
+  "offset": 0,
+  "works": [
+    {
+      "id": "0771a001-723d-4a79-a367-a81441fc600a",
+      "score": "100",
+      "title": "Delphi’s Journey",
+      "disambiguation": "Giants: Citizen Kabuto",
+      "relations": [
+        {
+          "type": "composer",
+          "direction": "backward",
+          "artist": {
+            "id": "f413369d-d72f-46b9-8744-2d09344a9c6a",
+            "name": "Jeremy Soule",
+            "sort-name": "Soule, Jeremy"
+          }
+        },
+        {
+          "type": "performance",
+          "direction": "backward",
+          "recording": {
+            "id": "63109d48-222a-4ed3-a402-21edc191f72b",
+            "title": "Delphi’s Journey",
+            "video": null
+          }
+        }
+      ]
+    },
+    {
+      "id": "3ffe21ec-7d58-44cb-a65a-5f5876e12b50",
+      "type": "Song",
+      "score": "100",
+      "title": "Delphinus delphis",
+      "language": "zxx",
+      "languages": [
+        "zxx"
+      ],
+      "relations": [
+        {
+          "type": "composer",
+          "direction": "backward",
+          "artist": {
+            "id": "78f15956-c5e1-46d6-a46b-fa6f46681ec8",
+            "name": "Austin Wintory",
+            "sort-name": "Wintory, Austin"
+          }
+        },
+        {
+          "type": "performance",
+          "direction": "backward",
+          "recording": {
+            "id": "4dd94ebc-6783-4e31-b9b6-972914b5c08a",
+            "title": "Delphinus delphis",
+            "video": null
+          }
+        }
+      ]
+    }
+  ]
+}

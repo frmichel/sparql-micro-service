@@ -1,0 +1,11 @@
+INSERT {
+    ?work schema:sameAs ?page.
+} WHERE {
+    ?work api:id ?id;
+        api:score ?score;
+        api:type ?type.
+
+    FILTER (LCASE(?type) = "song" && xsd:integer(?score) > 90)
+
+    BIND(IRI(concat("https://musicbrainz.org/work/", ?id)) as ?page)
+}

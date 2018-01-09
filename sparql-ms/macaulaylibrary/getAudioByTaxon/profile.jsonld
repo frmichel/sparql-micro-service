@@ -1,0 +1,14 @@
+{
+  "@context": {
+    "@base": "http://sms.i3s.unice.fr/item/",
+    "@vocab": "http://sms.i3s.unice.fr/schema/",
+
+    "schema": "http://schema.org/",
+    "dce": "http://purl.org/dc/elements/1.1/",
+
+    "mediaUrl": { "@type": "@id", "@id": "schema:contentUrl" },
+    "thumbnailUrl": "schema:thumbnailUrl",
+    "specimenUrl": "schema:sameAs",
+    "userDisplayName": "dce:creator"
+    }
+}

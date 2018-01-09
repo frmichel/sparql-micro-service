@@ -1,0 +1,17 @@
+{
+  "photos": { "page": 1, "pages": 1, "perpage": 100, "total": 15, 
+    "photo": [
+      { "id": "31173091406",
+        "owner": "10770266@N04", 
+        "secret": "8c7437e970", "server": "5470", "farm": 6, 
+        "title": " 2 (13-7-16 San Diego)",
+        "ispublic": 1, "isfriend": 0, "isfamily": 0, "ownername": "Bárbol", "dateadded": "1479969861" },
+      { "id": "6969282054",
+        "owner": "61021753@N02",
+        "secret": "01702ba038", "server": "7241", "farm": 8, 
+        "title": "n132_w1150",
+        "ispublic": 1, "isfriend": 0, "isfamily": 0, "ownername": "BioDivLibrary", "dateadded": "1335439494" }
+    ] 
+  },
+  "stat": "ok" 
+}
