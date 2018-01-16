@@ -135,10 +135,16 @@
     function translateJsonToNQuads($json, $jsonldProfile) {
         global $logger;
 
-        // Call the service and apply JSON-LD profile to the JSON response
-        $apiResp = JsonLD::expandJsonAsJsonld($json, $jsonldProfile);
-        if ($logger->isHandling(Logger::DEBUG))
-            $logger->debug("JSON response: \n".JsonLD::toString($apiResp));
+        try {
+            // Call the service and apply JSON-LD profile to the JSON response
+            $apiResp = JsonLD::expandJsonAsJsonld($json, $jsonldProfile);
+            if ($logger->isHandling(Logger::DEBUG))
+                $logger->debug("JSON response: \n".JsonLD::toString($apiResp));
+        } catch (Exception $e) {
+            $logger->warning((string)$e."\n");
+            $logger->warning("Error when querying the API or when transforming its response into JSON-LD. Returning empty result.");
+            $apiResp = array();
+        }
 
         // Transform the JSON-LD to RDF NQuads
         $quads = JsonLD::expandedToRdf($apiResp);

@@ -64,13 +64,16 @@
             $apiQuery = $customConfig['api_query'];
             foreach ($customParams as $parName => $parVal)
                 $apiQuery = str_replace('{'.$parName.'}', urlencode($parVal), $apiQuery);
-
             $logger->info("Web API query string: \n".$apiQuery);
         }
 
         // Call the service, apply JSON-LD profile and translate to NQuads
         if ($metro->isHandling(Logger::INFO)) $before = microtime(true);
-        $serializedQuads = translateJsonToNQuads($apiQuery, $service.'/profile.jsonld');
+        if ($apiQuery == "")
+            // Query string set to empty string in case an error occured.
+            $serializedQuads = "";
+        else
+            $serializedQuads = translateJsonToNQuads($apiQuery, $service.'/profile.jsonld');
         if ($metro->isHandling(Logger::INFO)) $apiTime = microtime(true) - $before;
 
         // ------------------------------------------------------------------------------------
