@@ -1,0 +1,17 @@
+version: '3'
+services:
+  sms-corese:
+    image: frmichel/corese
+    networks:
+      - sms-net
+  sms-apache:
+    image: frmichel/sparql-micro-service
+    networks:
+      - sms-net
+    ports:
+      - "81:80"
+
+networks:
+  sms-net:
+    driver: bridge
+
