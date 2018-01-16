@@ -18,9 +18,10 @@ WHERE {
         ];
     .
 
-    bind (IRI(concat("http://erebe-vm2.i3s.unice.fr/ld/flickr/photo/", ?id)) AS ?photoUri)
-    bind (IRI(?page) AS ?pageUrl)
+    # Dereferenceable URI: customize with the hostname of your Web server
+    bind (IRI(concat("http://example.org/ld/flickr/photo/", ?id)) AS ?photoUri)
 
+    bind (IRI(?page) AS ?pageUrl)
     bind (IRI(concat("https://flickr.com/photos/", ?authorId)) AS ?authorUrl)
     bind (IRI(concat("https://farm", ?farm, ".staticflickr.com/", ?server, "/", ?id, "_", ?secret, "_z.jpg")) AS ?img)
     bind (IRI(concat("https://farm", ?farm, ".staticflickr.com/", ?server, "/", ?id, "_", ?secret, "_q.jpg")) AS ?thumbnail)
