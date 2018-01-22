@@ -49,10 +49,15 @@ That should return an RDF description of the resource:
 
 ### Test SPARQL querying
 
-Enter this command in a bash:
-    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/service.php?querymode=sparql&service=flickr/getPhotoById&query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D%0A&photo_id=31173091246"```
+You can test the three services by typing the following commands in a bash:
        
-That should return a JSON SPARQL result set.
+    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/service.php?querymode=sparql&service=flickr/getPhotoById&query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&photo_id=31173091246"```
+
+    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/service.php?querymode=sparql&service=macaulaylibrary/getAudioByTaxon&query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"```
+
+    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/service.php?querymode=sparql&service=musicbrainz/getSongByName&query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"```
+
+That should return a JSON SPARQL result.
 
 ### Check application logs
 
@@ -77,7 +82,7 @@ You may have to set access mode 777 on this directory for the container to be ab
 To install this project, you will need an Apache Web server with PHP 5.3+ and a write-enabled SPARQL endpoint (and RDF triple store).
 
 Copy the ```sparql-ms``` directory to a directory exposed by Apache, typically ```/var/www/html``` or the ```public_html``` of your home dir.
-In the latter, the services will be accessible at e.g. http://server.example.org/~username/sparql-ms/.
+In the latter, the services will be accessible at e.g. http://example.org/~username/sparql-ms/.
 
 Do __NOT__ use PHP ```composer``` to update the libraries in the vendor directory. This would override changes we made in some of them (Json-LD and EasyRDF).
 
@@ -148,3 +153,29 @@ If any of the 3 Web APIs invoked is not available (network error, internal failu
         service <https://server.example.org/sparql-ms/musicbrainz/getSongByName?name=Delphinus+delphis> 
         { OPTIONAL { [] schema:sameAs ?page. } }
     }
+
+    
+## Folders structure
+
+    sparql-ms/
+        config.ini                # generic configuration of the SPARQL micro-serbice engine
+        service.php               # core of the SPARQL micro-services
+        utils.php                 # utility functions
+        
+        <Web API>/                # directory of the services related to one Web API
+            <service>/            # one service of this Web API
+                config.ini        # micro-service specific configuration
+                profile.jsonld    # JSON-LD profile to translate the JSON response into JSON-LD
+                insert.sparql     # optional SPARQL INSERT query for processing client SPARQL queries
+                construct.sparql  # optional SPARQL CONSTRUCT query for URI dereferencing
+                service.php       # optional script.  Replaces the config.ini in case specific actions are required
+            <service>             # one service of this Web API
+            ...
+        <Web API>/                # directory of the services related to one Web API
+            <service>/            # one service of this Web API
+            ...
+    docker/
+        docker-compose.yml        # run SPARQL micro-services with Docker       
+    apache_cfg/
+        httpd.cfg                 # Apache rewriting rules for HTTP access
+        ssl.cfg                   # Apache rewriting rules for HTTPS access
