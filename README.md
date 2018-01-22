@@ -5,7 +5,7 @@ The SPARQL Micro-Service architecture is meant to allow the combination of Linke
 This project is a prototype PHP implementation for JSON-based Web APIs. It comes with three example SPARQL micro-services, designed in the context of a biodiversity-related use case:
 - flickr/getPhotosByGroupByTag: searches a Flickr group for photos with a given tag. We use it to search the [*Encyclopedia of Life* Flickr group](https://www.flickr.com/groups/806927@N20) for photos of a given taxon: photos of this group are tagged with the scientific name of the taxon they represent, formatted as ```taxonomy:binomial=<scientific name>```.
 - macaulaylibrary/getAudioByTaxon retrieves audio recordings for a given taxon name from the [Macaulay Library](https://www.macaulaylibrary.org/), a scientific media archive related to birds, amphibians, fishes and mammals.
-- musicbrainz/getSongByName searches the [MusicBrainz music information encyclopedia](https://musicbrainz.org/) for music tunes whose title match a given name with a minimum confidence of 90%.
+- musicbrainz/getSongByName searches the [MusicBrainz music information encyclopedia](https://musicbrainz.org/) for music tunes whose titles match a given name with a minimum confidence of 90%.
 
 ## The SPARQL Micro-Service Architecture
 
@@ -14,119 +14,12 @@ A SPARQL micro-service [1] is a lightweight, task-specific SPARQL endpoint that 
 [1] Franck Michel, Catherine Faron-Zucker and Fabien Gandon. *SPARQL Micro-Services: Lightweight Integration of Web APIs and Linked Data*. Submitted to the Linked Data on the Web (LDOW) 2018 Workshop.
 
 
-## Deploy with Docker
+## How to use SPARQL micro-services?
 
-The easyest way to test SPARQL micro-services is to use the two [Docker](https://www.docker.com/) images we have built: 
-- [frmichel/corese](https://hub.docker.com/r/frmichel/corese/): built upon debian:buster, runs the [Corese-KGRAM](http://wimmics.inria.fr/corese) RDF store and SPARQL endpoint. Corese-KGRAM listens on port 8081 but it is not exposed to the Docker server.
-- [frmichel/sparql-micro-service](https://hub.docker.com/r/frmichel/sparql-micro-service/): provides the Apache Web server, PHP 5.6, and the SPARQL micro-services described above configured and ready to go. Apache listens on port 80, it is exposed as port 81 of the Docker server.
+A SPARQL micro-service is typically called from a SPARQL SERVICE clause.
 
-To run these images, simply download the file ```docker/docker-compose.yml``` on a Docker server and run ```docker-compose up -d```.
-
-### Test URI dereferencing
-
-Enter this URL in your browser: http://localhost:81/ld/flickr/photo/31173091246 or the following command in a bash:
-
-    curl --header "Accept: text/turtle" http://localhost:81/ld/flickr/photo/31173091246
-
-That should return an RDF description of the resource:
-
-    @prefix schema: <http://schema.org/> .
-    @prefix cos: <http://www.inria.fr/acacia/corese#> .
-    @prefix dce: <http://purl.org/dc/elements/1.1/> .
-    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-    @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
-    @prefix ma: <http://www.w3.org/ns/ma-ont#> .
-    @prefix api: <http://sms.i3s.unice.fr/schema/> .
-    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-
-    <http://erebe-vm2.i3s.unice.fr/ld/flickr/photo/31173091516> dce:creator "" ;
-    dce:title "Delphinus delphis 1 (13-7-16 San Diego)" ;
-    schema:author <https://flickr.com/photos/10770266@N04> ;
-    schema:subjectOf <https://www.flickr.com/photos/10770266@N04/31173091516/> ;
-    schema:thumbnailUrl <https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_q.jpg> ;
-    schema:url <https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_z.jpg> ;
-    rdf:type schema:Photograph .
-
-### Test SPARQL querying
-
-You can test the three services by typing the following commands in a bash:
-       
-    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/service.php?querymode=sparql&service=flickr/getPhotoById&query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&photo_id=31173091246"```
-
-    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/service.php?querymode=sparql&service=macaulaylibrary/getAudioByTaxon&query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"```
-
-    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/service.php?querymode=sparql&service=musicbrainz/getSongByName&query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"```
-
-That should return a JSON SPARQL result.
-
-### Check application logs
-
-To access the SPARQL micro-servcices log file, add a ```volumes``` parameter in the ```docker/docker-compose.yml``` file, like this:
-
-  sms-apache:
-    image: frmichel/sparql-micro-service
-    networks:
-      - sms-net
-    ports:
-      - "81:80"
-    volumes:
-      - "./logs:/var/www/html/sparql-ms/logs"
-
-This will mount the SPARQL micro-service logs directory to the Docker host in directory ```./logs```.
-
-You may have to set access mode 777 on this directory for the container to be able to write in log files.
-
-
-## Installation
-
-To install this project, you will need an Apache Web server with PHP 5.3+ and a write-enabled SPARQL endpoint (and RDF triple store).
-
-Copy the ```sparql-ms``` directory to a directory exposed by Apache, typically ```/var/www/html``` or the ```public_html``` of your home dir.
-In the latter, the services will be accessible at e.g. http://example.org/~username/sparql-ms/.
-
-Do __NOT__ use PHP ```composer``` to update the libraries in the vendor directory. This would override changes we made in some of them (Json-LD and EasyRDF).
-
-Customize the URL of your SPARQL endpoint in ```sparql-ms/config.ini```, for instance:
-```
-sparql_endpoint = http://server.example.org/sparql
-```
-
-Customize the dereferenceable URIs generated in the Flickr services: see the comments in construct.sparql and insert.sparql files.
-
-Add Apache [rewriting rules](http://httpd.apache.org/docs/2.4/rewrite/) to invoke micro-services using SPARQL or URI dereferencing: check the Apache rewriting examples in ```apache_cfg/httpd.conf``` and ```apache_cfg/ssl.conf```. See details in the sections below.
-
-### Rewriting rules for SPARQL querying
-
-Micro-service URL pattern:
-    ```http://server.example.org/sparql-ms/<Web API>/<service>?param=value```
-
-Rewriting rule:
-    ```RewriteRule "^/sparql-ms/([^/?]+)/([^/?]+).*$" http://server.example.org/~username/sparql-ms/service.php?querymode=sparql&service=$1/$2 [QSA,P,L]```
-
-Example:
-```
-    SELECT * WHERE {
-        SERVICE <https://server.example.org/sparql-ms/macaulaylibrary/getAudioByTaxon?name=Delphinus+delphis> 
-        { [] <http://schema.org/contentUrl> ?audioUrl. }
-    }
-```
-
-### Rewriting rules for URI dereferencing
-
-URI pattern: 
-    ```http://server.example.org/ld/<Web API>/<service>/<identifier>```
-
-Rewriting rule:
-    ```RewriteRule "^/ld/flickr/photo/(.*)$" http://server.example.org/sparql-ms/service.php?querymode=ld&service=flickr/getPhotoById&query=&photo_id=$1 [P,L]```
-
-Example: 
-    ```curl --header "accept:text/turtle" http://server.example.org/ld/flickr/photo/31173091516```
-    
-## Usage
-
-A SPARQL micro-service is typically called from a SERVICE clause. The query below retrieves the URI of the common dolphin species (*Delphinus delphis*) from the SPARQL endpoint of TAXREF-LD, a Linked Data representation of the taxonomy maintained by the french National Museum of Natural History.
-
-Then, it enriches this description with 15 photos retrieved from Flickr, 28 audio recordings from the Macaulay Library, and 1 music tune from MusicBrainz.
+The query below retrieves the URI of the common dolphin species (*Delphinus delphis*) from the SPARQL endpoint of TAXREF-LD, a Linked Data representation of the taxonomy maintained by the french National Museum of Natural History.
+Then, it enriches this description with 15 photos retrieved from Flickr, 28 audio recordings from the Macaulay Library, and 1 music tune from MusicBrainz (the tune Web page URL).
 
 If any of the 3 Web APIs invoked is not available (network error, internal failure etc.), the micro-service returns an empty result. In case this happens, the OPTINAL clauses make it possible to still get (possibly partial) results.
 
@@ -144,21 +37,21 @@ If any of the 3 Web APIs invoked is not available (network error, internal failu
         service <http://taxref.mnhn.fr/sparql> 
         { ?species a owl:Class; rdfs:label "Delphinus delphis". }
 
-        service <https://server.example.org/sparql-ms/flickr/getPhotosByGroupByTag?group_id=806927@N20&tags=taxonomy:binomial=Delphinus+delphis> 
+        service <https://example.org/sparql-ms/flickr/getPhotosByGroupByTag?group_id=806927@N20&tags=taxonomy:binomial=Delphinus+delphis> 
         { OPTIONAL { ?photo foaf:depiction ?img. } }
         
-        service <https://server.example.org/sparql-ms/macaulaylibrary/getAudioByTaxon?name=Delphinus+delphis> 
+        service <https://example.org/sparql-ms/macaulaylibrary/getAudioByTaxon?name=Delphinus+delphis> 
         { OPTIONAL { [] schema:contentUrl ?audioUrl. } }
 
-        service <https://server.example.org/sparql-ms/musicbrainz/getSongByName?name=Delphinus+delphis> 
+        service <https://example.org/sparql-ms/musicbrainz/getSongByName?name=Delphinus+delphis> 
         { OPTIONAL { [] schema:sameAs ?page. } }
     }
 
-    
+
 ## Folders structure
 
     sparql-ms/
-        config.ini                # generic configuration of the SPARQL micro-serbice engine
+        config.ini                # generic configuration of the SPARQL micro-service engine
         service.php               # core of the SPARQL micro-services
         utils.php                 # utility functions
         
@@ -166,9 +59,9 @@ If any of the 3 Web APIs invoked is not available (network error, internal failu
             <service>/            # one service of this Web API
                 config.ini        # micro-service specific configuration
                 profile.jsonld    # JSON-LD profile to translate the JSON response into JSON-LD
-                insert.sparql     # optional SPARQL INSERT query for processing client SPARQL queries
-                construct.sparql  # optional SPARQL CONSTRUCT query for URI dereferencing
-                service.php       # optional script.  Replaces the config.ini in case specific actions are required
+                insert.sparql     # optional SPARQL INSERT query to create triples that JSON-LD cannot create
+                construct.sparql  # optional SPARQL CONSTRUCT query used to process URI dereferencing queries
+                service.php       # optional script. Replaces the config.ini in case specific actions are required
             <service>             # one service of this Web API
             ...
         <Web API>/                # directory of the services related to one Web API
@@ -179,3 +72,112 @@ If any of the 3 Web APIs invoked is not available (network error, internal failu
     apache_cfg/
         httpd.cfg                 # Apache rewriting rules for HTTP access
         ssl.cfg                   # Apache rewriting rules for HTTPS access
+
+
+## Deploy with Docker
+
+The easyest way to test SPARQL micro-services is to use the two [Docker](https://www.docker.com/) images we have built: 
+- [frmichel/corese](https://hub.docker.com/r/frmichel/corese/): built upon debian:buster, runs the [Corese-KGRAM](http://wimmics.inria.fr/corese) RDF store and SPARQL endpoint. Corese-KGRAM listens on port 8081 but it is not exposed to the Docker server.
+- [frmichel/sparql-micro-service](https://hub.docker.com/r/frmichel/sparql-micro-service/): provides the Apache Web server, PHP 5.6, and the SPARQL micro-services described above configured and ready to go. Apache listens on port 80, it is exposed as port 81 of the Docker server.
+
+To run these images, simply download the file ```docker/docker-compose.yml``` on a Docker server and run ```docker-compose up -d```.
+
+#### Test SPARQL querying
+
+You can test the three services by typing the following commands in a bash:
+       
+    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/service.php?querymode=sparql&service=flickr/getPhotoById&query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&photo_id=31173091246"```
+
+    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/service.php?querymode=sparql&service=macaulaylibrary/getAudioByTaxon&query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"```
+
+    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/service.php?querymode=sparql&service=musicbrainz/getSongByName&query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"```
+
+That should return a JSON SPARQL result.
+
+#### Test URI dereferencing
+
+Enter this URL in your browser: http://localhost:81/ld/flickr/photo/31173091246 or the following command in a bash:
+
+    curl --header "Accept: text/turtle" http://localhost:81/ld/flickr/photo/31173091246
+
+That should return an RDF description of the resource:
+
+    @prefix schema: <http://schema.org/> .
+    @prefix cos: <http://www.inria.fr/acacia/corese#> .
+    @prefix dce: <http://purl.org/dc/elements/1.1/> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+    @prefix ma: <http://www.w3.org/ns/ma-ont#> .
+    @prefix api: <http://sms.i3s.unice.fr/schema/> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+    <http://erebe-vm2.i3s.unice.fr/ld/flickr/photo/31173091516> dce:creator "" ;
+        rdf:type schema:Photograph ;
+        dce:title           "Delphinus delphis 1 (13-7-16 San Diego)" ;
+        schema:author       <https://flickr.com/photos/10770266@N04> ;
+        schema:subjectOf    <https://www.flickr.com/photos/10770266@N04/31173091516/> ;
+        schema:thumbnailUrl <https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_q.jpg> ;
+        schema:url          <https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_z.jpg> ;
+        .
+
+#### Check application logs
+
+To access the SPARQL micro-servcices log file, add a ```volumes``` parameter in the ```docker/docker-compose.yml``` file, like this:
+
+    sms-apache:
+        image: frmichel/sparql-micro-service
+        networks:
+          - sms-net
+        ports:
+          - "81:80"
+        volumes:
+          - "./logs:/var/www/html/sparql-ms/logs"
+
+This will mount the SPARQL micro-service logs directory to the Docker host in directory ```./logs```.
+
+You may have to set access mode 777 on this directory for the container to be able to write in log files.
+
+
+## Installation
+
+To install this project, you will need an Apache Web server with PHP 5.3+ and a write-enabled SPARQL endpoint (and RDF triple store).
+
+Copy the ```sparql-ms``` directory to a directory exposed by Apache, typically ```/var/www/html``` or the ```public_html``` of your home dir.
+
+Do __NOT__ use PHP ```composer``` to update the libraries in the vendor directory. This would override changes we made in some of them (Json-LD and EasyRDF).
+
+Customize the URL of your SPARQL endpoint in ```sparql-ms/config.ini```, for instance:
+```
+sparql_endpoint = http://example.org/sparql
+```
+
+Customize the dereferenceable URIs generated in the Flickr services: see the comments in construct.sparql and insert.sparql files.
+
+Add Apache [rewriting rules](http://httpd.apache.org/docs/2.4/rewrite/) to invoke micro-services using SPARQL or URI dereferencing: check the Apache rewriting examples in ```apache_cfg/httpd.conf``` and ```apache_cfg/ssl.conf```. See details in the sections below.
+
+#### Rewriting rules for SPARQL querying
+
+Micro-service URL pattern:
+    ```http://example.org/sparql-ms/<Web API>/<service>?param=value```
+
+Rule:
+    ```RewriteRule "^/sparql-ms/([^/?]+)/([^/?]+).*$" http://example.org/sparql-ms/service.php?querymode=sparql&service=$1/$2 [QSA,P,L]```
+
+Usage Example:
+```
+    SELECT * WHERE {
+        SERVICE <https://example.org/sparql-ms/macaulaylibrary/getAudioByTaxon?name=Delphinus+delphis> 
+        { [] <http://schema.org/contentUrl> ?audioUrl. }
+    }
+```
+
+#### Rewriting rules for URI dereferencing
+
+URI pattern: 
+    ```http://example.org/ld/<Web API>/<service>/<identifier>```
+
+Rule:
+    ```RewriteRule "^/ld/flickr/photo/(.*)$" http://example.org/sparql-ms/service.php?querymode=ld&service=flickr/getPhotoById&query=&photo_id=$1 [P,L]```
+
+Usage Example: 
+    ```curl --header "accept:text/turtle" http://example.org/ld/flickr/photo/31173091516```
