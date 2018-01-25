@@ -85,12 +85,12 @@ To run these images, simply download the file ```docker/docker-compose.yml``` on
 #### Test SPARQL querying
 
 You can test the three services by typing the following commands in a bash:
-       
-    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/service.php?querymode=sparql&service=flickr/getPhotoById&query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&photo_id=31173091246"```
 
-    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/service.php?querymode=sparql&service=macaulaylibrary/getAudioByTaxon&query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"```
+    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/flickr/getPhotoById?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&photo_id=31173091246"```
 
-    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/service.php?querymode=sparql&service=musicbrainz/getSongByName&query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"```
+    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/macaulaylibrary/getAudioByTaxon?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"```
+
+    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/musicbrainz/getSongByName?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"```
 
 That should return a JSON SPARQL result.
 
