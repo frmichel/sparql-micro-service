@@ -5,7 +5,8 @@
     use Monolog\Logger;
 
     try {
-        $logger = initLogger(Logger::INFO);
+        // Set global debug level here
+        $logger = initLogger(Logger::DEBUG);
 
         // Set level to Logger::INFO to activate metrology, Logger::WARNING or highier to deactivate
         $metro = initMetro(Logger::WARNING);
@@ -15,17 +16,35 @@
         // --- Read generic configuration file
         // ------------------------------------------------------------------------------------
         $config = parse_ini_file('config.ini');
-        if (! $config) throw new Exception("Cannot read configuration file config.ini.");
+        if (! $config)
+            throw new Exception("Cannot read configuration file config.ini.");
+        if (! array_key_exists('sparql_endpoint', $config))
+            throw new Exception("Missing configuration property 'sparql_endpoint'. Check config.ini.");
+        if (! array_key_exists('default_mime_type', $config))
+            throw new Exception("Missing configuration property 'default_mime_type'. Check config.ini.");
+        if (! array_key_exists('parameter', $config))
+            throw new Exception("Missing configuration property 'parameter'. Check config.ini.");
 
         // Get default namespaces. These are automatially added to any SPARQL query.
         // See other existing default namespaces in EasyRdf/Namespace.php
-        foreach ($config['namespace'] as $nsName => $nsVal) {
-            if ($logger->isHandling(Logger::DEBUG))
-                $logger->debug('Adding namespace: '.$nsName. " = ".$nsVal);
-            EasyRdf_Namespace::set($nsName, $nsVal);
+        if (! array_key_exists('namespace', $config))
+            foreach ($config['namespace'] as $nsName => $nsVal) {
+                if ($logger->isHandling(Logger::DEBUG))
+                    $logger->debug('Adding namespace: '.$nsName. " = ".$nsVal);
+                EasyRdf_Namespace::set($nsName, $nsVal);
+            }
+
+        // Initialize a connection to the cache db (MongoDB client)
+        $useCache = array_key_exists('use_cache', $config) ? $config['use_cache'] : null;
+        if ($useCache) {
+            $cacheEndpoint = array_key_exists('cache_endpoint', $config) ? $config['cache_endpoint'] : "mongodb://localhost:27017";
+            $client = new MongoDB\Client($cacheEndpoint);
+
+            $cacheDbName = array_key_exists('cache_db_name', $config) ? $config['cache_db_name'] : "sparql_micro_service";
+            $cacheDb = $client->selectCollection($cacheDbName, 'cache');
         }
 
-        // Read and log mandatory input parameters
+        // Read mandatory input parameters
         list($service, $querymode, $sparqlQuery) = array_values(getQueryParameters($config['parameter']));
         if ($querymode != 'sparql' && $querymode != 'ld')
             throw new Exception("Invalid parameter 'querymode': should be one of 'sparql' or 'lod'.");
@@ -39,7 +58,7 @@
                     $logger->debug('Query string: '.$_SERVER['QUERY_STRING']);
             }
             else
-                badRequest("HTTP error, no query string provivded.");
+                badRequest("HTTP error, no query string provided.");
         }
 
         // ------------------------------------------------------------------------------------
@@ -55,7 +74,12 @@
         } else {
             $customConfigFile = $service.'/config.ini';
             $customConfig = parse_ini_file($customConfigFile);
-            if (! $customConfig) throw new Exception("Cannot read configuration file ".$customConfigFile);
+            if (! $customConfig)
+                throw new Exception("Cannot read configuration file ".$customConfigFile);
+            if (! array_key_exists('api_query', $customConfig))
+                throw new Exception("Missing configuration property 'api_query'. Check <service>/config.ini.");
+            if (! array_key_exists('parameter', $customConfig))
+                throw new Exception("Missing configuration property 'parameter'. Check <service>/config.ini.");
 
             // Read the custom parameters
             $customParams = getQueryParameters($customConfig['parameter']);

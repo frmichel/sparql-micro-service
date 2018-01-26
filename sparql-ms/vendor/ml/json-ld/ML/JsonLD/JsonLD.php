@@ -192,6 +192,8 @@ class JsonLD
      * object.
      *
      * @param string|object|array      $input       The JSON document to compact.
+     *                                  This may be a file URL, a JSON formatted string
+     *                                  or a JSON object or array.
      * @param null|string|object|array $context     The JSON-LD context.
      * @param null|array|object        $options     Options to configure the
      *                                              compaction process.
@@ -207,6 +209,7 @@ class JsonLD
         $options = self::mergeOptions($options);
 
         if (is_string($input)) {
+            // loadDocument() detects wether this is a URL or a JSON content
             $remoteDocument = $options->documentLoader->loadDocument($input);
             $input = $remoteDocument->document;
         }
