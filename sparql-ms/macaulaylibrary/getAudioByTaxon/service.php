@@ -1,10 +1,12 @@
 <?php
     /**
-     * Retrieve audio recordings for a given taxon
+     * This script can be provided instead of the service config.ini file.
+     * It must take care of defining the expected parameters, reading them, and preparing
+     * variable $apiQuery with the properly formatted query string.
      *
-     * Query mode: SPARQL query
-     *
-     * @param name taxon name
+     * musicbrainz/getSongByName:
+     *   Query mode: SPARQL query
+     *   @param name taxon name
      */
 
     use Monolog\Logger;
@@ -29,6 +31,9 @@
         $apiQuery = 'https://search.macaulaylibrary.org/catalog.json?'.
             'action=new_search&searchField=animals&sort=upload_date_desc&mediaType=a&'.
             'taxonCode='.urlencode($taxonCode);
+
+    // Define the cache expiration period (in seconds)
+    $cacheExpiresAfter = 2592000;
 
     /**
      * Query the Web API to get a code associated with a taxon name

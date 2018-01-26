@@ -94,7 +94,7 @@
     }
 
     /**
-     * Check and return the query parameters.
+     * Check and return the query parameters that the SPARQL micro service expects.
      * If any expected parameter in not found (in the regular case of an HTTP/HTTPS call)
      * the script returns an HTTP error 400 and exits.
      *
@@ -176,7 +176,7 @@
             return $serializedQuads;
 
         } catch (Exception $e) {
-            $logger->warning((string)$e."\n");
+            $logger->warning((string)$e);
             $logger->warning("Error when querying the API/transforming its response to JSON-LD. Returning empty result.");
             return array();
         }
@@ -206,47 +206,85 @@
             'https' => $streamContextOptions
         ));
 
-        $httpHeadersOffset = 0;
-
-        stream_context_set_params($context, array('notification' =>
-            function ($code, $severity, $msg, $msgCode, $bytesTx, $bytesMax) use (
-                &$remoteDocument, &$http_response_header, &$httpHeadersOffset
-            ) {
-                if ($code === STREAM_NOTIFY_MIME_TYPE_IS) {
-                    $remoteDocument->mediaType = $msg;
-                } elseif ($code === STREAM_NOTIFY_REDIRECTED) {
-                    $remoteDocument->documentUrl = $msg;
-                    $remoteDocument->mediaType = null;
-
-                    $httpHeadersOffset = count($http_response_header);
-                }
-            }
-        ));
-
         if (false === ($jsonContent = @file_get_contents($url, false, $context))) {
-            $logger->warning("Cannot load document ".$url."\n");
+            $logger->warning("Cannot load document ".$url);
             $jsonContent = null;
+        }
+
+        $headers = parseHttpHeaders($http_response_header);
+        if ($logger->isHandling(Logger::DEBUG)) {
+            $logger->debug("Web API response headers:");
+            foreach($headers as $k => $v )
+                $logger->debug("   $k: $v");
         }
 
         return $jsonContent;
     }
 
+    /**
+     * Parse an arrary of strings representing HTTP headers and return an associative
+     * array where the key is the header name. Example:
+     * Header "Accept: text/html" is transformed into the key value couple: "Accept" => "text/html"
+     *
+     * @param array $headers arrary of strings representing HTTP headers
+     * @return array associative array where the key is the header name
+     */
+    function parseHttpHeaders($headers)
+    {
+        $head = array();
+        foreach ($headers as $v)
+        {
+            $t = explode(':', $v, 2);
+            if (isset($t[1])) $head[trim($t[0])] = trim($t[1]);
+            else {
+                if (preg_match("#HTTP/[0-9\.]+\s+([0-9]+)#", $v, $out))
+                    $head['Status'] = intval($out[1]);
+            }
+        }
+        return $head;
+    }
+
+    /**
+     * Tries to get a document from the cache db and return it.
+     * If it is found and the expiration date is passed, the document is deleted from the cache db.
+     * 
+     * @param string $query the Web API query. Its hash is used as a key
+     * @return string the cached document if found, null otherwise.
+     */
     function readFromCache($query) {
-        global $cacheDb;
+        global $cacheDb, $cacheExpiresAfter, $logger;
+
         $found = $cacheDb->findOne(['hash' => hash("sha256", $query)]);
-        if ($found != null)
-            return $found['payload'];
+        if ($found != null) {
+            if ((new DateTime($found['expires'])) >= (new DateTime('now')))
+                return $found['payload'];
+            else {
+                if ($logger->isHandling(Logger::DEBUG)) $logger->debug("Cached document found but has expired, removing it.");
+                $cacheDb->deleteOne([ 'hash' => hash("sha256", $query)]);
+                return null;
+            }
+        }
         else
             return null;
     }
 
+    /**
+     * Write a document to the cache db along wuth an expiration date.
+     *
+     * @param string $query the Web API query. Its hash is used as a key
+     * @param string $resp the Web API query response to store in the cache db
+     */
     function writeToCache($query, $resp) {
-        global $cacheDb, $logger;
+        global $cacheDb, $cacheExpiresAfter, $logger;
         try {
-            $cacheDb->insertOne( [ 'hash' => hash("sha256", $query), 'query' => $query, 'payload' => $resp ] );
+            $expDate = (new DateTime('now'))->add($cacheExpiresAfter);
+            $cacheDb->insertOne([
+                'hash' => hash("sha256", $query),
+                'expires' => $expDate->format('Y-m-d H:i:s'),
+                'query' => $query,
+                'payload' => $resp ]);
         } catch (Exception $e) {
-            $logger->warning("Cannot write to cache db: ".(string)$e."\n");
+            $logger->warning("Cannot write to cache db: ".(string)$e);
         }
     }
-
 ?>

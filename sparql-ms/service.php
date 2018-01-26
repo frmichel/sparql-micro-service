@@ -1,11 +1,16 @@
 <?php
+    /**
+     * This script implements the core logic of SPARQL micro-services.
+     *
+     */
+
     require_once 'vendor/autoload.php';
     require_once 'utils.php';
 
     use Monolog\Logger;
 
     try {
-        // Set global debug level here
+        // Set global debug level here. Use WARNING or ERROR is production environment.
         $logger = initLogger(Logger::DEBUG);
 
         // Set level to Logger::INFO to activate metrology, Logger::WARNING or highier to deactivate
@@ -27,7 +32,7 @@
 
         // Get default namespaces. These are automatially added to any SPARQL query.
         // See other existing default namespaces in EasyRdf/Namespace.php
-        if (! array_key_exists('namespace', $config))
+        if (array_key_exists('namespace', $config))
             foreach ($config['namespace'] as $nsName => $nsVal) {
                 if ($logger->isHandling(Logger::DEBUG))
                     $logger->debug('Adding namespace: '.$nsName. " = ".$nsVal);
@@ -44,8 +49,9 @@
             $cacheDb = $client->selectCollection($cacheDbName, 'cache');
         }
 
-        // Read mandatory input parameters
+        // Read mandatory input parameters of the SPARQL micro service
         list($service, $querymode, $sparqlQuery) = array_values(getQueryParameters($config['parameter']));
+
         if ($querymode != 'sparql' && $querymode != 'ld')
             throw new Exception("Invalid parameter 'querymode': should be one of 'sparql' or 'lod'.");
 
@@ -59,19 +65,25 @@
             }
             else
                 badRequest("HTTP error, no query string provided.");
-        }
+        } // The 'else' case is a direct call from the command line, used for for debug
 
         // ------------------------------------------------------------------------------------
-        // --- Call the Web API and transform the JSON response into NQuads
+        // --- Get service-specific definitions
         // ------------------------------------------------------------------------------------
 
-        // Get custom service definitions
         if (file_exists($service.'/service.php')) {
-            // Script service.php must read custom parameters and create the Web API query string $apiQuery
+            // Non config.ini file but script service.php instead.
             require $service.'/service.php';
+
+            if (! isset($apiQuery))
+                throw new Exception('Missing variable "$apiQuery". Check <service>/service.php.');
+            if (! isset($cacheExpiresAfter))
+                $cacheExpirationSec = 2592000;
+
             $logger->info("Web API query string: \n".$apiQuery);
 
         } else {
+            // Read the regular config.ini file
             $customConfigFile = $service.'/config.ini';
             $customConfig = parse_ini_file($customConfigFile);
             if (! $customConfig)
@@ -80,6 +92,9 @@
                 throw new Exception("Missing configuration property 'api_query'. Check <service>/config.ini.");
             if (! array_key_exists('parameter', $customConfig))
                 throw new Exception("Missing configuration property 'parameter'. Check <service>/config.ini.");
+
+            # Read the cache expiration period
+            $cacheExpirationSec = array_key_exists('cache_expires_after', $customConfig) ? $customConfig['cache_expires_after'] : 2592000;
 
             // Read the custom parameters
             $customParams = getQueryParameters($customConfig['parameter']);
@@ -91,7 +106,13 @@
             $logger->info("Web API query string: \n".$apiQuery);
         }
 
-        // Call the service, apply JSON-LD profile and translate to NQuads
+        // Set global variable for cache management functions (expiration time in seconds)
+        $cacheExpiresAfter = new DateInterval('PT'.$cacheExpirationSec.'S');
+
+        // ------------------------------------------------------------------------------------
+        // --- Call the Web API service, apply the JSON-LD profile and translate to NQuads
+        // ------------------------------------------------------------------------------------
+
         if ($metro->isHandling(Logger::INFO)) $before = microtime(true);
         if ($apiQuery == "")
             // Query string set to empty string in case an error occured.
