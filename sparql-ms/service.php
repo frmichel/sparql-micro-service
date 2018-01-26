@@ -18,7 +18,7 @@
         if ($metro->isHandling(Logger::INFO)) $timeStart = microtime(true);
 
         // ------------------------------------------------------------------------------------
-        // --- Read generic configuration file
+        // --- Read generic configuration and check query parameters
         // ------------------------------------------------------------------------------------
         $config = parse_ini_file('config.ini');
         if (! $config)
@@ -30,6 +30,20 @@
         if (! array_key_exists('parameter', $config))
             throw new Exception("Missing configuration property 'parameter'. Check config.ini.");
 
+        // Read mandatory input parameters of the SPARQL micro service
+        list($service, $querymode, $sparqlQuery) = array_values(getQueryParameters($config['parameter']));
+
+        if ($querymode != 'sparql' && $querymode != 'ld')
+            throw new Exception("Invalid parameter 'querymode': should be one of 'sparql' or 'lod'.");
+
+        // --- Check and log HTTP headers
+        list($contentType, $accept) = getHttpHeaders();
+        if (array_key_exists('QUERY_STRING', $_SERVER)) {
+            if ($logger->isHandling(Logger::DEBUG))
+                $logger->debug('Query string: '.$_SERVER['QUERY_STRING']);
+        } else
+            badRequest("HTTP error, no query string provided.");
+
         // Get default namespaces. These are automatially added to any SPARQL query.
         // See other existing default namespaces in EasyRdf/Namespace.php
         if (array_key_exists('namespace', $config))
@@ -39,40 +53,12 @@
                 EasyRdf_Namespace::set($nsName, $nsVal);
             }
 
-        // Initialize a connection to the cache db (MongoDB client)
-        $useCache = array_key_exists('use_cache', $config) ? $config['use_cache'] : null;
-        if ($useCache) {
-            $cacheEndpoint = array_key_exists('cache_endpoint', $config) ? $config['cache_endpoint'] : "mongodb://localhost:27017";
-            $client = new MongoDB\Client($cacheEndpoint);
-
-            $cacheDbName = array_key_exists('cache_db_name', $config) ? $config['cache_db_name'] : "sparql_micro_service";
-            $cacheDb = $client->selectCollection($cacheDbName, 'cache');
-        }
-
-        // Read mandatory input parameters of the SPARQL micro service
-        list($service, $querymode, $sparqlQuery) = array_values(getQueryParameters($config['parameter']));
-
-        if ($querymode != 'sparql' && $querymode != 'ld')
-            throw new Exception("Invalid parameter 'querymode': should be one of 'sparql' or 'lod'.");
-
-        // --- Check and log HTTP headers
-        list($contentType, $accept) = getHttpHeaders();
-        if (array_key_exists('HTTP_HOST', $_SERVER)) {
-            // Regular HTTP or HTTPS invocation
-            if (array_key_exists('QUERY_STRING', $_SERVER)) {
-                if ($logger->isHandling(Logger::DEBUG))
-                    $logger->debug('Query string: '.$_SERVER['QUERY_STRING']);
-            }
-            else
-                badRequest("HTTP error, no query string provided.");
-        } // The 'else' case is a direct call from the command line, used for for debug
-
         // ------------------------------------------------------------------------------------
-        // --- Get service-specific definitions
+        // --- Read service-specific configuration
         // ------------------------------------------------------------------------------------
 
         if (file_exists($service.'/service.php')) {
-            // Non config.ini file but script service.php instead.
+            // No config.ini file but script service.php instead.
             require $service.'/service.php';
 
             if (! isset($apiQuery))
@@ -83,7 +69,7 @@
             $logger->info("Web API query string: \n".$apiQuery);
 
         } else {
-            // Read the regular config.ini file
+            // Read the service config.ini file
             $customConfigFile = $service.'/config.ini';
             $customConfig = parse_ini_file($customConfigFile);
             if (! $customConfig)
@@ -96,7 +82,7 @@
             # Read the cache expiration period
             $cacheExpirationSec = array_key_exists('cache_expires_after', $customConfig) ? $customConfig['cache_expires_after'] : 2592000;
 
-            // Read the custom parameters
+            // Read the service-specific parameters
             $customParams = getQueryParameters($customConfig['parameter']);
 
             // In the Web API query string, replace placeholders {param} with their values
@@ -106,19 +92,34 @@
             $logger->info("Web API query string: \n".$apiQuery);
         }
 
-        // Set global variable for cache management functions (expiration time in seconds)
-        $cacheExpiresAfter = new DateInterval('PT'.$cacheExpirationSec.'S');
+        // ------------------------------------------------------------------------------------
+        // --- Initialize the cache db client (MongoDB client)
+        //     Global variables:
+        //        $useCache, $cacheDb, $cacheExpiresAfter
+        // ------------------------------------------------------------------------------------
+
+        $useCache = array_key_exists('use_cache', $config) ? $config['use_cache'] : false;
+        if ($useCache) {
+            $cacheEndpoint = array_key_exists('cache_endpoint', $config) ? $config['cache_endpoint'] : "mongodb://localhost:27017";
+            $client = new MongoDB\Client($cacheEndpoint);
+
+            $cacheDbName = array_key_exists('cache_db_name', $config) ? $config['cache_db_name'] : "sparql_micro_service";
+            $cacheDb = $client->selectCollection($cacheDbName, 'cache');
+
+            $cacheExpiresAfter = new DateInterval('PT'.$cacheExpirationSec.'S');
+        }
 
         // ------------------------------------------------------------------------------------
         // --- Call the Web API service, apply the JSON-LD profile and translate to NQuads
         // ------------------------------------------------------------------------------------
 
         if ($metro->isHandling(Logger::INFO)) $before = microtime(true);
-        if ($apiQuery == "")
-            // Query string set to empty string in case an error occured.
+
+        if ($apiQuery == "") // Query string set to empty string in case an error occured.
             $serializedQuads = "";
         else
             $serializedQuads = translateJsonToNQuads($apiQuery, $service.'/profile.jsonld');
+
         if ($metro->isHandling(Logger::INFO)) $apiTime = microtime(true) - $before;
 
         // ------------------------------------------------------------------------------------
@@ -128,7 +129,7 @@
         // URI of the temporary work graph
         $graphUri = 'http://sms.i3s.unice.fr/graph'.uniqid("-", true);
 
-        // Create and clear the temporary graph before insert
+        // Create the temporary graph by clearing it
         $sparqlClient = new EasyRdf_Sparql_Client($config['sparql_endpoint']);
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("Creating graph: <".$graphUri.">");
@@ -179,7 +180,10 @@
             foreach($result->getHeaders() as $header => $headerVal)
                 $logger->debug('Received response header: '.$header.": ".$headerVal);
 
-        // Return the HTTP response
+        // ------------------------------------------------------------------------------------
+        // --- Return the HTTP response to the SPARQL client
+        // ------------------------------------------------------------------------------------
+
         $logger->info("Sending response Content-Type: ".$result->getHeader('Content-Type'));
         header('Content-Type: '.$result->getHeader('Content-Type'));
         header('Server: SPARQL-Micro-Service');

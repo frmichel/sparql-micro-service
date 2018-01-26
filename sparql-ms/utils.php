@@ -59,7 +59,7 @@
     /**
      * Check and log the Content-Type and Accept HTTP headers
      *
-     * @return array(Content-Type, Accept)
+     * @return array (Content-Type, Accept)
      */
     function getHttpHeaders() {
         global $logger, $config;
@@ -94,32 +94,25 @@
     }
 
     /**
-     * Check and return the query parameters that the SPARQL micro service expects.
+     * Check and return the query parameters that the SPARQL micro-service expects.
      * If any expected parameter in not found (in the regular case of an HTTP/HTTPS call)
      * the script returns an HTTP error 400 and exits.
      *
-     * @param array $params associative array of parameters and default values
+     * @param array $params array of parameter names
      * @return associative array of parameters and values read from the query string
      */
     function getQueryParameters($params) {
         global $logger;
 
         $result = array();
-        foreach ($params as $paramName => $paramDefaultValue) {
-
-            if (array_key_exists('HTTP_HOST', $_SERVER)) {
-                // The service parameters are passed in the query string
-                if (array_key_exists($paramName, $_REQUEST)) {
-                    $paramValue = $_REQUEST[$paramName];
-                    $result[$paramName] = $paramValue;
-                    $logger->info("Query parameter '".$paramName."': ".$paramValue);
-                } else
-                    badRequest("Query parameter '".$paramName."' undefined.");
-            } else {
-                // Call from command line - Use default value
-                $result[$paramName] = $paramDefaultValue;
-                $logger->warning("Query parameter '".$paramName."' undefined. Using '".$paramDefaultValue."'.");
-            }
+        foreach ($params as $paramName) {
+            // The service parameters are passed in the query string
+            if (array_key_exists($paramName, $_REQUEST)) {
+                $paramValue = $_REQUEST[$paramName];
+                $result[$paramName] = $paramValue;
+                $logger->info("Query parameter '".$paramName."': ".$paramValue);
+            } else
+                badRequest("Query parameter '".$paramName."' undefined.");
         }
 
         return $result;
@@ -269,7 +262,7 @@
     }
 
     /**
-     * Write a document to the cache db along wuth an expiration date.
+     * Write a document to the cache db along with an expiration date.
      *
      * @param string $query the Web API query. Its hash is used as a key
      * @param string $resp the Web API query response to store in the cache db
