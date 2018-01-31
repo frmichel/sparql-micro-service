@@ -41,11 +41,10 @@ class NQuads implements QuadSerializerInterface, QuadParserInterface
                     ? $quad->getObject()
                     : '<' . $quad->getObject() . '>';
             } else {
-                // Fix F. Michel 2017-12-05. Double-quotes and "\n" in JSON strings must be escaped.
-                $_v = $quad->getObject()->getValue();
-                $_v = str_replace ( '"', '\"', $_v );
-                $_v = str_replace ( "\n", '', $_v );
-                $result .= '"' . $_v. '"';
+                // Escape double-quotes and "\n" in JSON strings
+                $search = array("\n", '"');
+                $replace = array('\n', '\"');
+                $result .= '"' . str_replace($search, $replace, $quad->getObject()->getValue()) . '"';
                 $result .= ($quad->getObject() instanceof TypedValue)
                     ? (RdfConstants::XSD_STRING === $quad->getObject()->getType())
                         ? ''

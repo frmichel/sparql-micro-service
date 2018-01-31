@@ -154,17 +154,12 @@
                 }
             }
 
-            // Apply JSON-LD profile to the Web API response
-            $jsonldResp = JsonLD::expandJsonAsJsonld($apiResp, $jsonldProfile);
-            if ($logger->isHandling(Logger::DEBUG))
-                $logger->debug("Web API JSON response translated to JSON-LD: \n".JsonLD::toString($jsonldResp));
-
-            // Transform the JSON-LD to RDF NQuads
-            $quads = JsonLD::expandedToRdf($jsonldResp);
+            // Apply JSON-LD profile to the Web API response and transform the JSON-LD to RDF NQuads
+            $quads = JsonLD::toRdf($apiResp, array('expandContext' => $jsonldProfile));
             $nquads = new NQuads();
             $serializedQuads = $nquads->serialize($quads);
             if ($logger->isHandling(Logger::DEBUG))
-                $logger->debug("NQuads serialized response:\n".$serializedQuads);
+                $logger->debug("Web API JSON response translated into NQuads:\n".$serializedQuads);
 
             return $serializedQuads;
 
@@ -176,7 +171,7 @@
     }
 
     /**
-     * Read a JSON content given by its URL
+     * Read a JSON content given by its URL and return its content as a string
      *
      * @param string $url the URL of the JSON document
      * @return string the result JSON content as a string
@@ -186,10 +181,10 @@
 
         $streamContextOptions = array(
             'method'  => 'GET',
-            'header'  => "Accept: application/json; q=0.9, */*; q=0.1\r\n".
+            'header'  => "Accept: application/json; q=0.9, */*; q=0.1\r\n"
                         // Some Web API require a User-Agent.
                         // E.g. MusicBrainz returns error 403 if there is none.
-                        "User-Agent: SPARQL-Micro-Service\r\n",
+                        . "User-Agent: SPARQL-Micro-Service\r\n",
             'timeout' => Processor::REMOTE_TIMEOUT,
             'ssl' => [ 'verify_peer' => true, 'verify_peer_name' => true, 'allow_self_signed'=> false ]
         );
