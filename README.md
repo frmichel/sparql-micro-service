@@ -1,17 +1,17 @@
 # SPARQL Micro-Services
 
-The SPARQL Micro-Service architecture is meant to allow the combination of Linked Data with data from Web APIs. It enables querying non-RDF Web APIs with SPARQL, and allows on-the-fly assigning dereferenceable URIs to Web API resources that do not have a URI in the first place.
+The SPARQL Micro-Service architecture [1] is meant to allow the combination of Linked Data with data from Web APIs. It enables querying non-RDF Web APIs with SPARQL, and allows on-the-fly assigning dereferenceable URIs to Web API resources that do not have a URI in the first place.
 
 This project is a prototype PHP implementation for JSON-based Web APIs. It comes with three example SPARQL micro-services, designed in the context of a biodiversity-related use case:
 - flickr/getPhotosByGroupByTag: searches a Flickr group for photos with a given tag. We use it to search the [*Encyclopedia of Life* Flickr group](https://www.flickr.com/groups/806927@N20) for photos of a given taxon: photos of this group are tagged with the scientific name of the taxon they represent, formatted as ```taxonomy:binomial=<scientific name>```.
 - macaulaylibrary/getAudioByTaxon retrieves audio recordings for a given taxon name from the [Macaulay Library](https://www.macaulaylibrary.org/), a scientific media archive related to birds, amphibians, fishes and mammals.
 - musicbrainz/getSongByName searches the [MusicBrainz music information encyclopedia](https://musicbrainz.org/) for music tunes whose titles match a given name with a minimum confidence of 90%.
 
+[1] Franck Michel, Catherine Faron-Zucker and Fabien Gandon. *SPARQL Micro-Services: Lightweight Integration of Web APIs and Linked Data*. In Proc. of the Linked Data on the Web Workshop (LDOW2018). https://hal.archives-ouvertes.fr/hal-01722792
+
 ## The SPARQL Micro-Service Architecture
 
-A SPARQL micro-service [1] is a lightweight, task-specific SPARQL endpoint that provides access to a small, resource-centric virtual graph, while dynamically assigning dereferenceable URIs to Web API resources that do not have URIs beforehand. The graph is delineated by the Web API service being wrapped, the arguments passed to this service, and the restricted types of RDF triples that this SPARQL micro-service is designed to spawn. 
-
-[1] Franck Michel, Catherine Faron-Zucker and Fabien Gandon. *SPARQL Micro-Services: Lightweight Integration of Web APIs and Linked Data*. Submitted to the Linked Data on the Web (LDOW) 2018 Workshop.
+A SPARQL micro-service is a lightweight, task-specific SPARQL endpoint that provides access to a small, resource-centric virtual graph, while dynamically assigning dereferenceable URIs to Web API resources that do not have URIs beforehand. The graph is delineated by the Web API service being wrapped, the arguments passed to this service, and the restricted types of RDF triples that this SPARQL micro-service is designed to spawn. 
 
 
 ## How to use SPARQL micro-services?
@@ -34,17 +34,23 @@ If any of the 3 Web APIs invoked is not available (network error, internal failu
             schema:contentUrl ?audioUrl;
             schema:subjectOf ?page.
     } WHERE {
-        service <http://taxref.mnhn.fr/sparql> 
+        SERVICE <http://taxref.mnhn.fr/sparql> 
         { ?species a owl:Class; rdfs:label "Delphinus delphis". }
 
-        service <https://example.org/sparql-ms/flickr/getPhotosByGroupByTag?group_id=806927@N20&tags=taxonomy:binomial=Delphinus+delphis> 
-        { OPTIONAL { ?photo foaf:depiction ?img. } }
+        OPTIONAL { 
+          SERVICE <https://example.org/sparql-ms/flickr/getPhotosByGroupByTag?group_id=806927@N20&tags=taxonomy:binomial=Delphinus+delphis> 
+          { ?photo foaf:depiction ?img. }
+        }
         
-        service <https://example.org/sparql-ms/macaulaylibrary/getAudioByTaxon?name=Delphinus+delphis> 
-        { OPTIONAL { [] schema:contentUrl ?audioUrl. } }
+        OPTIONAL {
+          SERVICE <https://example.org/sparql-ms/macaulaylibrary/getAudioByTaxon?name=Delphinus+delphis> 
+          { [] schema:contentUrl ?audioUrl. } 
+        }
 
-        service <https://example.org/sparql-ms/musicbrainz/getSongByName?name=Delphinus+delphis> 
-        { OPTIONAL { [] schema:sameAs ?page. } }
+        OPTIONAL {
+          SERVICE <https://example.org/sparql-ms/musicbrainz/getSongByName?name=Delphinus+delphis> 
+          { [] schema:sameAs ?page. }
+        }
     }
 
 
@@ -135,25 +141,25 @@ To access the SPARQL micro-servcices log file, add a ```volumes``` parameter in 
 
 This will mount the SPARQL micro-service logs directory to the Docker host in directory ```./logs```.
 
-You may have to set access mode 777 on this directory for the container to be able to write in log files.
+You may have to set access mode 777 on this directory for the container to be able to write log files.
 
 
 ## Installation
 
-To install this project, you will need an Apache Web server with PHP 5.3+ and a write-enabled SPARQL endpoint (and RDF triple store).
+To install this project, you will need an Apache Web server with PHP 5.3+ and a write-enabled SPARQL endpoint and RDF triple store.
 
-Copy the ```sparql-ms``` directory to a directory exposed by Apache, typically ```/var/www/html``` or the ```public_html``` of your home dir.
+Copy the ```sparql-ms``` directory to a directory exposed by Apache, typically ```/var/www/html``` or the ```public_html``` of your home directory.
 
 Do __NOT__ use PHP ```composer``` to update the libraries in the vendor directory. This would override changes we made in some of them (Json-LD and EasyRDF).
 
-Customize the URL of your SPARQL endpoint in ```sparql-ms/config.ini```, for instance:
+Set the URL of your write-enabled SPARQL endpoint in ```sparql-ms/config.ini```. This endpoint does not need to be exposed publicly on the Web, only the SPARQL micro-services should have access to it. For instance:
 ```
-sparql_endpoint = http://example.org/sparql
+sparql_endpoint = http://localhost/sparql
 ```
 
 Customize the dereferenceable URIs generated in the Flickr services: see the comments in construct.sparql and insert.sparql files.
 
-Add Apache [rewriting rules](http://httpd.apache.org/docs/2.4/rewrite/) to invoke micro-services using SPARQL or URI dereferencing: check the Apache rewriting examples in ```apache_cfg/httpd.conf``` and ```apache_cfg/ssl.conf```. See details in the sections below.
+Set Apache [rewriting rules](http://httpd.apache.org/docs/2.4/rewrite/) to invoke micro-services using SPARQL or URI dereferencing: check the Apache rewriting examples in ```apache_cfg/httpd.conf``` and ```apache_cfg/ssl.conf```. See details in the sections below.
 
 #### Rewriting rules for SPARQL querying
 
