@@ -11,7 +11,7 @@
 
     try {
         // Set global debug level here. Use WARNING or ERROR is production environment.
-        $logger = initLogger(Logger::DEBUG);
+        $logger = initLogger(Logger::INFO);
 
         // Set level to Logger::INFO to activate metrology, Logger::WARNING or highier to deactivate
         $metro = initMetro(Logger::WARNING);

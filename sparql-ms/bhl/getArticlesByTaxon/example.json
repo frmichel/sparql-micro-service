@@ -1,0 +1,1632 @@
+{
+  "Status": "ok",
+  "ErrorMessage": null,
+  "Result": [
+    {
+      "PartUrl": "https://www.biodiversitylibrary.org/part/73414",
+      "PartID": 73414,
+      "ItemID": 90455,
+      "StartPageID": 28521490,
+      "SequenceOrder": 0,
+      "GenreName": "Article",
+      "Title": "5. On the Common Dolphin, Delphinus delphis. Linn",
+      "TranslatedTitle": "",
+      "ContainerTitle": "Proceedings of the Zoological Society of London.",
+      "PublicationDetails": "London :Academic Press, [etc.],1833-1965.",
+      "PublisherName": "",
+      "PublisherPlace": "",
+      "Notes": "",
+      "Volume": "1879",
+      "Series": "",
+      "Issue": "",
+      "Date": "1879",
+      "PageRange": "",
+      "StartPageNumber": "382",
+      "EndPageNumber": "384",
+      "Language": "",
+      "ExternalUrl": "",
+      "DownloadUrl": "",
+      "RightsStatus": "",
+      "RightsStatement": "",
+      "LicenseName": "",
+      "LicenseUrl": "",
+      "Doi": "",
+      "Authors": [
+        {
+          "CreatorID": 1212,
+          "Name": "Flower, William Henry,",
+          "Role": null,
+          "Numeration": "",
+          "Unit": "",
+          "Title": "",
+          "Location": "",
+          "FullerForm": "",
+          "Relationship": null,
+          "TitleOfWork": null,
+          "Dates": "1831-1899",
+          "CreatorUrl": null
+        }
+      ],
+      "Contributors": [
+        {
+          "ContributorName": "BioStor"
+        }
+      ],
+      "Subjects": [],
+      "Identifiers": [
+        {
+          "IdentifierName": "BioStor",
+          "IdentifierValue": "108624"
+        },
+        {
+          "IdentifierName": "ISSN",
+          "IdentifierValue": "0370-2774"
+        }
+      ],
+      "Pages": [
+        {
+          "PageID": 28521490,
+          "ItemID": 0,
+          "Volume": "1879",
+          "Issue": null,
+          "Year": "1879",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/28521490",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/28521490",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/28521490",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/28521490",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "382"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 28521491,
+          "ItemID": 0,
+          "Volume": "1879",
+          "Issue": null,
+          "Year": "1879",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/28521491",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/28521491",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/28521491",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/28521491",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "383"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 28521492,
+          "ItemID": 0,
+          "Volume": "1879",
+          "Issue": null,
+          "Year": "1879",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/28521492",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/28521492",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/28521492",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/28521492",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "384"
+            }
+          ],
+          "Names": null
+        }
+      ],
+      "RelatedParts": []
+    },
+    {
+      "PartUrl": "https://www.biodiversitylibrary.org/part/75874",
+      "PartID": 75874,
+      "ItemID": 126882,
+      "StartPageID": 40827894,
+      "SequenceOrder": 0,
+      "GenreName": "Article",
+      "Title": "Considérations sur le cerveau et le comportement du Delphinus delphis",
+      "TranslatedTitle": "",
+      "ContainerTitle": "Revue suisse de zoologie.",
+      "PublicationDetails": "Genève,Kundig [etc.]",
+      "PublisherName": "",
+      "PublisherPlace": "",
+      "Notes": "",
+      "Volume": "74",
+      "Series": "",
+      "Issue": "",
+      "Date": "1967",
+      "PageRange": "",
+      "StartPageNumber": "665",
+      "EndPageNumber": "678",
+      "Language": "",
+      "ExternalUrl": "",
+      "DownloadUrl": "",
+      "RightsStatus": "",
+      "RightsStatement": "",
+      "LicenseName": "",
+      "LicenseUrl": "",
+      "Doi": "",
+      "Authors": [
+        {
+          "CreatorID": 74670,
+          "Name": "Pilleri, G",
+          "Role": null,
+          "Numeration": "",
+          "Unit": "",
+          "Title": "",
+          "Location": "",
+          "FullerForm": "",
+          "Relationship": null,
+          "TitleOfWork": null,
+          "Dates": "",
+          "CreatorUrl": null
+        }
+      ],
+      "Contributors": [
+        {
+          "ContributorName": "BioStor"
+        }
+      ],
+      "Subjects": [],
+      "Identifiers": [
+        {
+          "IdentifierName": "BioStor",
+          "IdentifierValue": "111120"
+        },
+        {
+          "IdentifierName": "ISSN",
+          "IdentifierValue": "0035-418X"
+        }
+      ],
+      "Pages": [
+        {
+          "PageID": 40827894,
+          "ItemID": 0,
+          "Volume": "74",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/40827894",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/40827894",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/40827894",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/40827894",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "665"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 40827895,
+          "ItemID": 0,
+          "Volume": "74",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/40827895",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/40827895",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/40827895",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/40827895",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "666"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 40827896,
+          "ItemID": 0,
+          "Volume": "74",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/40827896",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/40827896",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/40827896",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/40827896",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            },
+            {
+              "PageTypeName": " Illustration"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "667"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 40827897,
+          "ItemID": 0,
+          "Volume": "74",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/40827897",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/40827897",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/40827897",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/40827897",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "668"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 40827898,
+          "ItemID": 0,
+          "Volume": "74",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/40827898",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/40827898",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/40827898",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/40827898",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "669"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 40827899,
+          "ItemID": 0,
+          "Volume": "74",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/40827899",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/40827899",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/40827899",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/40827899",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "670"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 40827900,
+          "ItemID": 0,
+          "Volume": "74",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/40827900",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/40827900",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/40827900",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/40827900",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "671"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 40827901,
+          "ItemID": 0,
+          "Volume": "74",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/40827901",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/40827901",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/40827901",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/40827901",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "672"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 40827902,
+          "ItemID": 0,
+          "Volume": "74",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/40827902",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/40827902",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/40827902",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/40827902",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "673"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 40827903,
+          "ItemID": 0,
+          "Volume": "74",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/40827903",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/40827903",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/40827903",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/40827903",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "674"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 40827904,
+          "ItemID": 0,
+          "Volume": "74",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/40827904",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/40827904",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/40827904",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/40827904",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "675"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 40827905,
+          "ItemID": 0,
+          "Volume": "74",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/40827905",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/40827905",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/40827905",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/40827905",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "676"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 40827906,
+          "ItemID": 0,
+          "Volume": "74",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/40827906",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/40827906",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/40827906",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/40827906",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [],
+          "Names": null
+        },
+        {
+          "PageID": 40827907,
+          "ItemID": 0,
+          "Volume": "74",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/40827907",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/40827907",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/40827907",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/40827907",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            },
+            {
+              "PageTypeName": " Illustration"
+            }
+          ],
+          "PageNumbers": [],
+          "Names": null
+        }
+      ],
+      "RelatedParts": []
+    },
+    {
+      "PartUrl": "https://www.biodiversitylibrary.org/part/190952",
+      "PartID": 190952,
+      "ItemID": 161960,
+      "StartPageID": 45349503,
+      "SequenceOrder": 0,
+      "GenreName": "Article",
+      "Title": "Courtship in captive saddle-backed porpoises, Delphinus delphis, L. 1758",
+      "TranslatedTitle": "",
+      "ContainerTitle": "Zeitschrift für Säugetierkunde : im Auftrage der Deutschen Gesellschaft für Säugetierkunde e.V.",
+      "PublicationDetails": "Berlin :Die Gesellschaft ;1926-c2000.",
+      "PublisherName": "",
+      "PublisherPlace": "",
+      "Notes": "",
+      "Volume": "27",
+      "Series": "",
+      "Issue": "",
+      "Date": "1962",
+      "PageRange": "",
+      "StartPageNumber": "211",
+      "EndPageNumber": "217",
+      "Language": "",
+      "ExternalUrl": "",
+      "DownloadUrl": "",
+      "RightsStatus": "",
+      "RightsStatement": "",
+      "LicenseName": "",
+      "LicenseUrl": "",
+      "Doi": "",
+      "Authors": [
+        {
+          "CreatorID": 193305,
+          "Name": "Essapian, Frank S ",
+          "Role": null,
+          "Numeration": "",
+          "Unit": "",
+          "Title": "",
+          "Location": "",
+          "FullerForm": "",
+          "Relationship": null,
+          "TitleOfWork": null,
+          "Dates": "",
+          "CreatorUrl": null
+        }
+      ],
+      "Contributors": [
+        {
+          "ContributorName": "BioStor"
+        }
+      ],
+      "Subjects": [],
+      "Identifiers": [
+        {
+          "IdentifierName": "BioStor",
+          "IdentifierValue": "182333"
+        },
+        {
+          "IdentifierName": "ISSN",
+          "IdentifierValue": "0044-3468"
+        }
+      ],
+      "Pages": [
+        {
+          "PageID": 45349503,
+          "ItemID": 0,
+          "Volume": "27",
+          "Issue": null,
+          "Year": "1962",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/45349503",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/45349503",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/45349503",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/45349503",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "211"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 45349504,
+          "ItemID": 0,
+          "Volume": "27",
+          "Issue": null,
+          "Year": "1962",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/45349504",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/45349504",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/45349504",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/45349504",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "212"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 45349505,
+          "ItemID": 0,
+          "Volume": "27",
+          "Issue": null,
+          "Year": "1962",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/45349505",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/45349505",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/45349505",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/45349505",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "213"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 45349506,
+          "ItemID": 0,
+          "Volume": "27",
+          "Issue": null,
+          "Year": "1962",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/45349506",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/45349506",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/45349506",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/45349506",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "214"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 45349507,
+          "ItemID": 0,
+          "Volume": "27",
+          "Issue": null,
+          "Year": "1962",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/45349507",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/45349507",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/45349507",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/45349507",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "215"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 45349508,
+          "ItemID": 0,
+          "Volume": "27",
+          "Issue": null,
+          "Year": "1962",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/45349508",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/45349508",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/45349508",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/45349508",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "216"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 45349509,
+          "ItemID": 0,
+          "Volume": "27",
+          "Issue": null,
+          "Year": "1962",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/45349509",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/45349509",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/45349509",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/45349509",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "217"
+            }
+          ],
+          "Names": null
+        }
+      ],
+      "RelatedParts": []
+    },
+    {
+      "PartUrl": "https://www.biodiversitylibrary.org/part/151873",
+      "PartID": 151873,
+      "ItemID": 187443,
+      "StartPageID": 48240061,
+      "SequenceOrder": 0,
+      "GenreName": "Article",
+      "Title": "Description of isopod Cirolana parva Hansen parasitic on the eye balls of dolphin, Delphinus delphis Linnaeus with a key to the Indian species of the genus Cirolana Leach",
+      "TranslatedTitle": "",
+      "ContainerTitle": "The journal of the Bombay Natural History Society.",
+      "PublicationDetails": "Bombay :Bombay Natural History Society,1886-",
+      "PublisherName": "",
+      "PublisherPlace": "",
+      "Notes": "",
+      "Volume": "75",
+      "Series": "",
+      "Issue": "",
+      "Date": "1978",
+      "PageRange": "",
+      "StartPageNumber": "516",
+      "EndPageNumber": "519",
+      "Language": "",
+      "ExternalUrl": "",
+      "DownloadUrl": "",
+      "RightsStatus": "",
+      "RightsStatement": "",
+      "LicenseName": "",
+      "LicenseUrl": "",
+      "Doi": "",
+      "Authors": [
+        {
+          "CreatorID": 159396,
+          "Name": "Hamsa, K M S Amer",
+          "Role": null,
+          "Numeration": "",
+          "Unit": "",
+          "Title": "",
+          "Location": "",
+          "FullerForm": "",
+          "Relationship": null,
+          "TitleOfWork": null,
+          "Dates": "",
+          "CreatorUrl": null
+        },
+        {
+          "CreatorID": 159397,
+          "Name": "Nammalwar, P",
+          "Role": null,
+          "Numeration": "",
+          "Unit": "",
+          "Title": "",
+          "Location": "",
+          "FullerForm": "",
+          "Relationship": null,
+          "TitleOfWork": null,
+          "Dates": "",
+          "CreatorUrl": null
+        }
+      ],
+      "Contributors": [
+        {
+          "ContributorName": "BioStor"
+        }
+      ],
+      "Subjects": [],
+      "Identifiers": [
+        {
+          "IdentifierName": "BioStor",
+          "IdentifierValue": "148085"
+        },
+        {
+          "IdentifierName": "ISSN",
+          "IdentifierValue": "0006-6982"
+        }
+      ],
+      "Pages": [
+        {
+          "PageID": 48240061,
+          "ItemID": 0,
+          "Volume": "75",
+          "Issue": null,
+          "Year": "1978",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/48240061",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/48240061",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/48240061",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/48240061",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "516"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 48240062,
+          "ItemID": 0,
+          "Volume": "75",
+          "Issue": null,
+          "Year": "1978",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/48240062",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/48240062",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/48240062",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/48240062",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "517"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 48240063,
+          "ItemID": 0,
+          "Volume": "75",
+          "Issue": null,
+          "Year": "1978",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/48240063",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/48240063",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/48240063",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/48240063",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "518"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 48240064,
+          "ItemID": 0,
+          "Volume": "75",
+          "Issue": null,
+          "Year": "1978",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/48240064",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/48240064",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/48240064",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/48240064",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "519"
+            }
+          ],
+          "Names": null
+        }
+      ],
+      "RelatedParts": []
+    },
+    {
+      "PartUrl": "https://www.biodiversitylibrary.org/part/193489",
+      "PartID": 193489,
+      "ItemID": 0,
+      "StartPageID": 0,
+      "SequenceOrder": 0,
+      "GenreName": "Article",
+      "Title": "Incidental capture of the short-beaked common dolphin (Delphinus delphis) in the industrial purse seine fishery in northern Chile",
+      "TranslatedTitle": "",
+      "ContainerTitle": "Universidad de Valparaíso. Facultad de Ciencias del Mar",
+      "PublicationDetails": " Universidad de Valparaíso. Facultad de Ciencias del Mar 2016-08-01",
+      "PublisherName": "",
+      "PublisherPlace": "",
+      "Notes": "",
+      "Volume": "",
+      "Series": "",
+      "Issue": "",
+      "Date": "2016-08-01",
+      "PageRange": "",
+      "StartPageNumber": "",
+      "EndPageNumber": "",
+      "Language": "",
+      "ExternalUrl": "http://www.scielo.cl/scielo.php?script=sci_arttext&pid=S0718-19572016000200019",
+      "DownloadUrl": "",
+      "RightsStatus": "",
+      "RightsStatement": "",
+      "LicenseName": "",
+      "LicenseUrl": "",
+      "Doi": "",
+      "Authors": [
+        {
+          "CreatorID": 195622,
+          "Name": "González-But,Juan Carlos",
+          "Role": null,
+          "Numeration": "",
+          "Unit": "",
+          "Title": "",
+          "Location": "",
+          "FullerForm": "",
+          "Relationship": null,
+          "TitleOfWork": null,
+          "Dates": "",
+          "CreatorUrl": null
+        },
+        {
+          "CreatorID": 123525,
+          "Name": "SEPÚLVEDA,MARITZA",
+          "Role": null,
+          "Numeration": "",
+          "Unit": "",
+          "Title": "",
+          "Location": "",
+          "FullerForm": "",
+          "Relationship": null,
+          "TitleOfWork": null,
+          "Dates": "",
+          "CreatorUrl": null
+        }
+      ],
+      "Contributors": [
+        {
+          "ContributorName": "BHL SciELO"
+        }
+      ],
+      "Subjects": [
+        {
+          "SubjectText": "Anchovy"
+        },
+        {
+          "SubjectText": "bycatch"
+        },
+        {
+          "SubjectText": "Marine mammals"
+        },
+        {
+          "SubjectText": "Purse seine"
+        }
+      ],
+      "Identifiers": [
+        {
+          "IdentifierName": "OAI",
+          "IdentifierValue": "oai:scielo:S0718-19572016000200019"
+        }
+      ],
+      "Pages": [],
+      "RelatedParts": []
+    },
+    {
+      "PartUrl": "https://www.biodiversitylibrary.org/part/143365",
+      "PartID": 143365,
+      "ItemID": 124612,
+      "StartPageID": 40315826,
+      "SequenceOrder": 0,
+      "GenreName": "Article",
+      "Title": "Measurements of the nasal sacs of individual common dolphin, Delphinus delphis, and Dall's porpoise, Phocoenoides dalli, by means of silicon reconstruction",
+      "TranslatedTitle": "",
+      "ContainerTitle": "Mammal study. ",
+      "PublicationDetails": "Tokyo, Japan :Mammalogical Society of Japan,[1996-",
+      "PublisherName": "",
+      "PublisherPlace": "",
+      "Notes": "",
+      "Volume": "23",
+      "Series": "",
+      "Issue": "",
+      "Date": "1998",
+      "PageRange": "",
+      "StartPageNumber": "119",
+      "EndPageNumber": "122",
+      "Language": "",
+      "ExternalUrl": "",
+      "DownloadUrl": "",
+      "RightsStatus": "",
+      "RightsStatement": "",
+      "LicenseName": "",
+      "LicenseUrl": "",
+      "Doi": "",
+      "Authors": [
+        {
+          "CreatorID": 71199,
+          "Name": "Nakamura, Koji",
+          "Role": null,
+          "Numeration": "",
+          "Unit": "",
+          "Title": "",
+          "Location": "",
+          "FullerForm": "",
+          "Relationship": null,
+          "TitleOfWork": null,
+          "Dates": "",
+          "CreatorUrl": null
+        },
+        {
+          "CreatorID": 71491,
+          "Name": "Shimazaki, Kenji",
+          "Role": null,
+          "Numeration": "",
+          "Unit": "",
+          "Title": "",
+          "Location": "",
+          "FullerForm": "",
+          "Relationship": null,
+          "TitleOfWork": null,
+          "Dates": "",
+          "CreatorUrl": null
+        },
+        {
+          "CreatorID": 149331,
+          "Name": "Yamada, Tadasu K",
+          "Role": null,
+          "Numeration": "",
+          "Unit": "",
+          "Title": "",
+          "Location": "",
+          "FullerForm": "",
+          "Relationship": null,
+          "TitleOfWork": null,
+          "Dates": "",
+          "CreatorUrl": null
+        }
+      ],
+      "Contributors": [
+        {
+          "ContributorName": "BioStor"
+        }
+      ],
+      "Subjects": [],
+      "Identifiers": [
+        {
+          "IdentifierName": "BioStor",
+          "IdentifierValue": "143386"
+        },
+        {
+          "IdentifierName": "ISSN",
+          "IdentifierValue": "1343-4152"
+        }
+      ],
+      "Pages": [
+        {
+          "PageID": 40315826,
+          "ItemID": 0,
+          "Volume": "23",
+          "Issue": null,
+          "Year": "1998",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/40315826",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/40315826",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/40315826",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/40315826",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "119"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 40315827,
+          "ItemID": 0,
+          "Volume": "23",
+          "Issue": null,
+          "Year": "1998",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/40315827",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/40315827",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/40315827",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/40315827",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "120"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 40315828,
+          "ItemID": 0,
+          "Volume": "23",
+          "Issue": null,
+          "Year": "1998",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/40315828",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/40315828",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/40315828",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/40315828",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "121"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 40315829,
+          "ItemID": 0,
+          "Volume": "23",
+          "Issue": null,
+          "Year": "1998",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/40315829",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/40315829",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/40315829",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/40315829",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "122"
+            }
+          ],
+          "Names": null
+        }
+      ],
+      "RelatedParts": []
+    },
+    {
+      "PartUrl": "https://www.biodiversitylibrary.org/part/191145",
+      "PartID": 191145,
+      "ItemID": 161849,
+      "StartPageID": 45343599,
+      "SequenceOrder": 0,
+      "GenreName": "Article",
+      "Title": "Nucleated cells of the peripheral blood of Stenella styx Gray and Delphinus delphis L. from the western Mediterranean and description of the haemomyelogram of Delphinus delphis",
+      "TranslatedTitle": "",
+      "ContainerTitle": "Zeitschrift für Säugetierkunde : im Auftrage der Deutschen Gesellschaft für Säugetierkunde e.V.",
+      "PublicationDetails": "Berlin :Die Gesellschaft ;1926-c2000.",
+      "PublisherName": "",
+      "PublisherPlace": "",
+      "Notes": "",
+      "Volume": "33",
+      "Series": "",
+      "Issue": "",
+      "Date": "1967",
+      "PageRange": "",
+      "StartPageNumber": "108",
+      "EndPageNumber": "116",
+      "Language": "",
+      "ExternalUrl": "",
+      "DownloadUrl": "",
+      "RightsStatus": "",
+      "RightsStatement": "",
+      "LicenseName": "",
+      "LicenseUrl": "",
+      "Doi": "",
+      "Authors": [
+        {
+          "CreatorID": 193408,
+          "Name": "De Monte, T ",
+          "Role": null,
+          "Numeration": "",
+          "Unit": "",
+          "Title": "",
+          "Location": "",
+          "FullerForm": "",
+          "Relationship": null,
+          "TitleOfWork": null,
+          "Dates": "",
+          "CreatorUrl": null
+        },
+        {
+          "CreatorID": 74670,
+          "Name": "Pilleri, G",
+          "Role": null,
+          "Numeration": "",
+          "Unit": "",
+          "Title": "",
+          "Location": "",
+          "FullerForm": "",
+          "Relationship": null,
+          "TitleOfWork": null,
+          "Dates": "",
+          "CreatorUrl": null
+        }
+      ],
+      "Contributors": [
+        {
+          "ContributorName": "BioStor"
+        }
+      ],
+      "Subjects": [],
+      "Identifiers": [
+        {
+          "IdentifierName": "BioStor",
+          "IdentifierValue": "182526"
+        },
+        {
+          "IdentifierName": "ISSN",
+          "IdentifierValue": "0044-3468"
+        }
+      ],
+      "Pages": [
+        {
+          "PageID": 45343599,
+          "ItemID": 0,
+          "Volume": "33",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/45343599",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/45343599",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/45343599",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/45343599",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "108"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 45343600,
+          "ItemID": 0,
+          "Volume": "33",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/45343600",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/45343600",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/45343600",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/45343600",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "109"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 45343601,
+          "ItemID": 0,
+          "Volume": "33",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/45343601",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/45343601",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/45343601",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/45343601",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "110"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 45343602,
+          "ItemID": 0,
+          "Volume": "33",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/45343602",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/45343602",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/45343602",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/45343602",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "111"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 45343603,
+          "ItemID": 0,
+          "Volume": "33",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/45343603",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/45343603",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/45343603",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/45343603",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "112"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 45343604,
+          "ItemID": 0,
+          "Volume": "33",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/45343604",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/45343604",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/45343604",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/45343604",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "113"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 45343605,
+          "ItemID": 0,
+          "Volume": "33",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/45343605",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/45343605",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/45343605",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/45343605",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "114"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 45343606,
+          "ItemID": 0,
+          "Volume": "33",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/45343606",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/45343606",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/45343606",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/45343606",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "115"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 45343607,
+          "ItemID": 0,
+          "Volume": "33",
+          "Issue": null,
+          "Year": "1967",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/45343607",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/45343607",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/45343607",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/45343607",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "116"
+            }
+          ],
+          "Names": null
+        }
+      ],
+      "RelatedParts": []
+    },
+    {
+      "PartUrl": "https://www.biodiversitylibrary.org/part/151648",
+      "PartID": 151648,
+      "ItemID": 156167,
+      "StartPageID": 44708242,
+      "SequenceOrder": 0,
+      "GenreName": "Article",
+      "Title": "Unusual Occurrence of the Common Dolphin Delphinus delphis in Longline Catches At Port blair Andamans India",
+      "TranslatedTitle": "",
+      "ContainerTitle": "The journal of the Bombay Natural History Society.",
+      "PublicationDetails": "Bombay :Bombay Natural History Society,1886-",
+      "PublisherName": "",
+      "PublisherPlace": "",
+      "Notes": "",
+      "Volume": "77",
+      "Series": "",
+      "Issue": "",
+      "Date": "1980",
+      "PageRange": "",
+      "StartPageNumber": "320",
+      "EndPageNumber": "321",
+      "Language": "",
+      "ExternalUrl": "",
+      "DownloadUrl": "",
+      "RightsStatus": "",
+      "RightsStatement": "",
+      "LicenseName": "",
+      "LicenseUrl": "",
+      "Doi": "",
+      "Authors": [
+        {
+          "CreatorID": 159209,
+          "Name": "Sivaprakasam, T E",
+          "Role": null,
+          "Numeration": "",
+          "Unit": "",
+          "Title": "",
+          "Location": "",
+          "FullerForm": "",
+          "Relationship": null,
+          "TitleOfWork": null,
+          "Dates": "",
+          "CreatorUrl": null
+        }
+      ],
+      "Contributors": [
+        {
+          "ContributorName": "BioStor"
+        }
+      ],
+      "Subjects": [],
+      "Identifiers": [
+        {
+          "IdentifierName": "BioStor",
+          "IdentifierValue": "147794"
+        },
+        {
+          "IdentifierName": "ISSN",
+          "IdentifierValue": "0006-6982"
+        }
+      ],
+      "Pages": [
+        {
+          "PageID": 44708242,
+          "ItemID": 0,
+          "Volume": "77",
+          "Issue": null,
+          "Year": "1980",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/44708242",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/44708242",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/44708242",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/44708242",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "320"
+            }
+          ],
+          "Names": null
+        },
+        {
+          "PageID": 44708243,
+          "ItemID": 0,
+          "Volume": "77",
+          "Issue": null,
+          "Year": "1980",
+          "PageUrl": "https://www.biodiversitylibrary.org/page/44708243",
+          "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/44708243",
+          "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/44708243",
+          "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/44708243",
+          "OcrText": null,
+          "PageTypes": [
+            {
+              "PageTypeName": "Text"
+            }
+          ],
+          "PageNumbers": [
+            {
+              "Prefix": "Page",
+              "Number": "321"
+            }
+          ],
+          "Names": null
+        }
+      ],
+      "RelatedParts": []
+    }
+  ]
+}

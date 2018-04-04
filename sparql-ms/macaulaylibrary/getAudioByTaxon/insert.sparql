@@ -1,19 +1,19 @@
-CONSTRUCT {
+INSERT {
     ?audioUri a schema:AudioObject;
         schema:contentUrl ?contentUrl;
         schema:thumbnailUrl ?thumbnail;
-        schema:sameAs ?page;
-        dce:creator ?authorName;
+        schema:mainEntityOfPage ?page;
+        schema:author [ schema:name ?authorName ];
         .
 }
 WHERE {
     ?content
-        schema:contentUrl ?contentUrl;
-        schema:thumbnailUrl ?thumbnail;
-        schema:sameAs ?page;
-        dce:creator ?authorName;
+        api:mediaUrl ?contentUrl;
+        api:thumbnailUrl ?thumbnail;
+        api:specimenUrl ?page;
+        api:userDisplayName ?authorName;
         api:assetId ?id;
-        .
+       .
 
     bind (IRI(concat("http://erebe-vm2.i3s.unice.fr/lod/macaulaylibrary/audio/id/", ?id)) AS ?audioUri)
 }

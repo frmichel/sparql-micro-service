@@ -1,17 +1,23 @@
 CONSTRUCT {
     ?photoUri a schema:Photograph;
-        schema:subjectOf ?pageUrl;
-        schema:url ?img;
+    
+        schema:name ?title;
+        schema:image ?img;
         schema:thumbnailUrl ?thumbnail;
-        schema:author ?authorUrl;
-        dce:creator ?authorName;
-        dce:title ?title;
+        
+        schema:mainEntityOfPage ?pageUrl;
+        schema:fileFormat "image/jpeg";
+        
+        schema:author [ schema:name ?authorName; schema:url ?authorUrl ];
+        
+        schema:description ?description;
         .
 }
 WHERE {
     ?photo api:id ?id; api:secret ?secret; api:server ?server; api:farm ?farm; 
         api:visibility [ api:ispublic ?public ];
         api:title [ api:_content ?title ];
+        api:description [ api:_content ?description ];
         api:owner [ api:nsid ?authorId; api:realname ?authorName ];
         api:urls [
             api:url [ api:type ?photoType; api:_content ?page ]
@@ -19,7 +25,7 @@ WHERE {
     .
 
     # Dereferenceable URI: customize with the hostname of your Web server
-    bind (IRI(concat("http://example.org/ld/flickr/photo/", ?id)) AS ?photoUri)
+    bind (IRI(concat("http://erebe-vm2.i3s.unice.fr/ld/flickr/photo/", ?id)) AS ?photoUri)
 
     bind (IRI(?page) AS ?pageUrl)
     bind (IRI(concat("https://flickr.com/photos/", ?authorId)) AS ?authorUrl)

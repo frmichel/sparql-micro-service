@@ -1,9 +1,15 @@
 INSERT {
-    ?work schema:sameAs ?page.
+    ?work schema:sameAs ?page;
+        schema:name ?title;
+    .
 } WHERE {
+    [] api:works ?work .
     ?work api:id ?id;
+        api:title ?title;
+        
+        api:type ?type;
         api:score ?score;
-        api:type ?type.
+    .
 
     FILTER (LCASE(?type) = "song" && xsd:integer(?score) > 90)
 

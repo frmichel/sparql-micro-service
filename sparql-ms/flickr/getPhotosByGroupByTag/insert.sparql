@@ -1,9 +1,14 @@
 INSERT {
     ?photoUri a schema:Photograph;
-        foaf:depiction ?img;
-        schema:author ?authorUrl;
-        dce:creator ?authorName;
-        dce:title ?title;
+    
+        schema:name ?title;
+        schema:image ?img;
+        schema:thumbnailUrl ?thumbnail;
+        
+        schema:mainEntityOfPage ?pageUrl;
+        schema:fileFormat "image/jpeg";
+        
+        schema:author [ schema:name ?authorName; schema:url ?authorUrl ];
         .
 }
 WHERE {
@@ -14,10 +19,12 @@ WHERE {
     .
 
     # Dereferenceable URI: customize with the hostname of your Web server
-    bind (IRI(concat("http://example.org/ld/flickr/photo/", ?id)) AS ?photoUri)
+    bind (IRI(concat("http://erebe-vm2.i3s.unice.fr/ld/flickr/photo/", ?id)) AS ?photoUri)
 
+    bind (IRI(concat("https://flickr.com/photos/", ?owner, "/", ?id)) AS ?pageUrl)
     bind (IRI(concat("https://flickr.com/photos/", ?owner)) AS ?authorUrl)
     bind (IRI(concat("https://farm", ?farm, ".staticflickr.com/", ?server, "/", ?id, "_", ?secret, "_z.jpg")) AS ?img)
+    bind (IRI(concat("https://farm", ?farm, ".staticflickr.com/", ?server, "/", ?id, "_", ?secret, "_s.jpg")) AS ?thumbnail)
 
     filter(?public = "1"^^xsd:integer)
 }

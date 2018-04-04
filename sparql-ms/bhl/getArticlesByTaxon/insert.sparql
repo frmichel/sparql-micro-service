@@ -1,0 +1,52 @@
+INSERT {
+    ?partUrl a schema:ScholarlyArticle;
+        schema:name ?title;
+        schema:hasPart ?pageUrl;
+        schema:thumbnailUrl ?thumbnailUrl;
+        schema:datePublished ?date;
+        
+        schema:author [ schema:name ?authorName ];
+        
+        schema:pageStart ?startPageNumber;
+        schema:pageEnd ?endPageNumber;
+        
+        schema:isPartOf [
+            schema:name ?containerTitle;
+            schema:volumeNumber ?volume;
+            schema:issueNumber ?issue;
+            schema:datePublished ?date;
+            schema:publisher [ schema:name ?publicationDetails ];
+        ];
+    .
+}
+WHERE {
+    ?result api:Result [
+        api:PartID ?partId;
+        api:PartUrl ?partUrl;
+        api:GenreName ?genreName;
+        api:Title ?title;
+        
+        api:ContainerTitle ?containerTitle;
+        api:PublicationDetails ?publicationDetails;
+        api:Volume ?volume;
+        api:Issue ?issue;
+        api:Date ?date;
+        
+        api:StartPageNumber ?startPageNumber;
+        api:EndPageNumber ?endPageNumber;
+
+        api:Authors [ api:Name ?authorName; api:CreatorID ?creatorID ];
+
+        api:Identifiers [ api:IdentifierName ?identifierName; api:IdentifierValue ?identifierValue ];
+        
+        api:Pages [
+          api:PageUrl ?pageUrl;
+          api:ThumbnailUrl ?thumbnailUrl;
+          api:FullSizeImageUrl ?fullSizeImageUrl;
+          api:PageNumbers [ api:Number ?pageNumber ] 
+        ];
+    ].
+    
+    FILTER (LCASE(?genreName) = "article")
+    FILTER (?pageNumber = ?startPageNumber)
+}
