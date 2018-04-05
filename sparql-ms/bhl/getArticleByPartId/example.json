@@ -1,0 +1,141 @@
+{
+  "Status": "ok",
+  "ErrorMessage": null,
+  "Result": {
+    "PartUrl": "https://www.biodiversitylibrary.org/part/73414",
+    "PartID": 73414,
+    "ItemID": 90455,
+    "StartPageID": 28521490,
+    "SequenceOrder": 12,
+    "GenreName": "Article",
+    "Title": "5. On the Common Dolphin, Delphinus delphis. Linn",
+    "TranslatedTitle": "",
+    "ContainerTitle": "Proceedings of the Zoological Society of London.",
+    "PublicationDetails": "London :Academic Press, [etc.],1833-1965.",
+    "PublisherName": "Academic Press, [etc.],",
+    "PublisherPlace": "London :",
+    "Notes": "",
+    "Volume": "1879",
+    "Series": "",
+    "Issue": "",
+    "Date": "1879",
+    "PageRange": "382--384",
+    "StartPageNumber": "382",
+    "EndPageNumber": "384",
+    "Language": "English",
+    "ExternalUrl": "",
+    "DownloadUrl": "",
+    "RightsStatus": "Public domain. The BHL considers that this work is no longer under copyright protection.",
+    "RightsStatement": "",
+    "LicenseName": "",
+    "LicenseUrl": "",
+    "Doi": "10.1111/j.1096-3642.1879.tb02668.x",
+    "Authors": [
+      {
+        "CreatorID": 1212,
+        "Name": "Flower, William Henry,",
+        "Role": null,
+        "Numeration": "",
+        "Unit": "",
+        "Title": "",
+        "Location": "",
+        "FullerForm": "",
+        "Relationship": null,
+        "TitleOfWork": null,
+        "Dates": "1831-1899",
+        "CreatorUrl": null
+      }
+    ],
+    "Contributors": [
+      {
+        "ContributorName": "BioStor"
+      }
+    ],
+    "Subjects": [],
+    "Identifiers": [
+      {
+        "IdentifierName": "BioStor",
+        "IdentifierValue": "108624"
+      },
+      {
+        "IdentifierName": "ISSN",
+        "IdentifierValue": "0370-2774"
+      }
+    ],
+    "Pages": [
+      {
+        "PageID": 28521490,
+        "ItemID": 0,
+        "Volume": "1879",
+        "Issue": null,
+        "Year": "1879",
+        "PageUrl": "https://www.biodiversitylibrary.org/page/28521490",
+        "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/28521490",
+        "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/28521490",
+        "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/28521490",
+        "OcrText": null,
+        "PageTypes": [
+          {
+            "PageTypeName": "Text"
+          }
+        ],
+        "PageNumbers": [
+          {
+            "Prefix": "Page",
+            "Number": "382"
+          }
+        ],
+        "Names": null
+      },
+      {
+        "PageID": 28521491,
+        "ItemID": 0,
+        "Volume": "1879",
+        "Issue": null,
+        "Year": "1879",
+        "PageUrl": "https://www.biodiversitylibrary.org/page/28521491",
+        "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/28521491",
+        "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/28521491",
+        "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/28521491",
+        "OcrText": null,
+        "PageTypes": [
+          {
+            "PageTypeName": "Text"
+          }
+        ],
+        "PageNumbers": [
+          {
+            "Prefix": "Page",
+            "Number": "383"
+          }
+        ],
+        "Names": null
+      },
+      {
+        "PageID": 28521492,
+        "ItemID": 0,
+        "Volume": "1879",
+        "Issue": null,
+        "Year": "1879",
+        "PageUrl": "https://www.biodiversitylibrary.org/page/28521492",
+        "ThumbnailUrl": "https://www.biodiversitylibrary.org/pagethumb/28521492",
+        "FullSizeImageUrl": "https://www.biodiversitylibrary.org/pageimage/28521492",
+        "OcrUrl": "https://www.biodiversitylibrary.org/pageocr/28521492",
+        "OcrText": null,
+        "PageTypes": [
+          {
+            "PageTypeName": "Text"
+          }
+        ],
+        "PageNumbers": [
+          {
+            "Prefix": "Page",
+            "Number": "384"
+          }
+        ],
+        "Names": null
+      }
+    ],
+    "RelatedParts": []
+  }
+}

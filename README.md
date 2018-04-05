@@ -2,10 +2,11 @@
 
 The SPARQL Micro-Service architecture [1] is meant to allow the combination of Linked Data with data from Web APIs. It enables querying non-RDF Web APIs with SPARQL, and allows on-the-fly assigning dereferenceable URIs to Web API resources that do not have a URI in the first place.
 
-This project is a prototype PHP implementation for JSON-based Web APIs. It comes with three example SPARQL micro-services, designed in the context of a biodiversity-related use case:
+This project is a prototype PHP implementation for JSON-based Web APIs. It comes with several example SPARQL micro-services, designed in the context of a biodiversity-related use case:
 - flickr/getPhotosByGroupByTag: searches a Flickr group for photos with a given tag. We use it to search the [*Encyclopedia of Life* Flickr group](https://www.flickr.com/groups/806927@N20) for photos of a given taxon: photos of this group are tagged with the scientific name of the taxon they represent, formatted as ```taxonomy:binomial=<scientific name>```.
 - macaulaylibrary/getAudioByTaxon retrieves audio recordings for a given taxon name from the [Macaulay Library](https://www.macaulaylibrary.org/), a scientific media archive related to birds, amphibians, fishes and mammals.
 - musicbrainz/getSongByName searches the [MusicBrainz music information encyclopedia](https://musicbrainz.org/) for music tunes whose titles match a given name with a minimum confidence of 90%.
+- bhl/getArticlesByTaxon searches the [Biodiversity Heritage Library](https://www.biodiversitylibrary.org/) for scientific articles related to a given taxon name.
 
 [1] Franck Michel, Catherine Faron-Zucker and Fabien Gandon. *SPARQL Micro-Services: Lightweight Integration of Web APIs and Linked Data*. In Proc. of the Linked Data on the Web Workshop (LDOW2018). https://hal.archives-ouvertes.fr/hal-01722792
 
@@ -117,7 +118,7 @@ That should return an RDF description of the resource:
     @prefix api: <http://sms.i3s.unice.fr/schema/> .
     @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 
-    <http://erebe-vm2.i3s.unice.fr/ld/flickr/photo/31173091516> dce:creator "" ;
+    <http://localhost:81/ld/flickr/photo/31173091516> dce:creator "" ;
         rdf:type schema:Photograph ;
         dce:title           "Delphinus delphis 1 (13-7-16 San Diego)" ;
         schema:author       <https://flickr.com/photos/10770266@N04> ;
@@ -146,7 +147,7 @@ You may have to set access mode 777 on this directory for the container to be ab
 
 ## Installation
 
-To install this project, you will need an Apache Web server with PHP 5.3+ and a write-enabled SPARQL endpoint and RDF triple store.
+To install this project, you will need an Apache Web server with PHP 5.3+ and a write-enabled SPARQL endpoint and RDF triple store. In our case, we used the [Corese-KGRAM](http://wimmics.inria.fr/corese) lightweight in-memory triple-store.
 
 Copy the ```sparql-ms``` directory to a directory exposed by Apache, typically ```/var/www/html``` or the ```public_html``` of your home directory.
 
@@ -154,7 +155,7 @@ Do __NOT__ use PHP ```composer``` to update the libraries in the vendor director
 
 Set the URL of your write-enabled SPARQL endpoint in ```sparql-ms/config.ini```. This endpoint does not need to be exposed publicly on the Web, only the SPARQL micro-services should have access to it. For instance:
 ```
-sparql_endpoint = http://localhost/sparql
+sparql_endpoint = http://localhost:8080/sparql
 ```
 
 Customize the dereferenceable URIs generated in the Flickr services: see the comments in construct.sparql and insert.sparql files.
@@ -178,6 +179,8 @@ Usage Example:
 ```
 
 #### Rewriting rules for URI dereferencing
+
+The apache_cfg directory contains more detailed Apache http/https configuration examples.
 
 URI pattern: 
     ```http://example.org/ld/<Web API>/<service>/<identifier>```

@@ -6,12 +6,12 @@ INSERT {
         schema:hasPart ?pageUrl;
         schema:thumbnailUrl ?thumbnailUrl;
         schema:datePublished ?date;
-        
+
         schema:author [ schema:name ?authorName ];
         
         schema:pageStart ?startPageNumber;
         schema:pageEnd ?endPageNumber;
-        
+
         schema:isPartOf [
             schema:name ?containerTitle;
             schema:volumeNumber ?volume;

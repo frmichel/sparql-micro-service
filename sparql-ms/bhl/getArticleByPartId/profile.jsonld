@@ -1,0 +1,10 @@
+{
+  "@context": {
+    "@base": "http://sms.i3s.unice.fr/item/",
+    "@vocab": "http://sms.i3s.unice.fr/schema/",
+    
+    "PartUrl": { "@type": "@id" },
+    "ThumbnailUrl": { "@type": "@id" },
+    "FullSizeImageUrl": { "@type": "@id" }
+  }
+}

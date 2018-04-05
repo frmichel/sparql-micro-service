@@ -1,4 +1,4 @@
-INSERT {
+CONSTRUCT {
     ?articleUri
         a schema:ScholarlyArticle;
         schema:mainEntityOfPage ?partUrl;
@@ -11,7 +11,7 @@ INSERT {
         
         schema:pageStart ?startPageNumber;
         schema:pageEnd ?endPageNumber;
-        
+
         schema:isPartOf [
             schema:name ?containerTitle;
             schema:volumeNumber ?volume;
