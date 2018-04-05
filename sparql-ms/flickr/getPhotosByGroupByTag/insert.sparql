@@ -19,7 +19,7 @@ WHERE {
     .
 
     # Dereferenceable URI: customize with the hostname of your Web server
-    bind (IRI(concat("http://erebe-vm2.i3s.unice.fr/ld/flickr/photo/", ?id)) AS ?photoUri)
+    bind (IRI(concat("http://example.org/ld/flickr/photo/", ?id)) AS ?photoUri)
 
     bind (IRI(concat("https://flickr.com/photos/", ?owner, "/", ?id)) AS ?pageUrl)
     bind (IRI(concat("https://flickr.com/photos/", ?owner)) AS ?authorUrl)

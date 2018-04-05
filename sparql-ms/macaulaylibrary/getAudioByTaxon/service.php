@@ -7,7 +7,7 @@
      *   $apiQuery: the properly formatted query string
      *   $cacheExpirationSec: cache expiration period (in seconds) if cache must be used
      *
-     * musicbrainz/getSongByName:
+     * macaulaylibrary/getAudioByTaxon:
      *   Query mode: SPARQL query
      *   Parameter: name = taxon name
      */

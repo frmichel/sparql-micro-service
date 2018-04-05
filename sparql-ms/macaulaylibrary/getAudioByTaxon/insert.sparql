@@ -15,5 +15,5 @@ WHERE {
         api:assetId ?id;
        .
 
-    bind (IRI(concat("http://erebe-vm2.i3s.unice.fr/lod/macaulaylibrary/audio/id/", ?id)) AS ?audioUri)
+    bind (IRI(concat("http://example.org/ld/macaulaylibrary/audio/id/", ?id)) AS ?audioUri)
 }

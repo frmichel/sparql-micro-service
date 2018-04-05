@@ -51,5 +51,5 @@ WHERE {
     FILTER (?pageNumber = ?startPageNumber)
 
     # Dereferenceable URI: customize with the hostname of your Web server
-    BIND (IRI(concat("http://erebe-vm2.i3s.unice.fr/ld/bhl/part/", ?partId)) AS ?articleUri)
+    BIND (IRI(concat("http://example.org/ld/bhl/part/", ?partId)) AS ?articleUri)
 }
