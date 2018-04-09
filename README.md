@@ -40,7 +40,7 @@ If any of the 3 Web APIs invoked is not available (network error, internal failu
 
         OPTIONAL { 
           SERVICE <https://example.org/sparql-ms/flickr/getPhotosByGroupByTag?group_id=806927@N20&tags=taxonomy:binomial=Delphinus+delphis> 
-          { ?photo foaf:depiction ?img. }
+          { ?photo schema:image ?img. }
         }
         
         OPTIONAL {
@@ -124,7 +124,7 @@ That should return an RDF description of the resource:
         schema:author       <https://flickr.com/photos/10770266@N04> ;
         schema:subjectOf    <https://www.flickr.com/photos/10770266@N04/31173091516/> ;
         schema:thumbnailUrl <https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_q.jpg> ;
-        schema:url          <https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_z.jpg> ;
+        schema:image        <https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_z.jpg> ;
         .
 
 #### Check application logs

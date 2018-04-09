@@ -604,11 +604,17 @@ class Processor
 
         if ('@id' === $keyword) {
             if (false === is_string($value)) {
+                /* F.Michel 2018-04-06 Uggly trick to allow parsing Encyclopedia of Life JSON-LD
+                  content that gives a numerical value for @id (bad bad API...).
+                  
                 throw new JsonLdException(
                     JsonLdException::INVALID_ID_VALUE,
                     'Invalid value for @id detected (must be a string).',
                     $element
                 );
+                */
+                // Fix: ignore the error and just convert the value to a string
+                $value = strval($value);
             }
 
             $value = $this->expandIri($value, $activectx, true);

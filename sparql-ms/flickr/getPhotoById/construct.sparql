@@ -2,7 +2,7 @@ CONSTRUCT {
     ?photoUri a schema:Photograph;
     
         schema:name ?title;
-        schema:image ?img;
+        schema:image ?img; foaf:depiction ?img;
         schema:thumbnailUrl ?thumbnail;
         
         schema:mainEntityOfPage ?pageUrl;

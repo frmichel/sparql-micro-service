@@ -144,7 +144,7 @@
         $sparqlInsert = $service.'/insert.sparql';
         if ($querymode == 'sparql' && file_exists($sparqlInsert)) {
             $query = "WITH <".$graphUri.">\n".file_get_contents($sparqlInsert);
-            $logger->info("SPARQL INSERT query ".$sparqlInsert);
+            $logger->info("SPARQL INSERT query file: ".$sparqlInsert);
             if ($logger->isHandling(Logger::DEBUG))
                 $logger->debug("Generating triples with INSERT query:\n".$query);
             $sparqlClient->update($query);
@@ -160,7 +160,7 @@
             $sparqlConstruct = $service.'/construct.sparql';
             if (file_exists($sparqlConstruct)) {
                 $sparqlQuery = file_get_contents($sparqlConstruct);
-                $logger->info("SPARQL CONSTRUCT query ".$sparqlConstruct);
+                $logger->info("SPARQL CONSTRUCT query file: ".$sparqlConstruct);
                 if ($logger->isHandling(Logger::DEBUG))
                     $logger->debug("Generating triples with CONSTRUCT query:\n".$sparqlQuery);
             } else
