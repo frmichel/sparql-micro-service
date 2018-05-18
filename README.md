@@ -3,12 +3,13 @@
 The SPARQL Micro-Service architecture [1] is meant to allow the combination of Linked Data with data from Web APIs. It enables querying non-RDF Web APIs with SPARQL, and allows on-the-fly assigning dereferenceable URIs to Web API resources that do not have a URI in the first place.
 
 This project is a prototype PHP implementation for JSON-based Web APIs. It comes with several example SPARQL micro-services, designed in the context of a biodiversity-related use case:
-- flickr/getPhotosByGroupByTag: searches a Flickr group for photos with a given tag. We use it to search the [*Encyclopedia of Life* Flickr group](https://www.flickr.com/groups/806927@N20) for photos of a given taxon: photos of this group are tagged with the scientific name of the taxon they represent, formatted as ```taxonomy:binomial=<scientific name>```.
-- macaulaylibrary/getAudioByTaxon retrieves audio recordings for a given taxon name from the [Macaulay Library](https://www.macaulaylibrary.org/), a scientific media archive related to birds, amphibians, fishes and mammals.
-- musicbrainz/getSongByName searches the [MusicBrainz music information encyclopedia](https://musicbrainz.org/) for music tunes whose titles match a given name with a minimum confidence of 90%.
-- bhl/getArticlesByTaxon searches the [Biodiversity Heritage Library](https://www.biodiversitylibrary.org/) for scientific articles related to a given taxon name.
+- ```flickr/getPhotosByGroupByTag```: searches a Flickr group for photos with a given tag. We use it to search the [*Encyclopedia of Life* Flickr group](https://www.flickr.com/groups/806927@N20) for photos of a given taxon: photos of this group are tagged with the scientific name of the taxon they represent, formatted as ```taxonomy:binomial=<scientific name>```.
+- ```macaulaylibrary/getAudioByTaxon``` retrieves audio recordings for a given taxon name from the [Macaulay Library](https://www.macaulaylibrary.org/), a scientific media archive related to birds, amphibians, fishes and mammals.
+- ```musicbrainz/getSongByName``` searches the [MusicBrainz music information encyclopedia](https://musicbrainz.org/) for music tunes whose titles match a given name with a minimum confidence of 90%.
+- ```bhl/getArticlesByTaxon``` searches the [Biodiversity Heritage Library](https://www.biodiversitylibrary.org/) for scientific articles related to a given taxon name.
+- ```eol/getTraitsByTaxon``` searches the searches the [Encyclopedia of Life traits bank](http://eol.org/traitbank) for data related to a given taxon name.
 
-[1] Franck Michel, Catherine Faron-Zucker and Fabien Gandon. *SPARQL Micro-Services: Lightweight Integration of Web APIs and Linked Data*. In Proc. of the Linked Data on the Web Workshop (LDOW2018). https://hal.archives-ouvertes.fr/hal-01722792
+Further details are given in each micro-service folder.
 
 ## The SPARQL Micro-Service Architecture
 
@@ -20,9 +21,9 @@ A SPARQL micro-service is a lightweight, task-specific SPARQL endpoint that prov
 A SPARQL micro-service is typically called from a SPARQL SERVICE clause.
 
 The query below retrieves the URI of the common dolphin species (*Delphinus delphis*) from the SPARQL endpoint of TAXREF-LD, a Linked Data representation of the taxonomy maintained by the french National Museum of Natural History.
-Then, it enriches this description with 15 photos retrieved from Flickr, 28 audio recordings from the Macaulay Library, and 1 music tune from MusicBrainz (the tune Web page URL).
+Then, it enriches this description with 2 photos retrieved from Flickr, 2 audio recordings from the Macaulay Library, and 1 music tune from MusicBrainz (the tune Web page URL).
 
-If any of the 3 Web APIs invoked is not available (network error, internal failure etc.), the micro-service returns an empty result. In case this happens, the OPTINAL clauses make it possible to still get (possibly partial) results.
+If any of the 3 Web APIs invoked is not available (network error, internal failure etc.), the micro-service returns an empty result. In case this happens, the OPTIONAL clauses make it possible to still get (possibly partial) results.
 
     prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
     prefix owl:    <http://www.w3.org/2002/07/owl#>
@@ -31,21 +32,21 @@ If any of the 3 Web APIs invoked is not available (network error, internal failu
     
     CONSTRUCT {
         ?species 
-            schema:subjectOf ?photo; foaf:depiction ?img ; 
+            schema:subjectOf ?photo; schema:image ?img; schema:thumbnailUrl ?thumbnail;
             schema:contentUrl ?audioUrl;
-            schema:subjectOf ?page.
+            schema:subjectOf ?musicPage.
     } WHERE {
         SERVICE <http://taxref.mnhn.fr/sparql> 
         { ?species a owl:Class; rdfs:label "Delphinus delphis". }
 
         OPTIONAL { 
           SERVICE <https://example.org/sparql-ms/flickr/getPhotosByGroupByTag?group_id=806927@N20&tags=taxonomy:binomial=Delphinus+delphis> 
-          { ?photo schema:image ?img. }
+          { SELECT * WHERE { ?photo schema:image ?img; schema:thumbnailUrl ?thumbnail.  } LIMIT 2 }
         }
         
         OPTIONAL {
           SERVICE <https://example.org/sparql-ms/macaulaylibrary/getAudioByTaxon?name=Delphinus+delphis> 
-          { [] schema:contentUrl ?audioUrl. } 
+               { SELECT ?audioUrl WHERE { [] schema:contentUrl ?audioUrl. } LIMIT 2 }
         }
 
         OPTIONAL {
@@ -53,6 +54,8 @@ If any of the 3 Web APIs invoked is not available (network error, internal failu
           { [] schema:sameAs ?page. }
         }
     }
+
+
 
 
 ## Folders structure
@@ -85,19 +88,19 @@ If any of the 3 Web APIs invoked is not available (network error, internal failu
 
 The easyest way to test SPARQL micro-services is to use the two [Docker](https://www.docker.com/) images we have built: 
 - [frmichel/corese](https://hub.docker.com/r/frmichel/corese/): built upon debian:buster, runs the [Corese-KGRAM](http://wimmics.inria.fr/corese) RDF store and SPARQL endpoint. Corese-KGRAM listens on port 8081 but it is not exposed to the Docker server.
-- [frmichel/sparql-micro-service](https://hub.docker.com/r/frmichel/sparql-micro-service/): provides the Apache Web server, PHP 5.6, and the SPARQL micro-services described above configured and ready to go. Apache listens on port 80, it is exposed as port 81 of the Docker server.
+- [frmichel/sparql-micro-service](https://hub.docker.com/r/frmichel/sparql-micro-service/): provides the Apache Web server, PHP 5.6, and three of the SPARQL micro-services described above (Flicrk, Macauly Library, MLusicbrainz) configured and ready to go. Apache listens on port 80, it is exposed as port 81 of the Docker server.
 
 To run these images, simply download the file ```docker/docker-compose.yml``` on a Docker server and run ```docker-compose up -d```.
 
 #### Test SPARQL querying
 
-You can test the three services by typing the following commands in a bash:
+You can test the services by typing the following commands in a bash:
 
-    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/flickr/getPhotoById?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&photo_id=31173091246"```
+    curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/flickr/getPhotoById?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&photo_id=31173091246"
 
-    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/macaulaylibrary/getAudioByTaxon?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"```
+    curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/macaulaylibrary/getAudioByTaxon?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"
 
-    ```curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/musicbrainz/getSongByName?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"```
+    curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/musicbrainz/getSongByName?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"
 
 That should return a JSON SPARQL result.
 
@@ -107,7 +110,7 @@ Enter this URL in your browser: http://localhost:81/ld/flickr/photo/31173091246 
 
     curl --header "Accept: text/turtle" http://localhost:81/ld/flickr/photo/31173091246
 
-That should return an RDF description of the resource:
+That should return an RDF description of the photographic resource:
 
     @prefix schema: <http://schema.org/> .
     @prefix cos: <http://www.inria.fr/acacia/corese#> .
@@ -190,3 +193,10 @@ Rule:
 
 Usage Example: 
     ```curl --header "accept:text/turtle" http://example.org/ld/flickr/photo/31173091516```
+
+
+## Publications
+
+[1] Franck Michel, Catherine Faron-Zucker and Fabien Gandon. *SPARQL Micro-Services: Lightweight Integration of Web APIs and Linked Data*. In Proceedings of the Linked Data on the Web Workshop (LDOW2018). https://hal.archives-ouvertes.fr/hal-01722792
+
+[2] Franck Michel, Olivier Gargominy, Sandrine Tercerie & Catherine Faron-Zucker (2017). *A Model to Represent Nomenclatural and Taxonomic Information as Linked Data. Application to the French Taxonomic Register, TAXREF*. In Proceedings of the 2nd International Workshop on Semantics for Biodiversity (S4BioDiv) co-located with ISWC 2017 vol. 1933. Vienna, Austria. CEUR. https://hal.archives-ouvertes.fr/hal-01617708
