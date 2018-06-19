@@ -9,11 +9,11 @@ This project is a prototype PHP implementation for JSON-based Web APIs. It comes
 - ```bhl/getArticlesByTaxon``` searches the [Biodiversity Heritage Library](https://www.biodiversitylibrary.org/) for scientific articles related to a given taxon name.
 - ```eol/getTraitsByTaxon``` searches the searches the [Encyclopedia of Life traits bank](http://eol.org/traitbank) for data related to a given taxon name.
 
-Further details are given in each micro-service folder.
+**Each micro-service is further detailed in its dedicated folder**.
 
 ## The SPARQL Micro-Service Architecture
 
-A SPARQL micro-service is a lightweight, task-specific SPARQL endpoint that provides access to a small, resource-centric virtual graph, while dynamically assigning dereferenceable URIs to Web API resources that do not have URIs beforehand. The graph is delineated by the Web API service being wrapped, the arguments passed to this service, and the restricted types of RDF triples that this SPARQL micro-service is designed to spawn. 
+A SPARQL micro-service is a lightweight, task-specific SPARQL endpoint that provides access to a small, resource-centric virtual graph, while dynamically assigning dereferenceable URIs to Web API resources that do not have URIs beforehand. The graph is delineated by the Web API service being wrapped, the arguments passed to this service, and the restricted types of RDF triples that this SPARQL micro-service is designed to spawn.
 
 
 ## How to use SPARQL micro-services?
@@ -29,33 +29,31 @@ If any of the 3 Web APIs invoked is not available (network error, internal failu
     prefix owl:    <http://www.w3.org/2002/07/owl#>
     prefix foaf:   <http://xmlns.com/foaf/0.1/>
     prefix schema: <http://schema.org/>
-    
+
     CONSTRUCT {
-        ?species 
+        ?species
             schema:subjectOf ?photo; schema:image ?img; schema:thumbnailUrl ?thumbnail;
             schema:contentUrl ?audioUrl;
             schema:subjectOf ?musicPage.
     } WHERE {
-        SERVICE <http://taxref.mnhn.fr/sparql> 
+        SERVICE <http://taxref.mnhn.fr/sparql>
         { ?species a owl:Class; rdfs:label "Delphinus delphis". }
 
-        OPTIONAL { 
-          SERVICE <https://example.org/sparql-ms/flickr/getPhotosByGroupByTag?group_id=806927@N20&tags=taxonomy:binomial=Delphinus+delphis> 
+        OPTIONAL {
+          SERVICE <https://example.org/sparql-ms/flickr/getPhotosByGroupByTag?group_id=806927@N20&tags=taxonomy:binomial=Delphinus+delphis>
           { SELECT * WHERE { ?photo schema:image ?img; schema:thumbnailUrl ?thumbnail.  } LIMIT 2 }
         }
-        
+
         OPTIONAL {
-          SERVICE <https://example.org/sparql-ms/macaulaylibrary/getAudioByTaxon?name=Delphinus+delphis> 
+          SERVICE <https://example.org/sparql-ms/macaulaylibrary/getAudioByTaxon?name=Delphinus+delphis>
                { SELECT ?audioUrl WHERE { [] schema:contentUrl ?audioUrl. } LIMIT 2 }
         }
 
         OPTIONAL {
-          SERVICE <https://example.org/sparql-ms/musicbrainz/getSongByName?name=Delphinus+delphis> 
+          SERVICE <https://example.org/sparql-ms/musicbrainz/getSongByName?name=Delphinus+delphis>
           { [] schema:sameAs ?page. }
         }
     }
-
-
 
 
 ## Folders structure
@@ -64,7 +62,7 @@ If any of the 3 Web APIs invoked is not available (network error, internal failu
         config.ini                # generic configuration of the SPARQL micro-service engine
         service.php               # core of the SPARQL micro-services
         utils.php                 # utility functions
-        
+
         <Web API>/                # directory of the services related to one Web API
             <service>/            # one service of this Web API
                 config.ini        # micro-service specific configuration
@@ -86,49 +84,11 @@ If any of the 3 Web APIs invoked is not available (network error, internal failu
 
 ## Deploy with Docker
 
-The easyest way to test SPARQL micro-services is to use the two [Docker](https://www.docker.com/) images we have built: 
+You can test SPARQL micro-services using the two [Docker](https://www.docker.com/) images we have built:
 - [frmichel/corese](https://hub.docker.com/r/frmichel/corese/): built upon debian:buster, runs the [Corese-KGRAM](http://wimmics.inria.fr/corese) RDF store and SPARQL endpoint. Corese-KGRAM listens on port 8081 but it is not exposed to the Docker server.
 - [frmichel/sparql-micro-service](https://hub.docker.com/r/frmichel/sparql-micro-service/): provides the Apache Web server, PHP 5.6, and three of the SPARQL micro-services described above (Flicrk, Macauly Library, MLusicbrainz) configured and ready to go. Apache listens on port 80, it is exposed as port 81 of the Docker server.
 
 To run these images, simply download the file ```docker/docker-compose.yml``` on a Docker server and run ```docker-compose up -d```.
-
-#### Test SPARQL querying
-
-You can test the services by typing the following commands in a bash:
-
-    curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/flickr/getPhotoById?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&photo_id=31173091246"
-
-    curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/macaulaylibrary/getAudioByTaxon?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"
-
-    curl --header "Accept: application/sparql-results+json" "http://localhost:81/sparql-ms/musicbrainz/getSongByName?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"
-
-That should return a JSON SPARQL result.
-
-#### Test URI dereferencing
-
-Enter this URL in your browser: http://localhost:81/ld/flickr/photo/31173091246 or the following command in a bash:
-
-    curl --header "Accept: text/turtle" http://localhost:81/ld/flickr/photo/31173091246
-
-That should return an RDF description of the photographic resource:
-
-    @prefix schema: <http://schema.org/> .
-    @prefix cos: <http://www.inria.fr/acacia/corese#> .
-    @prefix dce: <http://purl.org/dc/elements/1.1/> .
-    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-    @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
-    @prefix ma: <http://www.w3.org/ns/ma-ont#> .
-    @prefix api: <http://sms.i3s.unice.fr/schema/> .
-    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-
-    <http://localhost:81/ld/flickr/photo/31173091516> dce:creator "" ;
-        rdf:type schema:Photograph ;
-        dce:title           "Delphinus delphis 1 (13-7-16 San Diego)" ;
-        schema:author       <https://flickr.com/photos/10770266@N04> ;
-        schema:subjectOf    <https://www.flickr.com/photos/10770266@N04/31173091516/> ;
-        schema:thumbnailUrl <https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_q.jpg> ;
-        schema:image        <https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_z.jpg> ;
-        .
 
 #### Check application logs
 
@@ -150,7 +110,24 @@ You may have to set access mode 777 on this directory for the container to be ab
 
 ## Installation
 
-To install this project, you will need an Apache Web server with PHP 5.3+ and a write-enabled SPARQL endpoint and RDF triple store. In our case, we used the [Corese-KGRAM](http://wimmics.inria.fr/corese) lightweight in-memory triple-store.
+To install this project, you will need an Apache Web server and a write-enabled SPARQL endpoint and RDF triple store. In our case, we used the [Corese-KGRAM](http://wimmics.inria.fr/corese) lightweight in-memory triple-store.
+
+#### Pre-requisites
+
+The following packages an installation must be performed prior to installing the SPARQL micro-services.
+  * PHP 5.3+. Below we assume our current vesrion is 5.6
+  * Addition PHP packages: ```php56w-mbstring``` and ```php56w-xml```, ```php56w-devel```, ```php-pear``` (PECL)
+  * [Composer](https://getcomposer.org/doc/)
+  * Make sure the time zone is defined in the php.ini file, for instance:
+```
+  [Date]
+  ; Defines the default timezone used by the date functions
+  ; http://php.net/date.timezone
+  date.timezone = 'Europe/Paris'
+```
+  * To use MongoDB as a cache, install the [MongoDB PHP driver](https://secure.php.net/manual/en/mongodb.installation.manual.php) and don't forget to add the following line to php.ini:```extension=mongodb.so```
+
+#### Installation procedure
 
 Copy the ```sparql-ms``` directory to a directory exposed by Apache, typically ```/var/www/html``` or the ```public_html``` of your home directory.
 
@@ -176,7 +153,7 @@ Rule:
 Usage Example:
 ```
     SELECT * WHERE {
-        SERVICE <https://example.org/sparql-ms/macaulaylibrary/getAudioByTaxon?name=Delphinus+delphis> 
+        SERVICE <https://example.org/sparql-ms/macaulaylibrary/getAudioByTaxon?name=Delphinus+delphis>
         { [] <http://schema.org/contentUrl> ?audioUrl. }
     }
 ```
@@ -185,14 +162,58 @@ Usage Example:
 
 The apache_cfg directory contains more detailed Apache http/https configuration examples.
 
-URI pattern: 
+URI pattern:
     ```http://example.org/ld/<Web API>/<service>/<identifier>```
 
 Rule:
     ```RewriteRule "^/ld/flickr/photo/(.*)$" http://example.org/sparql-ms/service.php?querymode=ld&service=flickr/getPhotoById&query=&photo_id=$1 [P,L]```
 
-Usage Example: 
+Usage Example:
     ```curl --header "accept:text/turtle" http://example.org/ld/flickr/photo/31173091516```
+
+## Test the installation
+
+#### Test SPARQL querying
+
+You can test the services by typing the following commands in a bash:
+
+    curl --header "Accept: application/sparql-results+json" "http://example.org/sparql-ms/flickr/getPhotoById?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&photo_id=31173091246"
+
+    curl --header "Accept: application/sparql-results+json" "http://example.org//sparql-ms/macaulaylibrary/getAudioByTaxon?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"
+
+    curl --header "Accept: application/sparql-results+json" "http://lexample.org//sparql-ms/musicbrainz/getSongByName?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"
+
+That should return a JSON SPARQL result.
+
+*If you used the Docker deployment, simply replace example.org with localhost:81 in the commands above.*
+
+
+#### Test URI dereferencing
+
+Enter this URL in your browser: http://example.org/ld/flickr/photo/31173091246 or the following command in a bash:
+
+    curl --header "Accept: text/turtle" http://example.org/ld/flickr/photo/31173091246
+
+*If you used the Docker deployment, simply replace example.org with localhost:81.*
+
+That should return an RDF description of the photographic resource:
+
+    @prefix schema: <http://schema.org/> .
+    @prefix cos: <http://www.inria.fr/acacia/corese#> .
+    @prefix dce: <http://purl.org/dc/elements/1.1/> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+    @prefix ma: <http://www.w3.org/ns/ma-ont#> .
+    @prefix api: <http://sms.i3s.unice.fr/schema/> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+    <http://example.org1/ld/flickr/photo/31173091516> dce:creator "" ;
+        rdf:type schema:Photograph ;
+        dce:title           "Delphinus delphis 1 (13-7-16 San Diego)" ;
+        schema:author       <https://flickr.com/photos/10770266@N04> ;
+        schema:subjectOf    <https://www.flickr.com/photos/10770266@N04/31173091516/> ;
+        schema:thumbnailUrl <https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_q.jpg> ;
+        schema:image        <https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_z.jpg> .
 
 
 ## Publications
