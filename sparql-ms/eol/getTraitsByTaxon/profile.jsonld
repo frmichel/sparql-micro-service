@@ -1,6 +1,11 @@
 {
   "@context": {
     "@base": "http://sms.i3s.unice.fr/item/",
-    "vernacularNames": null
+    "schema": "http://schema.org/",
+
+    "vernacularNames": null,
+    "actionPlatform": null,
+    "sameAs": {"@id": "schema:sameAs", "@type": "@id"},
+    "url": {"@id": "schema:url", "@type": "@id"}
   }
 }

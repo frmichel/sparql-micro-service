@@ -6,18 +6,19 @@ CONSTRUCT {
         schema:hasPart ?pageUrl;
         schema:thumbnailUrl ?thumbnailUrl;
         schema:datePublished ?date;
-        
-        schema:author [ schema:name ?authorName ];
-        
+
+        schema:author ?authorName;
+
         schema:pageStart ?startPageNumber;
         schema:pageEnd ?endPageNumber;
 
         schema:isPartOf [
+            a schema:PublicationEvent;
             schema:name ?containerTitle;
             schema:volumeNumber ?volume;
             schema:issueNumber ?issue;
             schema:datePublished ?date;
-            schema:publisher [ schema:name ?publicationDetails ];
+            schema:publisher ?publicationDetails;
         ];
     .
 }
@@ -27,13 +28,13 @@ WHERE {
         api:PartUrl ?partUrl;
         api:GenreName ?genreName;
         api:Title ?title;
-        
+
         api:ContainerTitle ?containerTitle;
         api:PublicationDetails ?publicationDetails;
         api:Volume ?volume;
         api:Issue ?issue;
         api:Date ?date;
-        
+
         api:StartPageNumber ?startPageNumber;
         api:EndPageNumber ?endPageNumber;
 
@@ -43,10 +44,10 @@ WHERE {
           api:PageUrl ?pageUrl;
           api:ThumbnailUrl ?thumbnailUrl;
           api:FullSizeImageUrl ?fullSizeImageUrl;
-          api:PageNumbers [ api:Number ?pageNumber ] 
+          api:PageNumbers [ api:Number ?pageNumber ]
         ];
     ].
-    
+
     FILTER (LCASE(?genreName) = "article")
     FILTER (?pageNumber = ?startPageNumber)
 

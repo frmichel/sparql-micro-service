@@ -3,7 +3,7 @@ INSERT {
         schema:contentUrl ?contentUrl;
         schema:thumbnailUrl ?thumbnail;
         schema:mainEntityOfPage ?page;
-        schema:author [ schema:name ?authorName ];
+        schema:author ?authorName;
         .
 }
 WHERE {

@@ -19,12 +19,12 @@ Each recording is depicted as an instance of the `schema:AudioObject` class that
         schema:contentUrl <https://download.ams.birds.cornell.edu/api/v1/asset/111690/audio>;
         schema:thumbnailUrl <https://macaulaylibrary.org/media/Spectrograms/audio/poster/220/0/111/111690.jpg>;
         schema:mainEntityOfPage <https://macaulaylibrary.org/asset/111690>;
-        schema:author [ schema:name "Paul J. Perkins" ].
+        schema:author "Paul J. Perkins".
 
 ## Usage example
 
     prefix schema: <http://schema.org/>
-    
+
     SELECT ?page WHERE {
       SERVICE <https://example.org/sparql-ms/musicbrainz/getSongByName?name=Delphinus+delphis>
       { [] schema:sameAs ?page. }
