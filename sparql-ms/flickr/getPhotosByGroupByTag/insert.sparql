@@ -1,13 +1,13 @@
 INSERT {
     ?photoUri a schema:Photograph;
-    
+
         schema:name ?title;
-        schema:image ?img; foaf:depiction ?img;
+        schema:contentUrl ?img; foaf:depiction ?img;
         schema:thumbnailUrl ?thumbnail;
-        
+
         schema:mainEntityOfPage ?pageUrl;
         schema:fileFormat "image/jpeg";
-        
+
         schema:author [ schema:name ?authorName; schema:url ?authorUrl ];
         .
 }

@@ -3,7 +3,7 @@
 This service searches a Flickr group for photos with a given tag.
 In a biodiversity-related use case, we use it to search the [*Encyclopedia of Life* Flickr group](https://www.flickr.com/groups/806927@N20) for photos of a given taxon. In this group; photos are required to be tagged with the scientific name of the taxon they represent, formatted as ```taxonomy:binomial=<scientific name>```.
 
-Each photo is depicted as an instance of the `schema:Photograph`, that provides a title (`schema:name`), a link to the photo file in medium size (`schema:image`) and its format (`schema:fileFormat`), a square thumbnail (`schema:thumbnailUrl`), the author and its web page (`schema:author`), and the URL of the photo Web page (`schema:mainEntityOfPage`).
+Each photo is depicted as an instance of the `schema:Photograph`, that provides a title (`schema:name`), a link to the photo file in medium size (`schema:contentUrl` and `foaf:depiction`) and its format (`schema:fileFormat`), a square thumbnail (`schema:thumbnailUrl`), the author and its web page (`schema:author`), and the URL of the photo Web page (`schema:mainEntityOfPage`).
 
 **Path**: flickr/getPhotosByGroupByTag
 
@@ -28,9 +28,8 @@ Each photo is depicted as an instance of the `schema:Photograph`, that provides 
 ## Usage example
 
     prefix schema: <http://schema.org/>
-    
+
     SELECT * WHERE {
       SERVICE <https://example.org/sparql-ms/flickr/getPhotosByGroupByTag?group_id=806927@N20&tags=taxonomy:binomial=Delphinus+delphis>
         { ?photo schema:image ?img; schema:thumbnailUrl ?thumbnail.  }
     }
-    

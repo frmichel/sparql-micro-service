@@ -3,14 +3,14 @@
 This service retrives a Flickr photo by its identifier.
 It is mostly meant to dereference photo URIs produced in the flickr/getPhotosByGroupByTag service, but can also be use with SPARQL.
 
-Each photo is represented by an instance of the `schema:Photograph`, that provides a title (`schema:name`), a description (`schema:description`), a link to the photo file in medium size (`schema:image`) and its format (`schema:fileFormat`), a square thumbnail (`schema:thumbnailUrl`), the author and its web page (`schema:author`), and the URL of the photo Web page (`schema:mainEntityOfPage`).
+Each photo is represented by an instance of the `schema:Photograph`, that provides a title (`schema:name`), a description (`schema:description`), a link to the photo file in medium size (`schema:contentUrl` and `foaf:depiction`) and its format (`schema:fileFormat`), a square thumbnail (`schema:thumbnailUrl`), the author and its web page (`schema:author`), and the URL of the photo Web page (`schema:mainEntityOfPage`).
 
 **Path**: flickr/getPhotosByGroupByTag
 
 **Query mode**: dereferencing to RDF content, SPARQL
 
 **Parameters**:
-- photo_id: Flickr's internal photo identifier 
+- photo_id: Flickr's internal photo identifier
 
 
 ## Example of triples produced
@@ -28,13 +28,12 @@ Each photo is represented by an instance of the `schema:Photograph`, that provid
 ## Usage example (SPARQL)
 
     prefix schema: <http://schema.org/>
-    
+
     SELECT * WHERE {
       SERVICE <https://example.org/sparql-ms/flickr/getPhotoById?photo_id=31173091626>
         { ?photo schema:image ?img; schema:thumbnailUrl ?thumbnail.  }
     }
-    
+
 ## Usage example (dereferencing)
 
     curl --header "Accept:text/turtle" http://example.org/ld/flickr/photo/31173091626
-

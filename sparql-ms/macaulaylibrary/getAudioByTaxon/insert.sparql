@@ -4,6 +4,7 @@ INSERT {
         schema:thumbnailUrl ?thumbnail;
         schema:mainEntityOfPage ?page;
         schema:author ?authorName;
+        schema:description ?comments;
         .
 }
 WHERE {
@@ -13,6 +14,7 @@ WHERE {
         api:specimenUrl ?page;
         api:userDisplayName ?authorName;
         api:assetId ?id;
+        api:comments ?comments;
        .
 
     bind (IRI(concat("http://example.org/ld/macaulaylibrary/audio/id/", ?id)) AS ?audioUri)
