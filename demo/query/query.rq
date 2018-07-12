@@ -1,0 +1,126 @@
+prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+prefix schema: <http://schema.org/>
+prefix taxrefprop: <http://taxref.mnhn.fr/lod/property/>
+prefix taxrefrk: <http://taxref.mnhn.fr/lod/taxrank/>
+prefix dwc: <http://rs.tdwg.org/dwc/terms/>
+prefix dwciri: <http://rs.tdwg.org/dwc/iri/>
+prefix dct: <http://purl.org/dc/terms/>
+prefix sms: <http://sms.i3s.unice.fr/schema/>
+
+CONSTRUCT {
+    ?taxon a owl:Class;
+        rdfs:label ?taxonName; ?p ?o;       # TAXREF-LD
+        schema:image ?photo;                # Flickr
+        schema:audio ?audio;                # Macauley Lib
+        schema:subjectOf ?mbzPage;          # Musicbrainz
+        dct:relation ?measure.              # EoL
+        
+    ?photo                                  # Flickr
+        schema:contentUrl ?img; schema:thumbnailUrl ?imgThumbnail; schema:author ?imgAuthor.
+    ?imgAuthor schema:name ?imgAuthorName; schema:url ?imgAuthorUrl.
+    
+    ?audio                                  # Macauley Lib
+        schema:contentUrl ?audioUrl; schema:thumbnailUrl ?audioThumbnail;
+        schema:mainEntityOfPage ?audioPage; schema:author ?audioAuthor; schema:description ?audioDesc.
+
+    ?article a schema:ScholarlyArticle;     # BHL
+        schema:about ?taxon;
+        schema:author ?articleAuthorName;
+        schema:mainEntityOfPage ?articlePage;
+        schema:thumbnailUrl ?articleThumbnailUrl;
+        schema:description ?articleCitation.
+        
+    ?measure a dwc:MeasurementOrFact;       # EoL
+        dwciri:measurementType ?measurementType;
+        dwciri:measurementUnit ?measurementUnit;
+        dwc:measurementValue ?measurementValue;
+        schema:predicate ?measurePredicate.
+        
+} WHERE {
+        # First, retrieve the taxon name from the URL query string (?param=taxon+name)
+        BIND(st:get(st:param) as ?taxonName)
+
+        SERVICE <http://taxref.mnhn.fr/sparql> {
+            ?taxon a owl:Class;
+                rdfs:label ?taxonName;
+                ?p ?o.
+            FILTER (STRENDS(STR(?taxon), "/10.0"))
+        }
+    
+        BIND(sms:flickrService("806927@N20", ?taxonName) as ?flickr)
+        OPTIONAL {
+            SERVICE SILENT ?flickr
+            { SELECT * WHERE { 
+                ?photo schema:contentUrl ?img; schema:thumbnailUrl ?imgThumbnail; schema:author ?imgAuthor.
+                ?imgAuthor schema:name ?imgAuthorName; schema:url ?imgAuthorUrl.
+            } LIMIT 10 }
+        }
+        
+        BIND(sms:macauleyService(?taxonName) as ?macaulay)
+        OPTIONAL {
+            SERVICE SILENT ?macaulay
+            { SELECT * WHERE { 
+                ?audio 
+                    schema:contentUrl ?audioUrl; schema:thumbnailUrl ?audioThumbnail; 
+                    schema:mainEntityOfPage ?audioPage; schema:author ?audioAuthor; schema:description ?audioDesc.
+              } limit 6
+            }
+        }
+
+        BIND(sms:musicBrainzService(?taxonName) as ?musicbrainz)
+        OPTIONAL {
+            SERVICE SILENT ?musicbrainz
+            { [] schema:sameAs ?mbzPage; schema:name ?mbzTitle. }
+        }
+        
+        BIND(sms:bhlService(?taxonName) as ?bhl)
+        OPTIONAL {
+            SERVICE SILENT ?bhl
+            { SELECT * WHERE {
+                ?article
+                    schema:name ?articleTitle;
+                    schema:thumbnailUrl ?articleThumbnailUrl;
+                    schema:author ?articleAuthorName;
+                    schema:mainEntityOfPage ?articlePage;
+                    schema:isPartOf [
+                        schema:name ?articleContainerTitle;
+                        schema:datePublished ?articleDate;
+                    ].
+              } LIMIT 6
+            }
+            BIND( CONCAT(?articleTitle, ". ", ?articleContainerTitle, " (", ?articleDate, ").") AS ?articleCitation )
+        }
+        
+        BIND(sms:eolService(?taxonName) as ?eol)
+        OPTIONAL {
+            SERVICE SILENT ?eol
+            { SELECT * WHERE {
+                ?measure a dwc:MeasurementOrFact;
+                    dwc:measurementType ?measurementType;
+                    dwc:measurementValue ?measurementValue;
+                    schema:predicate ?measurePredicate.
+                OPTIONAL { ?measure dwc:measurementUnit ?measurementUnit }
+                FILTER (?measurePredicate = "total life span" || ?measurePredicate = "body length (VT)" || ?measurePredicate = "conservation status")
+              } LIMIT 10
+            } 
+        }
+}
+
+
+function sms:flickrService(?group_id, ?biname) {
+    IRI(concat("http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByGroupByTag?", 
+        "group_id=", encode_for_uri(?group_id), 
+        "&tags=", encode_for_uri(concat("taxonomy:binomial=", ?biname))))
+}
+function sms:macauleyService(?name) {
+    IRI(concat("http://sms.i3s.unice.fr/sparql-ms/macaulaylibrary/getAudioByTaxon?name=", encode_for_uri(?name)))
+}
+function sms:musicBrainzService(?name) {
+    IRI(concat("http://sms.i3s.unice.fr/sparql-ms/musicbrainz/getSongByName?name=", encode_for_uri(?name)))
+}
+function sms:bhlService(?name) {
+    IRI(concat("http://sms.i3s.unice.fr/sparql-ms/bhl/getArticlesByTaxon?name=", encode_for_uri(?name)))
+}
+function sms:eolService(?name) {
+    IRI(concat("http://sms.i3s.unice.fr/sparql-ms/eol/getTraitsByTaxon?name=", encode_for_uri(?name)))
+}

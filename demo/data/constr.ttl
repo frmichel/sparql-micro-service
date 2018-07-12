@@ -1,0 +1,65 @@
+@prefix schema:	<http://schema.org/> .
+@prefix rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+<http://taxref.mnhn.fr/lod/taxon/60878/10.0>
+    a owl:Class;
+    rdfs:label "Delphinus delphis";
+    schema:image <http://sparks-vm40.i3s.unice.fr/ld/flickr/photo/31173091246>, <http://sparks-vm40.i3s.unice.fr/ld/flickr/photo/31173091247>;
+    schema:audio <http://example.org/ld/macaulaylibrary/audio/id/122066>, <http://example.org/ld/macaulaylibrary/audio/id/122064>, <http://example.org/ld/macaulaylibrary/audio/id/122058>, <http://example.org/ld/macaulaylibrary/audio/id/120783>;
+    schema:subjectOf <https://musicbrainz.org/work/3ffe21ec-7d58-44cb-a65a-5f5876e12b50>.
+    
+<http://sparks-vm40.i3s.unice.fr/ld/flickr/photo/31173091246>
+        schema:contentUrl <https://farm6.staticflickr.com/5689/31173091246_fffc2c9f36_z.jpg>;
+        schema:thumbnailUrl <https://farm6.staticflickr.com/5689/31173091246_fffc2c9f36_s.jpg>;
+        schema:author [ schema:url <https://flickr.com/photos/10770266@N04>; schema:name "Bárbol" ].
+
+<http://sparks-vm40.i3s.unice.fr/ld/flickr/photo/31173091247>
+        schema:contentUrl <https://farm6.staticflickr.com/5689/31173091246_fffc2c9f36_z.jpg>;
+        schema:thumbnailUrl <https://farm6.staticflickr.com/5689/31173091246_fffc2c9f36_s.jpg>;
+        schema:author [ schema:url <https://flickr.com/photos/10770266@N04>; schema:name "Bárbol" ].
+
+        
+<http://example.org/ld/macaulaylibrary/audio/id/122066>
+    schema:contentUrl <https://download.ams.birds.cornell.edu/api/v1/asset/122066/audio>;
+    schema:thumbnailUrl <https://macaulaylibrary.org/media/Spectrograms/audio/poster/220/0/122/122066.jpg>;
+    schema:mainEntityOfPage <https://macaulaylibrary.org/asset/122066>;
+    schema:author "Jay Barlow";
+    schema:description "NOTES: Sighting #381. Record level gradually fades beginning halfway into the cut, but still some good whistles may be heard. Confidence interval assigned by MLNS (90% with sighting data; 75% without) [07Oct2004 CB]. SEAOCEAN. Other Behaviors: Clicks, Whistles.".
+ 
+<http://example.org/ld/macaulaylibrary/audio/id/122064>
+    schema:contentUrl <https://download.ams.birds.cornell.edu/api/v1/asset/122064/audio>;
+    schema:thumbnailUrl <https://macaulaylibrary.org/media/Spectrograms/audio/poster/220/0/122/122064.jpg>;
+    schema:mainEntityOfPage <https://macaulaylibrary.org/asset/122064>;
+    schema:author "Jay Barlow";
+    schema:description "NOTES: Sighting #375. Confidence interval assigned by MLNS (90% with sighting data; 75% without). SEAOCEAN. Other Behaviors: Clicks, Whistles.".
+
+<http://example.org/ld/macaulaylibrary/audio/id/122058>
+    schema:contentUrl <https://download.ams.birds.cornell.edu/api/v1/asset/122058/audio>;
+    schema:thumbnailUrl <https://macaulaylibrary.org/media/Spectrograms/audio/poster/220/0/122/122058.jpg>;
+    schema:mainEntityOfPage <https://macaulaylibrary.org/asset/122058>;
+    schema:author "Jay Barlow";
+    schema:description "NOTES: Sighting #334. Confidence interval assigned by MLNS (90% with sighting data; 75% without). SEAOCEAN. Other Behaviors: Whistles, Clicks.".
+
+<http://example.org/ld/macaulaylibrary/audio/id/120783>
+    schema:contentUrl <https://download.ams.birds.cornell.edu/api/v1/asset/120783/audio>;
+    schema:thumbnailUrl <https://macaulaylibrary.org/media/Spectrograms/audio/poster/220/0/120/120783.jpg>;
+    schema:mainEntityOfPage <https://macaulaylibrary.org/asset/120783>;
+    schema:author "Jay Barlow";
+    schema:description "NOTES: LNS notes: Filtered with Zsys z-Q2, lo shelf, -95 dB, 1kHz. ^BConfidence interval assigned by MLNS. 08Oct2004MLM. DAT case notes: "#734; D. delphis; 47:15." Julie Oswald's Spreadsheet Notes: "S# 734; Species: Delphinus delphis; Tape: DSJ BOW19; Track: 5; Comments: 47:15-53:25 on DAT." David Starr Jordan 2003 Final Cruise Report, http://swfsc.nmfs.noaa.gov/prd/PROJECTS/star/default.htm: "Study Area: The eastern tropical Pacific Ocean (ETP)".  SEAOCEAN. Other Behaviors: Whistles, Clicks.".
+
+    
+<http://example.org/ld/bhl/part/73414>	
+    rdf:type	        schema:ScholarlyArticle ;
+	schema:about        <http://taxref.mnhn.fr/lod/taxon/60878/10.0> ;
+	schema:thumbnailUrl	<https://www.biodiversitylibrary.org/pagethumb/28521490> ;
+    schema:author       "Flower, William Henry";
+	schema:description	"5. On the Common Dolphin, Delphinus delphis. Linn. Proceedings of the Zoological Society of London. (1879)." ;
+    schema:mainEntityOfPage <https://www.biodiversitylibrary.org/part/73414> .
+    
+<http://example.org/ld/bhl/part/73415>	
+    rdf:type	        schema:ScholarlyArticle ;
+	schema:about        <http://taxref.mnhn.fr/lod/taxon/60878/10.0> ;
+	schema:thumbnailUrl	<https://www.biodiversitylibrary.org/pagethumb/28521490> ;
+    schema:author       "Flower, William Henry";
+	schema:description	"5. On the Common Dolphin, Delphinus delphis. Linn. Proceedings of the Zoological Society of London. (1879)." ;
+    schema:mainEntityOfPage <https://www.biodiversitylibrary.org/part/73414> .

@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>SPARQL Micro-services demo</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Highslide lib (image viewer) -->
+    <script type="text/javascript" src="http://sms.i3s.unice.fr/~fmichel/demo-sms/highslide/highslide-with-gallery.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://sms.i3s.unice.fr/~fmichel/demo-sms/highslide/highslide.css" />
+
+  </head>
+  <body>
+
+    <div class="container">
+    
+        <h1>SPARQL Micro-services demo - TDWG 2018</h1>
+        
+        <h2>Data gathering about: <i>Delphinus delphis</i></h2>
+        
+        <!---------------------------------------------------->
+        <!-- FLICKR -->
+        <!---------------------------------------------------->
+        <div class="card-deck my-4">        
+            <div class="card bg-light border-secondary">
+              <div class="card-header"><big>Images from TAXREF-LD and <a href="https://www.flickr.com/groups/encyclopedia_of_life/pool/" target="mac">Flickr EoL group</a></big></div>
+              <div class="card-body text-center">
+                    <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                      <div class="carousel-inner">
+                      
+                        <div class="carousel-item active">
+                          <img class="img-small" src="https://farm6.staticflickr.com/5689/31173091246_fffc2c9f36_z.jpg" alt="First slide">
+                        </div>
+                        <div class="carousel-item">
+                          <img class="img-small" src="https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_z.jpg" alt="Second slide">
+                        </div>
+                        <div class="carousel-item">
+                          <img class="img-small" src="https://farm6.staticflickr.com/5617/31173090936_ed65c5a30a_z.jpg" alt="Second slide">
+                        </div>
+
+                      </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+              </div>
+            </div> <!-- card -->
+
+            <div class="card bg-light border-secondary">
+              <div class="card-header"><big>Images from TAXREF-LD and <a href="https://www.flickr.com/groups/encyclopedia_of_life/pool/" target="mac">Flickr EoL group</a></big></div>
+              <div class="card-body">
+                <div class="highslide-gallery">
+                
+                    <a href="https://farm6.staticflickr.com/5689/31173091246_fffc2c9f36_z.jpg" class="highslide" onclick="return hs.expand(this)">
+                        <img src="https://farm6.staticflickr.com/5689/31173091246_fffc2c9f36_s.jpg" title="Click to enlarge" />
+                    </a>
+                    <div class="highslide-caption">By Bárbol</div>
+
+                    <a href="https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_z.jpg" class="highslide" onclick="return hs.expand(this)">
+                        <img src="https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_s.jpg" title="Click to enlarge" />
+                    </a>
+                    <div class="highslide-caption">By Bárbol</div>
+
+                    <a href="https://farm6.staticflickr.com/5617/31173090936_ed65c5a30a_z.jpg" class="highslide" onclick="return hs.expand(this)">
+                        <img src="https://farm6.staticflickr.com/5617/31173090936_ed65c5a30a_s.jpg" title="Click to enlarge" />
+                    </a>
+                    <div class="highslide-caption">By BioDivLibrary</div>
+                    
+                </div> <!-- highslide-gallery -->
+              </div>
+            </div> <!-- card -->
+        </div> <!-- card-deck -->
+        
+        <!---------------------------------------------------->
+        <!-- BHL -->
+        <!---------------------------------------------------->
+        <div class="card my-4 border-secondary">
+          <div class="card-header"><big>Articles from the <a href="https://www.biodiversitylibrary.org/" target="bhl">Biodiversity Heritage Library</a></big></div>
+          <div class="card-body">
+            
+            <div class="row">
+            
+              <div class="col-4 my-2">
+                <div class="media ">
+                  <a href="https://www.biodiversitylibrary.org/part/73414" target="bhl"><img class="mr-3" style="width: 100px;" src="https://www.biodiversitylibrary.org/pagethumb/28521490"></a>
+                  <div class="media-body">
+                    <h5 class="mt-0">Flower, William Henry</h5>
+                    5. On the Common Dolphin, Delphinus delphis. Linn. Proceedings of the Zoological Society of London. (1879).
+                  </div>
+                </div>
+              </div>
+          
+              <div class="col-4 my-2">
+                <div class="media">
+                  <a href="https://www.biodiversitylibrary.org/part/73414" target="bhl"><img class="mr-3" style="width: 100px;" src="https://www.biodiversitylibrary.org/pagethumb/40827894"></a>
+                  <div class="media-body">
+                    <h5 class="mt-0">Flower, William Henry</h5>
+                    Considérations sur le cerveau et le comportement du Delphinus delphis. Revue suisse de zoologie. (1967).
+                  </div>
+                </div>
+              </div>
+            
+            </div> <!-- row -->
+          </div> <!-- card-body -->
+        </div> <!-- card -->
+        
+
+        <!---------------------------------------------------->
+        <!-- MACAULEY LIBRARY -->
+        <!---------------------------------------------------->
+        <div class="card bg-light my-4 border-secondary">
+          <div class="card-header"><big>Audio recordings from <a href="http://macaulaylibrary.org/" target="mac">Macculey Library</a></big></div>
+          <div class="card-body">          
+            <div class="row">
+            
+              <div class="col ">
+                <a href="https://macaulaylibrary.org/asset/118001" target="macauley"><img class="recording-thumbnail" src="https://macaulaylibrary.org/media/Spectrograms/audio/poster/220/0/131/131396.jpg"></a>
+                <audio controls src="https://download.ams.birds.cornell.edu/api/v1/asset/122066/audio"></audio>
+                <div class="text-justify small">NOTES: LNS notes: Filtered with ZSYS lo shelf, -95 dB, 2 kHz. Ships 12 kHz</div>
+              </div>
+
+              <div class="col ">
+                <a href="https://macaulaylibrary.org/asset/118001" target="macauley"><img class="recording-thumbnail" src="https://macaulaylibrary.org/media/Spectrograms/audio/poster/220/0/131/131396.jpg"></a>
+                <audio controls src="https://download.ams.birds.cornell.edu/api/v1/asset/122066/audio"></audio>
+              </div>
+            
+              <div class="col ">
+                <a href="https://macaulaylibrary.org/asset/118001" target="macauley"><img class="recording-thumbnail" src="https://macaulaylibrary.org/media/Spectrograms/audio/poster/220/0/131/131396.jpg"></a>
+                <audio controls src="https://download.ams.birds.cornell.edu/api/v1/asset/122066/audio"></audio>
+                <div class="text-justify">Author: Paul J. Perkins</div>
+              </div>
+            
+              <div class="col ">
+                <a href="https://macaulaylibrary.org/asset/118001" target="macauley"><img class="recording-thumbnail" src="https://macaulaylibrary.org/media/Spectrograms/audio/poster/220/0/131/131396.jpg"></a>
+                <audio controls src="https://download.ams.birds.cornell.edu/api/v1/asset/122066/audio"></audio>
+                <div class="text-justify">Author: Paul J. Perkins</div>
+                <div class="text-justify small">NOTES: LNS notes: Filtered with ZSYS lo shelf, -95 dB, 2 kHz. Ships 12 kHz fathometer running throughout cut. 19Jan2004 SAS. Reel box notes: \"Delphinus delphis strain 20 Aug 1968. Riding Bow wave.\" SEAOCEAN. Other Behaviors: Clicks, Whistles.</div>
+              </div>
+              
+              <div class="col ">
+                <a href="https://macaulaylibrary.org/asset/118001" target="macauley"><img class="recording-thumbnail" src="https://macaulaylibrary.org/media/Spectrograms/audio/poster/220/0/131/131396.jpg"></a>
+                <div class="text-justify">Author: Paul J. Perkins</div>
+                <audio controls src="https://download.ams.birds.cornell.edu/api/v1/asset/122066/audio" ></audio>
+              </div>
+
+            </div> <!-- row -->
+          </div> <!-- card-body -->
+        </div> <!-- card -->
+
+
+        <!---------------------------------------------------->
+        <!-- Other -->
+        <!---------------------------------------------------->
+        <div class="card my-4 border-secondary">
+          <div class="card-header"><big>Other information</big></div>
+          <div class="card-body">
+            
+            <div class="row">
+              <div class="col-md-4">http://schema.org/subjectOf</div>
+              <div class="col">https://musicbrainz.org/work/3ffe21ec-7d58-44cb-a65a-5f5876e12b50</div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">http://schema.org/subjectOf</div>
+              <div class="col">https://musicbrainz.org/work/3ffe21ec-7d58-44cb-a65a-5f5876e12b50</div>
+            </div>
+            
+          </div> <!-- card-body -->
+        </div> <!-- card -->
+        
+        
+    </div><!-- .container -->
+    
+    
+    <!-- Bootstrap core JavaScript ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" 
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" 
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" 
+        integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        hs.align = 'center';
+        hs.transitions = ['expand', 'crossfade'];
+        hs.fadeInOut = true;
+        
+        $(document).ready(function(){
+          // Change the carousel speed
+          $('#carouselControls').carousel({interval: 2500});
+          
+          // Set the carousel's first image as the active one
+          $('.carousel-item:first').addClass('active');
+        });
+    </script>
+  </body>
+</html>

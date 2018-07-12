@@ -1,0 +1,17 @@
+prefix schema:	<http://schema.org/> .
+
+template st:imgs {
+    format { <../tpl_imgs.html>
+        group { format { <../tpl_img_carousel.html> ?imgUrl } }
+        group { format { <../tpl_img_gallery.html> ?imgUrl ?imgThumbnail ?imgAuthorName } }
+    }
+} where {
+    ?taxon a owl:Class;
+        schema:image [
+            schema:contentUrl ?imgUrl; schema:thumbnailUrl ?imgThumbnail;
+            schema:author [
+                schema:name ?imgAuthorName;
+                schema:url ?imgAuthorUrl
+            ]
+        ].
+}

@@ -4,7 +4,7 @@ This service searches the [MusicBrainz music information encyclopedia](https://m
 
 Each tune consists of a work (with no URIblank node), having a Web page URL (`schema:sameAs`) and a title (`schema:name`).
 
-**Path**: `musicbrainz/getSongByName
+**Path**: `musicbrainz/getSongByName`
 
 **Query mode**: SPARQL
 

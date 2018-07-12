@@ -1,0 +1,15 @@
+prefix dwc: <http://rs.tdwg.org/dwc/terms/>
+prefix dwciri: <http://rs.tdwg.org/dwc/iri/>
+prefix schema:	<http://schema.org/> .
+
+template st:traits {
+    format { <../tpl_traits.html>
+        group { format { <../tpl_trait.html> ?measurePredicate ?measurementValue ?measurementUnit} }
+    }
+} where {
+    ?measure a dwc:MeasurementOrFact;
+        dwciri:measurementType ?measurementType;
+        dwciri:measurementUnit ?measurementUnit;
+        dwc:measurementValue ?measurementValue;
+        schema:predicate ?measurePredicate.
+}

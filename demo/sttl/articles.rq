@@ -1,0 +1,16 @@
+prefix schema:	<http://schema.org/> .
+
+template st:articles {
+    format { <../tpl_articles.html>
+        group { format { <../tpl_article.html> ?articlePage ?articleThumbnailUrl ?articleAuthorName ?articleCitation } }
+    }
+} where {
+    ?taxon a owl:Class.
+
+    ?article a schema:ScholarlyArticle;
+        schema:about ?taxon;
+        schema:author ?articleAuthorName;
+        schema:mainEntityOfPage ?articlePage;
+        schema:thumbnailUrl ?articleThumbnailUrl;
+        schema:description ?articleCitation.        
+}

@@ -1,0 +1,11 @@
+prefix schema:	<http://schema.org/> .
+
+template st:others {
+    format { <../tpl_others.html> ?taxon
+        group { format { <../tpl_other.html> st:call-template(st:literalOrLink, ?p) st:call-template(st:literalOrLink, ?o) } }
+    }
+} where {
+    ?taxon
+        a owl:Class;
+        ?p ?o.
+}

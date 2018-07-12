@@ -1,0 +1,6 @@
+template st:literalOrLink(?x) {
+    if (isIRI(?x),
+        concat('<a href="', str(?x), '">', str(?x), '</a>'),
+        ?x
+    )
+} where {}
