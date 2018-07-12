@@ -154,6 +154,15 @@
                 }
             }
 
+            // -- Safety measures
+            // Remove unicodecontrol  characters (0000 to 001f)
+            $apiResp = preg_replace("/\\\\u000./", "?", $apiResp);
+            $apiResp = preg_replace("/\\\\u001./", "?", $apiResp);
+            // Remove \n and \r
+            $search = array('\n', '\r');
+            $replace = array("", "");
+            $apiResp = str_replace($search, $replace, $apiResp);
+
             // Apply JSON-LD profile to the Web API response and transform the JSON-LD to RDF NQuads
             $quads = JsonLD::toRdf($apiResp, array('expandContext' => $jsonldProfile));
             $nquads = new NQuads();
@@ -235,7 +244,7 @@
     /**
      * Tries to get a document from the cache db and return it.
      * If it is found and the expiration date is passed, the document is deleted from the cache db.
-     * 
+     *
      * @param string $query the Web API query. Its hash is used as a key
      * @return string the cached document if found, null otherwise.
      */

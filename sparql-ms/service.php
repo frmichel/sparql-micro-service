@@ -207,7 +207,8 @@
         $logger->error((string)$e."\n");
         $logger->info("Returning error 500.\n");
         http_response_code(500);
-        print("Could not process the request. Error:\n".$e->getMessage());
+        //print("Could not process the request. Error:\n".$e->getMessage());
+        $logger->info("--------- Done --------");
         exit(0);
     }
 ?>
