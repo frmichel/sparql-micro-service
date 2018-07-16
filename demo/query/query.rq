@@ -9,7 +9,7 @@ prefix sms: <http://sms.i3s.unice.fr/schema/>
 
 CONSTRUCT {
     ?taxon a owl:Class;
-        rdfs:label ?taxonName; ?p ?o;       # TAXREF-LD
+        rdfs:label ?taxonName;              # TAXREF-LD
         schema:image ?photo;                # Flickr
         schema:audio ?audio;                # Macauley Lib
         schema:subjectOf ?mbzPage;          # Musicbrainz
@@ -42,8 +42,7 @@ CONSTRUCT {
 
         SERVICE <http://taxref.mnhn.fr/sparql> {
             ?taxon a owl:Class;
-                rdfs:label ?taxonName;
-                ?p ?o.
+                rdfs:label ?taxonName.
             FILTER (STRENDS(STR(?taxon), "/10.0"))
         }
     
@@ -100,8 +99,8 @@ CONSTRUCT {
                     dwc:measurementValue ?measurementValue;
                     schema:predicate ?measurePredicate.
                 OPTIONAL { ?measure dwc:measurementUnit ?measurementUnit }
-                FILTER (?measurePredicate = "total life span" || ?measurePredicate = "body length (VT)" || ?measurePredicate = "conservation status")
-              } LIMIT 10
+                # FILTER (?measurePredicate = "total life span" || ?measurePredicate = "body length (VT)" || ?measurePredicate = "conservation status")
+              } LIMIT 50
             } 
         }
 }

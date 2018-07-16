@@ -4,7 +4,7 @@ prefix schema:	<http://schema.org/> .
 
 template st:traits {
     format { <../tpl_traits.html>
-        group { format { <../tpl_trait.html> ?measurePredicate ?measurementValue ?measurementUnit} }
+        group { format { <../tpl_trait.html> ?measurePredicate ?measurementValue st:call-template(st:literalOrLink, ?measurementUnit)} }
     }
 } where {
     ?measure a dwc:MeasurementOrFact;
