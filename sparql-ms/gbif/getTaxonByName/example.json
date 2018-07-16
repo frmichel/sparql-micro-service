@@ -1,0 +1,221 @@
+http://api.gbif.org/v1/species?name=Delphinus%20delphis
+http://api.gbif.org/v1/species/8324617/references?limit=50
+
+
+{
+  "offset": 0,
+  "limit": 50,
+  "endOfRecords": true,
+  "results": [
+    {
+      "taxonKey": 8324617,
+      "citation": "(1996) NODC Taxonomic Code",
+      "type": "taxon",
+      "source": "Catalogue of Life",
+      "sourceTaxonKey": 132083455
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "(2001) database, Comisión Nacional para el Conocimiento y Uso de la Biodiversidad",
+      "type": "vernacular",
+      "source": "Catalogue of Life",
+      "sourceTaxonKey": 132083455
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "ABAD, E. et al. (2002): Interactions of common dolphin Delphinus delphis and bottlenose dolphin Tursiops truncatus with trawl and purse seine fisheries off Alboran Sea (Western Mediterranean Sea). En: European Research on Cetaceans- 16º Congreso anual de la Sociedad Europea de Cetáceos. Liege, Bélgica...AGUILAR, A. et al. (1995-1997): Inventario de los Cetáceos de las Aguas Atlánticas Peninsulares: Aplicación de la Directiva 92/43/CEE. Dirección General de Conservación de la Naturaleza- Universidad de Barcelona...AGUILAR, A. (2001): Delfín común, p. 251, in: Libro Rojo de los Vertebrados Amenazados de Andalucía. Consejería de Medio Ambiente. Junta de Andalucía. 336 pp. ..BEARZI, G. (2003): Delphinus delphis (Mediterranean subpopulation). En: IUCN 2004. 2004 IUCN Red List of Threatened Species. <www.redlist.org>...FAYOS, J.A., CAÑADAS, A. & SAGARMINAGA, R. (2000): A comparative approach of the movement patterns and orientation of common dolphins (Delphinus delphis) and bottlenose dolphins (Tursiops truncatus) in the north-eastern Alboran Sea. 14th Annual Conference of the European Cetacean Society. Cork, Ireland. ..GARCÍA, P. (2006): Delfín común, pp. 256-257. En, Libro Rojo de los Vertebrados de la Región de Murcia. Consejería de Industria y Medio Ambiente. Comunidad Autónoma de la Región de Murcia...RAGA, J.A. & PANTOJA, J. (eds.) (2004): Proyecto Mediterráneo. Zonas de especial interés para la conservación de los cetáceos en el Mediterráneo español. Naturaleza y Parques Nacionales, Serie Técnica. Ministerio de Medio Ambiente, Madrid...VIADA et al. (2006): Libro Rojo de los Vertebrados de las Baleares (3º Edición). Conselleria de Medi Ambient. Govern Balear.",
+      "source": "Inventario Nacional Biodiversidad  Especies amenazadas (España)",
+      "sourceTaxonKey": 100242492
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Banks, R. C., R. W. McDiarmid, and A. L. Gardner (1987) Checklist of Vertebrates of the United States, the U.S. Territories, and Canada: Resource Publication, no. 166",
+      "type": "taxon",
+      "source": "Catalogue of Life",
+      "sourceTaxonKey": 132083455
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Banks, R. C., R. W. McDiarmid, and A. L. Gardner, 1987: Checklist of Vertebrates of the United States, the U.S. Territories, and Canada. Resource Publication, no. 166. 79.",
+      "source": "Integrated Taxonomic Information System (ITIS)",
+      "sourceTaxonKey": 102116832
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Carwardine, M., E. Hoyt, R. E. Fordyce and P. Gill. 1998. Whales, dolphins and porpoises. Time-Life Books. Nature Company Guides, USA. 288 p.",
+      "type": "additional source",
+      "source": "World Register of Marine Species",
+      "sourceTaxonKey": 106037142
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Hershkovitz, P. (1966). Catalog of Living Whales. <em>Bulletin of the United States National Museum.</em> (246): 1-259.",
+      "doi": "10.5479/si.03629236.246",
+      "type": "additional source",
+      "source": "World Register of Marine Species",
+      "sourceTaxonKey": 106037142
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Heyning, J. E. and W. F. Perrin. (1994). Evidence for two species of common dolphins (genus <i>Delphinus</i>)from the eastern North Pacific. Natural History Museum of Los Angeles County Contributions in Science 442:1-35.",
+      "type": "additional source",
+      "source": "World Register of Marine Species",
+      "sourceTaxonKey": 106037142
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Heyning, John E., and William F. Perrin (1994) Evidence for Two Species of Common Dolphins (Genus Delphinus) from the Eastern North Pacific: Natural History Museum of Los Angeles County Contributions in Science, no. 442",
+      "type": "taxon",
+      "source": "Catalogue of Life",
+      "sourceTaxonKey": 132083455
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Heyning, John E., and William F. Perrin, 1994: Evidence for Two Species of Common Dolphins (Genus Delphinus) from the Eastern North Pacific. Natural History Museum of Los Angeles County Contributions in Science, no. 442. 1-35.",
+      "source": "Integrated Taxonomic Information System (ITIS)",
+      "sourceTaxonKey": 102116832
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "IUCN Red List of Threatened Species",
+      "type": "additional source",
+      "source": "World Register of Marine Species",
+      "sourceTaxonKey": 106037142
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "International Commission on Zoological Nomenclature. Direction 22 Addition to the Official List of Specific Names in Zoology of (a) the specific names of fifty-seven species, each of which is the type species of a genus in the class Mammalia, the name of which was placed on the Official List of Generic Names in Zoology in the period up to the end of 1936, and (B) of the specific names of two species belonging to the same class, each of which is currently regarded as the oldest available name for the type species of a genus, the name of which was placed on the Official List in the same period.Opinions and declarations rendered by the International Commission on Zoological Nomenclature 1C(C13), 179-200 (1955)",
+      "type": "publication",
+      "source": "Official Lists and Indexes of Names in Zoology",
+      "sourceTaxonKey": 100084563
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Jefferson, T. A., M. A. Webber and R. L. Pitman. (2008). Marine mammals of the world. Academic Press, Amsterdam.",
+      "type": "additional source",
+      "source": "World Register of Marine Species",
+      "sourceTaxonKey": 106037142
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "King, C.M.; Roberts, C.D.; Bell, B.D.; Fordyce, R.E.; Nicoll, R.S.; Worthy, T.H.; Paulin, C.D.; Hitchmough, R.A.; Keyes, I.W.; Baker, A.N.; Stewart, A.L.; Hiller, N.; McDowall, R.M.; Holdaway, R.N.; McPhee, R.P.; Schwarzhans, W.W.; Tennyson, A.J.D.; Rust, S.; Macadie, I. (2009). Phylum Chordata: lancelets, fishes, amphibians, reptiles, birds, mammals, in: Gordon, D.P. (Ed.) (2009). New Zealand inventory of biodiversity: 1. Kingdom Animalia: Radiata, Lophotrochozoa, Deuterostomia. pp. 431-554.",
+      "type": "additional source",
+      "source": "World Register of Marine Species",
+      "sourceTaxonKey": 106037142
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Linnaeus, C. (1758). Systema Naturae per regna tria naturae, secundum classes, ordines, genera, species, cum characteribus, differentiis, synonymis, locis. <em>Editio decima, reformata. Laurentius Salvius: Holmiae.</em> ii, 824 pp.",
+      "type": "original description",
+      "source": "World Register of Marine Species",
+      "sourceTaxonKey": 106037142
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Liu J.Y. [Ruiyu] (ed.). (2008). Checklist of marine biota of China seas. <em>China Science Press.</em> 1267 pp.",
+      "type": "additional source",
+      "source": "World Register of Marine Species",
+      "sourceTaxonKey": 106037142
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Mead, J. G.; Brownell, R. L. Jr. (2005). Cetacea. <em>In Wilson, D.E. & D.M. Reeder (eds). Mammal Species of the World. A Taxonomic and Geographic Reference (3rd ed), Johns Hopkins University Press, 2,142 pp.</em> 723--743.",
+      "type": "additional source",
+      "source": "World Register of Marine Species",
+      "sourceTaxonKey": 106037142
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Mead, James G., and Robert L. Brownell, Jr. / Wilson, Don E., and DeeAnn M. Reeder, eds. (2005) Order Cetacea: Mammal Species of the World: A Taxonomic and Geographic Reference, 3rd ed., vol. 1",
+      "type": "vernacular",
+      "source": "Catalogue of Life",
+      "sourceTaxonKey": 132083455
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Mead, James G., and Robert L. Brownell, Jr. / Wilson, Don E., and DeeAnn M. Reeder, eds. (2005) Order Cetacea: Mammal Species of the World: A Taxonomic and Geographic Reference, 3rd ed., vol. 1",
+      "type": "taxon",
+      "source": "Catalogue of Life",
+      "sourceTaxonKey": 132083455
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Mead, James G., and Robert L. Brownell, Jr. / Wilson, Don E., and DeeAnn M. Reeder, eds., 2005: Order Cetacea. Mammal Species of the World: A Taxonomic and Geographic Reference, 3rd ed., vol. 1. 723-743.",
+      "source": "Integrated Taxonomic Information System (ITIS)",
+      "sourceTaxonKey": 102116832
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Perrin, W.F.; Würsig, B.; Thewissen, J.G.M. (2009). Encyclopedia of marine mammals. Second edition. Academic Press: London. ISBN 978-0-12-373553-9. xxix, 1316 pp.",
+      "type": "additional source",
+      "source": "World Register of Marine Species",
+      "sourceTaxonKey": 106037142
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Rice, D. W. (1998). Marine mammals of the world. Systematics and distribution. <em>Society for Marine Mammalogy Special Publication.</em> 4.",
+      "type": "additional source",
+      "source": "World Register of Marine Species",
+      "sourceTaxonKey": 106037142
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Rice, Dale W. (1998) Marine Mammals of the World: Systematics and Distribution: Special Publications of the Society for Marine Mammals, no. 4",
+      "type": "taxon",
+      "source": "Catalogue of Life",
+      "sourceTaxonKey": 132083455
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Rice, Dale W., 1998: Marine Mammals of the World: Systematics and Distribution. Special Publications of the Society for Marine Mammals, no. 4. ix + 231.",
+      "source": "Integrated Taxonomic Information System (ITIS)",
+      "sourceTaxonKey": 102116832
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Wilson, Don E., and DeeAnn M. Reeder, eds. (1992) Mammal Species of the World: A Taxonomic and Geographic Reference, 2nd ed., 3rd printing",
+      "type": "taxon",
+      "source": "Catalogue of Life",
+      "sourceTaxonKey": 132083455
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Wilson, Don E., and DeeAnn M. Reeder, eds., 1992: null. Mammal Species of the World: A Taxonomic and Geographic Reference, 2nd ed., 3rd printing. xviii + 1207.",
+      "source": "Integrated Taxonomic Information System (ITIS)",
+      "sourceTaxonKey": 102116832
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Wilson, Don E., and F. Russell Cole (2000) Common Names of Mammals of the World",
+      "type": "vernacular",
+      "source": "Catalogue of Life",
+      "sourceTaxonKey": 132083455
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Wilson, Don E., and F. Russell Cole (2000) Common Names of Mammals of the World",
+      "type": "taxon",
+      "source": "Catalogue of Life",
+      "sourceTaxonKey": 132083455
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Wilson, Don E., and F. Russell Cole, 2000: null. Common Names of Mammals of the World. xiv + 204.",
+      "source": "Integrated Taxonomic Information System (ITIS)",
+      "sourceTaxonKey": 102116832
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Wilson, Don E., and Sue Ruff, eds. (1999) The Smithsonian Book of North American Mammals",
+      "type": "taxon",
+      "source": "Catalogue of Life",
+      "sourceTaxonKey": 132083455
+    },
+    {
+      "taxonKey": 8324617,
+      "citation": "Wilson, Don E., and Sue Ruff, eds., 1999: null. The Smithsonian Book of North American Mammals. xxv + 750.",
+      "source": "Integrated Taxonomic Information System (ITIS)",
+      "sourceTaxonKey": 102116832
+    }
+  ]
+}

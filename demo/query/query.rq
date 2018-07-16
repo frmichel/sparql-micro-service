@@ -13,6 +13,7 @@ CONSTRUCT {
         schema:image ?photo;                # Flickr
         schema:audio ?audio;                # Macauley Lib
         schema:subjectOf ?mbzPage;          # Musicbrainz
+        schema:subjectOf ?article;          # BHL
         dct:relation ?measure.              # EoL
         
     ?photo                                  # Flickr
