@@ -44,8 +44,7 @@
         } else
             badRequest("HTTP error, no query string provided.");
 
-        // Get default namespaces. These are automatially added to any SPARQL query.
-        // See other existing default namespaces in EasyRdf/Namespace.php
+        // Set default namespaces. See other existing default namespaces in EasyRdf/Namespace.php
         if (array_key_exists('namespace', $config))
             foreach ($config['namespace'] as $nsName => $nsVal) {
                 if ($logger->isHandling(Logger::DEBUG))
@@ -79,7 +78,7 @@
             if (! array_key_exists('parameter', $customConfig))
                 throw new Exception("Missing configuration property 'parameter'. Check <service>/config.ini.");
 
-            # Read the cache expiration period
+            # Read the (optional) cache expiration period
             $cacheExpirationSec = array_key_exists('cache_expires_after', $customConfig) ? $customConfig['cache_expires_after'] : 2592000;
 
             // Read the service-specific parameters

@@ -46,7 +46,7 @@
      * Query the Web API to get a code associated with a taxon name
      *
      * @param string $taxonName
-     * @return the first code associated with that taxon name. Null if none or an error occured
+     * @return string the first code associated with that taxon name. Null if none or an error occured
      */
     function getTaxonCode($taxonName) {
         global $logger;

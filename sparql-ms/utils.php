@@ -99,7 +99,7 @@
      * the script returns an HTTP error 400 and exits.
      *
      * @param array $params array of parameter names
-     * @return associative array of parameters and values read from the query string
+     * @return array associative array of parameters and values read from the query string
      */
     function getQueryParameters($params) {
         global $logger;
