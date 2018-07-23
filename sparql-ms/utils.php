@@ -108,9 +108,12 @@
         foreach ($params as $paramName) {
             // The service parameters are passed in the query string
             if (array_key_exists($paramName, $_REQUEST)) {
-                $paramValue = $_REQUEST[$paramName];
+                if ($paramName != "query")
+                    $paramValue = strip_tags($_REQUEST[$paramName]);
+                else
+                    $paramValue = $_REQUEST[$paramName];
                 $result[$paramName] = $paramValue;
-                $logger->info("Query parameter '".$paramName."': ".$paramValue);
+                $logger->info("Query parameter (with html special chars encoded)'".$paramName."': ".htmlspecialchars($paramValue));
             } else
                 badRequest("Query parameter '".$paramName."' undefined.");
         }
