@@ -1,5 +1,8 @@
 <?php
+namespace frmichel\sparqlms;
+
 use Monolog\Logger;
+use Exception;
 
 /**
  * Implement the management of the cache database, MongoDB in this case.
@@ -25,7 +28,7 @@ class Cache
 
     /**
      *
-     * @var Monolog\Logger
+     * @var \Monolog\Logger
      */
     private $logger = null;
 
@@ -46,14 +49,14 @@ class Cache
     /**
      * Cache expiration time.
      *
-     * @var DateInterval
+     * @var \DateInterval
      */
     private $cacheExpiresAfter = null;
 
     /**
      * MongoDB database collection
      *
-     * @var MongoDB\Collection
+     * @var \MongoDB\Collection
      */
     private $cacheDb = null;
 
@@ -73,12 +76,12 @@ class Cache
             $this->cacheDbName = $context->getConfigParam('cache_db_name');
 
         // Create the database client and default collection: 'cache'
-        $client = new MongoDB\Client($this->cacheEndpoint);
+        $client = new \MongoDB\Client($this->cacheEndpoint);
         $this->cacheDb = $client->selectCollection($this->cacheDbName, 'cache');
 
         // Create the date interval corresponding to the cache expiration duration
         $cacheExpirationSec = $context->hasConfigParam('cache_expires_after') ? $context->getConfigParam('cache_expires_after') : self::CACHE_EXP_SEC;
-        $this->cacheExpiresAfter = new DateInterval('PT' . $cacheExpirationSec . 'S');
+        $this->cacheExpiresAfter = new \DateInterval('PT' . $cacheExpirationSec . 'S');
     }
 
     /**
@@ -108,7 +111,7 @@ class Cache
     public function write($query, $resp, $service = null)
     {
         try {
-            $expDate = (new DateTime('now'))->add($this->cacheExpiresAfter);
+            $expDate = (new \DateTime('now'))->add($this->cacheExpiresAfter);
             $this->cacheDb->insertOne([
                 'hash' => hash("sha256", $query),
                 'service' => $service,
@@ -135,7 +138,7 @@ class Cache
             'hash' => hash("sha256", $query)
         ]);
         if ($found != null) {
-            if ((new DateTime($found['expires'])) >= (new DateTime('now')))
+            if ((new \DateTime($found['expires'])) >= (new \DateTime('now')))
                 // If the expiration date is not passed, return the document
                 return $found['payload'];
             else {

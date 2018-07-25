@@ -1,4 +1,6 @@
 <?php
+namespace frmichel\sparqlms;
+
 /**
  * This script can be provided to complement the service 'config.ini' file.
  *
@@ -13,9 +15,9 @@ list ($param1, $param2) = array_values($context->getQueryStringArgs($customArgs)
 
 /*
  * ----------------- Your specific code --------------------
- * 
+ *
  * Do whatever specific thing you may have to do here.
- * 
+ *
  * For instance, call another service using param2:
  */
 $other_param = someService($param2);

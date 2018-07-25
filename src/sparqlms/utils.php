@@ -1,10 +1,11 @@
 <?php
-require_once 'vendor/autoload.php';
+namespace frmichel\sparqlms;
 
 use ML\JsonLD\JsonLD;
 use ML\JsonLD\NQuads;
 use ML\JsonLD\Processor;
 use Monolog\Logger;
+use Exception;
 
 /**
  * Check and log the Content-Type and Accept HTTP headers
@@ -15,7 +16,7 @@ function getHttpHeaders()
 {
     global $context;
     $logger = $context->getLogger();
-    
+
     if (array_key_exists('CONTENT_TYPE', $_SERVER)) {
         $contentType = $_SERVER['CONTENT_TYPE'];
         $logger->info('Query HTTP header "Content-Type": ' . $contentType);
@@ -23,16 +24,17 @@ function getHttpHeaders()
         $logger->info('Query HTTP header "Content-Type" undefined.');
         $contentType = "";
     }
-    
+
     if (array_key_exists('HTTP_ACCEPT', $_SERVER)) {
         $accept = $_SERVER['HTTP_ACCEPT'];
         $logger->info('Query HTTP header "Accept": ' . $accept);
     } else
         $logger->warn('Query HTTP header "Accept" undefined. Using: ' . $context->getConfigParam('default_mime_type'));
-    
+
     return array(
         $contentType,
-        $accept);
+        $accept
+    );
 }
 
 /**
@@ -41,7 +43,7 @@ function getHttpHeaders()
 function badRequest($message)
 {
     global $logger;
-    
+
     http_response_code(400); // Bad Request
     $logger->error($message);
     print("Erroneous request: " . $message);
@@ -61,11 +63,11 @@ function badRequest($message)
 function translateJsonToNQuads($jsonUrl, $jsonldProfile)
 {
     global $context;
-    
+
     $logger = $context->getLogger();
     $useCache = $context->useCache();
     $cache = $context->getCache();
-    
+
     $apiResp = null;
     try {
         if ($useCache) {
@@ -74,7 +76,7 @@ function translateJsonToNQuads($jsonUrl, $jsonldProfile)
             if ($apiResp != null && $logger->isHandling(Logger::DEBUG))
                 $logger->debug("Retrieved JSON response from cache: \n" . JsonLD::toString($apiResp));
         }
-        
+
         if ($apiResp == null) {
             if ($logger->isHandling(Logger::DEBUG))
                 $logger->debug("JSON response not found in cache.");
@@ -82,7 +84,7 @@ function translateJsonToNQuads($jsonUrl, $jsonldProfile)
             $apiResp = loadJsonDocument($jsonUrl);
             if ($logger->isHandling(Logger::DEBUG))
                 $logger->debug("Web API JSON response: \n" . $apiResp);
-            
+
             // Store the result into the cache db
             if ($useCache) {
                 $cache->write($jsonUrl, $apiResp, $context->getService());
@@ -90,7 +92,7 @@ function translateJsonToNQuads($jsonUrl, $jsonldProfile)
                     $logger->debug("Stored JSON response into cache.");
             }
         }
-        
+
         // -- Safety measures
         // Remove unicodecontrol characters (0000 to 001f)
         $apiResp = preg_replace("/\\\\u000./", "?", $apiResp);
@@ -98,20 +100,23 @@ function translateJsonToNQuads($jsonUrl, $jsonldProfile)
         // Remove \n and \r
         $search = array(
             '\n',
-            '\r');
+            '\r'
+        );
         $replace = array(
             "",
-            "");
+            ""
+        );
         $apiResp = str_replace($search, $replace, $apiResp);
-        
+
         // Apply JSON-LD profile to the Web API response and transform the JSON-LD to RDF NQuads
         $quads = JsonLD::toRdf($apiResp, array(
-            'expandContext' => $jsonldProfile));
+            'expandContext' => $jsonldProfile
+        ));
         $nquads = new NQuads();
         $serializedQuads = $nquads->serialize($quads);
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("Web API JSON response translated into NQuads:\n" . $serializedQuads);
-        
+
         return $serializedQuads;
     } catch (Exception $e) {
         $logger->warning((string) $e);
@@ -131,10 +136,10 @@ function loadJsonDocument($url)
 {
     global $context;
     $logger = $context->getLogger();
-    
+
     $streamContextOptions = array(
         'method' => 'GET',
-        'header' => "Accept: application/json; q=0.9, */*; q=0.1\r\n" . 
+        'header' => "Accept: application/json; q=0.9, */*; q=0.1\r\n" .
         // Some Web API require a User-Agent.
         // E.g. MusicBrainz returns error 403 if there is none.
         "User-Agent: SPARQL-Micro-Service\r\n",
@@ -142,24 +147,27 @@ function loadJsonDocument($url)
         'ssl' => [
             'verify_peer' => true,
             'verify_peer_name' => true,
-            'allow_self_signed' => false]);
-    
+            'allow_self_signed' => false
+        ]
+    );
+
     $jsonContext = stream_context_create(array(
         'http' => $streamContextOptions,
-        'https' => $streamContextOptions));
-    
+        'https' => $streamContextOptions
+    ));
+
     if (false === ($jsonContent = @file_get_contents($url, false, $jsonContext))) {
         $logger->warning("Cannot load document " . $url);
         $jsonContent = null;
     }
-    
+
     $headers = parseHttpHeaders($http_response_header);
     if ($logger->isHandling(Logger::DEBUG)) {
         $logger->debug("Web API response headers:");
         foreach ($headers as $k => $v)
             $logger->debug("   $k: $v");
     }
-    
+
     return $jsonContent;
 }
 

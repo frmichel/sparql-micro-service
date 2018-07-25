@@ -40,17 +40,17 @@ If any of the 3 Web APIs invoked is not available (network error, internal failu
         { ?species a owl:Class; rdfs:label "Delphinus delphis". }
 
         OPTIONAL {
-          SERVICE <https://example.org/sparql-ms/flickr/getPhotosByGroupByTag?group_id=806927@N20&tags=taxonomy:binomial=Delphinus+delphis>
+          SERVICE <https://example.org/sparqlms/flickr/getPhotosByGroupByTag?group_id=806927@N20&tags=taxonomy:binomial=Delphinus+delphis>
           { SELECT * WHERE { ?photo schema:image ?img; schema:thumbnailUrl ?thumbnail.  } LIMIT 2 }
         }
 
         OPTIONAL {
-          SERVICE <https://example.org/sparql-ms/macaulaylibrary/getAudioByTaxon?name=Delphinus+delphis>
+          SERVICE <https://example.org/sparqlms/macaulaylibrary/getAudioByTaxon?name=Delphinus+delphis>
                { SELECT ?audioUrl WHERE { [] schema:contentUrl ?audioUrl. } LIMIT 2 }
         }
 
         OPTIONAL {
-          SERVICE <https://example.org/sparql-ms/musicbrainz/getSongByName?name=Delphinus+delphis>
+          SERVICE <https://example.org/sparqlms/musicbrainz/getSongByName?name=Delphinus+delphis>
           { [] schema:sameAs ?page. }
         }
     }
@@ -58,7 +58,7 @@ If any of the 3 Web APIs invoked is not available (network error, internal failu
 
 ## Folders structure
 
-    sparql-ms/
+    src/sparqlms
         config.ini                # generic configuration of the SPARQL micro-service engine
         service.php               # core of the SPARQL micro-services
         utils.php                 # utility functions
@@ -132,11 +132,11 @@ The following packages must be installed before installing the SPARQL micro-serv
 
 #### Installation procedure
 
-Copy the ```sparql-ms``` directory to a directory exposed by Apache, typically ```/var/www/html``` or the ```public_html``` of your home directory.
+Copy the ```src/sparqlms``` directory to a directory exposed by Apache, typically ```/var/www/html/sparqlms``` or ```public_html/sparqlms``` in your home directory.
 
-Do __NOT__ use PHP ```composer``` to update the libraries in the vendor directory. This would override changes we made in some of them (Json-LD and EasyRDF).
+Do __NOT__ use PHP ```composer``` to update the libraries in the vendor directory. This would override changes we made in Json-LD and EasyRDF.
 
-Set the URL of your write-enabled SPARQL endpoint in ```sparql-ms/config.ini```. This endpoint does not need to be exposed publicly on the Web, only the SPARQL micro-services should have access to it. For instance:
+Set the URL of your write-enabled SPARQL endpoint in ```src/sparqlms/config.ini```. This endpoint does not need to be exposed publicly on the Web, only the SPARQL micro-services should have access to it. For instance:
 ```
 sparql_endpoint = http://localhost:8080/sparql
 ```
@@ -148,15 +148,15 @@ Set Apache [rewriting rules](http://httpd.apache.org/docs/2.4/rewrite/) to invok
 #### Rewriting rules for SPARQL querying
 
 Micro-service URL pattern:
-    ```http://example.org/sparql-ms/<Web API>/<service>?param=value```
+    ```http://example.org/sparqlms/<Web API>/<service>?param=value```
 
 Rule:
-    ```RewriteRule "^/sparql-ms/([^/?]+)/([^/?]+).*$" http://example.org/sparql-ms/service.php?querymode=sparql&service=$1/$2 [QSA,P,L]```
+    ```RewriteRule "^/sparqlms/([^/?]+)/([^/?]+).*$" http://example.org/sparqlms/service.php?querymode=sparql&service=$1/$2 [QSA,P,L]```
 
 Usage Example:
 ```
     SELECT * WHERE {
-        SERVICE <https://example.org/sparql-ms/macaulaylibrary/getAudioByTaxon?name=Delphinus+delphis>
+        SERVICE <https://example.org/sparqlms/macaulaylibrary/getAudioByTaxon?name=Delphinus+delphis>
         { [] <http://schema.org/contentUrl> ?audioUrl. }
     }
 ```
@@ -169,7 +169,7 @@ URI pattern:
     ```http://example.org/ld/<Web API>/<service>/<identifier>```
 
 Rule:
-    ```RewriteRule "^/ld/flickr/photo/(.*)$" http://example.org/sparql-ms/service.php?querymode=ld&service=flickr/getPhotoById&query=&photo_id=$1 [P,L]```
+    ```RewriteRule "^/ld/flickr/photo/(.*)$" http://example.org/sparqlms/service.php?querymode=ld&service=flickr/getPhotoById&query=&photo_id=$1 [P,L]```
 
 Usage Example:
     ```curl --header "accept:text/turtle" http://example.org/ld/flickr/photo/31173091516```
@@ -180,11 +180,11 @@ Usage Example:
 
 You can test the services by typing the following commands in a bash:
 
-    curl --header "Accept: application/sparql-results+json" "http://example.org/sparql-ms/flickr/getPhotoById?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&photo_id=31173091246"
+    curl --header "Accept: application/sparql-results+json" "http://example.org/sparqlms/flickr/getPhotoById?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&photo_id=31173091246"
 
-    curl --header "Accept: application/sparql-results+json" "http://example.org//sparql-ms/macaulaylibrary/getAudioByTaxon?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"
+    curl --header "Accept: application/sparql-results+json" "http://example.org//sparqlms/macaulaylibrary/getAudioByTaxon?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"
 
-    curl --header "Accept: application/sparql-results+json" "http://lexample.org//sparql-ms/musicbrainz/getSongByName?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"
+    curl --header "Accept: application/sparql-results+json" "http://lexample.org//sparqlms/musicbrainz/getSongByName?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"
 
 That should return a JSON SPARQL result.
 

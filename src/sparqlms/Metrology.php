@@ -1,5 +1,5 @@
 <?php
-require_once 'vendor/autoload.php';
+namespace frmichel\sparqlms;
 
 use Monolog\Logger;
 use Monolog\Formatter\LineFormatter;
@@ -24,7 +24,7 @@ class Metrology
 
     /**
      *
-     * @var Monolog\Logger
+     * @var \Monolog\Logger
      */
     private $metro = null;
 
@@ -54,8 +54,8 @@ class Metrology
             $scriptName = basename($_SERVER['SCRIPT_FILENAME']);
         else
             $scriptName = basename(__FILE__);
-        
-        $handler = new StreamHandler(__DIR__ . '/logs/metro.csv', $level, true, 0666);
+
+        $handler = new StreamHandler(__DIR__ . '/../../logs/metro.csv', $level, true, 0666);
         $handler->setFormatter(new LineFormatter("%message% \n"));
         $this->metro = new Logger("");
         $this->metro->pushHandler($handler);
@@ -113,7 +113,7 @@ class Metrology
         if ($this->metro->isHandling(Logger::INFO)) {
             $t1 = number_format($this->timers[$i1], 4, $dec_point = ",", $thousands_sep = "");
             $t2 = number_format($this->timers[$i2], 4, $dec_point = ",", $thousands_sep = "");
-            
+
             if ($i2 == - 1)
                 $this->metro->info("$service; $message; $t1");
             else

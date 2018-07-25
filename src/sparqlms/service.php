@@ -1,14 +1,18 @@
 <?php
+namespace frmichel\sparqlms;
+
 /**
  * This script implements the core logic of SPARQL micro-services.
- *
  */
-require_once 'vendor/autoload.php';
+require_once '../../vendor/autoload.php';
+
+use Monolog\Logger;
+use EasyRdf_Sparql_Client;
+use Exception;
 require_once 'utils.php';
 require_once 'Context.php';
 require_once 'Metrology.php';
-
-use Monolog\Logger;
+require_once 'Cache.php';
 
 try {
     // --- Metrology

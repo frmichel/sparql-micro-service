@@ -1,11 +1,10 @@
 <?php
-require_once 'vendor/autoload.php';
-require_once 'utils.php';
-require_once 'Cache.php';
+namespace frmichel\sparqlms;
 
 use Monolog\Logger;
-use Monolog\Handler\RotatingFileHandler;
 use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\RotatingFileHandler;
+use Exception;
 
 /**
  * Application execution context containing the configuration, logger and cache.
@@ -26,7 +25,7 @@ class Context
 
     /**
      *
-     * @var Monolog\Logger
+     * @var \Monolog\Logger
      */
     private $logger = null;
 
@@ -66,13 +65,13 @@ class Context
             $scriptName = basename($_SERVER['SCRIPT_FILENAME']);
         else
             $scriptName = basename(__FILE__);
-        $handler = new RotatingFileHandler(__DIR__ . '/logs/sms.log', 5, $logLevel, true, 0666);
+        $handler = new RotatingFileHandler(__DIR__ . '/../../logs/sms.log', 5, $logLevel, true, 0666);
         $handler->setFormatter(new LineFormatter(null, null, true));
         $this->logger = new Logger($scriptName);
         $this->logger->pushHandler($handler);
         $logger = $this->logger;
         $logger->info("--------- Start --------");
-        
+
         // --- Read the global configuration file and check query parameters
         $this->config = parse_ini_file($configFile);
         if (! $this->config)
@@ -83,25 +82,25 @@ class Context
             throw new Exception("Missing configuration property 'default_mime_type'. Check config.ini.");
         if (! array_key_exists('parameter', $this->config))
             throw new Exception("Missing configuration property 'parameter'. Check config.ini.");
-        
+
         // Set default namespaces. See other existing default namespaces in EasyRdf/Namespace.php
         if (array_key_exists('namespace', $this->config))
             foreach ($this->config['namespace'] as $nsName => $nsVal) {
                 if ($logger->isHandling(Logger::DEBUG))
                     $logger->debug('Adding namespace: ' . $nsName . " = " . $nsVal);
-                EasyRdf_Namespace::set($nsName, $nsVal);
+                \EasyRdf_Namespace::set($nsName, $nsVal);
             }
-        
+
         // --- Read mandatory HTTP query string arguments
         list ($service, $querymode, $sparqlQuery) = array_values($this->getQueryStringArgs($this->getConfigParam('parameter')));
         if ($service != '')
             $this->service = $service;
         else
             throw new Exception("Invalid configuration: empty argument 'service'.");
-        
+
         if ($querymode != 'sparql' && $querymode != 'ld')
             throw new Exception("Invalid argument 'querymode': should be one of 'sparql' or 'lod'.");
-        
+
         // --- Read the custom service configuration file and check query parameters
         $customCfgFile = $service . '/config.ini';
         $customCfg = parse_ini_file($customCfgFile);
@@ -111,10 +110,10 @@ class Context
             throw new Exception("Missing configuration property 'api_query'. Check " . $customCfgFile . ".");
         if (! array_key_exists('custom_parameter', $customCfg))
             $logger->warning("No configuration property 'custom_parameter' in " . $customCfgFile . ".");
-        
+
         // Merge the custom config with the global config
         $this->config = array_merge($this->config, $customCfg);
-        
+
         // --- Initialize the cache database connection (must be done after the custom config has been loaded and merged, to get the expiration time)
         if ($this->useCache())
             $this->cache = Cache::getInstance($this);
@@ -218,7 +217,7 @@ class Context
             } else
                 badRequest("Query parameter '" . $paramName . "' undefined.");
         }
-        
+
         return $result;
     }
 }

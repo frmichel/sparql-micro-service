@@ -1,10 +1,11 @@
 <?php
+namespace frmichel\sparqlms;
+
 /**
  * This script can be provided to complement the service config.ini file.
- * 
+ *
  * It must take care of defining the global variable $apiQuery that contains the ready-to-run WebAPI query string.
  */
-
 $context = Context::getInstance();
 $logger = $context->getLogger();
 

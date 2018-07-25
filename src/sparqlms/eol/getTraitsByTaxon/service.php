@@ -4,6 +4,8 @@
  *
  * It must take care of defining the global variable $apiQuery that contains the ready-to-run WebAPI query string.
  */
+namespace frmichel\sparqlms;
+
 $context = Context::getInstance();
 $logger = $context->getLogger();
 
