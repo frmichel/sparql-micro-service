@@ -6,28 +6,29 @@
 require_once 'vendor/autoload.php';
 require_once 'utils.php';
 require_once 'Context.php';
+require_once 'Metrology.php';
 
 use Monolog\Logger;
 
 try {
+    // --- Metrology
     // Set level to Logger::INFO to activate metrology, Logger::WARNING or higher to deactivate
-    $metro = initMetro(Logger::WARNING);
-    if ($metro->isHandling(Logger::INFO))
-        $timeStart = microtime(true);
+    $metro = Metrology::getInstance(Logger::WARNING);
+    $metro->startTimer(1);
 
-    // Init the context: read the main config file and the service specific config file
-    $context = Context::getInstance('config.ini', Logger::DEBUG);
+    // Init the context: read the global and service-specific config.ini files, init the cache and logger
+    $context = Context::getInstance('config.ini', Logger::INFO);
     $logger = $context->getLogger();
     $useCache = $context->getConfigParam('use_cache');
 
-    // Read the mandatory arguments from the HTTP query string
-    list ($service, $querymode, $sparqlQuery) = array_values($context->getQueryStringArgs($context->getConfigParam('parameter')));
-    $logger->info("Query parameter (with html special chars encoded) 'service': " . htmlspecialchars($service));
-    $logger->info("Query parameter (with html special chars encoded) 'querymode': " . htmlspecialchars($querymode));
-    $logger->info("Query parameter (with html special chars encoded) 'sparqlQuery': " . htmlspecialchars($sparqlQuery));
-
     // --- Check and log HTTP headers and query string
     list ($contentType, $accept) = getHttpHeaders();
+
+    // Read the mandatory arguments from the HTTP query string
+    list ($service, $querymode, $sparqlQuery) = array_values($context->getQueryStringArgs($context->getConfigParam('parameter')));
+    $logger->info("Query parameter (html special chars encoded) 'service': " . htmlspecialchars($service));
+    $logger->info("Query parameter (html special chars encoded) 'querymode': " . htmlspecialchars($querymode));
+    $logger->info("Query parameter (html special chars encoded) 'sparqlQuery': " . htmlspecialchars($sparqlQuery));
 
     if (array_key_exists('QUERY_STRING', $_SERVER)) {
         if ($logger->isHandling(Logger::DEBUG))
@@ -56,16 +57,12 @@ try {
     // --- Call the Web API service, apply the JSON-LD profile and translate to NQuads
     // ------------------------------------------------------------------------------------
 
-    if ($metro->isHandling(Logger::INFO))
-        $before = microtime(true);
-
+    $metro->startTimer(2);
     if ($apiQuery == "") // Query string set to empty string in case an error occured.
         $serializedQuads = "";
     else
         $serializedQuads = translateJsonToNQuads($apiQuery, $service . '/profile.jsonld');
-
-    if ($metro->isHandling(Logger::INFO))
-        $apiTime = microtime(true) - $before;
+    $metro->stopTimer(2);
 
     // ------------------------------------------------------------------------------------
     // --- Populate the temporary graph
@@ -95,6 +92,14 @@ try {
         $sparqlClient->update($query);
     }
 
+    // Optional: calculate the number of triples in the temporary graph
+    if ($metro->isHandling(Logger::INFO)) {
+        $nbTriplesQuery = "select (count(*) as ?count) where { ?s ?p ?o }";
+        $result = $sparqlClient->queryRaw($nbTriplesQuery, "application/sparql-results+json", $namedGraphUri = $graphUri);
+        $jsonResult = json_decode($result->getBody(), true);
+        $metro->appendMessage($service, "No triples", $jsonResult['results']['bindings'][0]['count']['value']);
+    }
+
     // ------------------------------------------------------------------------------------
     // --- Run the SPARQL query against temporary graph
     // ------------------------------------------------------------------------------------
@@ -111,13 +116,6 @@ try {
         } else
             throw new Exception("LD mode required but no SPARQL CONSTRUCT query is defined.");
     } // else: exception already thrown above
-
-    // Optional: calculate the number of triples in the temporary graph
-    if ($metro->isHandling(Logger::INFO)) {
-        $nbTriples = "select (count(*) as ?count) where { ?s ?p ?o }";
-        $result = $sparqlClient->queryRaw($nbTriples, $accept, $namedGraphUri = $graphUri);
-        $metro->info("$service; No triples; " . $result->getBody());
-    }
 
     // Run the query against the temporary graph
     $result = $sparqlClient->queryRaw($sparqlQuery, $accept, $namedGraphUri = $graphUri);
@@ -145,8 +143,8 @@ try {
     $sparqlClient->update($query);
     $logger->info("--------- Done --------");
 
-    if ($metro->isHandling(Logger::INFO))
-        appendMetro($service, "API|Total", $apiTime, microtime(true) - $timeStart);
+    $metro->stopTimer(1);
+    $metro->appendTimer($service, "Total|API", 1, 2);
 } catch (Exception $e) {
     try {
         $logger = Context::getInstance()->getLogger();
@@ -154,8 +152,8 @@ try {
         $logger->info("Returning error 500.\n");
         $logger->info("--------- Done --------");
     } catch (Exception $f) {
-        print("Could not process the request. Error:\n".(string)$e."\n");
-        print("Second exception caught:\n".(string)$f."\n");
+        print("Could not process the request. Error:\n" . (string) $e . "\n");
+        print("Second exception caught:\n" . (string) $f . "\n");
     }
     http_response_code(500);
     exit(0);

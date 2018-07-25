@@ -1,50 +1,10 @@
 <?php
 require_once 'vendor/autoload.php';
 
-use Monolog\Logger;
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\StreamHandler;
 use ML\JsonLD\JsonLD;
 use ML\JsonLD\NQuads;
 use ML\JsonLD\Processor;
-
-function initMetro($level = Logger::INFO)
-{
-    if (array_key_exists('SCRIPT_FILENAME', $_SERVER))
-        $scriptName = basename($_SERVER['SCRIPT_FILENAME']);
-    else
-        $scriptName = basename(__FILE__);
-    
-    $handler = new StreamHandler(__DIR__ . '/logs/metro.csv', $level, true, 0666);
-    $handler->setFormatter(new LineFormatter("%message% \n"));
-    $logger = new Logger("");
-    $logger->pushHandler($handler);
-    
-    return $logger;
-}
-
-/**
- * Add time measures to the metrology file in CSV format
- *
- * @param string $service
- *            the current service name
- * @param string $message
- * @param float $time1
- *            first time measure is seconds
- * @param float $time2
- *            second time measure is seconds
- */
-function appendMetro($service, $message, $time1, $time2 = 0)
-{
-    global $metro;
-    $t1 = number_format($time1, 4, $dec_point = ",", $thousands_sep = "");
-    $t2 = number_format($time2, 4, $dec_point = ",", $thousands_sep = "");
-    
-    if ($time2 == 0)
-        $metro->info("$service; $message; $t1");
-    else
-        $metro->info("$service; $message; $t1; $t2");
-}
+use Monolog\Logger;
 
 /**
  * Check and log the Content-Type and Accept HTTP headers
