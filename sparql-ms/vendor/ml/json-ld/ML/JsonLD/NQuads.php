@@ -41,7 +41,7 @@ class NQuads implements QuadSerializerInterface, QuadParserInterface
                     ? $quad->getObject()
                     : '<' . $quad->getObject() . '>';
             } else {
-                // Escape double-quotes and "\n" in JSON strings
+                // Fix F. Michel 2017-12-05. Escape double-quotes and "\n" in JSON strings
                 $search = array("\n", '"');
                 $replace = array('\n', '\"');
                 $result .= '"' . str_replace($search, $replace, $quad->getObject()->getValue()) . '"';

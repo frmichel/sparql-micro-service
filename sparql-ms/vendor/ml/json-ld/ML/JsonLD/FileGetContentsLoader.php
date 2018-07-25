@@ -32,7 +32,7 @@ class FileGetContentsLoader implements DocumentLoaderInterface
             $streamContextOptions = array(
               'method'  => 'GET',
               'header'  => "Accept: application/ld+json, application/json; q=0.9, */*; q=0.1\r\n"
-                           ."User-Agent: JsonLD\r\n",
+                             ."User-Agent: JsonLD\r\n", // Fix F. Michel 2017-12-06 - Some Web API require a User-Agent.
               'timeout' => Processor::REMOTE_TIMEOUT
             );
 

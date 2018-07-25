@@ -41,6 +41,11 @@
  * @package    EasyRdf
  * @copyright  Copyright (c) 2009-2013 Nicholas J Humfrey
  * @license    http://www.opensource.org/licenses/bsd-license.php
+ * 
+ * 
+ * ---- History
+ * 2017-12-06 F. Michel - Add the queryRaw method
+ * 
  */
 class EasyRdf_Sparql_Client
 {
