@@ -69,7 +69,8 @@ If any of the 3 Web APIs invoked is not available (network error, internal failu
                 profile.jsonld    # JSON-LD profile to translate the JSON response into JSON-LD
                 insert.sparql     # optional SPARQL INSERT query to create triples that JSON-LD cannot create
                 construct.sparql  # optional SPARQL CONSTRUCT query used to process URI dereferencing queries
-                service.php       # optional script. Replaces the config.ini in case specific actions are required
+                service.php       # optional script. Complements the config.ini in case specific actions are required.
+                                  # See folder 'manual_config_example' for a detailed example.
             <service>             # one service of this Web API
             ...
         <Web API>/                # directory of the services related to one Web API
@@ -83,6 +84,8 @@ If any of the 3 Web APIs invoked is not available (network error, internal failu
 
 
 ## Deploy with Docker
+
+**Note: the Docker image is currently outdated compared to the current status of the code. In particular it odes not use any cache database.**
 
 You can test SPARQL micro-services using the two [Docker](https://www.docker.com/) images we have built:
 - [frmichel/corese](https://hub.docker.com/r/frmichel/corese/): built upon debian:buster, runs the [Corese-KGRAM](http://wimmics.inria.fr/corese) RDF store and SPARQL endpoint. Corese-KGRAM listens on port 8081 but it is not exposed to the Docker server.
@@ -114,7 +117,7 @@ To install this project, you will need an Apache Web server and a write-enabled 
 
 #### Pre-requisites
 
-The following packages an installation must be performed prior to installing the SPARQL micro-services.
+The following packages must be installed before installing the SPARQL micro-services.
   * PHP 5.3+. Below we assume our current vesrion is 5.6
   * Addition PHP packages: ```php56w-mbstring``` and ```php56w-xml```, ```php56w-devel```, ```php-pear``` (PECL)
   * [Composer](https://getcomposer.org/doc/)
@@ -125,7 +128,7 @@ The following packages an installation must be performed prior to installing the
   ; http://php.net/date.timezone
   date.timezone = 'Europe/Paris'
 ```
-  * To use MongoDB as a cache, install the [MongoDB PHP driver](https://secure.php.net/manual/en/mongodb.installation.manual.php) and don't forget to add the following line to php.ini:```extension=mongodb.so```
+  * To use MongoDB as a cache, install the [MongoDB PHP driver](https://secure.php.net/manual/en/mongodb.installation.manual.php) and add the following line to php.ini:```extension=mongodb.so```
 
 #### Installation procedure
 
