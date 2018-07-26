@@ -39,7 +39,8 @@ CONSTRUCT {
         
 } WHERE {
         # First, retrieve the taxon name from the URL query string (?param=taxon+name)
-        BIND(st:get(st:param) as ?taxonName)
+        BIND(st:get(st:param) as ?param)
+        BIND(if (bound(?param) && ?param != "", st:get(st:param), "") as ?taxonName)
 
         SERVICE <http://taxref.mnhn.fr/sparql> {
             ?taxon a owl:Class;
