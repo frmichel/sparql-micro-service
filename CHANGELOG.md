@@ -1,15 +1,10 @@
 # SPARQL Micro-Service Changelog
 
-## [Unversioned]
-
-### Changed
-- support SPARQL query with HTTP POST method
-
-
-## [0.1.0] 2018-07-25
+## [0.1.0] 2018-07-26
 
 ### Added
 - full demo with STTL for TDWG conference
+- support SPARQL query with HTTP POST method
 
 ### Changed
 - major refactoring to comply with usual conventions: add namespace, move code from sparql-ms to src/sparqlms
