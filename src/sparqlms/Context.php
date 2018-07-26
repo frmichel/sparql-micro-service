@@ -71,7 +71,7 @@ class Context
         $this->logger->pushHandler($handler);
         $logger = $this->logger;
         $logger->info("--------- Start --------");
-
+        
         // --- Read the global configuration file and check query parameters
         $this->config = parse_ini_file($configFile);
         if (! $this->config)
@@ -82,7 +82,7 @@ class Context
             throw new Exception("Missing configuration property 'default_mime_type'. Check config.ini.");
         if (! array_key_exists('parameter', $this->config))
             throw new Exception("Missing configuration property 'parameter'. Check config.ini.");
-
+        
         // Set default namespaces. See other existing default namespaces in EasyRdf/Namespace.php
         if (array_key_exists('namespace', $this->config))
             foreach ($this->config['namespace'] as $nsName => $nsVal) {
@@ -90,17 +90,17 @@ class Context
                     $logger->debug('Adding namespace: ' . $nsName . " = " . $nsVal);
                 \EasyRdf_Namespace::set($nsName, $nsVal);
             }
-
+        
         // --- Read mandatory HTTP query string arguments
-        list ($service, $querymode, $sparqlQuery) = array_values($this->getQueryStringArgs($this->getConfigParam('parameter')));
+        list ($service, $querymode) = array_values(getQueryStringArgs($this->getConfigParam('parameter')));
         if ($service != '')
             $this->service = $service;
         else
             throw new Exception("Invalid configuration: empty argument 'service'.");
-
+        
         if ($querymode != 'sparql' && $querymode != 'ld')
             throw new Exception("Invalid argument 'querymode': should be one of 'sparql' or 'lod'.");
-
+        
         // --- Read the custom service configuration file and check query parameters
         $customCfgFile = $service . '/config.ini';
         $customCfg = parse_ini_file($customCfgFile);
@@ -110,10 +110,10 @@ class Context
             throw new Exception("Missing configuration property 'api_query'. Check " . $customCfgFile . ".");
         if (! array_key_exists('custom_parameter', $customCfg))
             $logger->warning("No configuration property 'custom_parameter' in " . $customCfgFile . ".");
-
+        
         // Merge the custom config with the global config
         $this->config = array_merge($this->config, $customCfg);
-
+        
         // --- Initialize the cache database connection (must be done after the custom config has been loaded and merged, to get the expiration time)
         if ($this->useCache())
             $this->cache = Cache::getInstance($this);
@@ -193,32 +193,6 @@ class Context
     public function getService()
     {
         return $this->service;
-    }
-
-    /**
-     * Check and return the HTTP query string arguments.
-     * If any expected parameter in not found, the function returns an HTTP error 400 and exits.
-     *
-     * @param array $params
-     *            array of parameter names
-     * @return array associative array of parameter names and values read from the query string
-     */
-    public function getQueryStringArgs($params)
-    {
-        $result = array();
-        foreach ($params as $paramName) {
-            // The service parameters are passed in the query string
-            if (array_key_exists($paramName, $_REQUEST)) {
-                if ($paramName != "query")
-                    $paramValue = strip_tags($_REQUEST[$paramName]);
-                else
-                    $paramValue = $_REQUEST[$paramName];
-                $result[$paramName] = $paramValue;
-            } else
-                badRequest("Query parameter '" . $paramName . "' undefined.");
-        }
-
-        return $result;
     }
 }
 ?>
