@@ -1,8 +1,0 @@
-{
-    "require": {
-        "ml/json-ld": "1.*",
-        "easyrdf/easyrdf": "0.*",
-        "monolog/monolog": "1.*",
-        "mongodb/mongodb": "^1.2"
-    }
-}
