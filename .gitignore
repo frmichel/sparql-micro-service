@@ -6,3 +6,5 @@ demo-static
 .settings
 .project
 .buildpath
+vendor
+composer.lock
