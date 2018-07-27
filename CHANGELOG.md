@@ -1,5 +1,13 @@
 # SPARQL Micro-Service Changelog
 
+## [0.2.0] 2018-07-27
+
+### Changed
+- comply with composer common structure
+    - remove directory ```vendor```
+    - make composer.json point to my own forks of the JsonLD and EasyRDF libraries
+
+
 ## [0.1.0] 2018-07-26
 
 ### Added
