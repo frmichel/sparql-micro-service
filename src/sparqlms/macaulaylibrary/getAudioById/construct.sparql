@@ -1,10 +1,17 @@
-INSERT {
+CONSTRUCT {
     ?audioUri a schema:AudioObject;
         schema:contentUrl ?contentUrl;
         schema:thumbnailUrl ?thumbnail;
         schema:mainEntityOfPage ?page;
         schema:author ?authorName;
         schema:description ?comments;
+
+        schema:license ?licence;
+        schema:about [
+            foaf:age ?age;
+            foaf:gender ?sex;
+            schema:name ?sciName;
+        ];
         .
 }
 WHERE {
@@ -14,8 +21,13 @@ WHERE {
         api:specimenUrl ?page;
         api:userDisplayName ?authorName;
         api:assetId ?id;
-       .
+        .
     OPTIONAL { ?content api:comments ?comments }
+
+    OPTIONAL { ?content api:licenseType ?licence }
+    OPTIONAL { ?content api:age ?age }
+    OPTIONAL { ?content api:sex ?sex }
+    OPTIONAL { ?content api:sciName ?sciName }
 
     bind (IRI(concat("http://example.org/ld/macaulaylibrary/audio/id/", ?id)) AS ?audioUri)
 }
