@@ -107,22 +107,21 @@ The following packages must be installed before installing the SPARQL micro-serv
 
 #### Installation procedure
 
-Copy the ```src``` and ```vendor``` directories to a directory exposed by Apache, typically ```/var/www/html/sparqlms``` or ```public_html/sparqlms``` in your home directory.
+Extract the project directory to a directory exposed by Apache, typically ```/var/www/html/sparqlms``` or ```public_html/sparqlms``` in your home directory.
 
-Do __NOT__ use PHP ```composer``` to update the libraries in the vendor directory. This would override changes we made in Json-LD and EasyRDF.
+From the project directory, run command ```composer install```, this will create a vendor directory with the required libraries.
 
-Set the URL of your write-enabled SPARQL endpoint in ```src/sparqlms/config.ini```. This endpoint does not need to be exposed publicly on the Web, only the SPARQL micro-services should have access to it. For instance:
-```
-sparql_endpoint = http://localhost:8080/sparql
-```
-
-Create directory ```logs``` with 777 rights (chmod 777 logs). You should now have the following directory structure:
+Create directory ```logs``` with exec and write rights for all (```chmod 777 logs```). You should now have the following directory structure:
 
     sparqlms/
         src/sparqlms/
         vendor/
         logs/
 
+Set the URL of your write-enabled SPARQL endpoint in ```src/sparqlms/config.ini```. This endpoint does not need to be exposed publicly on the Web, only the SPARQL micro-services should have access to it. For instance:
+```
+sparql_endpoint = http://localhost:8080/sparql
+```
 
 Customize the dereferenceable URIs generated in the different services: replace the ```http://example.org``` URL with the URL of your server. See the comments in construct.sparql and insert.sparql files.
 
