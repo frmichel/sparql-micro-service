@@ -2,16 +2,22 @@ version: '3'
 services:
   sms-corese:
     image: frmichel/corese
+    build: ./sms-corese
+    networks:
+      - sms-net
+  sms-mongo:
+    image: mongo:3.6-jessie
     networks:
       - sms-net
   sms-apache:
     image: frmichel/sparql-micro-service
+    build: ./sms-apache
     networks:
       - sms-net
     ports:
       - "81:80"
-
+    volumes:
+      - "./logs:/var/www/html/sparqlms-install/logs"
 networks:
   sms-net:
     driver: bridge
-
