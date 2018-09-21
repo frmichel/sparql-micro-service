@@ -2,10 +2,14 @@
   "@context": {
     "@base": "http://sms.i3s.unice.fr/item/",
     "schema": "http://schema.org/",
+    "dwc": "http://rs.tdwg.org/dwc/terms/",
+    "dwciri": "http://rs.tdwg.org/dwc/iri/",
 
     "vernacularNames": null,
     "actionPlatform": null,
     "sameAs": {"@id": "schema:sameAs", "@type": "@id"},
-    "url": {"@id": "schema:url", "@type": "@id"}
+    "url": {"@id": "schema:url", "@type": "@id"},
+    "dwc:measurementType": {"@id": "dwciri:measurementType", "@type": "@id"},
+    "dwc:measurementUnit": {"@id": "dwciri:measurementUnit", "@type": "@id"}
   }
 }

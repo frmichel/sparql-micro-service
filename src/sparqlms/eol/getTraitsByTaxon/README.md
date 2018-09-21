@@ -28,7 +28,8 @@ As a result, a query to the trait bank with a URL such as http://eol.org/api/tra
     } WHERE {
         SERVICE SILENT <https://example.org/sparql-ms/eol/getTraitsByTaxon?name=Delphinus+delphis>
         { ?measure                 a dwc:MeasurementOrFact;
-            dwc:measurementType    ?measurementType;
+            dwciri:measurementType ?measurementType;
+            dwciri:measurementUnit ?measurementUnit;
             dwc:measurementValue   ?measurementValue;
             schema:predicate       ?measurePredicate.
           OPTIONAL { ?measure      dwc:measurementUnit ?measurementUnit }
