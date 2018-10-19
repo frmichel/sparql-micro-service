@@ -2,7 +2,6 @@ version: '3'
 services:
   sms-corese:
     image: frmichel/corese
-    build: ./sms-corese
     networks:
       - sms-net
   sms-mongo:
@@ -11,7 +10,6 @@ services:
       - sms-net
   sms-apache:
     image: frmichel/sparql-micro-service
-    build: ./sms-apache
     networks:
       - sms-net
     ports:
