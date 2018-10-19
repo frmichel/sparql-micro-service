@@ -1,5 +1,13 @@
 # SPARQL Micro-Service Changelog
 
+## [UNVERSIONED] 2018-08-16
+
+### Changed
+- add service macauleylibrary/getAudioById for URI dereferencing
+- update Docker deployment with last version of code and a MongoDB container
+- fix typos in the demo partial
+
+
 ## [0.2.0] 2018-07-27
 
 ### Changed
@@ -23,4 +31,3 @@
 ## [0.0.1] 2018-06-19
 
 First decent version of the project.
-

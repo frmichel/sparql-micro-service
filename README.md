@@ -88,7 +88,7 @@ If any of the 3 Web APIs invoked is not available (network error, internal failu
 
 ## Installation
 
-To install this project, you will need an Apache Web server and a write-enabled SPARQL endpoint and RDF triple store. In our case, we used the [Corese-KGRAM](http://wimmics.inria.fr/corese) lightweight in-memory triple-store.
+To install this project, you will need an Apache Web server, a write-enabled SPARQL endpoint and RDF triple store (in our case, we used the [Corese-KGRAM](http://wimmics.inria.fr/corese) lightweight in-memory triple-store), and an optional MongoDB instance to serve as the cache database (can be deactivated in src/sparqlms/config.ini).
 
 #### Pre-requisites
 
@@ -159,47 +159,36 @@ Usage Example:
 
 ## Deploy with Docker
 
-**Note: the Docker image is currently outdated compared to the current status of the code. In particular it does not use any cache database.**
-
 You can test SPARQL micro-services using the two [Docker](https://www.docker.com/) images we have built:
 - [frmichel/corese](https://hub.docker.com/r/frmichel/corese/): built upon debian:buster, runs the [Corese-KGRAM](http://wimmics.inria.fr/corese) RDF store and SPARQL endpoint. Corese-KGRAM listens on port 8081 but it is not exposed to the Docker server.
-- [frmichel/sparql-micro-service](https://hub.docker.com/r/frmichel/sparql-micro-service/): provides the Apache Web server, PHP 5.6, and three of the SPARQL micro-services described above (Flicrk, Macauly Library, MLusicbrainz) configured and ready to go. Apache listens on port 80, it is exposed as port 81 of the Docker server.
+- [frmichel/sparql-micro-service](https://hub.docker.com/r/frmichel/sparql-micro-service/): provides the Apache Web server, PHP 5.6, and the SPARQL micro-services described above. Apache listens on port 80, it is exposed as port 81 of the Docker server.
 
 To run these images, simply download the file ```docker/docker-compose.yml``` on a Docker server and run ```docker-compose up -d```.
 
+Note that this will also start a standard instance of MongoDB to serve as the cache DB.
+
 #### Check application logs
 
-To access the SPARQL micro-servcices log file, add a ```volumes``` parameter in the ```docker/docker-compose.yml``` file, like this:
 
-    sms-apache:
-        image: frmichel/sparql-micro-service
-        networks:
-          - sms-net
-        ports:
-          - "81:80"
-        volumes:
-          - "./logs:/var/www/html/sparql-ms/logs"
+This docker-compose.yml will mount the SPARQL micro-service logs directory to the Docker host in directory ```./logs``` where you can check the SPARQL micro-services log file.
 
-This will mount the SPARQL micro-service logs directory to the Docker host in directory ```./logs```.
-
-You may have to set access mode 777 on this directory for the container to be able to write log files.
+You may have to set rights 777 on this directory for the container to be able to write log files (chmod 777 logs).
 
 
 ## Test the installation
 
 #### Test SPARQL querying
 
-You can test the services by typing the following commands in a bash:
+You can test the services using the commands below in a bash.
+Simply *replace "example.org" with your server's hostname, or "localhost:81" if you deployed the services with Docker*.
 
     curl --header "Accept: application/sparql-results+json" "http://example.org/sparqlms/flickr/getPhotoById?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&photo_id=31173091246"
 
-    curl --header "Accept: application/sparql-results+json" "http://example.org//sparqlms/macaulaylibrary/getAudioByTaxon?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"
+    curl --header "Accept: application/sparql-results+json" "http://example.org/sparqlms/macaulaylibrary/getAudioByTaxon?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"
 
-    curl --header "Accept: application/sparql-results+json" "http://lexample.org//sparqlms/musicbrainz/getSongByName?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"
+    curl --header "Accept: application/sparql-results+json" "http://example.org/sparqlms/musicbrainz/getSongByName?query=select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D&name=Delphinus+delphis"
 
 That should return a JSON SPARQL result.
-
-*If you used the Docker deployment, simply replace example.org with localhost:81 in the commands above.*
 
 
 #### Test URI dereferencing
@@ -208,7 +197,7 @@ Enter this URL in your browser: http://example.org/ld/flickr/photo/31173091246 o
 
     curl --header "Accept: text/turtle" http://example.org/ld/flickr/photo/31173091246
 
-*If you used the Docker deployment, simply replace example.org with localhost:81.*
+*If you used the Docker deployment, simply replace "example.org" with localhost:81.*
 
 That should return an RDF description of the photographic resource:
 
@@ -235,3 +224,11 @@ That should return an RDF description of the photographic resource:
 [1] Franck Michel, Catherine Faron-Zucker and Fabien Gandon. *SPARQL Micro-Services: Lightweight Integration of Web APIs and Linked Data*. In Proceedings of the Linked Data on the Web Workshop (LDOW2018). https://hal.archives-ouvertes.fr/hal-01722792
 
 [2] Franck Michel, Olivier Gargominy, Sandrine Tercerie & Catherine Faron-Zucker (2017). *A Model to Represent Nomenclatural and Taxonomic Information as Linked Data. Application to the French Taxonomic Register, TAXREF*. In Proceedings of the 2nd International Workshop on Semantics for Biodiversity (S4BioDiv) co-located with ISWC 2017 vol. 1933. Vienna, Austria. CEUR. https://hal.archives-ouvertes.fr/hal-01617708
+
+#### Poster
+
+Michel F., Faron-Zucker C. & Gandon F. (2018). *Bridging Web APIs and Linked Data with SPARQL Micro-Services*. In The Semantic Web: ESWC 2018 Satellite Events, LNCS vol. 11155, pp. 187–191. Heraklion, Greece. Springer, Cham.
+
+#### Demo
+
+Michel F., Faron-Zucker C. & Gandon F. (2018). *Integration of Biodiversity Linked Data and Web APIs using SPARQL Micro-Services*. In Biodiversity Information Science and Standards, TDWG 2018 Proceedings, vol. 2, p. e25481. Dunedin, New Zealand. Pensoft.
