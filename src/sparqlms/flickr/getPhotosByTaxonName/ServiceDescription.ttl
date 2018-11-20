@@ -1,0 +1,64 @@
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#>.
+@prefix sd:      <http://www.w3.org/ns/sparql-service-description#>.
+@prefix frmt:    <http://www.w3.org/ns/formats/>.
+@prefix dct:     <http://purl.org/dc/terms/>.
+@prefix shacl:   <http://www.w3.org/ns/shacl#>.
+@prefix void:    <http://rdfs.org/ns/void#> .
+@prefix hydra:   <http://www.w3.org/ns/hydra/core#>.
+@prefix schema:  <http://schema.org/>.
+@prefix dwc:     <http://rs.tdwg.org/dwc/terms/>.
+@prefix sms:     <http://sms.i3s.unice.fr/terms/>.
+
+@base            <http://example.org/flickr/getPhotosByTaxonName/>.
+
+# This file is loaded as graph <ServiceDescription>
+<>
+    a sd:Service;
+    dct:hasVersion <http://sms.i3s.unice.fr/version/2.0>;
+    sd:endpoint <>;
+    sd:supportedLanguage sd:SPARQL11Query;
+    sd:feature sd:BasicFederatedQuery, sd:EmptyGraphs;
+    sd:resultFormat frmt:SPARQL_Results_XML, frmt:SPARQL_Results_JSON, frmt:SPARQL_Results_CSV, frmt:SPARQL_Results_TSV,
+                    frmt:RDF_XML, frmt:Turtle, frmt:JSON-LD;
+    schema:name "Flickr search for photos by biological taxon scientific name";
+    schema:description "SPARQL micro-service wrapping the Flickr Web API to search photos by biological taxon scientific name.";
+    
+    sd:defaultDataset [
+        a sd:Dataset, void:Dataset;
+        sd:defaultGraph [ a sd:Graph; shacl:shapesGraph <ShapesGraph> ];
+        sd:namedGraph   [ a sd:Graph; sd:name <ServiceDescription> ];
+        sd:namedGraph   [ a sd:Graph; sd:name <ShapesGraph> ];
+        
+        void:vocabulary <http://schema.org/>, <http://www.w3.org/ns/shacl#>, <http://www.w3.org/ns/hydra/core#>;
+        void:sparqlEndpoint <>;
+        
+        # Topics description
+        foaf:topic <http://dbpedia.org/resource/Photography>, <https://www.wikidata.org/entity/Q47041>; # Biodiversity
+        schema:keywords "photography"@en, "biodiversity"@en;
+    ];
+
+    dct:source [
+        a schema:WebAPI; schema:name "Flickr API";
+        schema:url <https://www.flickr.com/services/api/>;
+        schema:potentialAction <APIService>;
+    ];
+    sms:cacheExpiresAfter "P2592000S"^^xsd:duration;
+    .
+
+
+# Web API service being wrapped by this µ-service + parameters binding
+<APIService>
+    a schema:SearchAction;
+    schema:documentation "The taxon scientific name must be provided by property dwc:scientificName in the SPARQL graph pattern.";
+
+    a hydra:IriTemplate;
+    hydra:template 
+        "https://api.flickr.com/services/rest/?method=flickr.photos.search&format=json&nojsoncallback=1&api_key=<api_key>&per_page=500&tags=taxonomy%3Abinomial%3D{name}";
+    hydra:mapping [
+        hydra:variable "name";
+        schema:description "The taxon scientific name without authorship nor date information";
+
+        # Use either hydra:property or shacl:sourceShape
+        hydra:property dwc:scientificName;
+        shacl:sourceShape <ShapesGraph#InputPropertyShape>;
+    ].

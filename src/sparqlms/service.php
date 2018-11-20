@@ -7,10 +7,10 @@ namespace frmichel\sparqlms;
 require_once '../../vendor/autoload.php';
 
 use Monolog\Logger;
-use EasyRdf_Sparql_Client;
 use Exception;
 require_once 'utils.php';
 require_once 'Context.php';
+require_once 'Configuration.php';
 require_once 'Metrology.php';
 require_once 'Cache.php';
 
@@ -24,7 +24,7 @@ try {
     $metro->startTimer(1);
     
     // Init the context: read the global and service-specific config.ini files, init the cache and logger
-    $context = Context::getInstance('config.ini', Logger::INFO);
+    $context = Context::getInstance(Logger::INFO);
     $logger = $context->getLogger();
     $useCache = $context->getConfigParam('use_cache');
     
@@ -66,6 +66,8 @@ try {
     } else {
         // Read the service-specific arguments from the HTTP query string
         $customArgs = getQueryStringArgs($context->getConfigParam('custom_parameter'));
+        if ($logger->isHandling(Logger::DEBUG))
+            $logger->debug("Service arguments: " . print_r($customArgs, TRUE));
         
         $apiQuery = $context->getConfigParam('api_query');
         foreach ($customArgs as $parName => $parVal)
@@ -86,10 +88,10 @@ try {
     // ------------------------------------------------------------------------------------
     
     // URI of the temporary work graph
-    $graphUri = 'http://sms.i3s.unice.fr/graph' . uniqid("-", true);
+    $graphUri = $context->getConfigParam('root_url') . '/tempgraph' . uniqid("-", true);
     
     // Create the temporary graph by clearing it
-    $sparqlClient = new EasyRdf_Sparql_Client($context->getConfigParam('sparql_endpoint'));
+    $sparqlClient = $context->getSparqlClient();
     if ($logger->isHandling(Logger::DEBUG))
         $logger->debug("Creating graph: <" . $graphUri . ">");
     $query = "CLEAR SILENT GRAPH <" . $graphUri . ">\n";
@@ -153,7 +155,6 @@ try {
     print($result->getBody());
     
     // Drop the temporary graph
-    $sparqlClient = new EasyRdf_Sparql_Client($context->getConfigParam('sparql_endpoint'));
     if ($logger->isHandling(Logger::DEBUG))
         $logger->debug("Dropping graph: <" . $graphUri . ">");
     $query = "DROP SILENT GRAPH <" . $graphUri . ">\n";

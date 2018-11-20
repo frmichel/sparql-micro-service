@@ -1,0 +1,36 @@
+@prefix shacl:   <http://www.w3.org/ns/shacl#>.
+@prefix schema:  <http://schema.org/>.
+@prefix dwc:     <http://rs.tdwg.org/dwc/terms/>.
+
+@base            <http://example.org/flickr/getPhotosByTaxonName/>.
+
+<ShapesGraph#TaxonShape> a shacl:NodeShape;
+    shacl:targetClass dwc:Taxon;
+    shacl:property
+      <ShapesGraph#InputPropertyShape>,
+      [ a shacl:PropertyShape; shacl:path schema:image; shacl:class schema:Photograph; 
+        shacl:nodeKind shacl:BlankNodeOrIRI; shacl:minCount 1 ];
+    shacl:closed false.
+
+<ShapesGraph#InputPropertyShape>
+    a shacl:PropertyShape; shacl:path dwc:scientificName;
+    shacl:datatype xsd:string; shacl:minCount 1; shacl:maxCount 1.
+    
+<ShapesGraph#PhotographShape> a shacl:NodeShape;
+    shacl:targetClass schema:Photograph;
+    shacl:property
+      [ a shacl:PropertyShape; shacl:path schema:name;             shacl:datatype xsd:string; shacl:maxCount 1 ],
+      [ a shacl:PropertyShape; shacl:path schema:contentUrl;       shacl:nodeKind shacl:IRI ],
+      [ a shacl:PropertyShape; shacl:path foaf:depiction;          shacl:nodeKind shacl:IRI ],
+      [ a shacl:PropertyShape; shacl:path schema:thumbnailUrl;     shacl:nodeKind shacl:IRI ],
+      [ a shacl:PropertyShape; shacl:path schema:mainEntityOfPage; shacl:nodeKind shacl:IRI ],
+      [ a shacl:PropertyShape; shacl:path schema:fileFormat;       shacl:datatype xsd:string; shacl:maxCount 1 ],
+      [ a shacl:PropertyShape; shacl:path schema:author;           shacl:nodeKind shacl:BlankNodeOrIRI; shacl:class schema:Person ];
+    shacl:closed false.
+
+<ShapesGraph#PersonShape> a shacl:NodeShape;
+    shacl:targetClass schema:Person;
+    shacl:property 
+      [ a shacl:PropertyShape; shacl:path schema:name; shacl:datatype xsd:string ],
+      [ a shacl:PropertyShape; shacl:path schema:url; shacl:nodeKind shacl:IRI ];
+    shacl:closed false.

@@ -1,0 +1,6 @@
+SELECT ?apiQuery ?expiresAfter WHERE {
+    <{serviceUri}> dct:source [ 
+        schema:potentialAction [ hydra:template ?apiQuery ]
+    ].
+    OPTIONAL { <{serviceUri}> sms:cacheExpiresAfter ?expiresAfter. }
+}

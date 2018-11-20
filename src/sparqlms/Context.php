@@ -4,10 +4,11 @@ namespace frmichel\sparqlms;
 use Monolog\Logger;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
+use EasyRdf_Sparql_Client;
 use Exception;
 
 /**
- * Application execution context containing the configuration, logger and cache.
+ * Application execution context containing the configuration, logger, cache, SPARQL client
  *
  * The constructor also checks the presence of the HTTP query string parameters
  * listed in the configuration.
@@ -53,12 +54,19 @@ class Context
     private $service = null;
 
     /**
+     * Local RDF store and SPARQL endpoint
+     *
+     * @var EasyRdf_Sparql_Client
+     */
+    private $sparqlClient = null;
+
+    /**
      *
      * @param string $configFile
      * @param integer $logLevel
      *            one of Logger::INFO, Logger::WARNING, Logger::DEBUG etc. (see Monolog\Logger.php)
      */
-    private function __construct($configFile, $logLevel)
+    private function __construct($logLevel)
     {
         // --- Initialize the logger
         if (array_key_exists('SCRIPT_FILENAME', $_SERVER))
@@ -73,15 +81,9 @@ class Context
         $logger->info("--------- Start --------");
         
         // --- Read the global configuration file and check query parameters
-        $this->config = parse_ini_file($configFile);
-        if (! $this->config)
-            throw new Exception("Cannot read configuration file config.ini.");
-        if (! array_key_exists('sparql_endpoint', $this->config))
-            throw new Exception("Missing configuration property 'sparql_endpoint'. Check config.ini.");
-        if (! array_key_exists('default_mime_type', $this->config))
-            throw new Exception("Missing configuration property 'default_mime_type'. Check config.ini.");
-        if (! array_key_exists('parameter', $this->config))
-            throw new Exception("Missing configuration property 'parameter'. Check config.ini.");
+        $this->config = Configuration::readGobalConfig();
+        if ($logger->isHandling(Logger::DEBUG))
+            $logger->debug("Global configuration: " . print_r($this->config, TRUE));
         
         // Set default namespaces. See other existing default namespaces in EasyRdf/Namespace.php
         if (array_key_exists('namespace', $this->config))
@@ -101,17 +103,13 @@ class Context
         if ($querymode != 'sparql' && $querymode != 'ld')
             throw new Exception("Invalid argument 'querymode': should be one of 'sparql' or 'lod'.");
         
-        // --- Read the custom service configuration file and check query parameters
-        $customCfgFile = $service . '/config.ini';
-        $customCfg = parse_ini_file($customCfgFile);
-        if (! $customCfg)
-            throw new Exception("Cannot read custom configuration file " . $customCfgFile);
-        if (! array_key_exists('api_query', $customCfg))
-            throw new Exception("Missing configuration property 'api_query'. Check " . $customCfgFile . ".");
-        if (! array_key_exists('custom_parameter', $customCfg))
-            $logger->warning("No configuration property 'custom_parameter' in " . $customCfgFile . ".");
+        // --- Initialize the local RDF store and SPARQL endpoint
+        $this->sparqlClient = new EasyRdf_Sparql_Client($this->getConfigParam('sparql_endpoint'));
         
-        // Merge the custom config with the global config
+        // --- Read the custom service configuration and merge it with the global confif
+        $customCfg = Configuration::getCustomConfig($this);
+        if ($logger->isHandling(Logger::DEBUG))
+            $logger->debug("Custom configuration: " . print_r($customCfg, TRUE));
         $this->config = array_merge($this->config, $customCfg);
         
         // --- Initialize the cache database connection (must be done after the custom config has been loaded and merged, to get the expiration time)
@@ -193,6 +191,16 @@ class Context
     public function getService()
     {
         return $this->service;
+    }
+
+    /**
+     * Return the client to the local RDF store and SPARQL endpoint
+     *
+     * @return EasyRdf_Sparql_Client
+     */
+    public function getSparqlClient()
+    {
+        return $this->sparqlClient;
     }
 }
 ?>

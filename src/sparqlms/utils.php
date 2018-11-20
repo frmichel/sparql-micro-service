@@ -211,20 +211,19 @@ function parseHttpHeaders($headers)
 }
 
 /**
- * Check and return the HTTP query string arguments.
- * If any expected parameter in not found, the function returns an HTTP error 400 and exits.
+ * Check and return a set of named HTTP query string arguments.
+ * If any parameter in not found, the function returns an HTTP error 400 and exits.
  *
  * @param array $args
- *            array of parameter names
+ *            array of parameter names to read from the query string
  * @return array associative array of parameter names and values read from the query string
  */
 function getQueryStringArgs($args)
 {
     $result = array();
     foreach ($args as $argName) {
-        // The service parameters are passed in the query string
         if (array_key_exists($argName, $_REQUEST)) {
-            // Escape special chars except in the 'query' parameter that contains the SPARQL query
+            // Escape special chars except in case of the 'query' parameter that contains the SPARQL query
             if ($argName != "query")
                 $argValue = strip_tags($_REQUEST[$argName]);
             else
@@ -245,9 +244,6 @@ function getQueryStringArgs($args)
  */
 function getSparqlQuery()
 {
-    global $context;
-    $logger = $context->getLogger();
-    
     $method = $_SERVER['REQUEST_METHOD'];
     switch ($method) {
         case 'GET':

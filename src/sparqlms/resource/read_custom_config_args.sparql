@@ -1,0 +1,9 @@
+SELECT ?arg WHERE {
+    <{serviceUri}> dct:source [
+        schema:potentialAction [
+            hydra:mapping [
+                hydra:variable ?arg
+            ]
+        ]
+    ].
+}
