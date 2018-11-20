@@ -21,8 +21,7 @@ list ($param1, $param2) = array_values(getQueryStringArgs($customArgs));
  * For instance, call another service using param2:
  */
 $other_param = someService($param2);
-
-$logger->info("What must be done has been done...");
+$logger->info("Retrieved other parameter: ".$other_param);
 
 // ----------------------------------------------------------
 
@@ -32,6 +31,6 @@ $apiQuery = str_replace('{param1}', urlencode($param1), $apiQuery);
 $apiQuery = str_replace('{other_param}', urlencode($other_param), $apiQuery);
 
 /*
- * This is it. Now variable $apiQuery will be used to do the rest of the job.
+ * This is it. Now, variable $apiQuery will be used to do the rest of the job.
  */
 ?>
