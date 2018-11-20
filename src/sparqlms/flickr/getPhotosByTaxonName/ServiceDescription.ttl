@@ -52,8 +52,6 @@
     schema:documentation "The taxon scientific name must be provided by property dwc:scientificName in the SPARQL graph pattern.";
 
     a hydra:IriTemplate;
-    hydra:template 
-        "https://api.flickr.com/services/rest/?method=flickr.photos.search&format=json&nojsoncallback=1&api_key=<api_key>&per_page=500&tags=taxonomy%3Abinomial%3D{name}";
     hydra:mapping [
         hydra:variable "name";
         schema:description "The taxon scientific name without authorship nor date information";

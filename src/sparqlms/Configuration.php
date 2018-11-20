@@ -68,7 +68,7 @@ class Configuration
             if ($logger->isHandling(Logger::DEBUG))
                 $logger->debug("Cannot read custom configuration file " . $customCfgFile . ". Trying service description graph.");
             
-            // The service description graph URI ends with a '/' e.g. http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/
+            // The service URI ends with a '/' e.g. http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/
             $serviceUri = $context->getConfigParam('root_url') . "/" . $context->getService() . "/";
             
             $query = file_get_contents('resource/read_custom_config.sparql');
@@ -76,7 +76,7 @@ class Configuration
             $result = $context->getSparqlClient()->queryRaw($query, "application/sparql-results+json");
             $jsonResult = json_decode($result->getBody(), true)['results']['bindings'];
             if (sizeof($jsonResult) == 0)
-                throw new Exception("No custom configuration found in Service Description graph '" . $serviceUri . "'.");
+                throw new Exception("No custom configuration found for service '" . $serviceUri . "'.");
             $jsonResult0 = $jsonResult[0];
             $customCfg = array();
             

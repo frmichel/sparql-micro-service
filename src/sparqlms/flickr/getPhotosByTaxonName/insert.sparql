@@ -8,14 +8,14 @@ INSERT {
         schema:mainEntityOfPage ?pageUrl;
         schema:fileFormat "image/jpeg";
 
-        schema:author [ schema:name ?authorName; schema:url ?authorUrl ];
+        schema:author [ schema:identifier ?owner; schema:url ?authorUrl ];
         .
 }
 WHERE {
     ?photo api:id ?id; api:secret ?secret; api:server ?server; api:farm ?farm;
         api:ispublic ?public;
         api:title ?title;
-        api:owner ?owner; api:ownername ?authorName;
+        api:owner ?owner;
     .
 
     # Dereferenceable URI: customize with the hostname of your Web server

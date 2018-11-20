@@ -31,6 +31,6 @@
 <ShapesGraph#PersonShape> a shacl:NodeShape;
     shacl:targetClass schema:Person;
     shacl:property 
-      [ a shacl:PropertyShape; shacl:path schema:name; shacl:datatype xsd:string ],
+      [ a shacl:PropertyShape; shacl:path schema:identifier; shacl:datatype xsd:string ],
       [ a shacl:PropertyShape; shacl:path schema:url; shacl:nodeKind shacl:IRI ];
     shacl:closed false.
