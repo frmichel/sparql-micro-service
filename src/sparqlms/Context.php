@@ -94,7 +94,7 @@ class Context
             }
         
         // --- Read mandatory HTTP query string arguments
-        list ($service, $querymode) = array_values(getQueryStringArgs($this->getConfigParam('parameter')));
+        list ($service, $querymode) = array_values(Utils::getQueryStringArgs($this->getConfigParam('parameter')));
         if ($service != '')
             $this->service = $service;
         else

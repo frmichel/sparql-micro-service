@@ -54,7 +54,7 @@ class Configuration
         if (file_exists($customCfgFile)) {
             
             // --- Read the custom service configuration file
-
+            
             $customCfg = parse_ini_file($customCfgFile);
             if (! $customCfg)
                 throw new Exception("Configuration file " . $customCfgFile . " is invalid.");
@@ -79,7 +79,7 @@ class Configuration
             // Read Web API query string and cache expiration time
             $query = file_get_contents('resources/read_custom_config.sparql');
             $query = str_replace('{serviceUri}', $serviceUri, $query);
-            $jsonResult = runSparqlSelectQuery($query);
+            $jsonResult = Utils::runSparqlSelectQuery($query);
             if (sizeof($jsonResult) == 0)
                 throw new Exception("No service description found for service <" . $serviceUri . ">.");
             
@@ -104,7 +104,7 @@ class Configuration
             // Read the service input arguments from the Hydra mapping (possibly multiple values for variable arg)
             $query = file_get_contents('resources/read_custom_config_args.sparql');
             $query = str_replace('{serviceUri}', $serviceUri, $query);
-            $jsonResult = runSparqlSelectQuery($query);
+            $jsonResult = Utils::runSparqlSelectQuery($query);
             foreach ($jsonResult as $binding) {
                 $name = $binding['name']['value'];
                 $customCfg['custom_parameter'][] = $name;

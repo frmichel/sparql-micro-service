@@ -8,7 +8,7 @@ require_once '../../vendor/autoload.php';
 
 use Monolog\Logger;
 use Exception;
-require_once 'utils.php';
+require_once 'Utils.php';
 require_once 'Context.php';
 require_once 'Configuration.php';
 require_once 'Metrology.php';
@@ -32,23 +32,23 @@ try {
     // ------------------------------------------------------------------------------------
     
     // Read HTTP headers
-    list ($contentType, $accept) = getHttpHeaders();
+    list ($contentType, $accept) = Utils::getHttpHeaders();
     
     // Read the mandatory arguments from the HTTP query string
     if (array_key_exists('QUERY_STRING', $_SERVER)) {
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug('Query string: ' . $_SERVER['QUERY_STRING']);
     } else
-        httpBadRequest("HTTP error, no query string provided.");
+        Utils::httpBadRequest("HTTP error, no query string provided.");
     
-    list ($service, $querymode) = array_values(getQueryStringArgs($context->getConfigParam('parameter')));
+        list ($service, $querymode) = array_values(Utils::getQueryStringArgs($context->getConfigParam('parameter')));
     $logger->info("Query parameter (html special chars encoded) 'service': " . htmlspecialchars($service));
     $logger->info("Query parameter (html special chars encoded) 'querymode': " . htmlspecialchars($querymode));
     
     // Get the SPARQL query using either GET or POST methods
-    $sparqlQuery = getSparqlQuery();
+    $sparqlQuery = Utils::getSparqlQuery();
     if ($sparqlQuery == "" && $querymode == 'sparql')
-        httpBadRequest("Empty SPARQL query.");
+        Utils::httpBadRequest("Empty SPARQL query.");
     else
         $logger->info("SPARQL query (html special chars encoded): " . htmlspecialchars($sparqlQuery));
     
@@ -64,7 +64,7 @@ try {
             throw new Exception('Variable "$apiQuery" does not exist. Should haver been set by script ' . $service . '/service.php.');
     } else {
         // Read the service-specific arguments either from the HTTP query string of from the SPARQL graph pattern
-        $customArgs = getServiceCustomArgs($context->getConfigParam('custom_parameter'), $sparqlQuery);
+        $customArgs = Utils::getServiceCustomArgs($context->getConfigParam('custom_parameter'), $sparqlQuery);
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("Custom service arguments: " . print_r($customArgs, true));
         
@@ -79,7 +79,7 @@ try {
     if ($apiQuery == "") // Query string set to empty string in case an error occured.
         $serializedQuads = "";
     else
-        $serializedQuads = translateJsonToNQuads($apiQuery, $service . '/profile.jsonld');
+        $serializedQuads = Utils::translateJsonToNQuads($apiQuery, $service . '/profile.jsonld');
     $metro->stopTimer(2);
     
     // ------------------------------------------------------------------------------------

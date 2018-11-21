@@ -13,7 +13,7 @@ $logger = $context->getLogger();
 $customArgs = $context->getConfigParam('custom_parameter');
 
 // Call another API service to get the code associated with the taxon name
-list ($name) = array_values(getQueryStringArgs($customArgs));
+list ($name) = array_values(Utils::getQueryStringArgs($customArgs));
 $taxonCode = getTaxonCode($name);
 $logger->info("Retrieved taxon code: " . $taxonCode);
 

@@ -11,7 +11,7 @@ $logger = $context->getLogger();
 
 // Get the service custom arguments defined in config.ini: param1 and param2
 $customArgs = $context->getConfigParam('custom_parameter');
-list ($param1, $param2) = array_values(getQueryStringArgs($customArgs));
+list ($param1, $param2) = array_values(Utils::getQueryStringArgs($customArgs));
 
 /*
  * ----------------- Your specific code --------------------
