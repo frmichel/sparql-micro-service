@@ -1,0 +1,20 @@
+# Read the inputs from the SPARQL query in case the Hydra mapping refers to a property shape
+SELECT ?argValue WHERE {
+
+    # Get the predicate from the PropertyShape and the class constraint from the NodeShape
+    GRAPH <{shapesGraph}> {
+        ?nodeShape a shacl:NodeShape; 
+            shacl:property <{shape}>;
+            shacl:targetClass ?class.
+            
+        <{shape}> a shacl:PropertyShape; shacl:path ?predicate.
+    }
+    
+    # Get the object of the predicates obtained above
+    GRAPH <{spinQueryGraph}> {
+        ?query
+            sp:where [ sp:subject ?subject; sp:predicate rdf:type; sp:object ?class. ];
+            sp:where [ sp:subject ?subject; sp:predicate ?predicate; sp:object ?argValue. ].
+        FILTER (isLiteral(?argValue))
+    }
+}

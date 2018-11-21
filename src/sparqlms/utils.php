@@ -218,22 +218,106 @@ function parseHttpHeaders($headers)
  *            array of parameter names to read from the query string
  * @return array associative array of parameter names and values read from the query string
  */
-function getQueryStringArgs($args)
+function getServiceCustomArgsFromQueryString($args)
 {
     $result = array();
-    foreach ($args as $argName) {
-        if (array_key_exists($argName, $_REQUEST)) {
-            // Escape special chars except in case of the 'query' parameter that contains the SPARQL query
-            if ($argName != "query")
-                $argValue = strip_tags($_REQUEST[$argName]);
+    foreach ($args as $name) {
+        
+        if (array_key_exists($name, $_REQUEST)) {
+            if ($name != "query")
+                // Escape special chars
+                $argValue = strip_tags($_REQUEST[$name]);
             else
-                $argValue = $_REQUEST[$argName];
-            $result[$argName] = $argValue;
+                // Dp NOT escape special chars in case of the 'query' parameter that contains the SPARQL query
+                $argValue = $_REQUEST[$name];
+            $result[$name] = $argValue;
         } else
-            httpBadRequest("Query argument '" . $argName . "' undefined.");
+            httpBadRequest("Query argument '" . $name . "' undefined.");
     }
     
     return $result;
+}
+
+/**
+ * Get the Web API arguments passed to the micro-service within the SPARQL graph pattern.
+ *
+ * If any parameter in not found, the function returns an HTTP error 400 and exits.
+ *
+ * @param array $args
+ *            array of parameter names to read
+ * @param string $sparqlQuery
+ *            the SPARQL query string
+ * @return array associative array of parameter names and values
+ */
+function getServiceCustomArgsFromSparqlQuery($args, $sparqlQuery)
+{
+    global $context;
+    $logger = $context->getLogger();
+    
+    // @todo Convert the SPARQL query to SPIN and load it into a temp graph
+    $spinQueryGraph = '';
+    
+    $result = array();
+    foreach ($args as $name) {
+        $binding = $context->getConfigParam('custom_parameter_binding')[$name];
+        
+        if (array_key_exists('predicate', $binding)) {
+            
+            // The value of argument $name is given by a predicate denoted by hydra:property in the service description
+            $query = file_get_contents('resources/read_input_from_gp_with_predicate.sparql');
+            $query = str_replace('{spinQueryGraph}', $spinQueryGraph, $query);
+            $query = str_replace('{predicate}', $binding['predicate'], $query);
+            $jsonResult = runSparqlSelectQuery($query);
+            if (sizeof($jsonResult) == 0)
+                $logger->info("No triple with predicate '" . $binding['predicate'] . "' found in the SPARQL query. Returning empty response.");
+            elseif (sizeof($jsonResult) > 1)
+                throw new Exception("Only one value is allowed for property " . $predicate . ".");
+            else
+                $result[$name] = $jsonResult[0]['argValue']['value'];
+            //
+        } elseif (array_key_exists('shape', $binding)) {
+            
+            // The value of argument $name is given by a predicate denoted by a property shape
+            $query = file_get_contents('resources/read_input_from_gp_with_shape.sparql');
+            $query = str_replace('{shapesGraph}', $context->getShapesGraphUri(), $query);
+            $query = str_replace('{shape}', $binding['shape'], $query);
+            $query = str_replace('{spinQueryGraph}', $spinQueryGraph, $query);
+            $jsonResult = runSparqlSelectQuery($query);
+            if (sizeof($jsonResult) == 0)
+                $logger->info("No triple matching property shape '" . $binding['shape'] . "' found in the SPARQL query. Returning empty response.");
+            elseif (sizeof($jsonResult) > 1)
+                throw new Exception("Only one value is allowed for property " . $jsonResult[0]['predicate']['value'] . ".");
+            else
+                $result[$name] = $jsonResult[0]['argValue']['value'];
+            //
+        } else
+            throw new Exception("No predicate nor shape for argument " . $name . " of service <" . $context->getServiceUri() . ">.");
+    }
+    
+    return $result;
+}
+
+/**
+ * Get the Web API arguments passed to the micro-service either as query string arguments
+ * or within the SPARQL graph pattern.
+ *
+ * If any parameter in not found, the function returns an HTTP error 400 and exits.
+ *
+ * @param array $args
+ *            array of parameter names to read
+ * @param string $sparqlQuery
+ *            the SPARQL query string. Optional: needed if arguments are passed in the SPARQL graph pattern
+ * @return array associative array of parameter names and values
+ */
+function getServiceCustomArgs($args, $sparqlQuery = null)
+{
+    global $context;
+    $logger = $context->getLogger();
+    
+    if ($context->getConfigParam('service_description'))
+        return getServiceCustomArgsFromQueryString($args);
+    else
+        return getServiceCustomArgsFromSparqlQuery($args, $sparqlQuery);
 }
 
 /**
@@ -281,4 +365,36 @@ function getSparqlQuery()
     }
     return $sparqlQuery;
 }
+
+/**
+ * Execute a SPARQL SELECT query asking for a JSON response and return only the bindings part of the response
+ *
+ * @param string $query
+ *            SPARQL query
+ * @return array JSON document containnig only an array (possibly empty) of bindings
+ * @example The returned document would typically look like this:
+ *          <pre><code>
+ *          [ {
+ *          "book": { "type": "uri" , "value": "http://example.org/book/book6" } ,
+ *          "title": { "type": "literal" , "value": "Harry Potter and the Half-Blood Prince" }
+ *          },
+ *          {
+ *          "book": { "type": "uri" , "value": "http://example.org/book/book7" } ,
+ *          "title": { "type": "literal" , "value": "Harry Potter and the Deathly Hallows" }
+ *          }
+ *          ]
+ *          </code></pre>
+ */
+function runSparqlSelectQuery($query)
+{
+    global $contet;
+    $logger = $context->getLogger();
+    if ($logger->isHandling(Logger::DEBUG))
+        $logger->debug("Executing SPARQL query:\n " . $query);
+    
+    $result = $context->getSparqlClient()->queryRaw($query, "application/sparql-results+json");
+    $jsonResult = json_decode($result->getBody(), true)['results']['bindings'];
+    return $jsonResult;
+}
+
 ?>

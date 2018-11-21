@@ -1,0 +1,11 @@
+SELECT ?name WHERE {
+
+    <{serviceUri}> a sd:Service;
+        dct:source [ schema:potentialAction [ hydra:mapping ?mapping ] ];
+        
+    ?mapping hydra:variable ?name.
+    
+    OPTIONAL { ?mapping hydra:property ?predicate. }
+    
+    OPTIONAL { ?mapping shacl:sourceShape ?shape. }
+}

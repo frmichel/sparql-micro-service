@@ -26,7 +26,6 @@ try {
     // Init the context: read the global and service-specific config.ini files, init the cache and logger
     $context = Context::getInstance(Logger::INFO);
     $logger = $context->getLogger();
-    $useCache = $context->getConfigParam('use_cache');
     
     // ------------------------------------------------------------------------------------
     // --- Parse the HTTP query, retrieve arguments
@@ -64,10 +63,10 @@ try {
         if (! isset($apiQuery))
             throw new Exception('Variable "$apiQuery" does not exist. Should haver been set by script ' . $service . '/service.php.');
     } else {
-        // Read the service-specific arguments from the HTTP query string
-        $customArgs = getQueryStringArgs($context->getConfigParam('custom_parameter'));
+        // Read the service-specific arguments either from the HTTP query string of from the SPARQL graph pattern
+        $customArgs = getServiceCustomArgs($context->getConfigParam('custom_parameter'), $sparqlQuery);
         if ($logger->isHandling(Logger::DEBUG))
-            $logger->debug("Service arguments: " . print_r($customArgs, TRUE));
+            $logger->debug("Custom service arguments: " . print_r($customArgs, true));
         
         $apiQuery = $context->getConfigParam('api_query');
         foreach ($customArgs as $parName => $parVal)

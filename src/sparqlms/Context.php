@@ -194,6 +194,32 @@ class Context
     }
 
     /**
+     * Return the URI of the service being called.
+     * The URI ends with a '/'
+     * e.g. http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/
+     *
+     * Note the this URI is different from the service sescription graph URI
+     * that would be http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/ServiceDescription
+     *
+     * @return string
+     */
+    public function getServiceUri()
+    {
+        return $this->getConfigParam('root_url') . "/" . $this->getService() . "/";
+    }
+
+    /**
+     * Return the URI of the shapes graph, if it exists, e.g.
+     * http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/ShapesGraph
+     *
+     * @return string
+     */
+    public function getShapesGraphUri()
+    {
+        return $this->getConfigParam('root_url') . "/" . $this->getService() . "/ShapesGraph";
+    }
+
+    /**
      * Return the client to the local RDF store and SPARQL endpoint
      *
      * @return EasyRdf_Sparql_Client
