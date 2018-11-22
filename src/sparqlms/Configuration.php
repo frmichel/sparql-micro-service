@@ -42,12 +42,11 @@ class Configuration
      * Read the SPARQL micro-serivce custom configuration, either from the service/config.ini file
      * or from the Service Description graph (stored in the local RDF store)
      *
-     * @param Context $context
-     *            initialized context
      * @return array associative array of config parameters and values
      */
-    static public function getCustomConfig($context)
+    static public function getCustomConfig()
     {
+        global $context;
         $logger = $context->getLogger();
         
         $customCfgFile = $context->getService() . '/config.ini';
@@ -71,7 +70,7 @@ class Configuration
             // --- Read config parameters from the service description graph
             
             if ($logger->isHandling(Logger::DEBUG))
-                $logger->debug("Cannot read custom configuration file " . $customCfgFile . ". Trying service description graph.");
+                $logger->debug("No custom configuration file " . $customCfgFile . ". Trying service description graph...");
             $customCfg = array();
             $customCfg['service_description'] = true;
             $serviceUri = $context->getServiceUri();
@@ -105,19 +104,22 @@ class Configuration
             $query = file_get_contents('resources/read_custom_config_args.sparql');
             $query = str_replace('{serviceUri}', $serviceUri, $query);
             $jsonResult = Utils::runSparqlSelectQuery($query);
+            if (sizeof($jsonResult) == 0)
+                throw new Exception("No argument mapping found for service <" . $serviceUri . ">.");
+            
             foreach ($jsonResult as $binding) {
                 $name = $binding['name']['value'];
                 $customCfg['custom_parameter'][] = $name;
                 
-                // Variables ?argPred and ?propShape may be unbound (optional triple patterns), but one of them should be provided
-                if (array_key_exists('argPred', $binding))
+                // Variables ?predicate and ?shape may be unbound (optional triple patterns), but one of them should be provided
+                if (array_key_exists('predicate', $binding))
                     $customCfg['custom_parameter_binding'][$name]['predicate'] = $binding['predicate']['value'];
-                elseif (array_key_exists('argShape', $binding))
+                elseif (array_key_exists('shape', $binding))
                     $customCfg['custom_parameter_binding'][$name]['shape'] = $binding['shape']['value'];
                 else
                     throw new Exception("No hydra:property nor shacl:sourceShape found for argument " . $name . " of service <" . $serviceUri . ">. Fix the service description graph.");
             }
-            return $customCfg;
         }
+        return $customCfg;
     }
 }

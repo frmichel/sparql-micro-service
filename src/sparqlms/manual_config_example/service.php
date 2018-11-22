@@ -9,9 +9,10 @@ namespace frmichel\sparqlms;
 $context = Context::getInstance();
 $logger = $context->getLogger();
 
-// Get the service custom arguments defined in config.ini: param1 and param2
-$customArgs = $context->getConfigParam('custom_parameter');
-list ($param1, $param2) = array_values(Utils::getQueryStringArgs($customArgs));
+// Read the service custom arguments
+$customArgs = Utils::getQueryStringArgs($context->getConfigParam('custom_parameter'));
+$param1 = $customArgs['param1'];
+$param2 = $customArgs['param2'];
 
 /*
  * ----------------- Your specific code --------------------

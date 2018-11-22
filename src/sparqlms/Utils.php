@@ -48,6 +48,9 @@ class Utils
 
     /**
      * Return an HTTP staus 400 with an error message and exit the script.
+     *
+     * @param string $message
+     *            error message returned
      */
     static public function httpBadRequest($message)
     {
@@ -62,6 +65,9 @@ class Utils
 
     /**
      * Return an HTTP staus 405 with an error message and exit the script.
+     *
+     * @param string $message
+     *            error message returned
      */
     static public function httpMethodNotAllowed($message)
     {
@@ -69,6 +75,25 @@ class Utils
         $logger = $context->getLogger();
         
         http_response_code(405); // Method Not Allowed
+        $logger->error($message);
+        print("Erroneous request: " . $message . "\n");
+        exit(0);
+    }
+
+    /**
+     * Return an HTTP staus 422 with an error message and exit the script.
+     *
+     * @see https://httpstatuses.com/422
+     *
+     * @param string $message
+     *            error message returned
+     */
+    static public function httpUnprocessableEntity($message)
+    {
+        global $context;
+        $logger = $context->getLogger();
+        
+        http_response_code(422); // Unprocessable entity
         $logger->error($message);
         print("Erroneous request: " . $message . "\n");
         exit(0);
@@ -104,7 +129,7 @@ class Utils
                 if ($logger->isHandling(Logger::DEBUG))
                     $logger->debug("JSON response not found in cache.");
                 // Query the Web API
-                    $apiResp = self::loadJsonDocument($jsonUrl);
+                $apiResp = self::loadJsonDocument($jsonUrl);
                 if ($logger->isHandling(Logger::DEBUG))
                     $logger->debug("Web API JSON response: \n" . $apiResp);
                 
@@ -252,21 +277,29 @@ class Utils
      *
      * If any parameter in not found, the function returns an HTTP error 400 and exits.
      *
-     * @param array $args
-     *            array of parameter names to read
      * @param string $sparqlQuery
      *            the SPARQL query string
      * @return array associative array of parameter names and values
      */
-    static private function getServiceCustomArgsFromSparqlQuery($args, $sparqlQuery)
+    static private function getServiceCustomArgsFromSparqlQuery($sparqlQuery)
     {
         global $context;
         $logger = $context->getLogger();
         
-        // @todo Convert the SPARQL query to SPIN and load it into a temp graph
-        $spinQueryGraph = '';
+        // --- Convert the SPARQL query to SPIN and load it into a temporary graph
+        $spinInvocation = $context->getConfigParam('spin_endpoint') . '?arg=' . urlencode($sparqlQuery);
+        $spinQueryGraph = $context->getConfigParam('root_url') . '/tempgraph' . uniqid("-", true);
+        $query = 'LOAD <' . $spinInvocation . '> INTO GRAPH <' . $spinQueryGraph . '>';
+        if ($logger->isHandling(Logger::DEBUG)) {
+            $logger->debug("SPARQL query converted to SPIN: \n" . file_get_contents($spinInvocation));
+            $logger->debug('Loading SPIN SPARQL query into temp graph ' . $spinQueryGraph);
+        }
+        $context->getSparqlClient()->update($query);
         
+        // --- For each service custom argument, read its value from the SPARQL graph pattern.
+        // Each argument may be provided either by hydra:property or by a property shape denoted by shacl:sourceShape
         $result = array();
+        $args = $context->getConfigParam('custom_parameter');
         foreach ($args as $name) {
             $binding = $context->getConfigParam('custom_parameter_binding')[$name];
             
@@ -278,9 +311,9 @@ class Utils
                 $query = str_replace('{predicate}', $binding['predicate'], $query);
                 $jsonResult = self::runSparqlSelectQuery($query);
                 if (sizeof($jsonResult) == 0)
-                    $logger->info("No triple with predicate '" . $binding['predicate'] . "' found in the SPARQL query. Returning empty response.");
+                    $logger->info("No triple with predicate '" . $binding['predicate'] . "' found in the SPARQL query. Will return empty response.");
                 elseif (sizeof($jsonResult) > 1)
-                    throw new Exception("Only one value is allowed for property " . $predicate . ".");
+                    Utils::httpUnprocessableEntity("Only one value is allowed for property " . $predicate . ".");
                 else
                     $result[$name] = $jsonResult[0]['argValue']['value'];
                 //
@@ -292,16 +325,22 @@ class Utils
                 $query = str_replace('{shape}', $binding['shape'], $query);
                 $query = str_replace('{spinQueryGraph}', $spinQueryGraph, $query);
                 $jsonResult = self::runSparqlSelectQuery($query);
+                
                 if (sizeof($jsonResult) == 0)
-                    $logger->info("No triple matching property shape '" . $binding['shape'] . "' found in the SPARQL query. Returning empty response.");
+                    $logger->info("No triple matching property shape '" . $binding['shape'] . "' found in the SPARQL query. Will return empty response.");
                 elseif (sizeof($jsonResult) > 1)
-                    throw new Exception("Only one value is allowed for property " . $jsonResult[0]['predicate']['value'] . ".");
+                    Utils::httpUnprocessableEntity("Only one value is allowed for property " . $jsonResult[0]['predicate']['value'] . ".");
                 else
                     $result[$name] = $jsonResult[0]['argValue']['value'];
                 //
             } else
                 throw new Exception("No predicate nor shape for argument " . $name . " of service <" . $context->getServiceUri() . ">.");
         }
+        
+        // Drop the temporary SPIN graph
+        if ($logger->isHandling(Logger::DEBUG))
+            $logger->debug("Dropping graph: <" . $spinQueryGraph . ">");
+        $context->getSparqlClient()->update("DROP SILENT GRAPH <" . $spinQueryGraph . ">");
         
         return $result;
     }
@@ -312,21 +351,22 @@ class Utils
      *
      * If any parameter in not found, the function returns an HTTP error 400 and exits.
      *
-     * @param array $args
-     *            array of parameter names to read
      * @param string $sparqlQuery
      *            the SPARQL query string. Optional: needed if arguments are passed in the SPARQL graph pattern
      * @return array associative array of parameter names and values
      */
-    static public function getServiceCustomArgs($args, $sparqlQuery = null)
+    static public function getServiceCustomArgs($sparqlQuery = null)
     {
         global $context;
         $logger = $context->getLogger();
         
-        if ($context->getConfigParam('service_description'))
-            return self::getServiceCustomArgsFromQueryString($args);
-        else
-            return self::getServiceCustomArgsFromSparqlQuery($args, $sparqlQuery);
+        if (! $context->getConfigParam('service_description'))
+            return self::getQueryStringArgs($context->getConfigParam('custom_parameter'));
+        else {
+            if ($sparqlQuery == null)
+                throw new Exception("No SPARQL query passed although arguments are given in the graph pattern.");
+            return self::getServiceCustomArgsFromSparqlQuery($sparqlQuery);
+        }
     }
 
     /**
@@ -396,13 +436,16 @@ class Utils
      */
     static public function runSparqlSelectQuery($query)
     {
-        global $contet;
+        global $context;
         $logger = $context->getLogger();
         if ($logger->isHandling(Logger::DEBUG))
-            $logger->debug("Executing SPARQL query:\n " . $query);
+            $logger->debug("Executing SPARQL query:\n" . $query);
         
         $result = $context->getSparqlClient()->queryRaw($query, "application/sparql-results+json");
         $jsonResult = json_decode($result->getBody(), true)['results']['bindings'];
+        
+        if ($logger->isHandling(Logger::DEBUG))
+            $logger->debug("SPARQL response: " . print_r($jsonResult, true));
         return $jsonResult;
     }
 }

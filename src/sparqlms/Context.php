@@ -83,7 +83,7 @@ class Context
         // --- Read the global configuration file and check query parameters
         $this->config = Configuration::readGobalConfig();
         if ($logger->isHandling(Logger::DEBUG))
-            $logger->debug("Global configuration: " . print_r($this->config, TRUE));
+            $logger->debug("Global configuration read from config.ini: " . print_r($this->config, TRUE));
         
         // Set default namespaces. See other existing default namespaces in EasyRdf/Namespace.php
         if (array_key_exists('namespace', $this->config))
@@ -106,12 +106,6 @@ class Context
         // --- Initialize the local RDF store and SPARQL endpoint
         $this->sparqlClient = new EasyRdf_Sparql_Client($this->getConfigParam('sparql_endpoint'));
         
-        // --- Read the custom service configuration and merge it with the global confif
-        $customCfg = Configuration::getCustomConfig($this);
-        if ($logger->isHandling(Logger::DEBUG))
-            $logger->debug("Custom configuration: " . print_r($customCfg, TRUE));
-        $this->config = array_merge($this->config, $customCfg);
-        
         // --- Initialize the cache database connection (must be done after the custom config has been loaded and merged, to get the expiration time)
         if ($this->useCache())
             $this->cache = Cache::getInstance($this);
@@ -131,6 +125,20 @@ class Context
             self::$singleton = new Context($configFile, $logLevel);
         }
         return self::$singleton;
+    }
+
+    /**
+     * Read the service custom configuration and merge it with the global config
+     *
+     * This cannot be done within the constructor because it requires the context
+     * to be initialized first, notably to access the SPARQL client.
+     */
+    public function readCustomConfig()
+    {
+        $customCfg = Configuration::getCustomConfig($this);
+        if ($this->logger->isHandling(Logger::DEBUG))
+            $this->logger->debug("Service custom configuration: " . print_r($customCfg, TRUE));
+        $this->config = array_merge($this->config, $customCfg);
     }
 
     /**

@@ -23,9 +23,12 @@ try {
     $metro = Metrology::getInstance(Logger::WARNING);
     $metro->startTimer(1);
     
-    // Init the context: read the global and service-specific config.ini files, init the cache and logger
+    // Init the context: read the global config.ini file, init the cache and logger
     $context = Context::getInstance(Logger::INFO);
     $logger = $context->getLogger();
+    
+    // Read the service-specific configuration, either as config.ini file or from the service description graph
+    $context->readCustomConfig();
     
     // ------------------------------------------------------------------------------------
     // --- Parse the HTTP query, retrieve arguments
@@ -41,7 +44,7 @@ try {
     } else
         Utils::httpBadRequest("HTTP error, no query string provided.");
     
-        list ($service, $querymode) = array_values(Utils::getQueryStringArgs($context->getConfigParam('parameter')));
+    list ($service, $querymode) = array_values(Utils::getQueryStringArgs($context->getConfigParam('parameter')));
     $logger->info("Query parameter (html special chars encoded) 'service': " . htmlspecialchars($service));
     $logger->info("Query parameter (html special chars encoded) 'querymode': " . htmlspecialchars($querymode));
     
@@ -56,31 +59,44 @@ try {
     // --- Build the Web API query string and call the service
     // ------------------------------------------------------------------------------------
     
-    // Format the Web API query string
+    // --- Format the Web API query string
+    
     if (file_exists($service . '/service.php')) {
+        
         // Web API query string will be formatted by the custom service script
         require $service . '/service.php';
         if (! isset($apiQuery))
-            throw new Exception('Variable "$apiQuery" does not exist. Should haver been set by script ' . $service . '/service.php.');
+            throw new Exception('Variable "$apiQuery" was not set by ' . $service . '/service.php.');
+        if (! isset($customArgs))
+            throw new Exception('Variable "$customArgs" was not set by ' . $service . '/service.php.');
+        //
     } else {
-        // Read the service-specific arguments either from the HTTP query string of from the SPARQL graph pattern
-        $customArgs = Utils::getServiceCustomArgs($context->getConfigParam('custom_parameter'), $sparqlQuery);
-        if ($logger->isHandling(Logger::DEBUG))
-            $logger->debug("Custom service arguments: " . print_r($customArgs, true));
         
-        $apiQuery = $context->getConfigParam('api_query');
-        foreach ($customArgs as $parName => $parVal)
-            $apiQuery = str_replace('{' . $parName . '}', urlencode($parVal), $apiQuery);
+        // Read the service-specific arguments either from the HTTP query string or from the SPARQL graph pattern
+        $customArgs = Utils::getServiceCustomArgs($sparqlQuery);
+        if (sizeof($customArgs) != sizeof($context->getConfigParam('custom_parameter')))
+            // In case one argument is not found in the query, then do not query the API at all to return an empty response
+            $apiQuery = "";
+        else {
+            $apiQuery = $context->getConfigParam('api_query');
+            foreach ($customArgs as $parName => $parVal)
+                $apiQuery = str_replace('{' . $parName . '}', urlencode($parVal), $apiQuery);
+        }
     }
-    $logger->info("Web API query string: \n" . $apiQuery);
     
-    // Call the Web API service, apply the JSON-LD profile and translate to NQuads
+    if ($apiQuery != "") {
+        $logger->info("Service custom arguments: " . print_r($customArgs, true));
+        $logger->info("Web API query string: " . $apiQuery);
+    } else
+        $logger->info("Web API query was set to empty string. Will return empty response.");
+    
+    // --- Call the Web API service, apply the JSON-LD profile and translate to NQuads
+    
     $metro->startTimer(2);
-    if ($apiQuery == "") // Query string set to empty string in case an error occured.
-        $serializedQuads = "";
-    else
-        $serializedQuads = Utils::translateJsonToNQuads($apiQuery, $service . '/profile.jsonld');
+    $serializedQuads = ($apiQuery == "") ? "" : Utils::translateJsonToNQuads($apiQuery, $service . '/profile.jsonld');
     $metro->stopTimer(2);
+    
+    // Query string set to empty string in case an error occured.
     
     // ------------------------------------------------------------------------------------
     // --- Populate the temporary graph
@@ -89,22 +105,22 @@ try {
     // URI of the temporary work graph
     $graphUri = $context->getConfigParam('root_url') . '/tempgraph' . uniqid("-", true);
     
-    // Create the temporary graph by clearing it
+    // Insert the triples generated from the Web API response
     $sparqlClient = $context->getSparqlClient();
     if ($logger->isHandling(Logger::DEBUG))
-        $logger->debug("Creating graph: <" . $graphUri . ">");
-    $query = "CLEAR SILENT GRAPH <" . $graphUri . ">\n";
-    $sparqlClient->update($query);
-    
-    // Insert the quads obtained from the Web API
+        $logger->debug("Creating temporary graph: <" . $graphUri . ">");
     $query = "INSERT DATA { GRAPH <" . $graphUri . "> {\n" . $serializedQuads . "\n}}\n";
     $sparqlClient->update($query);
     
     // Add the triples for which this SPARQL service is meant
     $sparqlInsert = $service . '/insert.sparql';
     if ($querymode == 'sparql' && file_exists($sparqlInsert)) {
+        $logger->info("Found SPARQL INSERT query file: " . $sparqlInsert);
         $query = "WITH <" . $graphUri . ">\n" . file_get_contents($sparqlInsert);
-        $logger->info("SPARQL INSERT query file: " . $sparqlInsert);
+        
+        // Reinject service custom arguments into the INSERT query
+        foreach ($customArgs as $arg => $val)
+            $query = str_replace('{' . $arg . '}', $val, $query);
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("Generating triples with INSERT query:\n" . $query);
         $sparqlClient->update($query);
@@ -122,9 +138,7 @@ try {
     // --- Run the SPARQL query against temporary graph
     // ------------------------------------------------------------------------------------
     
-    if ($querymode == 'sparql') {
-        $logger->info('Evaluating SPARQL query against temporary graph...');
-    } elseif ($querymode == 'ld') {
+    if ($querymode == 'ld') {
         $sparqlConstruct = $service . '/construct.sparql';
         if (file_exists($sparqlConstruct)) {
             $sparqlQuery = file_get_contents($sparqlConstruct);
@@ -133,8 +147,9 @@ try {
                 $logger->debug("Generating triples with CONSTRUCT query:\n" . $sparqlQuery);
         } else
             throw new Exception("LD mode required but no SPARQL CONSTRUCT query is defined.");
-    } // else: exception already thrown above
-      
+    } else
+        $logger->info('Evaluating SPARQL query against temporary graph...');
+    
     // Run the query against the temporary graph
     $result = $sparqlClient->queryRaw($sparqlQuery, $accept, $namedGraphUri = $graphUri);
     if ($logger->isHandling(Logger::DEBUG))
@@ -156,8 +171,7 @@ try {
     // Drop the temporary graph
     if ($logger->isHandling(Logger::DEBUG))
         $logger->debug("Dropping graph: <" . $graphUri . ">");
-    $query = "DROP SILENT GRAPH <" . $graphUri . ">\n";
-    $sparqlClient->update($query);
+    $sparqlClient->update("DROP SILENT GRAPH <" . $graphUri . ">");
     $logger->info("--------- Done --------");
     
     $metro->stopTimer(1);
@@ -166,7 +180,7 @@ try {
     try {
         $logger = Context::getInstance()->getLogger();
         $logger->error((string) $e . "\n");
-        $logger->info("Returning error 500.\n");
+        $logger->info("Returning HTTP status 500.\n");
         $logger->info("--------- Done --------");
     } catch (Exception $f) {
         print("Could not process the request. Error:\n" . (string) $e . "\n");

@@ -1,4 +1,8 @@
 INSERT {
+    [] a dwc:Taxon;
+        dwc:scientificName "{name}";
+        schema:image ?photoUri.
+
     ?photoUri a schema:Photograph;
 
         schema:name ?title;

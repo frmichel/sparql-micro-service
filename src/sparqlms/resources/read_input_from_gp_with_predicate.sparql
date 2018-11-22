@@ -1,8 +1,10 @@
-# Read the inputs from the SPARQL query in case the Hydra mapping provides a hydra:propery
+@prefix sp:      <http://spinrdf.org/sp#> .
+
+# Read the inputs from the SPARQL query in case the Hydra mapping provides a hydra:property
 SELECT ?argValue WHERE {
 
     GRAPH <{spinQueryGraph}> {
-        ?query sp:where [ sp:predicate {predicate}; sp:object ?argValue. ]
+        [] sp:predicate <{predicate}>; sp:object ?argValue.
         FILTER (isLiteral(?argValue))
     }
 }
