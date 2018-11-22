@@ -4,6 +4,7 @@ namespace frmichel\sparqlms;
 use Monolog\Logger;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
+use Monolog\Processor\IntrospectionProcessor;
 use EasyRdf_Sparql_Client;
 use Exception;
 
@@ -74,9 +75,11 @@ class Context
         else
             $scriptName = basename(__FILE__);
         $handler = new RotatingFileHandler(__DIR__ . '/../../logs/sms.log', 5, $logLevel, true, 0666);
-        $handler->setFormatter(new LineFormatter(null, null, true));
+        $handler->setFormatter(new LineFormatter("[%datetime%] %level_name%: %message%\n", null, true));
+        //$handler->setFormatter(new LineFormatter("[%datetime%] %level_name%: %message% %context% %extra%\n", null, true));
         $this->logger = new Logger($scriptName);
         $this->logger->pushHandler($handler);
+        //$this->logger->pushProcessor(new IntrospectionProcessor($logLevel));
         $logger = $this->logger;
         $logger->info("--------- Start --------");
         
