@@ -1,0 +1,46 @@
+@prefix sd:      <http://www.w3.org/ns/sparql-service-description#>.
+@prefix shacl:   <http://www.w3.org/ns/shacl#>.
+@prefix hydra:   <http://www.w3.org/ns/hydra/core#>.
+@prefix dct:     <http://purl.org/dc/terms/>.
+@prefix sp:      <http://spinrdf.org/sp#> .
+
+SELECT DISTINCT ?name ?predicate ?argValue 
+FROM <{ServiceDescription}>     # Service Description graph
+FROM <{SpinQueryGraph}>         # SPARQL query in SPIN
+FROM <{ShapesGraph}>            # Optional shapes graph
+WHERE {
+
+    # Get the list of service custom arguments and their bindings to predicates of the SPARQL graph pattern
+    {
+        # - Service Description - Predicate given directly with hydra:property
+        [] a sd:Service; dct:source [ schema:potentialAction [ hydra:mapping [
+            hydra:variable ?name;
+            hydra:property ?predicate;
+        ]]].
+
+        # - SPIN quey - Get the object of the predicates obtained in ?predicate
+        [] sp:predicate ?predicate; sp:object ?argValue.
+        FILTER (isLiteral(?argValue))
+    }
+    
+    UNION
+    
+    {
+        # - Service Description - Predicate is given through a property shape with shacl:sourceShape
+        [] a sd:Service; dct:source [ schema:potentialAction [ hydra:mapping [
+            hydra:variable ?name;
+            shacl:sourceShape ?shape;
+        ]]].
+
+        # - Shapes Graph - Predicate is given through a property shape with shacl:sourceShape
+        ?shape a shacl:PropertyShape; shacl:path ?predicate.
+        ?nodeShape a shacl:NodeShape; 
+            shacl:targetClass ?class;
+            shacl:property ?shape.
+
+        # - SPIN quey - Get the object of the predicates obtained using ?shape
+        [] sp:subject ?subject; sp:predicate rdf:type;   sp:object ?class.
+        [] sp:subject ?subject; sp:predicate ?predicate; sp:object ?argValue.
+        FILTER (isLiteral(?argValue))
+    }
+}

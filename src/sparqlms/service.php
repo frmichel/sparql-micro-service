@@ -187,6 +187,7 @@ try {
         print("Second exception caught:\n" . (string) $f . "\n");
     }
     http_response_code(500);
+    print("Internal error: " . $e->getMessage() . "\n");
     exit(0);
 }
 ?>

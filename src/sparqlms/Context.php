@@ -4,7 +4,6 @@ namespace frmichel\sparqlms;
 use Monolog\Logger;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
-use Monolog\Processor\IntrospectionProcessor;
 use EasyRdf_Sparql_Client;
 use Exception;
 
@@ -76,10 +75,10 @@ class Context
             $scriptName = basename(__FILE__);
         $handler = new RotatingFileHandler(__DIR__ . '/../../logs/sms.log', 5, $logLevel, true, 0666);
         $handler->setFormatter(new LineFormatter("[%datetime%] %level_name%: %message%\n", null, true));
-        //$handler->setFormatter(new LineFormatter("[%datetime%] %level_name%: %message% %context% %extra%\n", null, true));
+        // $handler->setFormatter(new LineFormatter("[%datetime%] %level_name%: %message% %context% %extra%\n", null, true));
         $this->logger = new Logger($scriptName);
         $this->logger->pushHandler($handler);
-        //$this->logger->pushProcessor(new IntrospectionProcessor($logLevel));
+        // $this->logger->pushProcessor(new IntrospectionProcessor($logLevel));
         $logger = $this->logger;
         $logger->info("--------- Start --------");
         
@@ -205,12 +204,8 @@ class Context
     }
 
     /**
-     * Return the URI of the service being called.
-     * The URI ends with a '/'
-     * e.g. http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/
-     *
-     * Note the this URI is different from the service sescription graph URI
-     * that would be http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/ServiceDescription
+     * Return the URI of the service being called. The URI ends with a '/'
+     * @example http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/
      *
      * @return string
      */
@@ -220,8 +215,20 @@ class Context
     }
 
     /**
-     * Return the URI of the shapes graph, if it exists, e.g.
-     * http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/ShapesGraph
+     * Return the URI of the Service Description graph, that is returned 
+     * when looking up the service URI.
+     * @example http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/ServiceDescription
+     *
+     * @return string
+     */
+    public function getServiceDescriptionGraphUri()
+    {
+        return $this->getConfigParam('root_url') . "/" . $this->getService() . "/ServiceDescription";
+    }
+
+    /**
+     * Return the URI of the shapes graph, if it exists
+     * @example http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/ShapesGraph
      *
      * @return string
      */

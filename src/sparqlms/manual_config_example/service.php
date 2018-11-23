@@ -4,7 +4,9 @@ namespace frmichel\sparqlms;
 /**
  * This script can be provided to complement the service 'config.ini' file.
  *
- * It must take care of defining the global variable $apiQuery that contains the ready-to-run Web API query string.
+ * It must take care of defining two global variables:
+ * - $customArgs is an associative array of parameter names and associated values passed to the service
+ * - $apiQuery contains the ready-to-run WebAPI query string.
  */
 $context = Context::getInstance();
 $logger = $context->getLogger();
@@ -19,7 +21,7 @@ $param2 = $customArgs['param2'];
  *
  * Do whatever specific thing you may have to do here.
  *
- * For instance, call another service using param2:
+ * For instance, call another service someService() using param2:
  */
 $other_param = someService($param2);
 $logger->info("Retrieved other parameter: ".$other_param);

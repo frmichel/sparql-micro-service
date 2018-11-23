@@ -95,7 +95,7 @@ class Utils
         
         http_response_code(422); // Unprocessable entity
         $logger->error($message);
-        print("Erroneous request: " . $message . "\n");
+        print("Invalid request: " . $message . "\n");
         exit(0);
     }
 
@@ -168,8 +168,7 @@ class Utils
             return $serializedQuads;
         } catch (Exception $e) {
             $logger->warning((string) $e);
-            $logger->warning("Error when querying the API/transforming its response to JSON-LD. Returning empty result.");
-            return array();
+            throw new Exception("Cannot query the Web API or transform its response to JSON-LD.");
         }
     }
 
@@ -296,46 +295,29 @@ class Utils
         }
         $context->getSparqlClient()->update($query);
         
-        // --- For each service custom argument, read its value from the SPARQL graph pattern.
-        // Each argument may be provided either by hydra:property or by a property shape denoted by shacl:sourceShape
+        // --- For each service custom argument, read its value from the SPARQL query.
+        // Each argument may be provided either directly with hydra:property or by a property shape denoted by shacl:sourceShape
+        
+        $query = file_get_contents('resources/read_input_from_gp.sparql');
+        $query = str_replace('{SpinQueryGraph}', $spinQueryGraph, $query);
+        $query = str_replace('{ServiceDescription}', $context->getServiceDescriptionGraphUri(), $query);
+        $query = str_replace('{ShapesGraph}', $context->getShapesGraphUri(), $query);
+        
+        $jsonResult = self::runSparqlSelectQuery($query);
         $result = array();
-        $args = $context->getConfigParam('custom_parameter');
-        foreach ($args as $name) {
-            $binding = $context->getConfigParam('custom_parameter_binding')[$name];
-            
-            if (array_key_exists('predicate', $binding)) {
-                
-                // The value of argument $name is given by a predicate denoted by hydra:property in the service description
-                $query = file_get_contents('resources/read_input_from_gp_with_predicate.sparql');
-                $query = str_replace('{spinQueryGraph}', $spinQueryGraph, $query);
-                $query = str_replace('{predicate}', $binding['predicate'], $query);
-                $jsonResult = self::runSparqlSelectQuery($query);
-                if (sizeof($jsonResult) == 0)
-                    $logger->info("No triple with predicate '" . $binding['predicate'] . "' found in the SPARQL query. Will return empty response.");
-                elseif (sizeof($jsonResult) > 1)
-                    Utils::httpUnprocessableEntity("Only one value is allowed for property " . $predicate . ".");
-                else
-                    $result[$name] = $jsonResult[0]['argValue']['value'];
-                //
-            } elseif (array_key_exists('shape', $binding)) {
-                
-                // The value of argument $name is given by a predicate denoted by a property shape
-                $query = file_get_contents('resources/read_input_from_gp_with_shape.sparql');
-                $query = str_replace('{shapesGraph}', $context->getShapesGraphUri(), $query);
-                $query = str_replace('{shape}', $binding['shape'], $query);
-                $query = str_replace('{spinQueryGraph}', $spinQueryGraph, $query);
-                $jsonResult = self::runSparqlSelectQuery($query);
-                
-                if (sizeof($jsonResult) == 0)
-                    $logger->info("No triple matching property shape '" . $binding['shape'] . "' found in the SPARQL query. Will return empty response.");
-                elseif (sizeof($jsonResult) > 1)
-                    Utils::httpUnprocessableEntity("Only one value is allowed for property " . $jsonResult[0]['predicate']['value'] . ".");
-                else
-                    $result[$name] = $jsonResult[0]['argValue']['value'];
-                //
-            } else
-                throw new Exception("No predicate nor shape for argument " . $name . " of service <" . $context->getServiceUri() . ">.");
+        foreach ($jsonResult as $jsonResultN) {
+            $name = $jsonResultN['name']['value'];
+            if (array_key_exists($name, $result)) {
+                $predicate = $jsonResultN['predicate']['value'];
+                Utils::httpUnprocessableEntity("Only one value is allowed for property '" . $predicate . "' (argument '" . $name . "').");
+            }
+            $result[$name] = $jsonResultN['argValue']['value'];
         }
+        
+        // Make sure we have values for all expected arguments
+        foreach ($context->getConfigParam('custom_parameter') as $name)
+            if (! array_key_exists($name, $result))
+                $logger->info("No triple for argument '" . $name . "' found in the SPARQL query. Will return empty response.");
         
         // Drop the temporary SPIN graph
         if ($logger->isHandling(Logger::DEBUG))
