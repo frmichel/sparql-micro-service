@@ -38,7 +38,7 @@ class Utils
             $accept = $_SERVER['HTTP_ACCEPT'];
             $logger->info('Query HTTP header "Accept": ' . $accept);
         } else
-            $logger->warn('Query HTTP header "Accept" undefined. Using: ' . $context->getConfigParam('default_mime_type'));
+            $logger->notice('Query HTTP header "Accept" undefined. Using: ' . $context->getConfigParam('default_mime_type'));
         
         return array(
             $contentType,
@@ -317,7 +317,7 @@ class Utils
         // Make sure we have values for all expected arguments
         foreach ($context->getConfigParam('custom_parameter') as $name)
             if (! array_key_exists($name, $result))
-                $logger->info("No triple for argument '" . $name . "' found in the SPARQL query. Will return empty response.");
+                $logger->notice("No triple for argument '" . $name . "' found in the SPARQL query. Will return empty response.");
         
         // Drop the temporary SPIN graph
         if ($logger->isHandling(Logger::DEBUG))
@@ -333,22 +333,16 @@ class Utils
      *
      * If any parameter in not found, the function returns an HTTP error 400 and exits.
      *
-     * @param string $sparqlQuery
-     *            the SPARQL query string. Optional: needed if arguments are passed in the SPARQL graph pattern
      * @return array associative array of parameter names and values
      */
-    static public function getServiceCustomArgs($sparqlQuery = null)
+    static public function getServiceCustomArgs()
     {
         global $context;
-        $logger = $context->getLogger();
         
         if (! $context->getConfigParam('service_description'))
             return self::getQueryStringArgs($context->getConfigParam('custom_parameter'));
-        else {
-            if ($sparqlQuery == null)
-                throw new Exception("No SPARQL query passed although arguments are given in the graph pattern.");
-            return self::getServiceCustomArgsFromSparqlQuery($sparqlQuery);
-        }
+        else
+            return self::getServiceCustomArgsFromSparqlQuery($context->getSparqlQuery());
     }
 
     /**

@@ -2,17 +2,19 @@
 namespace frmichel\sparqlms;
 
 /**
- * This script can be provided to complement the service 'config.ini' file.
+ * This script can be provided to complement the service config.ini file.
  *
- * It must take care of defining two global variables:
- * - $customArgs is an associative array of parameter names and associated values passed to the service
- * - $apiQuery contains the ready-to-run WebAPI query string.
+ * It receives 3 global variables:
+ * - $customArgs is the set of custom arguments that have been passed to the service.
+ * - $apiQuery contains the Web API query template. The script must set the parameters to
+ *   produce the ready-to-run query string.
+ * - $logger is provided as a convenience in case the script wants to log any information.
  */
-$context = Context::getInstance();
-$logger = $context->getLogger();
+global $apiQuery;
+global $customArgs;
+global $logger;
 
 // Read the service custom arguments
-$customArgs = Utils::getQueryStringArgs($context->getConfigParam('custom_parameter'));
 $param1 = $customArgs['param1'];
 $param2 = $customArgs['param2'];
 
@@ -24,12 +26,11 @@ $param2 = $customArgs['param2'];
  * For instance, call another service someService() using param2:
  */
 $other_param = someService($param2);
-$logger->info("Retrieved other parameter: ".$other_param);
+$logger->info("Retrieved other parameter: " . $other_param);
 
 // ----------------------------------------------------------
 
-// Build the Web API query URL
-$apiQuery = $context->getConfigParam('api_query');
+// Format the Web API query URL
 $apiQuery = str_replace('{param1}', urlencode($param1), $apiQuery);
 $apiQuery = str_replace('{other_param}', urlencode($other_param), $apiQuery);
 

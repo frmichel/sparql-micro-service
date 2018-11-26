@@ -26,7 +26,7 @@ try {
     // Init the context: read the global config.ini file, init the cache and logger
     $context = Context::getInstance(Logger::INFO);
     $logger = $context->getLogger();
-    
+        
     // Read the service-specific configuration, either as config.ini file or from the service description graph
     $context->readCustomConfig();
     
@@ -49,36 +49,33 @@ try {
     $logger->info("Query parameter (html special chars encoded) 'querymode': " . htmlspecialchars($querymode));
     
     // Get the SPARQL query using either GET or POST methods
-    $sparqlQuery = Utils::getSparqlQuery();
-    if ($sparqlQuery == "" && $querymode == 'sparql')
-        Utils::httpBadRequest("Empty SPARQL query.");
-    else
-        $logger->info("SPARQL query (html special chars encoded): " . htmlspecialchars($sparqlQuery));
+    if ($querymode == "sparql") {
+        $sparqlQuery = Utils::getSparqlQuery();
+        if ($sparqlQuery == "")
+            Utils::httpBadRequest("Empty SPARQL query.");
+    } else
+        $sparqlQuery = "";
+    
+    $logger->info("SPARQL query (html special chars encoded): " . htmlspecialchars($sparqlQuery));
+    $context->setSparqlQuery($sparqlQuery);
     
     // ------------------------------------------------------------------------------------
     // --- Build the Web API query string and call the service
     // ------------------------------------------------------------------------------------
     
-    // --- Format the Web API query string
+    // Read the Web API query string template
+    $apiQuery = $context->getConfigParam('api_query');
     
-    if (file_exists($service . '/service.php')) {
-        
-        // Web API query string will be formatted by the custom service script
-        require $service . '/service.php';
-        if (! isset($apiQuery))
-            throw new Exception('Variable "$apiQuery" was not set by ' . $service . '/service.php.');
-        if (! isset($customArgs))
-            throw new Exception('Variable "$customArgs" was not set by ' . $service . '/service.php.');
-        //
-    } else {
-        
-        // Read the service-specific arguments either from the HTTP query string or from the SPARQL graph pattern
-        $customArgs = Utils::getServiceCustomArgs($sparqlQuery);
-        if (sizeof($customArgs) != sizeof($context->getConfigParam('custom_parameter')))
-            // In case one argument is not found in the query, then do not query the API at all to return an empty response
-            $apiQuery = "";
-        else {
-            $apiQuery = $context->getConfigParam('api_query');
+    // Read the service custom arguments either from the HTTP query string or from the SPARQL graph pattern
+    $customArgs = Utils::getServiceCustomArgs();
+    if (sizeof($customArgs) != sizeof($context->getConfigParam('custom_parameter')))
+        // In case one argument is not found in the query, do not query the API and just return an empty response
+        $apiQuery = "";
+    else {
+        if (file_exists($service . '/service.php')) {
+            // Web API query string will be formatted by the custom service script
+            require $service . '/service.php';
+        } else {
             foreach ($customArgs as $parName => $parVal)
                 $apiQuery = str_replace('{' . $parName . '}', urlencode($parVal), $apiQuery);
         }
@@ -88,7 +85,7 @@ try {
         $logger->info("Service custom arguments: " . print_r($customArgs, true));
         $logger->info("Web API query string: " . $apiQuery);
     } else
-        $logger->info("Web API query was set to empty string. Will return empty response.");
+        $logger->notice("Web API query was set to empty string. Will return empty response.");
     
     // --- Call the Web API service, apply the JSON-LD profile and translate to NQuads
     
@@ -141,8 +138,8 @@ try {
     if ($querymode == 'ld') {
         $sparqlConstruct = $service . '/construct.sparql';
         if (file_exists($sparqlConstruct)) {
+            $logger->info("Found SPARQL CONSTRUCT query file: " . $sparqlConstruct);
             $sparqlQuery = file_get_contents($sparqlConstruct);
-            $logger->info("SPARQL CONSTRUCT query file: " . $sparqlConstruct);
             if ($logger->isHandling(Logger::DEBUG))
                 $logger->debug("Generating triples with CONSTRUCT query:\n" . $sparqlQuery);
         } else

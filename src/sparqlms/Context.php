@@ -58,6 +58,13 @@ class Context
      *
      * @var EasyRdf_Sparql_Client
      */
+    private $sparqlQuery = null;
+
+    /**
+     * Client to the local RDF store and SPARQL endpoint
+     *
+     * @var EasyRdf_Sparql_Client
+     */
     private $sparqlClient = null;
 
     /**
@@ -105,7 +112,7 @@ class Context
         if ($querymode != 'sparql' && $querymode != 'ld')
             throw new Exception("Invalid argument 'querymode': should be one of 'sparql' or 'lod'.");
         
-        // --- Initialize the local RDF store and SPARQL endpoint
+        // --- Initialize the client to the local RDF store and SPARQL endpoint
         $this->sparqlClient = new EasyRdf_Sparql_Client($this->getConfigParam('sparql_endpoint'));
         
         // --- Initialize the cache database connection (must be done after the custom config has been loaded and merged, to get the expiration time)
@@ -204,9 +211,11 @@ class Context
     }
 
     /**
-     * Return the URI of the service being called. The URI ends with a '/'
-     * @example http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/
+     * Return the URI of the service being called.
+     * The URI ends with a '/'
      *
+     * @example http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/
+     *         
      * @return string
      */
     public function getServiceUri()
@@ -215,10 +224,11 @@ class Context
     }
 
     /**
-     * Return the URI of the Service Description graph, that is returned 
+     * Return the URI of the Service Description graph, that is returned
      * when looking up the service URI.
-     * @example http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/ServiceDescription
      *
+     * @example http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/ServiceDescription
+     *         
      * @return string
      */
     public function getServiceDescriptionGraphUri()
@@ -228,8 +238,9 @@ class Context
 
     /**
      * Return the URI of the shapes graph, if it exists
-     * @example http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/ShapesGraph
      *
+     * @example http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/ShapesGraph
+     *         
      * @return string
      */
     public function getShapesGraphUri()
@@ -245,6 +256,27 @@ class Context
     public function getSparqlClient()
     {
         return $this->sparqlClient;
+    }
+
+    /**
+     * Return the SPARQL query
+     *
+     * @return string
+     */
+    public function getSparqlQuery()
+    {
+        return $this->sparqlQuery;
+    }
+
+    /**
+     * Set the SPARQL query
+     *
+     * @param
+     *            string q SPARQL query
+     */
+    public function setSparqlQuery($q)
+    {
+        $this->sparqlQuery = $q;
     }
 }
 ?>
