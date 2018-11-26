@@ -8,7 +8,7 @@
 @prefix dwc:     <http://rs.tdwg.org/dwc/terms/>.
 @prefix sms:     <http://sms.i3s.unice.fr/terms/>.
 
-@base            <http://example.org/flickr/getPhotosByTaxonName/>.
+@base            <http://example.org/flickr/getPhotosByTaxon_sd/>.
 
 # This file is loaded as graph <ServiceDescriptionPrivate>
 <APIService>

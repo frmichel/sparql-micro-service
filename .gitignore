@@ -8,3 +8,5 @@ demo-static
 .buildpath
 vendor
 composer.lock
+.metadata
+.recommenders

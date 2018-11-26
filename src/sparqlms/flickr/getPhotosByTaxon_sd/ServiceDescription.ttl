@@ -9,7 +9,7 @@
 @prefix dwc:     <http://rs.tdwg.org/dwc/terms/>.
 @prefix sms:     <http://sms.i3s.unice.fr/terms/>.
 
-@base            <http://example.org/flickr/getPhotosByTaxonName/>.
+@base            <http://example.org/flickr/getPhotosByTaxon_sd/>.
 
 # This file is loaded as graph <ServiceDescription>
 <>
@@ -19,7 +19,7 @@
     sd:supportedLanguage sd:SPARQL11Query;
     sd:feature sd:BasicFederatedQuery, sd:EmptyGraphs;
     sd:resultFormat frmt:SPARQL_Results_XML, frmt:SPARQL_Results_JSON, frmt:SPARQL_Results_CSV, frmt:SPARQL_Results_TSV,
-                    frmt:RDF_XML, frmt:Turtle, frmt:JSON-LD;
+                    frmt:RDF_XML, frmt:Turtle, frmt:JSON-LD, frmt:Trig;
     schema:name "Flickr search for photos by biological taxon scientific name";
     schema:description "SPARQL micro-service wrapping the Flickr Web API to search photos by biological taxon scientific name.";
     
@@ -34,7 +34,7 @@
         
         # Topics description
         foaf:topic <http://dbpedia.org/resource/Photography>, <https://www.wikidata.org/entity/Q47041>; # Biodiversity
-        schema:keywords "photography"@en, "biodiversity"@en;
+        schema:keywords "photography"@en, "media"@en, "biodiversity"@en;
     ];
 
     dct:source [
@@ -42,9 +42,9 @@
         schema:url <https://www.flickr.com/services/api/>;
         schema:potentialAction <APIService>;
     ];
+    # Maxium time (in seconds) to cache responses from the Web API. Default: 2592000 = 30 days
     sms:cacheExpiresAfter "P2592000S"^^xsd:duration;
     .
-
 
 # Web API service being wrapped by this µ-service + parameters binding
 <APIService>
