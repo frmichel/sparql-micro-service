@@ -14,7 +14,6 @@
 # This file is loaded as graph <ServiceDescription>
 <>
     a sd:Service;
-    dct:hasVersion <http://sms.i3s.unice.fr/version/2.0>;
     sd:endpoint <>;
     sd:supportedLanguage sd:SPARQL11Query;
     sd:feature sd:BasicFederatedQuery, sd:EmptyGraphs;

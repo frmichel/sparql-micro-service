@@ -1,19 +1,21 @@
 # SPARQL Micro-Service Changelog
 
-## [UNVERSIONED] 2018-08-16
+
+## [0.2.0] 2018-11-26
+
+### Added
+- new configuration method using SPARQL Service Description + Hydra + SHACL instead of config.ini file
+- new class Configuration to switch automatically between config.ini and Service Description
+- new services supporting SPARQL Service Description 
+    - flickr/getPhotosByTaxon_sd
+    - macaulaylibrary/getAudioByTaxon_sd
+- new service macaulaylibrary/getAudioById for URI dereferencing
 
 ### Changed
-- add service macauleylibrary/getAudioById for URI dereferencing
-- update Docker deployment with last version of code and a MongoDB container
-- fix typos in the demo partial
-
-
-## [0.2.0] 2018-07-27
-
-### Changed
-- comply with composer common structure
-    - remove directory ```vendor```
-    - make composer.json point to my own forks of the JsonLD and EasyRDF libraries
+- change interface of services' custom service.php scripts (see manual_config_example)
+- update Docker deployment with code version 0.1.0 and a MongoDB container
+- comply with composer common structure (remove directory ```vendor```, point to own forks of the JsonLD and EasyRDF librarie)
+- fix typos in TDWG demo
 
 
 ## [0.1.0] 2018-07-26

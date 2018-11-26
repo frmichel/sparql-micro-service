@@ -1,30 +1,32 @@
 <?php
+namespace frmichel\sparqlms;
+
 /**
  * This script can be provided to complement the service config.ini file.
  *
- * It must take care of defining the global variable $apiQuery that contains the ready-to-run WebAPI query string.
+ * It receives 3 global variables:
+ * - $customArgs is the set of custom arguments that have been passed to the service.
+ * - $apiQuery contains the Web API query template. The script must set the parameters to
+ * produce the ready-to-run query string.
+ * - $logger is provided as a convenience in case the script wants to log any information.
  */
-namespace frmichel\sparqlms;
-
-$context = Context::getInstance();
-$logger = $context->getLogger();
+global $apiQuery;
+global $customArgs;
+global $logger;
 
 // Read the service custom arguments
-$customArgs = Utils::getQueryStringArgs($context->getConfigParam('custom_parameter'));
 $name = $customArgs['name'];
 
 // Call another API service to get the code associated with the taxon name
 $taxonCode = getTaxonCode($name);
 $logger->info("Retrieved taxon code: " . $taxonCode);
 
-// Build the Web API query URL
+// Format the Web API query URL
 if ($taxonCode == null)
     // In case the previous call failed, produce an empty query string for the service to be ignored
     $apiQuery = "";
-else {
-    $apiQuery = $context->getConfigParam('api_query');
+else
     $apiQuery = str_replace('{taxonCode}', urlencode($taxonCode), $apiQuery);
-}
 
 /**
  * Query the Web API to get an EoL code associated with a taxon name
