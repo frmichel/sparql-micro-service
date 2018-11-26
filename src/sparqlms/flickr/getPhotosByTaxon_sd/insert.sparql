@@ -1,0 +1,34 @@
+INSERT {
+    [] a dwc:Taxon;
+        dwc:scientificName "{name}";
+        schema:image ?photoUri.
+
+    ?photoUri a schema:Photograph;
+
+        schema:name ?title;
+        schema:contentUrl ?img; foaf:depiction ?img;
+        schema:thumbnailUrl ?thumbnail;
+
+        schema:mainEntityOfPage ?pageUrl;
+        schema:fileFormat "image/jpeg";
+
+        schema:author [ schema:identifier ?owner; schema:url ?authorUrl ];
+        .
+}
+WHERE {
+    ?photo api:id ?id; api:secret ?secret; api:server ?server; api:farm ?farm;
+        api:ispublic ?public;
+        api:title ?title;
+        api:owner ?owner;
+    .
+
+    # Dereferenceable URI: customize with the hostname of your Web server
+    bind (IRI(concat("http://example.org/ld/flickr/photo/", ?id)) AS ?photoUri)
+
+    bind (IRI(concat("https://flickr.com/photos/", ?owner, "/", ?id)) AS ?pageUrl)
+    bind (IRI(concat("https://flickr.com/photos/", ?owner)) AS ?authorUrl)
+    bind (IRI(concat("https://farm", ?farm, ".staticflickr.com/", ?server, "/", ?id, "_", ?secret, "_z.jpg")) AS ?img)
+    bind (IRI(concat("https://farm", ?farm, ".staticflickr.com/", ?server, "/", ?id, "_", ?secret, "_s.jpg")) AS ?thumbnail)
+
+    filter(?public = "1"^^xsd:integer)
+}

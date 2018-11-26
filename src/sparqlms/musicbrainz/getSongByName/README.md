@@ -14,15 +14,18 @@ Each tune consists of a work (with no URIblank node), having a Web page URL (`sc
 
 ## Example of triples produced
 
-    []  schema::name "Delphinus delphis";
-        schema::sameAs <https://musicbrainz.org/work/3ffe21ec-7d58-44cb-a65a-5f5876e12b50>.
-
+```turtle
+[]  schema::name "Delphinus delphis";
+    schema::sameAs <https://musicbrainz.org/work/3ffe21ec-7d58-44cb-a65a-5f5876e12b50>.
+```
 
 ## Usage example
 
-    prefix schema: <http://schema.org/>
-    
-    SELECT ?musicPage WHERE {
-        SERVICE <https://example.org/sparql-ms/musicbrainz/getSongByName?name=Delphinus+delphis>
-        { [] schema:sameAs ?musicPage. } }
-    }
+```sparql
+prefix schema: <http://schema.org/>
+
+SELECT ?musicPage WHERE {
+    SERVICE <https://example.org/sparql-ms/musicbrainz/getSongByName?name=Delphinus+delphis>
+    { [] schema:sameAs ?musicPage. } }
+}
+```

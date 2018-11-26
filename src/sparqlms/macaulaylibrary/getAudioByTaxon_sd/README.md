@@ -1,20 +1,24 @@
-# Macauley Library / getAudioByTaxon
+# Macauley Library / getAudioByTaxon_sd
 
 This service retrieves audio recordings for a given taxon name from the [Macaulay Library](https://www.macaulaylibrary.org/), a scientific media archive related to birds, amphibians, fishes and mammals.
 
 Each recording is depicted as an instance of the `schema:AudioObject` class that provides a link to the audio file (`schema:contentUrl`), the author (`schema:author`), a thumbnail (`schema:thumbnailUrl`), a description (`schema:description`) and the URL of the related Web page (`schema:mainEntityOfPage`).
 
-**Path**: `macaulaylibrary/getAudioByTaxon`
+**Path**: `macaulaylibrary/getAudioByTaxon_sd`
 
 **Query mode**: SPARQL
 
-**Parameters**:
-- `name`: taxon name
+**Input**:
+- object of property dwc:scientificName: taxonomic name
 
 
 ## Example of triples produced
 
 ```turtle
+[] a dwc:Taxon;
+    dwc:scientificName "Delphinus delphis";
+    schema:audio <http://example.org/ld/macaulaylibrary/audio/id/111690>.
+
 <http://example.org/ld/macaulaylibrary/audio/id/111690>
     a schema:AudioObject;
     schema:contentUrl <https://download.ams.birds.cornell.edu/api/v1/asset/111690/audio>;
@@ -28,9 +32,16 @@ Each recording is depicted as an instance of the `schema:AudioObject` class that
 
 ```sparql
 prefix schema: <http://schema.org/>
+prefix dwc: <http://rs.tdwg.org/dwc/terms/>
 
-SELECT ?page WHERE {
-  SERVICE <https://example.org/sparql-ms/macaulaylibrary/getAudioByName?name=Delphinus+delphis>
-  { [] schema:sameAs ?page. }
+SELECT ?audio ?audioFile ?description WHERE {
+
+    ?taxon a dwc:Taxon;
+        dwc:scientificName "Delphinus delphis";
+        schema:audio ?audio.
+
+    ?audio a schema:AudioObject;
+        schema:contentUrl ?audioFile;
+        schema:description ?description.
 }
 ```

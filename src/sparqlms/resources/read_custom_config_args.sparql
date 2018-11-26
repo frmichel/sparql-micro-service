@@ -1,0 +1,16 @@
+@prefix sd:      <http://www.w3.org/ns/sparql-service-description#>.
+@prefix hydra:   <http://www.w3.org/ns/hydra/core#>.
+@prefix shacl:   <http://www.w3.org/ns/shacl#>.
+
+SELECT ?name ?predicate ?shape WHERE {
+
+    <{serviceUri}> 
+        a sd:Service;
+        dct:source [ schema:potentialAction [ hydra:mapping ?mapping ] ].
+        
+    ?mapping hydra:variable ?name.
+    
+    OPTIONAL { ?mapping hydra:property ?predicate. }
+    
+    OPTIONAL { ?mapping shacl:sourceShape ?shape. }
+}

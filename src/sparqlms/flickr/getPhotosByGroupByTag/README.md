@@ -16,20 +16,24 @@ Each photo is depicted as an instance of the `schema:Photograph`, that provides 
 
 ## Example of triples produced
 
-    <http://example.org/ld/flickr/photo/31173091626>
-        a schema:Photograph;
-        schema:name "Delphinus delphis 5 (13-7-16 San Diego)";
-        schema:image <https://farm6.staticflickr.com/5718/31173091626_88c410c3f2_z.jpg>;
-        schema:fileFormat "image/jpeg";
-        schema:thumbnailUrl <https://farm6.staticflickr.com/5718/31173091626_88c410c3f2_s.jpg>;
-        schema:mainEntityOfPage <https://flickr.com/photos/10770266@N04/31173091626>;
-        schema:author [ schema:name ""; schema:url <https://flickr.com/photos/10770266@N04> ].
+```turtle
+<http://example.org/ld/flickr/photo/31173091626>
+    a schema:Photograph;
+    schema:name "Delphinus delphis 5 (13-7-16 San Diego)";
+    schema:image <https://farm6.staticflickr.com/5718/31173091626_88c410c3f2_z.jpg>;
+    schema:fileFormat "image/jpeg";
+    schema:thumbnailUrl <https://farm6.staticflickr.com/5718/31173091626_88c410c3f2_s.jpg>;
+    schema:mainEntityOfPage <https://flickr.com/photos/10770266@N04/31173091626>;
+    schema:author [ schema:name ""; schema:url <https://flickr.com/photos/10770266@N04> ].
+```
 
 ## Usage example
 
-    prefix schema: <http://schema.org/>
+```sparql
+prefix schema: <http://schema.org/>
 
-    SELECT * WHERE {
-      SERVICE <https://example.org/sparql-ms/flickr/getPhotosByGroupByTag?group_id=806927@N20&tags=taxonomy:binomial=Delphinus+delphis>
-        { ?photo schema:image ?img; schema:thumbnailUrl ?thumbnail.  }
-    }
+SELECT * WHERE {
+  SERVICE <https://example.org/sparql-ms/flickr/getPhotosByGroupByTag?group_id=806927@N20&tags=taxonomy:binomial=Delphinus+delphis>
+    { ?photo schema:image ?img; schema:thumbnailUrl ?thumbnail.  }
+}
+```

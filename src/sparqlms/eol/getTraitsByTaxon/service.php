@@ -9,11 +9,11 @@ namespace frmichel\sparqlms;
 $context = Context::getInstance();
 $logger = $context->getLogger();
 
-// Read list of the service custom arguments
-$customArgs = $context->getConfigParam('custom_parameter');
+// Read the service custom arguments
+$customArgs = Utils::getQueryStringArgs($context->getConfigParam('custom_parameter'));
+$name = $customArgs['name'];
 
 // Call another API service to get the code associated with the taxon name
-list ($name) = array_values(getQueryStringArgs($customArgs));
 $taxonCode = getTaxonCode($name);
 $logger->info("Retrieved taxon code: " . $taxonCode);
 

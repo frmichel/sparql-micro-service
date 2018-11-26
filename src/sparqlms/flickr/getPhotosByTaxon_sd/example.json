@@ -1,0 +1,32 @@
+{
+  "photos": {
+    "page": 1, "pages": 1, "perpage": 100, "total": "18",
+    "photo": [
+      { "id": "21873161962",
+        "owner": "58213213@N00",
+        "secret": "240ce2049e",
+        "server": "597",
+        "farm": 1,
+        "title": "Golfinho-comum // Short-beaked Common Dolphin (Delphinus delphis)",
+        "ispublic": 1, "isfriend": 0, "isfamily": 0
+      },
+      { "id": "21106725323",
+        "owner": "49828152@N00",
+        "secret": "928de05ffd",
+        "server": "5756",
+        "farm": 6,
+        "title": "Common Dolphin",
+        "ispublic": 1, "isfriend": 0, "isfamily": 0
+      },
+      { "id": "21403579250",
+        "owner": "49828152@N00",
+        "secret": "d8a4df4f2b",
+        "server": "5834",
+        "farm": 6,
+        "title": "Common Dolphins",
+        "ispublic": 1, "isfriend": 0, "isfamily": 0
+      }
+   ]
+  },
+  "stat": "ok"
+}

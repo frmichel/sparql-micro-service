@@ -4,10 +4,11 @@ namespace frmichel\sparqlms;
 use Monolog\Logger;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
+use EasyRdf_Sparql_Client;
 use Exception;
 
 /**
- * Application execution context containing the configuration, logger and cache.
+ * Application execution context containing the configuration, logger, cache, SPARQL client
  *
  * The constructor also checks the presence of the HTTP query string parameters
  * listed in the configuration.
@@ -53,12 +54,26 @@ class Context
     private $service = null;
 
     /**
+     * Local RDF store and SPARQL endpoint
+     *
+     * @var EasyRdf_Sparql_Client
+     */
+    private $sparqlQuery = null;
+
+    /**
+     * Client to the local RDF store and SPARQL endpoint
+     *
+     * @var EasyRdf_Sparql_Client
+     */
+    private $sparqlClient = null;
+
+    /**
      *
      * @param string $configFile
      * @param integer $logLevel
      *            one of Logger::INFO, Logger::WARNING, Logger::DEBUG etc. (see Monolog\Logger.php)
      */
-    private function __construct($configFile, $logLevel)
+    private function __construct($logLevel)
     {
         // --- Initialize the logger
         if (array_key_exists('SCRIPT_FILENAME', $_SERVER))
@@ -66,22 +81,18 @@ class Context
         else
             $scriptName = basename(__FILE__);
         $handler = new RotatingFileHandler(__DIR__ . '/../../logs/sms.log', 5, $logLevel, true, 0666);
-        $handler->setFormatter(new LineFormatter(null, null, true));
+        $handler->setFormatter(new LineFormatter("[%datetime%] %level_name%: %message%\n", null, true));
+        // $handler->setFormatter(new LineFormatter("[%datetime%] %level_name%: %message% %context% %extra%\n", null, true));
         $this->logger = new Logger($scriptName);
         $this->logger->pushHandler($handler);
+        // $this->logger->pushProcessor(new IntrospectionProcessor($logLevel));
         $logger = $this->logger;
         $logger->info("--------- Start --------");
         
         // --- Read the global configuration file and check query parameters
-        $this->config = parse_ini_file($configFile);
-        if (! $this->config)
-            throw new Exception("Cannot read configuration file config.ini.");
-        if (! array_key_exists('sparql_endpoint', $this->config))
-            throw new Exception("Missing configuration property 'sparql_endpoint'. Check config.ini.");
-        if (! array_key_exists('default_mime_type', $this->config))
-            throw new Exception("Missing configuration property 'default_mime_type'. Check config.ini.");
-        if (! array_key_exists('parameter', $this->config))
-            throw new Exception("Missing configuration property 'parameter'. Check config.ini.");
+        $this->config = Configuration::readGobalConfig();
+        if ($logger->isHandling(Logger::DEBUG))
+            $logger->debug("Global configuration read from config.ini: " . print_r($this->config, TRUE));
         
         // Set default namespaces. See other existing default namespaces in EasyRdf/Namespace.php
         if (array_key_exists('namespace', $this->config))
@@ -92,7 +103,7 @@ class Context
             }
         
         // --- Read mandatory HTTP query string arguments
-        list ($service, $querymode) = array_values(getQueryStringArgs($this->getConfigParam('parameter')));
+        list ($service, $querymode) = array_values(Utils::getQueryStringArgs($this->getConfigParam('parameter')));
         if ($service != '')
             $this->service = $service;
         else
@@ -101,18 +112,8 @@ class Context
         if ($querymode != 'sparql' && $querymode != 'ld')
             throw new Exception("Invalid argument 'querymode': should be one of 'sparql' or 'lod'.");
         
-        // --- Read the custom service configuration file and check query parameters
-        $customCfgFile = $service . '/config.ini';
-        $customCfg = parse_ini_file($customCfgFile);
-        if (! $customCfg)
-            throw new Exception("Cannot read custom configuration file " . $customCfgFile);
-        if (! array_key_exists('api_query', $customCfg))
-            throw new Exception("Missing configuration property 'api_query'. Check " . $customCfgFile . ".");
-        if (! array_key_exists('custom_parameter', $customCfg))
-            $logger->warning("No configuration property 'custom_parameter' in " . $customCfgFile . ".");
-        
-        // Merge the custom config with the global config
-        $this->config = array_merge($this->config, $customCfg);
+        // --- Initialize the client to the local RDF store and SPARQL endpoint
+        $this->sparqlClient = new EasyRdf_Sparql_Client($this->getConfigParam('sparql_endpoint'));
         
         // --- Initialize the cache database connection (must be done after the custom config has been loaded and merged, to get the expiration time)
         if ($this->useCache())
@@ -133,6 +134,20 @@ class Context
             self::$singleton = new Context($configFile, $logLevel);
         }
         return self::$singleton;
+    }
+
+    /**
+     * Read the service custom configuration and merge it with the global config
+     *
+     * This cannot be done within the constructor because it requires the context
+     * to be initialized first, notably to access the SPARQL client.
+     */
+    public function readCustomConfig()
+    {
+        $customCfg = Configuration::getCustomConfig($this);
+        if ($this->logger->isHandling(Logger::DEBUG))
+            $this->logger->debug("Service custom configuration: " . print_r($customCfg, TRUE));
+        $this->config = array_merge($this->config, $customCfg);
     }
 
     /**
@@ -193,6 +208,75 @@ class Context
     public function getService()
     {
         return $this->service;
+    }
+
+    /**
+     * Return the URI of the service being called.
+     * The URI ends with a '/'
+     *
+     * @example http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/
+     *         
+     * @return string
+     */
+    public function getServiceUri()
+    {
+        return $this->getConfigParam('root_url') . "/" . $this->getService() . "/";
+    }
+
+    /**
+     * Return the URI of the Service Description graph, that is returned
+     * when looking up the service URI.
+     *
+     * @example http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/ServiceDescription
+     *         
+     * @return string
+     */
+    public function getServiceDescriptionGraphUri()
+    {
+        return $this->getConfigParam('root_url') . "/" . $this->getService() . "/ServiceDescription";
+    }
+
+    /**
+     * Return the URI of the shapes graph, if it exists
+     *
+     * @example http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/ShapesGraph
+     *         
+     * @return string
+     */
+    public function getShapesGraphUri()
+    {
+        return $this->getConfigParam('root_url') . "/" . $this->getService() . "/ShapesGraph";
+    }
+
+    /**
+     * Return the client to the local RDF store and SPARQL endpoint
+     *
+     * @return EasyRdf_Sparql_Client
+     */
+    public function getSparqlClient()
+    {
+        return $this->sparqlClient;
+    }
+
+    /**
+     * Return the SPARQL query
+     *
+     * @return string
+     */
+    public function getSparqlQuery()
+    {
+        return $this->sparqlQuery;
+    }
+
+    /**
+     * Set the SPARQL query
+     *
+     * @param
+     *            string q SPARQL query
+     */
+    public function setSparqlQuery($q)
+    {
+        $this->sparqlQuery = $q;
     }
 }
 ?>

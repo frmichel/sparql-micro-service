@@ -1,0 +1,15 @@
+@prefix sd:      <http://www.w3.org/ns/sparql-service-description#>.
+@prefix frmt:    <http://www.w3.org/ns/formats/>.
+@prefix dct:     <http://purl.org/dc/terms/>.
+@prefix shacl:   <http://www.w3.org/ns/shacl#>.
+@prefix void:    <http://rdfs.org/ns/void#> .
+@prefix hydra:   <http://www.w3.org/ns/hydra/core#>.
+@prefix schema:  <http://schema.org/>.
+@prefix dwc:     <http://rs.tdwg.org/dwc/terms/>.
+@prefix sms:     <http://sms.i3s.unice.fr/terms/>.
+
+@base            <http://example.org/flickr/getPhotosByTaxon_sd/>.
+
+# This file is loaded as graph <ServiceDescriptionPrivate>
+<APIService>
+    hydra:template "https://api.flickr.com/services/rest/?method=flickr.photos.search&format=json&nojsoncallback=1&api_key=<api_key>&per_page=500&tags=taxonomy%3Abinomial%3D{name}".
