@@ -1,0 +1,10 @@
+{
+  "@context": {
+    "@base": "http://sms.i3s.unice.fr/item/",
+    "@vocab": "http://sms.i3s.unice.fr/terms/api/",
+    
+    "mediaUrl": { "@type": "@id" },
+    "thumbnailUrl": { "@type": "@id" },
+    "specimenUrl": { "@type": "@id" }
+  }
+}

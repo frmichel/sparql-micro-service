@@ -1,0 +1,27 @@
+@prefix shacl:   <http://www.w3.org/ns/shacl#>.
+@prefix schema:  <http://schema.org/>.
+@prefix dwc:     <http://rs.tdwg.org/dwc/terms/>.
+
+@base            <http://example.org/macaulaylibrary/getAudioByTaxon_sd/>.
+
+<ShapesGraph#TaxonShape> a shacl:NodeShape;
+    shacl:targetClass dwc:Taxon;
+    shacl:property
+      <ShapesGraph#InputPropertyShape>,
+      [ a shacl:PropertyShape; shacl:path schema:audio; shacl:class schema:AudioObject; 
+        shacl:nodeKind shacl:BlankNodeOrIRI; shacl:minCount 1 ];
+    shacl:closed false.
+
+<ShapesGraph#InputPropertyShape>
+    a shacl:PropertyShape; shacl:path dwc:scientificName;
+    shacl:nodeKind shacl:Literal; shacl:minCount 1; shacl:maxCount 1.
+    
+<ShapesGraph#AudioShape> a shacl:NodeShape;
+    shacl:targetClass schema:AudioObject;
+    shacl:property
+      [ a shacl:PropertyShape; shacl:path schema:contentUrl;       shacl:nodeKind shacl:IRI ],
+      [ a shacl:PropertyShape; shacl:path schema:thumbnailUrl;     shacl:nodeKind shacl:IRI ],
+      [ a shacl:PropertyShape; shacl:path schema:mainEntityOfPage; shacl:nodeKind shacl:IRI ],
+      [ a shacl:PropertyShape; shacl:path schema:author;           shacl:nodeKind shacl:Literal ],
+      [ a shacl:PropertyShape; shacl:path schema:description;      shacl:nodeKind shacl:Literal ];
+    shacl:closed false.
