@@ -14,19 +14,23 @@ Each recording is depicted as an instance of the `schema:AudioObject` class that
 
 ## Example of triples produced
 
-    <http://example.org/ld/macaulaylibrary/audio/id/111690>
-        a schema:AudioObject;
-        schema:contentUrl <https://download.ams.birds.cornell.edu/api/v1/asset/111690/audio>;
-        schema:thumbnailUrl <https://macaulaylibrary.org/media/Spectrograms/audio/poster/220/0/111/111690.jpg>;
-        schema:mainEntityOfPage <https://macaulaylibrary.org/asset/111690>;
-        schema:author "Paul J. Perkins";
-        schema:description "NOTES ...".
+```turtle
+<http://example.org/ld/macaulaylibrary/audio/id/111690>
+    a schema:AudioObject;
+    schema:contentUrl <https://download.ams.birds.cornell.edu/api/v1/asset/111690/audio>;
+    schema:thumbnailUrl <https://macaulaylibrary.org/media/Spectrograms/audio/poster/220/0/111/111690.jpg>;
+    schema:mainEntityOfPage <https://macaulaylibrary.org/asset/111690>;
+    schema:author "Paul J. Perkins";
+    schema:description "NOTES ...".
+```
 
 ## Usage example
 
-    prefix schema: <http://schema.org/>
+```sparql
+prefix schema: <http://schema.org/>
 
-    SELECT ?page WHERE {
-      SERVICE <https://example.org/sparql-ms/macaulaylibrary/getAudioByName?name=Delphinus+delphis>
-      { [] schema:sameAs ?page. }
-    }
+SELECT ?page WHERE {
+  SERVICE <https://example.org/sparql-ms/macaulaylibrary/getAudioByName?name=Delphinus+delphis>
+  { [] schema:sameAs ?page. }
+}
+```

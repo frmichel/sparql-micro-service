@@ -15,24 +15,28 @@ Each photo is represented by an instance of the `schema:Photograph`, that provid
 
 ## Example of triples produced
 
-    <http://example.org/ld/flickr/photo/31173091626>
-        a schema:Photograph;
-        schema:name "Delphinus delphis 5 (13-7-16 San Diego)";
-        schema:description "" ;
-        schema:image <https://farm6.staticflickr.com/5718/31173091626_88c410c3f2_z.jpg>;
-        schema:fileFormat "image/jpeg";
-        schema:thumbnailUrl <https://farm6.staticflickr.com/5718/31173091626_88c410c3f2_s.jpg>;
-        schema:mainEntityOfPage <https://flickr.com/photos/10770266@N04/31173091626>;
-        schema:author [ schema:name ""; schema:url <https://flickr.com/photos/10770266@N04> ].
+```turtle
+<http://example.org/ld/flickr/photo/31173091626>
+    a schema:Photograph;
+    schema:name "Delphinus delphis 5 (13-7-16 San Diego)";
+    schema:description "" ;
+    schema:image <https://farm6.staticflickr.com/5718/31173091626_88c410c3f2_z.jpg>;
+    schema:fileFormat "image/jpeg";
+    schema:thumbnailUrl <https://farm6.staticflickr.com/5718/31173091626_88c410c3f2_s.jpg>;
+    schema:mainEntityOfPage <https://flickr.com/photos/10770266@N04/31173091626>;
+    schema:author [ schema:name ""; schema:url <https://flickr.com/photos/10770266@N04> ].
+```
 
 ## Usage example (SPARQL)
 
-    prefix schema: <http://schema.org/>
+```sparql
+prefix schema: <http://schema.org/>
 
-    SELECT * WHERE {
-      SERVICE <https://example.org/sparql-ms/flickr/getPhotoById?photo_id=31173091626>
-        { ?photo schema:image ?img; schema:thumbnailUrl ?thumbnail.  }
-    }
+SELECT * WHERE {
+  SERVICE <https://example.org/sparql-ms/flickr/getPhotoById?photo_id=31173091626>
+    { ?photo schema:image ?img; schema:thumbnailUrl ?thumbnail.  }
+}
+```
 
 ## Usage example (dereferencing)
 

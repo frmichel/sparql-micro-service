@@ -14,31 +14,34 @@ Each recording is depicted as an instance of the `schema:AudioObject` class that
 
 ## Example of triples produced
 
-    [] a dwc:Taxon;
-        dwc:scientificName "Delphinus delphis";
-        schema:audio <http://example.org/ld/macaulaylibrary/audio/id/111690>.
+```turtle
+[] a dwc:Taxon;
+    dwc:scientificName "Delphinus delphis";
+    schema:audio <http://example.org/ld/macaulaylibrary/audio/id/111690>.
 
-    <http://example.org/ld/macaulaylibrary/audio/id/111690>
-        a schema:AudioObject;
-        schema:contentUrl <https://download.ams.birds.cornell.edu/api/v1/asset/111690/audio>;
-        schema:thumbnailUrl <https://macaulaylibrary.org/media/Spectrograms/audio/poster/220/0/111/111690.jpg>;
-        schema:mainEntityOfPage <https://macaulaylibrary.org/asset/111690>;
-        schema:author "Paul J. Perkins";
-        schema:description "NOTES ...".
+<http://example.org/ld/macaulaylibrary/audio/id/111690>
+    a schema:AudioObject;
+    schema:contentUrl <https://download.ams.birds.cornell.edu/api/v1/asset/111690/audio>;
+    schema:thumbnailUrl <https://macaulaylibrary.org/media/Spectrograms/audio/poster/220/0/111/111690.jpg>;
+    schema:mainEntityOfPage <https://macaulaylibrary.org/asset/111690>;
+    schema:author "Paul J. Perkins";
+    schema:description "NOTES ...".
+```
 
 ## Usage example
 
-    prefix schema: <http://schema.org/>
-    prefix dwc: <http://rs.tdwg.org/dwc/terms/>
+```sparql
+prefix schema: <http://schema.org/>
+prefix dwc: <http://rs.tdwg.org/dwc/terms/>
 
-    SELECT ?audioUri ?audioFile ?description WHERE {
+SELECT ?audio ?audioFile ?description WHERE {
 
-        ?taxon a dwc:Taxon;
-            dwc:scientificName "Delphinus delphis";
-            schema:audio ?audioUri.
+    ?taxon a dwc:Taxon;
+        dwc:scientificName "Delphinus delphis";
+        schema:audio ?audio.
 
-        ?audio a schema:AudioObject;
-            schema:contentUrl ?audioFile;
-            schema:description ?description.
-    }
-    
+    ?audio a schema:AudioObject;
+        schema:contentUrl ?audioFile;
+        schema:description ?description.
+}
+```

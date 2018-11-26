@@ -18,46 +18,50 @@ As a result, a query to the trait bank with a URL such as http://eol.org/api/tra
 
 ## Example query
 
-    CONSTRUCT {
-        ?measure
-            a                      dwc:MeasurementOrFact;
-            dwciri:measurementType ?measurementType;
-            dwciri:measurementUnit ?measurementUnit;
-            dwc:measurementValue   ?measurementValue;
-            schema:name            ?measurePredicate.
-    } WHERE {
-        SERVICE SILENT <https://example.org/sparql-ms/eol/getTraitsByTaxon?name=Delphinus+delphis>
-        { ?measure                 a dwc:MeasurementOrFact;
-            dwciri:measurementType ?measurementType;
-            dwciri:measurementUnit ?measurementUnit;
-            dwc:measurementValue   ?measurementValue;
-            schema:predicate       ?measurePredicate.
-          OPTIONAL { ?measure      dwc:measurementUnit ?measurementUnit }
-          FILTER (?measurePredicate = "total life span" || ?measurePredicate = "body length (VT)" || ?measurePredicate = "conservation status")
-        }
+```turtle
+CONSTRUCT {
+    ?measure
+        a                      dwc:MeasurementOrFact;
+        dwciri:measurementType ?measurementType;
+        dwciri:measurementUnit ?measurementUnit;
+        dwc:measurementValue   ?measurementValue;
+        schema:name            ?measurePredicate.
+} WHERE {
+    SERVICE SILENT <https://example.org/sparql-ms/eol/getTraitsByTaxon?name=Delphinus+delphis>
+    { ?measure                 a dwc:MeasurementOrFact;
+        dwciri:measurementType ?measurementType;
+        dwciri:measurementUnit ?measurementUnit;
+        dwc:measurementValue   ?measurementValue;
+        schema:predicate       ?measurePredicate.
+      OPTIONAL { ?measure      dwc:measurementUnit ?measurementUnit }
+      FILTER (?measurePredicate = "total life span" || ?measurePredicate = "body length (VT)" || ?measurePredicate = "conservation status")
     }
+    }
+```
 
 ## Triples produced by the example query
 
-    @prefix dwc:    <http://rs.tdwg.org/dwc/terms/> .
-    @prefix dwciri: <http://rs.tdwg.org/dwc/iri/> .
+```sparql
+@prefix dwc:    <http://rs.tdwg.org/dwc/terms/> .
+@prefix dwciri: <http://rs.tdwg.org/dwc/iri/> .
 
-    <http://eol.org/pages/314276/data#data_point_716247>
-        rdf:type                dwc:MeasurementOrFact ;
-        schema:name             "total life span"^^xsd:string ;
-        dwc:measurementValue    "240"^^xsd:string .
-        dwciri:measurementType  "http://purl.obolibrary.org/obo/VT_0001661"^^xsd:string ;
-        dwciri:measurementUnit  "http://purl.obolibrary.org/obo/UO_0000035"^^xsd:string .
-        
-    <http://eol.org/pages/314276/data#data_point_716249>
-        rdf:type                dwc:MeasurementOrFact ;
-        schema:name             "body length (VT)"^^xsd:string ;
-        dwc:measurementValue    "2439.99"^^xsd:string ;
-        dwciri:measurementType  "http://purl.obolibrary.org/obo/VT_0001256"^^xsd:string ;
-        dwciri:measurementUnit  "http://purl.obolibrary.org/obo/UO_0000016"^^xsd:string .
+<http://eol.org/pages/314276/data#data_point_716247>
+    rdf:type                dwc:MeasurementOrFact ;
+    schema:name             "total life span"^^xsd:string ;
+    dwc:measurementValue    "240"^^xsd:string .
+    dwciri:measurementType  "http://purl.obolibrary.org/obo/VT_0001661"^^xsd:string ;
+    dwciri:measurementUnit  "http://purl.obolibrary.org/obo/UO_0000035"^^xsd:string .
+    
+<http://eol.org/pages/314276/data#data_point_716249>
+    rdf:type                dwc:MeasurementOrFact ;
+    schema:name             "body length (VT)"^^xsd:string ;
+    dwc:measurementValue    "2439.99"^^xsd:string ;
+    dwciri:measurementType  "http://purl.obolibrary.org/obo/VT_0001256"^^xsd:string ;
+    dwciri:measurementUnit  "http://purl.obolibrary.org/obo/UO_0000016"^^xsd:string .
 
-    <http://eol.org/pages/314276/data#data_point_45845581>
-        rdf:type                dwc:MeasurementOrFact ;
-        schema:name             "conservation status"^^xsd:string ;
-        dwciri:measurementValue "http://eol.org/schema/terms/leastConcern"^^xsd:string ;
-        dwciri:measurementType  "http://rs.tdwg.org/ontology/voc/SPMInfoItems#ConservationStatus"^^xsd:string .
+<http://eol.org/pages/314276/data#data_point_45845581>
+    rdf:type                dwc:MeasurementOrFact ;
+    schema:name             "conservation status"^^xsd:string ;
+    dwciri:measurementValue "http://eol.org/schema/terms/leastConcern"^^xsd:string ;
+    dwciri:measurementType  "http://rs.tdwg.org/ontology/voc/SPMInfoItems#ConservationStatus"^^xsd:string .
+```
