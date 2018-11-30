@@ -6,16 +6,19 @@
 
 <ShapesGraph#TaxonShape> a shacl:NodeShape;
     shacl:targetClass dwc:Taxon;
-    shacl:property
-      <ShapesGraph#InputPropertyShape>,
-      [ a shacl:PropertyShape; shacl:path schema:audio; shacl:class schema:AudioObject; 
-        shacl:nodeKind shacl:BlankNodeOrIRI; shacl:minCount 1 ];
+    shacl:property <ShapesGraph#NamePropertyShape>, <ShapesGraph#AudioPropertyShape>;
     shacl:closed false.
 
-<ShapesGraph#InputPropertyShape>
-    a shacl:PropertyShape; shacl:path dwc:scientificName;
-    shacl:nodeKind shacl:Literal; shacl:minCount 1; shacl:maxCount 1.
+<ShapesGraph#NamePropertyShape> a shacl:PropertyShape; 
+    shacl:path dwc:scientificName;
+    shacl:nodeKind shacl:Literal;
+    shacl:minCount 1; shacl:maxCount 1.
     
+<ShapesGraph#AudioPropertyShape> a shacl:PropertyShape; 
+    shacl:path schema:audio;
+    shacl:node <ShapesGraph#AudioShape>;
+    shacl:minCount 1.
+        
 <ShapesGraph#AudioShape> a shacl:NodeShape;
     shacl:targetClass schema:AudioObject;
     shacl:property
@@ -23,5 +26,5 @@
       [ a shacl:PropertyShape; shacl:path schema:thumbnailUrl;     shacl:nodeKind shacl:IRI ],
       [ a shacl:PropertyShape; shacl:path schema:mainEntityOfPage; shacl:nodeKind shacl:IRI ],
       [ a shacl:PropertyShape; shacl:path schema:author;           shacl:nodeKind shacl:Literal ],
-      [ a shacl:PropertyShape; shacl:path schema:description;      shacl:nodeKind shacl:Literal ];
+      [ a shacl:PropertyShape; shacl:path schema:description;      shacl:nodeKind shacl:Literal; shacl:minCount 0 ];
     shacl:closed false.

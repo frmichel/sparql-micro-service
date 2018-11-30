@@ -4,7 +4,7 @@
 @prefix dct:     <http://purl.org/dc/terms/>.
 @prefix sp:      <http://spinrdf.org/sp#> .
 
-SELECT DISTINCT ?name ?predicate ?argValue 
+SELECT DISTINCT ?name ?predicate ?value 
 FROM <{ServiceDescription}>     # Service Description graph
 FROM <{SpinQueryGraph}>         # SPARQL query in SPIN
 FROM <{ShapesGraph}>            # Optional shapes graph
@@ -19,8 +19,8 @@ WHERE {
         ]]].
 
         # - SPIN quey - Get the object of the predicates obtained in ?predicate
-        [] sp:predicate ?predicate; sp:object ?argValue.
-        FILTER (isLiteral(?argValue))
+        [] sp:predicate ?predicate; sp:object ?value.
+        FILTER (isLiteral(?value))
     }
     
     UNION
@@ -29,18 +29,17 @@ WHERE {
         # - Service Description - Predicate is given through a property shape with shacl:sourceShape
         [] a sd:Service; dct:source [ schema:potentialAction [ hydra:mapping [
             hydra:variable ?name;
-            shacl:sourceShape ?shape;
+            shacl:sourceShape ?propShape;
         ]]].
 
         # - Shapes Graph - Predicate is given through a property shape with shacl:sourceShape
-        ?shape a shacl:PropertyShape; shacl:path ?predicate.
-        ?nodeShape a shacl:NodeShape; 
-            shacl:targetClass ?class;
-            shacl:property ?shape.
+        ?nodeShape a shacl:NodeShape; shacl:property ?propShape.
+        OPTIONAL { ?nodeShape shacl:targetClass ?class. }
+        ?propShape a shacl:PropertyShape; shacl:path ?predicate.
 
-        # - SPIN quey - Get the object of the predicates obtained using ?shape
-        [] sp:subject ?subject; sp:predicate rdf:type;   sp:object ?class.
-        [] sp:subject ?subject; sp:predicate ?predicate; sp:object ?argValue.
-        FILTER (isLiteral(?argValue))
+        # - SPIN quey - Get the object of the predicates obtained using ?propShape
+        OPTIONAL { [] sp:subject ?subject; sp:predicate rdf:type;   sp:object ?class. }
+        [] sp:subject ?subject; sp:predicate ?predicate; sp:object ?value.
+        FILTER (isLiteral(?value))
     }
 }

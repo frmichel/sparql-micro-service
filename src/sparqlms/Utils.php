@@ -273,7 +273,13 @@ class Utils
 
     /**
      * Get the Web API arguments passed to the micro-service within the SPARQL graph pattern.
-     *
+     * 
+     * This is achieved by a SPARQL query over the SPIN graph of the user's query, the Service Description 
+     * graph and the shapes graph. 
+     * For each argument declared in the Service Description, we look for it in the user's query either 
+     * with its hydra:property or using the property shape denoted by shacl:sourceShape (the SD graph 
+     * should provuide one or the other).
+     * 
      * If any parameter in not found, the function returns an HTTP error 400 and exits.
      *
      * @param string $sparqlQuery
@@ -311,7 +317,8 @@ class Utils
                 $predicate = $jsonResultN['predicate']['value'];
                 Utils::httpUnprocessableEntity("Only one value is allowed for property '" . $predicate . "' (argument '" . $name . "').");
             }
-            $result[$name] = $jsonResultN['argValue']['value'];
+            // The first 'value' denotes SPARQL variabe '?value', the second is where the variable value is given in the SPARQL results format
+            $result[$name] = $jsonResultN['value']['value']; 
         }
         
         // Make sure we have values for all expected arguments

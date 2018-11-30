@@ -54,8 +54,9 @@
     hydra:mapping [
         hydra:variable "name";
         schema:description "The taxon scientific name without authorship nor date information";
-
+        hydra:required "true"^^xsd:boolean;
+        
         # Use either hydra:property or shacl:sourceShape
         hydra:property dwc:scientificName;
-        shacl:sourceShape <ShapesGraph#InputPropertyShape>;
+        shacl:sourceShape <ShapesGraph#NamePropertyShape>;
     ].

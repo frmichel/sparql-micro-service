@@ -6,17 +6,18 @@
 
 <ShapesGraph#TaxonShape> a shacl:NodeShape;
     shacl:targetClass dwc:Taxon;
-    shacl:property
-      <ShapesGraph#InputPropertyShape>,
-      [ a shacl:PropertyShape; shacl:path schema:image; shacl:class schema:Photograph; 
-        shacl:nodeKind shacl:BlankNodeOrIRI; shacl:minCount 1 ];
+    shacl:property <ShapesGraph#NamePropertyShape>, <ShapesGraph#ImagePropertyShape>;
     shacl:closed false.
 
-<ShapesGraph#InputPropertyShape>
-    a shacl:PropertyShape; 
+<ShapesGraph#NamePropertyShape> a shacl:PropertyShape; 
     shacl:path dwc:scientificName;
     shacl:nodeKind shacl:Literal;
     shacl:minCount 1; shacl:maxCount 1.
+
+<ShapesGraph#ImagePropertyShape> a shacl:PropertyShape; 
+    shacl:path schema:image; 
+    shacl:node <ShapesGraph#PhotographShape>; 
+    shacl:minCount 1.
     
 <ShapesGraph#PhotographShape> a shacl:NodeShape;
     shacl:targetClass schema:Photograph;
@@ -27,7 +28,7 @@
       [ a shacl:PropertyShape; shacl:path schema:thumbnailUrl;     shacl:nodeKind shacl:IRI ],
       [ a shacl:PropertyShape; shacl:path schema:mainEntityOfPage; shacl:nodeKind shacl:IRI ],
       [ a shacl:PropertyShape; shacl:path schema:fileFormat;       shacl:nodeKind shacl:Literal; shacl:maxCount 1 ],
-      [ a shacl:PropertyShape; shacl:path schema:author;           shacl:nodeKind shacl:BlankNodeOrIRI; shacl:class schema:Person ];
+      [ a shacl:PropertyShape; shacl:path schema:author;           shacl:node <ShapesGraph#PersonShape> ];
     shacl:closed false.
 
 <ShapesGraph#PersonShape> a shacl:NodeShape;
