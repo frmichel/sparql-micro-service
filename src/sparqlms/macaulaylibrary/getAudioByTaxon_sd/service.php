@@ -19,7 +19,7 @@ $name = $customArgs['name'];
 
 // Call another API service to get the code associated with the taxon name
 $taxonCode = getTaxonCode($name);
-$logger->info("Retrieved taxon code: " . $taxonCode);
+$logger->notice("Retrieved taxon code: " . $taxonCode);
 
 // Format the Web API query URL
 if ($taxonCode == null)
@@ -39,7 +39,7 @@ function getTaxonCode($taxonName)
     global $logger;
     
     $apiQuery = 'https://search.macaulaylibrary.org/api/v1/find/taxon?q=' . urlencode($taxonName);
-    $logger->info("Web API request: " . $apiQuery);
+    $logger->notice("Web API request: " . $apiQuery);
     
     $result = file_get_contents($apiQuery);
     if ($result !== FALSE) {

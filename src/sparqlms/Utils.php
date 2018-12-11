@@ -28,17 +28,17 @@ class Utils
         
         if (array_key_exists('CONTENT_TYPE', $_SERVER)) {
             $contentType = $_SERVER['CONTENT_TYPE'];
-            $logger->info('Query HTTP header "Content-Type": ' . $contentType);
+            $logger->notice('Query HTTP header "Content-Type": ' . $contentType);
         } else {
-            $logger->info('Query HTTP header "Content-Type" undefined.');
+            $logger->notice('Query HTTP header "Content-Type" undefined.');
             $contentType = "";
         }
         
         if (array_key_exists('HTTP_ACCEPT', $_SERVER)) {
             $accept = $_SERVER['HTTP_ACCEPT'];
-            $logger->info('Query HTTP header "Accept": ' . $accept);
+            $logger->notice('Query HTTP header "Accept": ' . $accept);
         } else
-            $logger->notice('Query HTTP header "Accept" undefined. Using: ' . $context->getConfigParam('default_mime_type'));
+            $logger->warning('Query HTTP header "Accept" undefined. Using: ' . $context->getConfigParam('default_mime_type'));
         
         return array(
             $contentType,
@@ -126,8 +126,7 @@ class Utils
             }
             
             if ($apiResp == null) {
-                if ($logger->isHandling(Logger::DEBUG))
-                    $logger->debug("JSON response not found in cache.");
+                $logger->info("JSON response not found in cache.");
                 // Query the Web API
                 $apiResp = self::loadJsonDocument($jsonUrl);
                 if ($logger->isHandling(Logger::DEBUG))
@@ -136,8 +135,7 @@ class Utils
                 // Store the result into the cache db
                 if ($useCache) {
                     $cache->write($jsonUrl, $apiResp, $context->getService());
-                    if ($logger->isHandling(Logger::DEBUG))
-                        $logger->debug("Stored JSON response into cache.");
+                    $logger->info("Stored JSON response into cache.");
                 }
             }
             
@@ -295,10 +293,9 @@ class Utils
         $spinInvocation = $context->getConfigParam('spin_endpoint') . '?arg=' . urlencode($sparqlQuery);
         $spinQueryGraph = $context->getConfigParam('root_url') . '/tempgraph' . uniqid("-", true);
         $query = 'LOAD <' . $spinInvocation . '> INTO GRAPH <' . $spinQueryGraph . '>';
-        if ($logger->isHandling(Logger::DEBUG)) {
+        if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("SPARQL query converted to SPIN: \n" . file_get_contents($spinInvocation));
-            $logger->debug('Loading SPIN SPARQL query into temp graph ' . $spinQueryGraph);
-        }
+        $logger->info('Loading SPIN SPARQL query into temp graph ' . $spinQueryGraph);
         $context->getSparqlClient()->update($query);
         
         // --- For each service custom argument, read its value from the SPARQL query.
@@ -324,11 +321,10 @@ class Utils
         // Make sure we have values for all expected arguments
         foreach ($context->getConfigParam('custom_parameter') as $name)
             if (! array_key_exists($name, $result))
-                $logger->notice("No triple for argument '" . $name . "' found in the SPARQL query. Will return empty response.");
+                $logger->warning("No triple for argument '" . $name . "' found in the SPARQL query. Will return empty response.");
         
         // Drop the temporary SPIN graph
-        if ($logger->isHandling(Logger::DEBUG))
-            $logger->debug("Dropping graph: <" . $spinQueryGraph . ">");
+        $logger->info("Dropping graph: <" . $spinQueryGraph . ">");
         $context->getSparqlClient()->update("DROP SILENT GRAPH <" . $spinQueryGraph . ">");
         
         return $result;

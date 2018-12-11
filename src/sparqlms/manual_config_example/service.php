@@ -26,7 +26,7 @@ $param2 = $customArgs['param2'];
  * For instance, call another service someService() using param2:
  */
 $other_param = someService($param2);
-$logger->info("Retrieved other parameter: " . $other_param);
+$logger->notice("Retrieved other parameter: " . $other_param);
 
 // ----------------------------------------------------------
 

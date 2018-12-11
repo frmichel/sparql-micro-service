@@ -69,8 +69,7 @@ class Configuration
             
             // --- Read config parameters from the service description graph
             
-            if ($logger->isHandling(Logger::DEBUG))
-                $logger->debug("No custom configuration file " . $customCfgFile . ". Trying service description graph...");
+            $logger->info("No custom configuration file " . $customCfgFile . ". Trying service description graph...");
             $customCfg = array();
             $customCfg['service_description'] = true;
             $serviceUri = $context->getServiceUri();

@@ -142,8 +142,8 @@ class Cache
                 // If the expiration date is not passed, return the document
                 return $found['payload'];
             else {
-                if ($this->logger->isHandling(Logger::DEBUG))
-                    $this->logger->debug("Cached document found but has expired, removing it.");
+                if ($this->logger->isHandling(Logger::INFO))
+                    $this->logger->info("Cached document found but has expired, removing it.");
                 $this->cacheDb->deleteOne([
                     'hash' => hash("sha256", $query)
                 ]);

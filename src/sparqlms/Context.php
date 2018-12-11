@@ -87,12 +87,12 @@ class Context
         $this->logger->pushHandler($handler);
         // $this->logger->pushProcessor(new IntrospectionProcessor($logLevel));
         $logger = $this->logger;
-        $logger->info("--------- Start --------");
+        $logger->notice("--------- Start --------");
         
         // --- Read the global configuration file and check query parameters
         $this->config = Configuration::readGobalConfig();
-        if ($logger->isHandling(Logger::DEBUG))
-            $logger->debug("Global configuration read from config.ini: " . print_r($this->config, TRUE));
+        if ($logger->isHandling(Logger::INFO))
+            $logger->info("Global configuration read from config.ini: " . print_r($this->config, TRUE));
         
         // Set default namespaces. See other existing default namespaces in EasyRdf/Namespace.php
         if (array_key_exists('namespace', $this->config))
@@ -101,16 +101,6 @@ class Context
                     $logger->debug('Adding namespace: ' . $nsName . " = " . $nsVal);
                 \EasyRdf_Namespace::set($nsName, $nsVal);
             }
-        
-        // --- Read mandatory HTTP query string arguments
-        list ($service, $querymode) = array_values(Utils::getQueryStringArgs($this->getConfigParam('parameter')));
-        if ($service != '')
-            $this->service = $service;
-        else
-            throw new Exception("Invalid configuration: empty argument 'service'.");
-        
-        if ($querymode != 'sparql' && $querymode != 'ld')
-            throw new Exception("Invalid argument 'querymode': should be one of 'sparql' or 'lod'.");
         
         // --- Initialize the client to the local RDF store and SPARQL endpoint
         $this->sparqlClient = new EasyRdf_Sparql_Client($this->getConfigParam('sparql_endpoint'));
@@ -145,8 +135,8 @@ class Context
     public function readCustomConfig()
     {
         $customCfg = Configuration::getCustomConfig($this);
-        if ($this->logger->isHandling(Logger::DEBUG))
-            $this->logger->debug("Service custom configuration: " . print_r($customCfg, TRUE));
+        if ($this->logger->isHandling(Logger::INFO))
+            $this->logger->info("Service custom configuration: " . print_r($customCfg, TRUE));
         $this->config = array_merge($this->config, $customCfg);
     }
 
@@ -200,7 +190,7 @@ class Context
     }
 
     /**
-     * Return the service name being called.
+     * Return the name of the service being called.
      * Retrived from query string parameter 'service', e.g. 'flickr/getPhotoById'
      *
      * @return string
@@ -208,6 +198,16 @@ class Context
     public function getService()
     {
         return $this->service;
+    }
+
+    /**
+     * Set the name of the service being called.
+     *
+     * @param string $serviceName
+     */
+    public function setService($serviceName)
+    {
+        $this->service = $serviceName;
     }
 
     /**
