@@ -1,3 +1,4 @@
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix shacl:   <http://www.w3.org/ns/shacl#>.
 @prefix schema:  <http://schema.org/>.
 @prefix dwc:     <http://rs.tdwg.org/dwc/terms/>.
@@ -5,23 +6,18 @@
 @base            <http://example.org/flickr/getPhotosByTaxon_sd/>.
 
 <ShapesGraph#TaxonShape> a shacl:NodeShape;
-    shacl:targetClass dwc:Taxon;
-    shacl:property <ShapesGraph#NamePropertyShape>, <ShapesGraph#ImagePropertyShape>;
+    shacl:property <ShapesGraph#NamePropertyShape>,
+        [ a shacl:PropertyShape; shacl:path rdf:type;     shacl:hasValue dwc:Taxon ],
+        [ a shacl:PropertyShape; shacl:path schema:image; shacl:node <ShapesGraph#PhotographShape> ];
     shacl:closed false.
 
 <ShapesGraph#NamePropertyShape> a shacl:PropertyShape; 
-    shacl:path dwc:scientificName;
-    shacl:nodeKind shacl:Literal;
+    shacl:path dwc:scientificName; shacl:nodeKind shacl:Literal;
     shacl:minCount 1; shacl:maxCount 1.
 
-<ShapesGraph#ImagePropertyShape> a shacl:PropertyShape; 
-    shacl:path schema:image; 
-    shacl:node <ShapesGraph#PhotographShape>; 
-    shacl:minCount 1.
-    
 <ShapesGraph#PhotographShape> a shacl:NodeShape;
-    shacl:targetClass schema:Photograph;
     shacl:property
+      [ a shacl:PropertyShape; shacl:path rdf:type;                shacl:hasValue schema:Photograph ],
       [ a shacl:PropertyShape; shacl:path schema:name;             shacl:nodeKind shacl:Literal; shacl:maxCount 1 ],
       [ a shacl:PropertyShape; shacl:path schema:contentUrl;       shacl:nodeKind shacl:IRI ],
       [ a shacl:PropertyShape; shacl:path foaf:depiction;          shacl:nodeKind shacl:IRI ],
@@ -32,8 +28,8 @@
     shacl:closed false.
 
 <ShapesGraph#PersonShape> a shacl:NodeShape;
-    shacl:targetClass schema:Person;
     shacl:property 
+      [ a shacl:PropertyShape; shacl:path rdf:type;          shacl:hasValue schema:Person ],
       [ a shacl:PropertyShape; shacl:path schema:identifier; shacl:nodeKind shacl:Literal ],
       [ a shacl:PropertyShape; shacl:path schema:url;        shacl:nodeKind shacl:IRI ];
     shacl:closed false.

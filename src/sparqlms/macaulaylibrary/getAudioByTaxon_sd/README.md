@@ -9,7 +9,7 @@ Each recording is depicted as an instance of the `schema:AudioObject` class that
 **Query mode**: SPARQL
 
 **Input**:
-- object of property dwc:scientificName: taxonomic name
+- object of property `dwc:scientificName`: taxonomic name
 
 
 ## Example of triples produced
