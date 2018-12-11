@@ -7,12 +7,15 @@ namespace frmichel\sparqlms;
 require_once '../../vendor/autoload.php';
 
 use Monolog\Logger;
+use frmichel\sparqlms\common\Context;
+use frmichel\sparqlms\common\Metrology;
+use frmichel\sparqlms\common\Utils;
 use Exception;
-require_once 'Utils.php';
-require_once 'Context.php';
-require_once 'Configuration.php';
-require_once 'Metrology.php';
-require_once 'Cache.php';
+require_once '../common/Utils.php';
+require_once '../common/Context.php';
+require_once '../common/Configuration.php';
+require_once '../common/Metrology.php';
+require_once '../common/Cache.php';
 
 try {
     // ------------------------------------------------------------------------------------
@@ -23,28 +26,16 @@ try {
     $metro = Metrology::getInstance(Logger::WARNING);
     $metro->startTimer(1);
     
-    // Init the context: read the global config.ini file, init the cache and logger
+    // Init the context: read the global config.ini file, init the cache, logger and SPARQL client
     $context = Context::getInstance(Logger::NOTICE);
     $logger = $context->getLogger();
-    
-    // Read the service-specific configuration, either as config.ini file or from the service description graph
-    $context->readCustomConfig();
+    $sparqlClient = $context->getSparqlClient();
     
     // ------------------------------------------------------------------------------------
-    // --- Parse the HTTP query, retrieve arguments
+    // --- Parse the HTTP query, retrieve mandatory arguments
     // ------------------------------------------------------------------------------------
     
-    // Read HTTP headers
-    list ($contentType, $accept) = Utils::getHttpHeaders();
-    
-    // Read the mandatory arguments from the HTTP query string
-    if (array_key_exists('QUERY_STRING', $_SERVER)) {
-        if ($logger->isHandling(Logger::DEBUG))
-            $logger->debug('Query string: ' . $_SERVER['QUERY_STRING']);
-    } else
-        Utils::httpBadRequest("HTTP error, no query string provided.");
-    
-    // --- Read mandatory HTTP query string arguments
+    // Read the service and querymode arguments
     list ($service, $querymode) = array_values(Utils::getQueryStringArgs($context->getConfigParam('parameter')));
     if ($service != '')
         $context->setService($service);
@@ -55,6 +46,9 @@ try {
     if ($querymode != 'sparql' && $querymode != 'ld')
         throw new Exception("Invalid argument 'querymode': should be one of 'sparql' or 'ld'.");
     $logger->notice("Query parameter (html special chars encoded) 'querymode': " . htmlspecialchars($querymode));
+    
+    // Read HTTP headers
+    list ($contentType, $accept) = Utils::getHttpHeaders();
     
     // Get the SPARQL query using either GET or POST methods
     if ($querymode == "sparql") {
@@ -70,6 +64,9 @@ try {
     // ------------------------------------------------------------------------------------
     // --- Build the Web API query string and call the service
     // ------------------------------------------------------------------------------------
+    
+    // Read the service-specific configuration, either from the config.ini file or from the service description graph
+    $context->readCustomConfig();
     
     // Read the Web API query string template
     $apiQuery = $context->getConfigParam('api_query');
@@ -111,7 +108,6 @@ try {
     $graphUri = $context->getConfigParam('root_url') . '/tempgraph' . uniqid("-", true);
     
     // Insert the triples generated from the Web API response
-    $sparqlClient = $context->getSparqlClient();
     $logger->info("Creating temporary graph: <" . $graphUri . ">");
     $query = "INSERT DATA { GRAPH <" . $graphUri . "> {\n" . $serializedQuads . "\n}}\n";
     $sparqlClient->update($query);
@@ -152,7 +148,7 @@ try {
         } else
             throw new Exception("LD mode required but no SPARQL CONSTRUCT query is defined.");
     } else
-        $logger->notice('Evaluating SPARQL query against temporary graph...');
+        $logger->notice('Evaluating client SPARQL query against temporary graph...');
     
     // Run the query against the temporary graph
     $result = $sparqlClient->queryRaw($sparqlQuery, $accept, $namedGraphUri = $graphUri);
@@ -164,7 +160,7 @@ try {
     // --- Return the HTTP response to the SPARQL client
     // ------------------------------------------------------------------------------------
     
-    $logger->notice("Sending response Content-Type: " . $result->getHeader('Content-Type'));
+    $logger->notice("Sending response with Content-Type: " . $result->getHeader('Content-Type'));
     header('Content-Type: ' . $result->getHeader('Content-Type'));
     header('Server: SPARQL-Micro-Service');
     header('Access-Control-Allow-Origin: *');
@@ -175,7 +171,7 @@ try {
     // Drop the temporary graph
     $logger->info("Dropping graph: <" . $graphUri . ">");
     $sparqlClient->update("DROP SILENT GRAPH <" . $graphUri . ">");
-    $logger->notice("--------- Done --------");
+    $logger->notice("--------- Done - SPARQL µS execution --------");
     
     $metro->stopTimer(1);
     $metro->appendTimer($service, "Total|API", 1, 2);
@@ -184,7 +180,7 @@ try {
         $logger = Context::getInstance()->getLogger();
         $logger->error((string) $e . "\n");
         $logger->notice("Returning HTTP status 500.\n");
-        $logger->notice("--------- Done --------");
+        $logger->notice("--------- Done - SPARQL µS execution --------");
     } catch (Exception $f) {
         print("Could not process the request. Error:\n" . (string) $e . "\n");
         print("Second exception caught:\n" . (string) $f . "\n");

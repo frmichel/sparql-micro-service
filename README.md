@@ -1,6 +1,6 @@
 # SPARQL Micro-Services
 
-The SPARQL Micro-Service architecture [1] is meant to allow the combination of Linked Data with data from Web APIs. It enables querying non-RDF Web APIs with SPARQL, and allows on-the-fly assigning dereferenceable URIs to Web API resources that do not have a URI in the first place.
+The SPARQL Micro-Service architecture [1, 3] is meant to allow the combination of Linked Data with data from Web APIs. It enables querying non-RDF Web APIs with SPARQL, and allows on-the-fly assigning dereferenceable URIs to Web API resources that do not have a URI in the first place.
 
 This project is a prototype PHP implementation for JSON-based Web APIs. It comes with several example SPARQL micro-services, designed in the context of a biodiversity-related use case, such as:
 - search Flickr for photos with a given tag. We use it to search the [*Encyclopedia of Life* Flickr group](https://www.flickr.com/groups/806927@N20) for photos of a given taxon: photos of this group are tagged with the scientific name of the taxon they represent, formatted as ```taxonomy:binomial=<scientific name>```;
@@ -93,13 +93,16 @@ CONSTRUCT {
 ## Folders structure
 
 ```bash
+src/common
+    Cache.php
+    Configuration.php         # management of the config either by config.ini file of service description graph
+    Context.php               # application execution context
+    Metrology.php             # execution time measures
+    Utils.php                 # utility functions
+
 src/sparqlms/
     config.ini                # generic configuration of the SPARQL micro-service engine
-    service.php               # core of the SPARQL micro-services
-    utils.php                 # utility functions
-    Context.php
-    Cache.php
-    Metrology.php
+    service.php               # core logics of the SPARQL micro-services
 
     <Web API>/                # directory of the services related to one Web API
     
@@ -164,6 +167,7 @@ From the project directory, run command ```composer install```, this will create
 Create directory ```logs``` with exec and write rights for all (```chmod 777 logs```). You should now have the following directory structure:
 
     sparqlms/
+        src/common/
         src/sparqlms/
         vendor/
         logs/
@@ -300,6 +304,8 @@ That should return an RDF description of the photographic resource:
 [1] Franck Michel, Catherine Faron-Zucker and Fabien Gandon. *SPARQL Micro-Services: Lightweight Integration of Web APIs and Linked Data*. In Proceedings of the Linked Data on the Web Workshop (LDOW2018). https://hal.archives-ouvertes.fr/hal-01722792
 
 [2] Franck Michel, Olivier Gargominy, Sandrine Tercerie & Catherine Faron-Zucker (2017). *A Model to Represent Nomenclatural and Taxonomic Information as Linked Data. Application to the French Taxonomic Register, TAXREF*. In Proceedings of the 2nd International Workshop on Semantics for Biodiversity (S4BioDiv) co-located with ISWC 2017 vol. 1933. Vienna, Austria. CEUR. https://hal.archives-ouvertes.fr/hal-01617708
+
+[3] Michel F., Zucker C., Gargominy O. & Gandon F. (2018). *Integration of Web APIs and Linked Data Using SPARQL Micro-Services—Application to Biodiversity Use Cases*. Information 9(12):310. DOI: https://dx.doi.org/10.3390/info9120310
 
 #### Poster
 

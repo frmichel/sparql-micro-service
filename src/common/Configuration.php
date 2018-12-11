@@ -1,7 +1,6 @@
 <?php
-namespace frmichel\sparqlms;
+namespace frmichel\sparqlms\common;
 
-use Monolog\Logger;
 use Exception;
 
 /**

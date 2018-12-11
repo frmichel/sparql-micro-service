@@ -1,6 +1,14 @@
 # SPARQL Micro-Service Changelog
 
 
+## [UNVERSIONED] 
+
+### Added
+
+### Changed
+- refactoring of code into several packages
+
+
 ## [0.2.0] 2018-11-26
 
 ### Added
@@ -12,9 +20,9 @@
 - new service macaulaylibrary/getAudioById for URI dereferencing
 
 ### Changed
-- change interface of services' custom service.php scripts (see manual_config_example)
+- change interface of services' custom service.php scripts (see folder ```src/sparqlms/manual_config_example```)
 - update Docker deployment with code version 0.1.0 and a MongoDB container
-- comply with composer common structure (remove directory ```vendor```, point to own forks of the JsonLD and EasyRDF librarie)
+- comply with composer common structure (remove directory ```vendor```, point to own forks of the JsonLD and EasyRDF libraries)
 - fix typos in TDWG demo
 
 

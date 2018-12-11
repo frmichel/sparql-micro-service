@@ -1,5 +1,5 @@
 <?php
-namespace frmichel\sparqlms;
+namespace frmichel\sparqlms\common;
 
 use ML\JsonLD\JsonLD;
 use ML\JsonLD\NQuads;
@@ -251,6 +251,12 @@ class Utils
      */
     static public function getQueryStringArgs($args)
     {
+        if (array_key_exists('QUERY_STRING', $_SERVER)) {
+            if ($logger->isHandling(Logger::DEBUG))
+                $logger->debug('Query string: ' . $_SERVER['QUERY_STRING']);
+        } else
+            Utils::httpBadRequest("HTTP error, no query string provided.");
+        
         $result = array();
         foreach ($args as $name) {
             
@@ -271,13 +277,13 @@ class Utils
 
     /**
      * Get the Web API arguments passed to the micro-service within the SPARQL graph pattern.
-     * 
-     * This is achieved by a SPARQL query over the SPIN graph of the user's query, the Service Description 
-     * graph and the shapes graph. 
-     * For each argument declared in the Service Description, we look for it in the user's query either 
-     * with its hydra:property or using the property shape denoted by shacl:sourceShape (the SD graph 
+     *
+     * This is achieved by a SPARQL query over the SPIN graph of the user's query, the Service Description
+     * graph and the shapes graph.
+     * For each argument declared in the Service Description, we look for it in the user's query either
+     * with its hydra:property or using the property shape denoted by shacl:sourceShape (the SD graph
      * should provuide one or the other).
-     * 
+     *
      * If any parameter in not found, the function returns an HTTP error 400 and exits.
      *
      * @param string $sparqlQuery
@@ -291,7 +297,7 @@ class Utils
         
         // --- Convert the SPARQL query to SPIN and load it into a temporary graph
         $spinInvocation = $context->getConfigParam('spin_endpoint') . '?arg=' . urlencode($sparqlQuery);
-        $spinQueryGraph = $context->getConfigParam('root_url') . '/tempgraph' . uniqid("-", true);
+        $spinQueryGraph = $context->getConfigParam('root_url') . '/tempgraph-spin-' . uniqid("-", true);
         $query = 'LOAD <' . $spinInvocation . '> INTO GRAPH <' . $spinQueryGraph . '>';
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("SPARQL query converted to SPIN: \n" . file_get_contents($spinInvocation));
@@ -315,7 +321,7 @@ class Utils
                 Utils::httpUnprocessableEntity("Only one value is allowed for property '" . $predicate . "' (argument '" . $name . "').");
             }
             // The first 'value' denotes SPARQL variabe '?value', the second is where the variable value is given in the SPARQL results format
-            $result[$name] = $jsonResultN['value']['value']; 
+            $result[$name] = $jsonResultN['value']['value'];
         }
         
         // Make sure we have values for all expected arguments
