@@ -1,0 +1,14 @@
+@prefix sms:   <http://sms.i3s.unice.fr/terms/api/>
+
+TEMPLATE st:service-optional(?serviceDescr, ?service, ?optional) {
+
+    "    " xsd:string(?triple)
+}
+WHERE {
+    GRAPH ?serviceDescr {
+        ?service sms:elements [
+            sms:triple ?triple;
+            sms:optionalNode ?optional;
+        ].
+    }
+}

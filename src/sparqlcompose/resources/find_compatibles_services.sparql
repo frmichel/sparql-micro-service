@@ -1,0 +1,45 @@
+@prefix sd:    <http://www.w3.org/ns/sparql-service-description#>.
+@prefix shacl: <http://www.w3.org/ns/shacl#>.
+@prefix hydra: <http://www.w3.org/ns/hydra/core#>.
+@prefix dct:   <http://purl.org/dc/terms/>.
+@prefix sp:    <http://spinrdf.org/sp#> .
+
+# Find the services that are compatible with the query in that inputs are satisfied by the query.
+# It returns a list of services that may be invoked with what is provided by the query, nothing more.
+SELECT DISTINCT ?service ?shapesGraph WHERE {
+  {
+    # - Service Description -
+    ?service  a sd:Service;
+      dct:source [ schema:potentialAction [ hydra:mapping [ hydra:property ?inputPredicate ]]];
+      sd:defaultDataset [ sd:defaultGraph [ shacl:shapesGraph ?shapesGraph ]].
+
+    # - SPIN quey -
+    GRAPH <{SpinQueryGraph}> {
+      [] sp:predicate ?inputPredicate; sp:object ?inputValue.
+      FILTER (isLiteral(?inputValue) || isIRI(?inputValue))
+    }
+  }
+  
+  UNION
+  
+  {
+    # - Service Description -
+    ?service  a sd:Service;
+      dct:source [ schema:potentialAction [ hydra:mapping [ shacl:sourceShape ?inputPropShape  ]]];
+      sd:defaultDataset [ sd:defaultGraph [ shacl:shapesGraph ?shapesGraph ]].
+
+    # - Shapes Graph -
+    GRAPH ?shapesGraph {
+      ?nodeShape a shacl:NodeShape; shacl:property ?inputPropShape.
+      ?inputPropShape shacl:path ?inputPredicate.
+      OPTIONAL { ?nodeShape shacl:property [ shacl:path rdf:type; shacl:hasValue ?class ] }
+    }
+
+    # - SPIN quey -
+    GRAPH <{SpinQueryGraph}> {
+      [] sp:subject ?subject; sp:predicate ?inputPredicate; sp:object ?inputValue.
+      FILTER (isLiteral(?inputValue) || isIRI(?inputValue))
+      OPTIONAL { [] sp:subject ?subject; sp:predicate rdf:type; sp:object ?class. }
+    }
+  }
+}

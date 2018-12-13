@@ -1,0 +1,9 @@
+template st:start {
+
+    st:call-template(st:services, ?serviceDescr)
+
+}
+where {
+    # Parameter passed on the query string as "...?param=<graph uri>"
+    BIND(IRI(st:get(st:param)) as ?serviceDescr)
+}

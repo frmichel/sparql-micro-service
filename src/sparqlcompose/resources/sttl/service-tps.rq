@@ -1,0 +1,14 @@
+@prefix sms:   <http://sms.i3s.unice.fr/terms/api/>
+
+TEMPLATE st:service-tps(?serviceDescr, ?service) {
+    "  " xsd:string(?triple)
+}
+WHERE {
+    GRAPH ?serviceDescr {
+        ?service sms:elements ?el.
+        ?el sms:triple ?triple.
+        
+        # Make sure this triple pattern is not embedded into an OPTIONAL clause
+        FILTER NOT EXISTS { ?el sms:optionalNode ?optional. }
+    }
+}
