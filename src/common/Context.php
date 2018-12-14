@@ -69,11 +69,12 @@ class Context
 
     /**
      *
-     * @param string $configFile
      * @param integer $logLevel
      *            one of Logger::INFO, Logger::WARNING, Logger::DEBUG etc. (see Monolog\Logger.php)
+     * @param string $startMessage
+     *            an optional message to log once the logger is initialized
      */
-    private function __construct($logLevel)
+    private function __construct($logLevel, $startMessage = null)
     {
         // --- Initialize the logger
         if (array_key_exists('SCRIPT_FILENAME', $_SERVER))
@@ -113,16 +114,17 @@ class Context
     /**
      * Create and/or get singleton instance
      *
-     * @param string $configFile
+     * @param integer $logLevel
+     *            a log level from Monolog\Logger
+     * @param string $startMessage
+     *            an optional message to log once the logger is initialized
      * @return Context
      */
-    public static function getInstance($configFile = null, $logLevel = Logger::INFO)
+    public static function getInstance($logLevel = Logger::NOTICE, $startMessage = null)
     {
-        if (is_null(self::$singleton)) {
-            if (is_null($configFile))
-                throw new Exception("Error: application context not yet initialized.");
-            self::$singleton = new Context($configFile, $logLevel);
-        }
+        if (is_null(self::$singleton))
+            self::$singleton = new Context($logLevel, $startMessage);
+        
         return self::$singleton;
     }
 

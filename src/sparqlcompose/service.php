@@ -19,7 +19,7 @@ try {
     // ------------------------------------------------------------------------------------
 
     // Init the context: read the global config.ini file & init the logger and SPARQL client
-    $context = Context::getInstance(Logger::DEBUG);
+    $context = Context::getInstance(Logger::NOTICE, "--------- Starting SPARQL composer --------");
     $logger = $context->getLogger();
     $sparqlClient = $context->getSparqlClient();
 
