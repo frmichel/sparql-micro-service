@@ -88,7 +88,7 @@ class Context
         $this->logger->pushHandler($handler);
         // $this->logger->pushProcessor(new IntrospectionProcessor($logLevel));
         $logger = $this->logger;
-        $logger->notice("--------- Starting " . $scriptName . " --------");
+        $logger->notice($startMessage);
         
         // --- Read the global configuration file and check query parameters
         $this->config = Configuration::readGobalConfig();

@@ -90,7 +90,7 @@ try {
 
     // Repalce anything within the WHERE clause of the client SPARQL query with the SERVICE clauses
     preg_match('/(?i)where\s*\{((.|\R)*)\}[^}]*/', $sparqlQuery, $matches);
-    $sparqlQueryRewritten = str_replace($matches[1], "\n".$serviceClauses."\n", $sparqlQuery);
+    $sparqlQueryRewritten = str_replace($matches[1], "\n\n".$serviceClauses, $sparqlQuery);
     if ($logger->isHandling(Logger::INFO))
         $logger->info("Rewritten SPARQL query: \n" . $sparqlQueryRewritten);
 

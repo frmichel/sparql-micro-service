@@ -5,27 +5,20 @@
 
 WITH  <{MatchmakingGraph}>
 INSERT {
-  ?service a sd:Service;
-    sms:elements [
-      sms:triple ?strTP;            # the formatted triple pattern
-      sms:optionalNode ?optional;   # the OPTIONAL node that contains the triple pattern
-    ]
+    ?service a sd:Service;
+      sms:elements [
+        sp:subject ?s; sp:object ?o; sp:predicate ?p;
+        sms:optionalNode ?optional;   # the OPTIONAL node that contains the triple pattern
+      ].
+    ?s sp:varName ?varNameS.
+    ?p sp:varName ?varNameP.
+    ?o sp:varName ?varNameO.
 }
 USING <{SpinQueryGraph}>
 {Using_Clauses}
 WHERE {
-    ?service a sd:Service; sd:defaultDataset [ sd:defaultGraph [ shacl:shapesGraph ?shapesGraph ]].
-    GRAPH ?shapesGraph {
-      ?nodeShape a shacl:NodeShape; shacl:property ?propShape.
-      ?propShape shacl:path ?p.
-      OPTIONAL { ?propShape shacl:nodeKind ?nodeType. }
-      OPTIONAL { ?propShape shacl:hasValue ?nodeValue. }
-    }
-
-    # Get each triple pattern from the client query
+    # Get each triple pattern from the client query and optional variable names for each term
     ?triple sp:subject ?s; sp:predicate ?p; sp:object ?o.
-
-    # Check if the subject/predicate/object are variables
     OPTIONAL { ?s sp:varName ?varNameS. }
     OPTIONAL { ?p sp:varName ?varNameP. }
     OPTIONAL { ?o sp:varName ?varNameO. }
@@ -33,26 +26,50 @@ WHERE {
     # Check whether the triple pattern is embedded in an sp:Optional node
     OPTIONAL { ?optional a sp:Optional; sp:elements/(rdf:rest|rdf:first)* ?triple. }
 
-    FILTER (
-      bound(?varNameO)
-      ||
-      !bound(?varNameO) && !bound(?nodeType) && !bound(?nodeValue)
-      ||
-      bound(?nodeType) &&
-        ((?nodeType = shacl:Literal && isLiteral(?o)) || (?nodeType = shacl:IRI && isIRI(?o)))
-      ||
-      bound(?nodeValue) && (?o = ?nodeValue)
-    )
+    # Check the triple pattern against each node shape of each service
+    ?service a sd:Service; sd:defaultDataset [ sd:defaultGraph [ shacl:shapesGraph ?shapesGraph ]].
 
-    # Produce a string representation of the triple pattern
-    BIND(if(bound(?varNameS), concat("?", ?varNameS), sms:strRep(?s)) as ?subject)
-    BIND(if(bound(?varNameP), concat("?", ?varNameP), sms:strRep(?p)) as ?predicate)
-    BIND(if(bound(?varNameO), concat("?", ?varNameO), sms:strRep(?o)) as ?object)
-    BIND(concat(?subject, " ", ?predicate, " ", ?object, ".") as ?strTP)
+    # Verify that the triple pattern matches the node shape definition
+    FILTER sms:validate(?s, ?p, ?o, ?shapesGraph)
 }
 
-function sms:strRep(?x) {
-    if ( isLiteral(?x), concat("\"", str(?x), "\""),
-      if ( isIRI(?x), concat("<", str(?x), ">"), str(?x) )
+function sms:validate(?s, ?p, ?o, ?shapesGraph) {
+  EXISTS {
+    # Force the evaluation of variables so that they be bound with
+    # the value of parameter with the same name
+    VALUES ?s { UNDEF }
+    VALUES ?o { UNDEF }
+
+    # Check whether ?s is the object in a "parent" triple pattern
+    OPTIONAL { [] sp:subject ?s2; sp:predicate ?p2; sp:object ?s. }
+
+    GRAPH ?shapesGraph {
+      ?nodeShape shacl:property ?propShape.
+      ?propShape shacl:path ?p.
+      OPTIONAL { ?propShape shacl:nodeKind ?nodeType. }
+      OPTIONAL { ?propShape shacl:hasValue ?nodeValue. }
+      OPTIONAL { ?propShape shacl:node     ?subseqNodeShape. }
+    }
+    OPTIONAL { ?o sp:varName ?varNameO. }
+
+    FILTER (
+      # If "?s ?p ?o" has a parent triple, then this parent triple must also be valid wrt to the shapes graph
+      if (bound(?s2) && bound(?p2), sms:validate(?s2, ?p2, ?s, ?shapesGraph), true)
+      &&
+      (
+        # If there is a node type, ?o must comply with that type unless ?o is a variable
+        bound(?nodeType) &&
+          (bound(?varNameO) || (?nodeType = shacl:Literal && isLiteral(?o)) || (?nodeType = shacl:IRI && isIRI(?o)))
+        ||
+        # ?o has a fixed value in the shape.
+        bound(?nodeValue) && (bound(?varNameO) || (?o = ?nodeValue))
+        ||
+        # ?o corresponds to a ShapeNode but it is not the subject of any other triple
+        bound(?subseqNodeShape) && 
+          NOT EXISTS { [] sp:subject ?o; sp:predicate ?p3; sp:object ?o3. }
+        ||
+        bound(?subseqNodeShape)
+      )
     )
+  }
 }
