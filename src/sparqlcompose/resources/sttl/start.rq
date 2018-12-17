@@ -2,6 +2,7 @@
 
 template st:start {
 
+    "  {}" st:nl() # empty group graph pattern as the first of a UNION of other group graph patterns
     st:call-template(st:services, ?serviceDescr)
 
 }

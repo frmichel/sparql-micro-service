@@ -2,8 +2,10 @@
 @prefix sms: <http://sms.i3s.unice.fr/terms/api/>
 
 TEMPLATE st:service-tps(?serviceDescr, ?service) {
-    "  " xsd:string(?tpStr)
+
+    "      " xsd:string(?tpStr)
 }
+
 WHERE {
     GRAPH ?serviceDescr {
         ?service sms:elements ?el.

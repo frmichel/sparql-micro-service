@@ -3,7 +3,7 @@
 
 TEMPLATE st:service-optional(?serviceDescr, ?service, ?optional) {
 
-    "    " xsd:string(?tpStr)
+    "        " xsd:string(?tpStr)
 }
 WHERE {
     GRAPH ?serviceDescr {

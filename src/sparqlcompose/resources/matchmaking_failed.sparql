@@ -3,19 +3,9 @@
 @prefix sp:    <http://spinrdf.org/sp#> .
 @prefix sms:   <http://sms.i3s.unice.fr/terms/api/>
 
-WITH  <{MatchmakingGraph}>
-INSERT {
-    ?service a sd:Service;
-      sms:elements [
-        sp:subject ?s; sp:object ?o; sp:predicate ?p;
-        sms:optionalNode ?optional;   # the OPTIONAL node that contains the triple pattern
-      ].
-    ?s sp:varName ?varNameS.
-    ?p sp:varName ?varNameP.
-    ?o sp:varName ?varNameO.
-}
-USING <{SpinQueryGraph}>
-{Using_Clauses}
+SELECT DISTINCT ?tpStr
+FROM <{SpinQueryGraph}>
+{From_Clauses}
 WHERE {
     # Get each triple pattern from the client query and optional variable names for each term
     ?triple sp:subject ?s; sp:predicate ?p; sp:object ?o.
@@ -26,11 +16,32 @@ WHERE {
     # Check whether the triple pattern is embedded in an sp:Optional node
     OPTIONAL { ?optional a sp:Optional; sp:elements/(rdf:rest|rdf:first)* ?triple. }
 
+    # Verify that the triple pattern does not match any shape definition
+    FILTER (!sms:validateTriple(?s, ?p, ?o))
+    
+    BIND(if(bound(?varNameS), concat("?", ?varNameS), sms:strRep(?s)) as ?sf)
+    BIND(if(bound(?varNameP), concat("?", ?varNameP), sms:strRep(?p)) as ?pf)
+    BIND(if(bound(?varNameO), concat("?", ?varNameO), sms:strRep(?o)) as ?of)
+    BIND(if(bound(?optional), "[optional] ", "") as ?optStr)
+    BIND(concat(?sf, " ", ?pf, " ", ?of, ".") as ?tpStr)
+           
+} ORDER BY ?p
+
+# Check whether there exists at least one shapes graph for which the given triple pattern is valid
+function sms:validateTriple(?s, ?p, ?o) {
+  EXISTS {
+    # Force the evaluation of variables so that they be bound with
+    # the value of parameter with the same name
+    VALUES ?s { UNDEF }
+    VALUES ?p { UNDEF }
+    VALUES ?o { UNDEF }
+
     # Check the triple pattern against each node shape of each service
     ?service a sd:Service; sd:defaultDataset [ sd:defaultGraph [ shacl:shapesGraph ?shapesGraph ]].
 
     # Verify that the triple pattern matches the node shape definition
-    FILTER sms:validate(?s, ?p, ?o, ?shapesGraph)
+    FILTER (sms:validate(?s, ?p, ?o, ?shapesGraph))
+  }
 }
 
 # Checks whether the given triple pattern is valid wrt. the given shapes graph
@@ -66,9 +77,15 @@ function sms:validate(?s, ?p, ?o, ?shapesGraph) {
         bound(?nodeValue) && (bound(?varNameO) || (?o = ?nodeValue))
         ||
         # ?o corresponds to a ShapeNode. Triples with ?o as their subject may or may not 
-        # be valid with respect to the same shapes node.
+        # be valid wrt. the same shapes node.
         bound(?subseqNodeShape)
       )
     )
   }
+}
+
+function sms:strRep(?x) {
+    if ( isLiteral(?x), concat("\"", str(?x), "\""),
+      if ( isIRI(?x), concat("<", str(?x), ">"), str(?x) )
+    )
 }

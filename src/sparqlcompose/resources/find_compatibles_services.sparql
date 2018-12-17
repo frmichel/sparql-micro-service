@@ -39,7 +39,11 @@ SELECT DISTINCT ?service ?shapesGraph WHERE {
     GRAPH <{SpinQueryGraph}> {
       [] sp:subject ?subject; sp:predicate ?inputPredicate; sp:object ?inputValue.
       FILTER (isLiteral(?inputValue) || isIRI(?inputValue))
-      OPTIONAL { [] sp:subject ?subject; sp:predicate rdf:type; sp:object ?class. }
+      OPTIONAL { [] sp:subject ?subject; sp:predicate rdf:type; sp:object ?class2. }
+      
+      # If there is a "rdf:type" property shape and an "rdf:type <class>" in the query,
+      # then these queries must be the same
+      FILTER (if(bound(?class) && bound(?class2), ?class = ?class2, true))
     }
   }
 }

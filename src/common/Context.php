@@ -5,7 +5,6 @@ use Monolog\Logger;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use EasyRdf_Sparql_Client;
-use Exception;
 
 /**
  * Application execution context containing the configuration, logger, cache, SPARQL client
@@ -179,6 +178,14 @@ class Context
     public function getConfigParam($param)
     {
         return $this->config[$param];
+    }
+
+    /**
+     * Set a parameter from the configuration (generic or custom)
+     */
+    public function setConfigParam($param, $value)
+    {
+        $this->config[$param] = $value;
     }
 
     /**

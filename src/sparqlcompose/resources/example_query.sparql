@@ -1,0 +1,26 @@
+prefix schema: <http://schema.org/>
+prefix dwc: <http://rs.tdwg.org/dwc/terms/>
+
+SELECT ?audioFile ?imgFile ?author WHERE {
+
+    ?taxon a dwc:Taxon;
+        dwc:scientificName "Delphinus delphis";
+        schema:audio ?audio.
+
+    ?audio a schema:AudioObject;
+        schema:contentUrl ?audioFile;
+        schema:mainEntityOfPage ?page;
+        schema:author ?author;
+        schema:description ?description.
+        
+    OPTIONAL { 
+        ?taxon schema:image [
+            a schema:Photograph;
+            # schema:XXXXXXXXXX ?x; # unmatched triple
+            schema:name ?title;
+            schema:author [ schema:identifier ?author ];
+            schema:mainEntityOfPage ?pageUrl;
+            schema:contentUrl ?imgFile
+        ]. 
+    }
+}
