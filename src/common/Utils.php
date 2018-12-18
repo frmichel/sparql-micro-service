@@ -251,6 +251,9 @@ class Utils
      */
     static public function getQueryStringArgs($args)
     {
+        global $context;
+        $logger = $context->getLogger();
+        
         if (array_key_exists('QUERY_STRING', $_SERVER)) {
             if ($logger->isHandling(Logger::DEBUG))
                 $logger->debug('Query string: ' . $_SERVER['QUERY_STRING']);

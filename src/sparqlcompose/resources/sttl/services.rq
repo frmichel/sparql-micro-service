@@ -5,11 +5,11 @@ TEMPLATE st:services(?serviceDescr) {
     "  UNION" st:nl()
     "  {" st:nl()
     "    SERVICE " ?service " {" st:nl()
-        st:call-template(st:service-tps, ?serviceDescr, ?service)
-        st:nl()st:nl()
-        st:call-template(st:service-optionals, ?serviceDescr, ?service)
-    st:nl() "    }" st:nl()
-    "   }"
+            st:call-template(st:service-tps, ?serviceDescr, ?service)
+            st:nl()
+            st:call-template(st:service-optionals, ?serviceDescr, ?service)
+    "    }" st:nl()
+    "  }"
 }
 WHERE {
     GRAPH ?serviceDescr {

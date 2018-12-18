@@ -4,7 +4,7 @@ TEMPLATE st:service-optionals(?serviceDescr, ?service) {
 
     "      OPTIONAL {" st:nl()
         group distinct { st:call-template(st:service-optional, ?serviceDescr, ?service, ?optional) }
-    st:nl() "      }"
+    st:nl() "      }" st:nl()
 }
 WHERE {
     GRAPH ?serviceDescr {
