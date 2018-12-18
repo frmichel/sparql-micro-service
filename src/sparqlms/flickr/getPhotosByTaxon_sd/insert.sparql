@@ -1,5 +1,5 @@
 INSERT {
-    <{urlencode(name)}> a dwc:Taxon;
+    [] a dwc:Taxon;
         dwc:scientificName "{name}";
         schema:image ?photoUri.
 
