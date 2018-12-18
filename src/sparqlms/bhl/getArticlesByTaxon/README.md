@@ -1,11 +1,8 @@
-# Biodiversity Heritage Library / getArticlesByTaxon
+# bhl/getArticlesByTaxon
 
 This service searches the [Biodiversity Heritage Library](https://www.biodiversitylibrary.org/) for scientific articles related to a given taxon name.
 
 Each article is represented by an instance of the `schema:ScholarlyArticle` class. It comes with a title (`schema:name`), a publication date (`schema:datePublished`), authors (`schema:author`), the article's Web page (`schema:mainEntityOfPage`), the first page's URL (`schema:mainEntityOfPage`) and thumbnail (`schema:thumbnailUrl`), and the details about the journal in which it was published (`schema:isPartOf`).
-
-
-**Path**: bhl/getArticlesByTaxon
 
 **Query mode**: SPARQL
 
@@ -13,7 +10,7 @@ Each article is represented by an instance of the `schema:ScholarlyArticle` clas
 - name: a taxon name
 
 
-## Example of triples produced
+## Produced graph example
 
 ```turtle
 <http://example.org/ld/bhl/part/73414>

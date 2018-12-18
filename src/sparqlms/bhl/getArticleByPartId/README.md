@@ -1,12 +1,9 @@
-# Biodiversity Heritage Library / getArticleByPartId
+# bhl/getArticleByPartId
 
 This service retrives a scientific article from the [Biodiversity Heritage Library](https://www.biodiversitylibrary.org/) (BHL).
 It is mostly meant to dereference article URIs produced in the bhl/getArticlesByTaxon service, but can also be use with SPARQL.
 
 Each article is represented by an instance of the `schema:ScholarlyArticle` class. It comes with a title (`schema:name`), a publication date (`schema:datePublished`), authors (`schema:author`), the article's Web page (`schema:mainEntityOfPage`), the first page's URL (`schema:mainEntityOfPage`) and thumbnail (`schema:thumbnailUrl`), and the details about the journal in which it was published (`schema:isPartOf`).
-
-
-**Path**: bhl/getArticleByPartId
 
 **Query mode**: dereferencing to RDF content, SPARQL
 
@@ -14,7 +11,7 @@ Each article is represented by an instance of the `schema:ScholarlyArticle` clas
 - partId: BHL's internal article identifier
 
 
-## Example of triples produced
+## Produced graph example
 
 ```turtle
 <http://example.org/ld/bhl/part/73414>

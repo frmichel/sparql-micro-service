@@ -1,10 +1,8 @@
-# Musicbrainz / getSongByName
+# musicbrainz/getSongByName
 
 This service searches the [MusicBrainz music information encyclopedia](https://musicbrainz.org/) for music tunes whose titles match a given name with a minimum confidence of 90%.
 
 Each tune consists of a work (with no URIblank node), having a Web page URL (`schema:sameAs`) and a title (`schema:name`).
-
-**Path**: `musicbrainz/getSongByName`
 
 **Query mode**: SPARQL
 
@@ -12,7 +10,7 @@ Each tune consists of a work (with no URIblank node), having a Web page URL (`sc
 - `name`: taxon name
 
 
-## Example of triples produced
+## Produced graph example
 
 ```turtle
 []  schema::name "Delphinus delphis";
