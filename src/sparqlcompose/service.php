@@ -62,34 +62,11 @@ try {
     $sparqlClient->update($query);
     
     // ------------------------------------------------------------------------------------
-    // --- Discover the services whose inputs are satisfied by the query
-    // ------------------------------------------------------------------------------------
-    
-    $query = file_get_contents('resources/find_compatibles_services.sparql');
-    $query = str_replace('{SpinQueryGraph}', $spinQueryGraph, $query);
-    
-    $logger->info('Looking for services whose inputs are satisfied by the query...');
-    $jsonResult = Utils::runSparqlSelectQuery($query);
-    $potentialServices = array();
-    foreach ($jsonResult as $jsonResultN)
-        $potentialServices[$jsonResultN['service']['value']] = $jsonResultN['shapesGraph']['value'];
-    if ($logger->isHandling(Logger::INFO))
-        $logger->info("Service whose inputs are satisfied by the SPARQL query: " . print_r($potentialServices, true));
-    
-    // Create a temporary graph where to store the result of the matchmaking of triples and services
-    $matchmakingGraph = $context->getConfigParam('root_url') . '/tempgraph-matchmaking' . uniqid("-", true);
-    
-    // ------------------------------------------------------------------------------------
     // --- Find out which TPs cannot be matched by any service using the "unmatched triples" query
     // ------------------------------------------------------------------------------------
     
     $query = file_get_contents('resources/matchmaking_failed.sparql');
     $query = str_replace('{SpinQueryGraph}', $spinQueryGraph, $query);
-    $fromClauses = "";
-    foreach ($potentialServices as $service => $shapesGraph)
-        $fromClauses .= "FROM <" . $service . "ServiceDescription>\n" . "FROM NAMED <" . $shapesGraph . ">\n";
-    
-    $query = str_replace('{From_Clauses}', $fromClauses, $query);
     $logger->info("Executing unmatched triples query...");
     $jsonResult = Utils::runSparqlSelectQuery($query);
     if (sizeof($jsonResult) != 0) {
@@ -102,16 +79,14 @@ try {
     }
     
     // ------------------------------------------------------------------------------------
-    // --- Prepare and exec the matchmaking query
+    // --- Matchmaking: find out which TPs are matched by which services
     // ------------------------------------------------------------------------------------
     
+    // Create a temporary graph where to store the result of the matchmaking of triples and services
+    $matchmakingGraph = $context->getConfigParam('root_url') . '/tempgraph-matchmaking' . uniqid("-", true);
     $query = file_get_contents('resources/matchmaking.sparql');
     $query = str_replace('{MatchmakingGraph}', $matchmakingGraph, $query);
     $query = str_replace('{SpinQueryGraph}', $spinQueryGraph, $query);
-    $usingClauses = "";
-    foreach ($potentialServices as $service => $shapesGraph)
-        $usingClauses .= "USING <" . $service . "ServiceDescription>\n" . "USING NAMED <" . $shapesGraph . ">\n";
-    $query = str_replace('{Using_Clauses}', $usingClauses, $query);
     $logger->info("Executing matchmaking query and storing result in temp graph: <" . $matchmakingGraph . ">...");
     if ($logger->isHandling(Logger::DEBUG))
         $logger->debug("Matchmaking SPARQL query: \n" . $query);
@@ -122,7 +97,7 @@ try {
         $result = $sparqlClient->queryRaw("CONSTRUCT WHERE { ?s ?p ?o }", "text/turtle", $namedGraphUri = $matchmakingGraph);
         $logger->debug("Matchmaking result graph: \n" . $result);
     }
-    
+
     // ------------------------------------------------------------------------------------
     // --- Rewrite the client SPARQL query
     // ------------------------------------------------------------------------------------

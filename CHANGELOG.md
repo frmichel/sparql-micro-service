@@ -4,9 +4,10 @@
 ## [UNVERSIONED] 
 
 ### Added
+- SPARQL compose (beta): service to automatically rewrite a SPARQL query into a union of invocations to multiples SPARQL micro-services
 
 ### Changed
-- refactoring of code into several packages
+- refactoring of code into packages common, sparqlms and sparqlcompose
 
 
 ## [0.2.0] 2018-11-26

@@ -16,7 +16,7 @@ SELECT ?audioFile ?imgFile ?author WHERE {
     OPTIONAL { 
         ?taxon schema:image [
             a schema:Photograph;
-            # schema:XXXXXXXXXX ?x; # unmatched triple
+            schema:XXXXX ?x; # unmatched triple
             schema:name ?title;
             schema:author [ schema:identifier ?author ];
             schema:mainEntityOfPage ?pageUrl;
