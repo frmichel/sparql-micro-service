@@ -323,8 +323,7 @@ class Utils
                 $predicate = $jsonResultN['predicate']['value'];
                 Utils::httpUnprocessableEntity("Only one value is allowed for property '" . $predicate . "' (argument '" . $name . "').");
             }
-            // The first 'value' denotes SPARQL variabe '?value', the second is where the variable value is given in the SPARQL results format
-            $result[$name] = $jsonResultN['value']['value'];
+            $result[$name] = $jsonResultN['result']['value'];
         }
         
         // Make sure we have values for all expected arguments

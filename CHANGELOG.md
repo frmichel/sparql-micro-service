@@ -7,6 +7,7 @@
 - SPARQL compose (beta): service to automatically rewrite a SPARQL query into a union of invocations to multiples SPARQL micro-services
 
 ### Changed
+- pass arguments to SPARQL micro-services in graph pattern using a variable and VALUES or FILTER clauses
 - refactoring of code into packages common, sparqlms and sparqlcompose
 
 
