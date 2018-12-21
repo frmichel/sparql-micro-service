@@ -1,13 +1,13 @@
-@prefix sms:   <http://sms.i3s.unice.fr/terms/api/>
+@prefix sms:   <http://sms.i3s.unice.fr/terms/>
 
-TEMPLATE st:service-optionals(?serviceDescr, ?service) {
+TEMPLATE st:service-optionals(?serviceDescrGraph, ?service) {
 
     "      OPTIONAL {" st:nl()
-        group distinct { st:call-template(st:service-optional, ?serviceDescr, ?service, ?optional) }
+        group distinct { st:call-template(st:service-optional, ?serviceDescrGraph, ?service, ?optional) }
     st:nl() "      }" st:nl()
 }
 WHERE {
-    GRAPH ?serviceDescr {
+    GRAPH ?serviceDescrGraph {
         ?service sms:elements [ sms:optionalNode ?optional ].
     }
 }

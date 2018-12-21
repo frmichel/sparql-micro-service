@@ -1,24 +1,23 @@
 prefix schema: <http://schema.org/>
 prefix dwc: <http://rs.tdwg.org/dwc/terms/>
 
-SELECT ?audioFile ?imgFile ?author WHERE {
+SELECT ?taxon ?audFile ?audAuthor ?imgFile ?imgAuthor WHERE {
 
     ?taxon a dwc:Taxon;
         dwc:scientificName "Delphinus delphis";
         schema:audio ?audio.
 
     ?audio a schema:AudioObject;
-        schema:contentUrl ?audioFile;
+        schema:contentUrl ?audFile;
         schema:mainEntityOfPage ?page;
-        schema:author ?author;
+        schema:author ?audAuthor;
         schema:description ?description.
         
     OPTIONAL { 
         ?taxon schema:image [
             a schema:Photograph;
-            schema:XXXXX ?x; # unmatched triple
             schema:name ?title;
-            schema:author [ schema:identifier ?author ];
+            schema:author [ schema:identifier ?imgAuthor ];
             schema:mainEntityOfPage ?pageUrl;
             schema:contentUrl ?imgFile
         ]. 

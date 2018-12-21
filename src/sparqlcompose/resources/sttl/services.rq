@@ -1,18 +1,18 @@
 @prefix sd:    <http://www.w3.org/ns/sparql-service-description#>.
 
-TEMPLATE st:services(?serviceDescr) {
+TEMPLATE st:services(?serviceDescrGraph) {
 
     "  UNION" st:nl()
     "  {" st:nl()
     "    SERVICE " ?service " {" st:nl()
-            st:call-template(st:service-tps, ?serviceDescr, ?service)
+            st:call-template(st:service-tps, ?serviceDescrGraph, ?service)
             st:nl()
-            st:call-template(st:service-optionals, ?serviceDescr, ?service)
+            st:call-template(st:service-optionals, ?serviceDescrGraph, ?service)
     "    }" st:nl()
     "  }"
 }
 WHERE {
-    GRAPH ?serviceDescr {
+    GRAPH ?serviceDescrGraph {
         ?service a sd:Service.
     }
 }

@@ -1,12 +1,12 @@
 @prefix sp:  <http://spinrdf.org/sp#> .
-@prefix sms: <http://sms.i3s.unice.fr/terms/api/>
+@prefix sms: <http://sms.i3s.unice.fr/terms/>
 
-TEMPLATE st:service-optional(?serviceDescr, ?service, ?optional) {
+TEMPLATE st:service-optional(?serviceDescrGraph, ?service, ?optional) {
 
     "        " xsd:string(?tpStr)
 }
 WHERE {
-    GRAPH ?serviceDescr {
+    GRAPH ?serviceDescrGraph {
         ?service sms:elements ?el.
         ?el sp:subject ?s; sp:predicate ?p; sp:object ?o;
             sms:optionalNode ?optional.

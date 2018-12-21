@@ -84,6 +84,7 @@ try {
     
     // Create a temporary graph where to store the result of the matchmaking of triples and services
     $matchmakingGraph = $context->getConfigParam('root_url') . '/tempgraph-matchmaking' . uniqid("-", true);
+    
     $query = file_get_contents('resources/matchmaking.sparql');
     $query = str_replace('{MatchmakingGraph}', $matchmakingGraph, $query);
     $query = str_replace('{SpinQueryGraph}', $spinQueryGraph, $query);
@@ -95,35 +96,47 @@ try {
     if ($logger->isHandling(Logger::DEBUG)) {
         // Read the graph that we just generated - just for logging
         $result = $sparqlClient->queryRaw("CONSTRUCT WHERE { ?s ?p ?o }", "text/turtle", $namedGraphUri = $matchmakingGraph);
-        $logger->debug("Matchmaking result graph: \n" . $result);
+        //$logger->debug("Matchmaking result graph: \n" . $result);
     }
-
+    
     // ------------------------------------------------------------------------------------
-    // --- Rewrite the client SPARQL query
+    // --- Generate and execute the federated client SPARQL query
     // ------------------------------------------------------------------------------------
     
     // -- Generate the SERVICE clauses corresponding to each SPARQL micro-service to invoke
-    $genServiceClausesInvocation = $context->getConfigParam('sparql_compose_endpoint') . '?param=' . $matchmakingGraph;
-    $serviceClauses = file_get_contents($genServiceClausesInvocation);
+    $genFedQuery = $context->getConfigParam('sparql_compose_endpoint') . '?param=' . $matchmakingGraph;
+    $evalFedQuery = file_get_contents($genFedQuery);
     
-    // Repalce anything within the WHERE clause of the client SPARQL query with the SERVICE clauses
-    preg_match('/(?i)where\s*\{((.|\R)*)\}[^}]*/', $sparqlQuery, $matches);
-    $sparqlQueryRewritten = str_replace($matches[1], "\n\n" . $serviceClauses, $sparqlQuery);
-    if ($logger->isHandling(Logger::INFO))
-        $logger->info("Rewritten SPARQL query: \n" . $sparqlQueryRewritten);
+    $evalFedQueryGraph = $context->getConfigParam('root_url') . '/tempgraph-eval' . uniqid("-", true);
+    $evalFedQuery = str_replace('{EvalFedQueryGraph}', $evalFedQueryGraph, $evalFedQuery);
+    if ($logger->isHandling(Logger::DEBUG))
+        $logger->debug("Federated SPARQL query: \n" . $evalFedQuery);
+    $logger->info('Evaluating federated query into temporary graph <' . $evalFedQueryGraph . ">");
+    $sparqlClient->update($evalFedQuery);
     
-    // Drop the spin and matchmaking temporary graph
-    $logger->info("Dropping graph: <" . $matchmakingGraph . ">");
-    $sparqlClient->update("DROP SILENT GRAPH <" . $matchmakingGraph . ">");
-    $logger->info("Dropping graph: <" . $spinQueryGraph . ">");
-    $sparqlClient->update("DROP SILENT GRAPH <" . $spinQueryGraph . ">");
+    if ($logger->isHandling(Logger::DEBUG)) {
+        // Read the graph that we just generated - just for logging
+        $result = $sparqlClient->queryRaw("CONSTRUCT WHERE { ?s ?p ?o }", "text/turtle", $namedGraphUri = $evalFedQueryGraph);
+        //$logger->debug("Federated query result graph: \n" . $result);
+    }
     
-    // Run the rewritten query
-    $logger->info("Executing rewritten SPARQL query...");
-    $result = $sparqlClient->queryRaw($sparqlQueryRewritten, $accept);
+    // ------------------------------------------------------------------------------------
+    // --- Evaluate the client SPARQL query agaisnt the result of the federated query
+    // ------------------------------------------------------------------------------------
+    
+    // Run the rewritten query againt the fed query result graph
+    $result = $sparqlClient->queryRaw($sparqlQuery, $accept, $namedGraphUri = $evalFedQueryGraph);
     if ($logger->isHandling(Logger::INFO))
         foreach ($result->getHeaders() as $header => $headerVal)
             $logger->info('Received response header: ' . $header . ": " . $headerVal);
+    
+    // Drop the temporary graphs
+    $logger->info("Dropping graph: <" . $spinQueryGraph . ">");
+    $sparqlClient->update("DROP SILENT GRAPH <" . $spinQueryGraph . ">");
+    $logger->info("Dropping graph: <" . $matchmakingGraph . ">");
+    $sparqlClient->update("DROP SILENT GRAPH <" . $matchmakingGraph . ">");
+    $logger->info("Dropping graph: <" . $evalFedQueryGraph . ">");
+    $sparqlClient->update("DROP SILENT GRAPH <" . $evalFedQueryGraph . ">");
     
     // ------------------------------------------------------------------------------------
     // --- Return the HTTP response to the SPARQL client
@@ -133,8 +146,9 @@ try {
     header('Content-Type: ' . $result->getHeader('Content-Type'));
     header('Server: SPARQL-Micro-Service Composer');
     header('Access-Control-Allow-Origin: *');
-    if ($logger->isHandling(Logger::DEBUG))
-        $logger->debug("Sending response body: " . $result->getBody());
+    $logger->info("Sending response body.");
+    //if ($logger->isHandling(Logger::DEBUG))
+    //    $logger->debug("Sending response body: " . $result->getBody());
     print($result->getBody());
     
     $logger->notice("--------- Done - SPARQL µS composition --------");

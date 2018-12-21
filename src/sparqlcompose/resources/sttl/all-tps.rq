@@ -1,14 +1,13 @@
 @prefix sp:  <http://spinrdf.org/sp#> .
 @prefix sms: <http://sms.i3s.unice.fr/terms/>
 
-TEMPLATE st:service-tps(?serviceDescrGraph, ?service) {
+TEMPLATE st:all-tps(?serviceDescrGraph) {
 
-    "      " xsd:string(?tpStr)
+    group distinct { "      " xsd:string(?tpStr) st:nl()}
 }
 
 WHERE {
     GRAPH ?serviceDescrGraph {
-        ?service sms:elements ?el.
         ?el sp:subject ?s; sp:object ?o; sp:predicate ?p.
         OPTIONAL { ?s sp:varName ?varNameS. }
         OPTIONAL { ?p sp:varName ?varNameP. }
@@ -18,8 +17,5 @@ WHERE {
         BIND(if(bound(?varNameP), concat("?", ?varNameP), sms:strRep(?p)) as ?pf)
         BIND(if(bound(?varNameO), concat("?", ?varNameO), sms:strRep(?o)) as ?of)
         BIND(concat(?sf, " ", ?pf, " ", ?of, ".") as ?tpStr)
-
-        # Make sure this triple pattern is not embedded into an OPTIONAL clause
-        FILTER NOT EXISTS { ?el sms:optionalNode ?optional. }
     }
 }
