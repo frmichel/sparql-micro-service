@@ -62,11 +62,32 @@ try {
     $sparqlClient->update($query);
     
     // ------------------------------------------------------------------------------------
+    // --- Discover the services whose inputs are satisfied by the query
+    // ------------------------------------------------------------------------------------
+    
+    $query = file_get_contents('resources/find_compatibles_services.sparql');
+    $query = str_replace('{SpinQueryGraph}', $spinQueryGraph, $query);
+    
+    $logger->info('Looking for services whose inputs are satisfied by the query...');
+    $jsonResult = Utils::runSparqlSelectQuery($query);
+    $potentialServices = array();
+    foreach ($jsonResult as $jsonResultN)
+        $potentialServices[$jsonResultN['service']['value']] = $jsonResultN['shapesGraph']['value'];
+    if ($logger->isHandling(Logger::INFO))
+        $logger->info("Services whose inputs are satisfied by the SPARQL query: " . print_r($potentialServices, true));
+    
+    // ------------------------------------------------------------------------------------
     // --- Find out which TPs cannot be matched by any service using the "unmatched triples" query
     // ------------------------------------------------------------------------------------
     
+    $fromClauses = "";
+    foreach ($potentialServices as $service => $shapesGraph)
+        $fromClauses .= "FROM <" . $service . "ServiceDescription>\n" . "FROM NAMED <" . $shapesGraph . ">\n";
+    
     $query = file_get_contents('resources/matchmaking_failed.sparql');
     $query = str_replace('{SpinQueryGraph}', $spinQueryGraph, $query);
+    $query = str_replace('{FromServices_Clauses}', $fromClauses, $query);
+    
     $logger->info("Executing unmatched triples query...");
     $jsonResult = Utils::runSparqlSelectQuery($query);
     if (sizeof($jsonResult) != 0) {
@@ -88,15 +109,19 @@ try {
     $query = file_get_contents('resources/matchmaking.sparql');
     $query = str_replace('{MatchmakingGraph}', $matchmakingGraph, $query);
     $query = str_replace('{SpinQueryGraph}', $spinQueryGraph, $query);
-    $logger->info("Executing matchmaking query and storing result in temp graph: <" . $matchmakingGraph . ">...");
+    $usingClauses = "";
+    foreach ($potentialServices as $service => $shapesGraph)
+        $usingClauses .= "USING <" . $service . "ServiceDescription>\n" . "USING NAMED <" . $shapesGraph . ">\n";
+    $query = str_replace('{Using_Clauses}', $usingClauses, $query);
     if ($logger->isHandling(Logger::DEBUG))
         $logger->debug("Matchmaking SPARQL query: \n" . $query);
     
+    $logger->info("Executing matchmaking query and storing result in graph: <" . $matchmakingGraph . ">...");
     $sparqlClient->update($query);
     if ($logger->isHandling(Logger::DEBUG)) {
         // Read the graph that we just generated - just for logging
         $result = $sparqlClient->queryRaw("CONSTRUCT WHERE { ?s ?p ?o }", "text/turtle", $namedGraphUri = $matchmakingGraph);
-        //$logger->debug("Matchmaking result graph: \n" . $result);
+        // $logger->debug("Matchmaking result graph:\n" . $result);
     }
     
     // ------------------------------------------------------------------------------------
@@ -117,7 +142,7 @@ try {
     if ($logger->isHandling(Logger::DEBUG)) {
         // Read the graph that we just generated - just for logging
         $result = $sparqlClient->queryRaw("CONSTRUCT WHERE { ?s ?p ?o }", "text/turtle", $namedGraphUri = $evalFedQueryGraph);
-        //$logger->debug("Federated query result graph: \n" . $result);
+        // $logger->debug("Federated query result graph: \n" . $result);
     }
     
     // ------------------------------------------------------------------------------------
@@ -147,8 +172,8 @@ try {
     header('Server: SPARQL-Micro-Service Composer');
     header('Access-Control-Allow-Origin: *');
     $logger->info("Sending response body.");
-    //if ($logger->isHandling(Logger::DEBUG))
-    //    $logger->debug("Sending response body: " . $result->getBody());
+    // if ($logger->isHandling(Logger::DEBUG))
+    // $logger->debug("Sending response body: " . $result->getBody());
     print($result->getBody());
     
     $logger->notice("--------- Done - SPARQL µS composition --------");

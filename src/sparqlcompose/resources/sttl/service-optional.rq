@@ -14,9 +14,9 @@ WHERE {
         OPTIONAL { ?p sp:varName ?varNameP. }
         OPTIONAL { ?o sp:varName ?varNameO. }
 
-        BIND(if(bound(?varNameS), concat("?", ?varNameS), sms:strRep(?s)) as ?sf)
-        BIND(if(bound(?varNameP), concat("?", ?varNameP), sms:strRep(?p)) as ?pf)
-        BIND(if(bound(?varNameO), concat("?", ?varNameO), sms:strRep(?o)) as ?of)
+        BIND(if(bound(?varNameS), concat("?", ?varNameS), sms:strRep(?s, ?service)) as ?sf)
+        BIND(if(bound(?varNameP), concat("?", ?varNameP), sms:strRep(?p, ?service)) as ?pf)
+        BIND(if(bound(?varNameO), concat("?", ?varNameO), sms:strRep(?o, ?service)) as ?of)
         BIND(concat(?sf, " ", ?pf, " ", ?of, ".") as ?tpStr)
     }
 }

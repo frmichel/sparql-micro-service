@@ -16,9 +16,17 @@ where {
     BIND(IRI(st:get(st:param)) as ?serviceDescrGraph)
 }
 
+# Generate a string representation of an RDF term:
+# - literal => "literal" (including quotes)
+# - iri => <iri>
+# - blank node => the blank node identifer concatenated with a hash of variable ?s.
+#   This is used to generate unique blank node identifiers for each SERVIce clause.
+#   Example: _b123 => _:b123_daa7740f2dba21716e892cf43bc0ab44c95b9420
 @public
-function sms:strRep(?x) {
+function sms:strRep(?x, ?service) {
     if ( isLiteral(?x), concat("\"", str(?x), "\""),
-      if ( isIRI(?x), concat("<", str(?x), ">"), str(?x) )
+      if ( isIRI(?x), concat("<", str(?x), ">"), 
+        concat(str(?x), "_", MD5(str(?service)))
+      )
     )
 }

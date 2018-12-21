@@ -4,18 +4,17 @@
 @prefix sms:   <http://sms.i3s.unice.fr/terms/>
 
 SELECT DISTINCT ?tpStr
+FROM <{SpinQueryGraph}>
+{FromServices_Clauses}
 WHERE {
     # Get each triple pattern from the client query and optional variable names for each term
-    GRAPH <{SpinQueryGraph}>
-    {
-        ?triple sp:subject ?s; sp:predicate ?p; sp:object ?o.
-        OPTIONAL { ?s sp:varName ?varNameS. }
-        OPTIONAL { ?p sp:varName ?varNameP. }
-        OPTIONAL { ?o sp:varName ?varNameO. }
-        
-        # Check whether the triple pattern is embedded in an sp:Optional node
-        OPTIONAL { ?optional a sp:Optional; sp:elements/(rdf:rest|rdf:first)* ?triple. }
-    }
+    ?triple sp:subject ?s; sp:predicate ?p; sp:object ?o.
+    OPTIONAL { ?s sp:varName ?varNameS. }
+    OPTIONAL { ?p sp:varName ?varNameP. }
+    OPTIONAL { ?o sp:varName ?varNameO. }
+    
+    # Check whether the triple pattern is embedded in an sp:Optional node
+    OPTIONAL { ?optional a sp:Optional; sp:elements/(rdf:rest|rdf:first)* ?triple. }
 
     # Verify that the triple pattern does not match any shape definition
     FILTER (! sms:validateTriple(?s, ?p, ?o))
@@ -45,15 +44,12 @@ function sms:validateTriple(?s, ?p, ?o) {
 # Checks whether the given triple pattern is valid wrt. the given shapes graph
 function sms:validate(?s, ?p, ?o, ?shapesGraph) {
   EXISTS {
-    GRAPH <{SpinQueryGraph}>
-    {
-        # Force the evaluation of variables so that they be bound with the value of parameter with the same name
-        [] sp:subject ?s; sp:predicate ?p; sp:object ?o.
-        OPTIONAL { ?o sp:varName ?varNameO. }
-        
-        # Check whether ?s is the object in a "parent" triple pattern
-        OPTIONAL { [] sp:subject ?s2; sp:predicate ?p2; sp:object ?s. }
-    }
+    # Force the evaluation of variables so that they be bound with the value of parameter with the same name
+    [] sp:subject ?s; sp:predicate ?p; sp:object ?o.
+    OPTIONAL { ?o sp:varName ?varNameO. }
+    
+    # Check whether ?s is the object in a "parent" triple pattern
+    OPTIONAL { [] sp:subject ?s2; sp:predicate ?p2; sp:object ?s. }
 
     GRAPH ?shapesGraph {
       ?nodeShape shacl:property ?propShape.
