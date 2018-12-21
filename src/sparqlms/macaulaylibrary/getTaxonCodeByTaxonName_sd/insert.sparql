@@ -1,0 +1,13 @@
+INSERT {
+    <http://example.org/ld/taxon/{urlencode(name)}>
+        a dwc:Taxon;
+        dwc:scientificName "{name}";
+        schema:identifier ?code;
+        .
+}
+WHERE {
+    ?content
+        api:name ?name;
+        api:code ?code;
+       .
+}
