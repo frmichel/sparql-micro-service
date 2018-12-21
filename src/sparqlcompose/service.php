@@ -29,7 +29,7 @@ try {
     // ------------------------------------------------------------------------------------
     
     // Init the context: read the global config.ini file & init the logger and SPARQL client
-    $context = Context::getInstance(Logger::NOTICE, "--------- Starting SPARQL composer --------");
+    $context = Context::getInstance(Logger::DEBUG, "--------- Starting SPARQL composer --------");
     $logger = $context->getLogger();
     $sparqlClient = $context->getSparqlClient();
     
@@ -52,7 +52,10 @@ try {
     $logger->notice("SPARQL query (html special chars encoded):\n" . htmlspecialchars($sparqlQuery));
     $context->setSparqlQuery($sparqlQuery);
     
-    // --- Convert the SPARQL query to SPIN and load it into a temporary graph
+    // ------------------------------------------------------------------------------------
+    // --- Convert the SPARQL query to a SPIN graph and turn blank nodes into explicit variables
+    // ------------------------------------------------------------------------------------
+    
     $spinInvocation = $context->getConfigParam('spin_endpoint') . '?arg=' . urlencode($sparqlQuery);
     $spinQueryGraph = $context->getConfigParam('root_url') . '/tempgraph-spin' . uniqid("-", true);
     $query = 'LOAD <' . $spinInvocation . '> INTO GRAPH <' . $spinQueryGraph . '>';
@@ -61,8 +64,30 @@ try {
     $logger->info('Loading SPIN SPARQL query into temp graph <' . $spinQueryGraph . ">");
     $sparqlClient->update($query);
     
+    // --- Create explicit variable names for terms of the SPARQL graph pattern that are simple blank nodes
+    /*
+     * For each BN, add a variable name only once. In particular the same BN can be used e.g. as a subject or object.
+     * Therefore, it is not possible to create those variable names in a single query. Instead, we enrich the graph
+     * alternatively for subject BNs, prodicate BNs and object BNs.
+     *
+     * Also, the var name is built from the BN identifier and a uniq id. But the same BN may be the subject or several
+     * triples. So we must use the same uniq id for each use of the BN. This is why the uniq id is built here and not
+     * within the SPARQL query using a rand() that would generate a new value for each use of the same BN.
+     */
+    $query = file_get_contents('resources/spin_query_explicit_bn.sparql');
+    $query = str_replace('{SpinQueryGraph}', $spinQueryGraph, $query);
+    $query = str_replace('{uniqid}', uniqid("_"), $query);
+    
+    $queryx = str_replace('{predicate}', "sp:subject", $query);
+    $sparqlClient->update($queryx);
+    $queryx = str_replace('{predicate}', "sp:predicate", $query);
+    $sparqlClient->update($queryx);
+    $queryx = str_replace('{predicate}', "sp:object", $query);
+    $sparqlClient->update($queryx);
+    
     // ------------------------------------------------------------------------------------
-    // --- Discover the services whose inputs are satisfied by the query
+    // --- Discover the services whose inputs are satisfied by the query, so that only
+    //     these ones will be tested in the matchmaking
     // ------------------------------------------------------------------------------------
     
     $query = file_get_contents('resources/find_compatibles_services.sparql');
@@ -100,7 +125,8 @@ try {
     }
     
     // ------------------------------------------------------------------------------------
-    // --- Matchmaking: find out which TPs are matched by which services
+    // --- Matchmaking: find out which TPs are matched by which services, and 
+    //     generate a federated SPARQL query with all the micro-serivces invocations
     // ------------------------------------------------------------------------------------
     
     // Create a temporary graph where to store the result of the matchmaking of triples and services
