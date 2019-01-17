@@ -1,5 +1,5 @@
 # --
-# Service URL: http://localhost:8080/tutorial/demo?param=Delphinus+delphis
+# Service URL: http://localhost:8082/service/demo?param=Delphinus+delphis
 # --
 
 st:demo a st:Server ;
@@ -10,20 +10,21 @@ st:demo a st:Server ;
         st:hyperlink true ;
     ] ;
 
-    # Select how to get the data (query vs. static file)
     st:workflow st:demoWorkflow ;
+
+    # Get the data from a static file
 #    st:content st:democontent ;
     .
 
-# Load data from a query
+# Load data from a query and apply transformation
 st:demoWorkflow a sw:Workflow ; 
     sw:body (
         [ a sw:Query ;          sw:uri <query/query.rq> ]
         [ a sw:Transformation ; sw:uri <sttl/> ]
     ).
 
-# loading data from a file
+# load data from a static file (for test purpose only)
 st:democontent a sw:Workflow ;
     sw:body (
-        [ a sw:Load ; sw:path <data/constr.ttl>  ; sw:name st:data1 ]    
+        [ a sw:Load ; sw:path <static-example/data.ttl> ; sw:name st:data1 ]    
     ).

@@ -1,0 +1,13 @@
+@prefix sms: <http://ns.inria.fr/sparql-micro-service/>.
+
+TEMPLATE st:service-optionals(?serviceDescrGraph, ?service) {
+
+    "      OPTIONAL {" st:nl()
+        group distinct { st:call-template(st:service-optional, ?serviceDescrGraph, ?service, ?optional) }
+    st:nl() "      }" st:nl()
+}
+WHERE {
+    GRAPH ?serviceDescrGraph {
+        ?service sms:elements [ sms:optionalNode ?optional ].
+    }
+}

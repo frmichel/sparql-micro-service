@@ -1,10 +1,10 @@
-# Macauley Library / getAudioByTaxon_sd
+# macaulaylibrary/getAudioByTaxon_sd
 
 This service retrieves audio recordings for a given taxon name from the [Macaulay Library](https://www.macaulaylibrary.org/), a scientific media archive related to birds, amphibians, fishes and mammals.
 
 Each recording is depicted as an instance of the `schema:AudioObject` class that provides a link to the audio file (`schema:contentUrl`), the author (`schema:author`), a thumbnail (`schema:thumbnailUrl`), a description (`schema:description`) and the URL of the related Web page (`schema:mainEntityOfPage`).
 
-**Path**: `macaulaylibrary/getAudioByTaxon_sd`
+Audio recording URIs can be dereferenced using service `macaulaylibrary/getAudioById`.
 
 **Query mode**: SPARQL
 
@@ -12,7 +12,7 @@ Each recording is depicted as an instance of the `schema:AudioObject` class that
 - object of property `dwc:scientificName`: taxonomic name
 
 
-## Example of triples produced
+## Produced graph example
 
 ```turtle
 [] a dwc:Taxon;

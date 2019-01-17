@@ -57,6 +57,7 @@ class Utils
         global $context;
         $logger = $context->getLogger();
         
+        header('Access-Control-Allow-Origin: *');
         http_response_code(400); // Bad Request
         $logger->error($message);
         print("Erroneous request: " . $message . "\n");
@@ -74,6 +75,7 @@ class Utils
         global $context;
         $logger = $context->getLogger();
         
+        header('Access-Control-Allow-Origin: *');
         http_response_code(405); // Method Not Allowed
         $logger->error($message);
         print("Erroneous request: " . $message . "\n");
@@ -93,6 +95,7 @@ class Utils
         global $context;
         $logger = $context->getLogger();
         
+        header('Access-Control-Allow-Origin: *');
         http_response_code(422); // Unprocessable entity
         $logger->error($message);
         print("Invalid request: " . $message . "\n");
@@ -251,6 +254,9 @@ class Utils
      */
     static public function getQueryStringArgs($args)
     {
+        global $context;
+        $logger = $context->getLogger();
+        
         if (array_key_exists('QUERY_STRING', $_SERVER)) {
             if ($logger->isHandling(Logger::DEBUG))
                 $logger->debug('Query string: ' . $_SERVER['QUERY_STRING']);
@@ -320,8 +326,7 @@ class Utils
                 $predicate = $jsonResultN['predicate']['value'];
                 Utils::httpUnprocessableEntity("Only one value is allowed for property '" . $predicate . "' (argument '" . $name . "').");
             }
-            // The first 'value' denotes SPARQL variabe '?value', the second is where the variable value is given in the SPARQL results format
-            $result[$name] = $jsonResultN['value']['value'];
+            $result[$name] = $jsonResultN['result']['value'];
         }
         
         // Make sure we have values for all expected arguments

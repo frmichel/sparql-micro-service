@@ -3,24 +3,26 @@
 @prefix frmt:    <http://www.w3.org/ns/formats/>.
 @prefix dct:     <http://purl.org/dc/terms/>.
 @prefix shacl:   <http://www.w3.org/ns/shacl#>.
-@prefix void:    <http://rdfs.org/ns/void#> .
+@prefix void:    <http://rdfs.org/ns/void#>.
 @prefix hydra:   <http://www.w3.org/ns/hydra/core#>.
 @prefix schema:  <http://schema.org/>.
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#>.
 @prefix dwc:     <http://rs.tdwg.org/dwc/terms/>.
-@prefix sms:     <http://sms.i3s.unice.fr/terms/>.
+@prefix sms:     <http://ns.inria.fr/sparql-micro-service/>.
 
 @base            <http://example.org/flickr/getPhotosByTaxon_sd/>.
 
 # This file is loaded as graph <ServiceDescription>
 <>
-    a sd:Service;
+    a sd:Service, sms:Service;
     sd:endpoint <>;
     sd:supportedLanguage sd:SPARQL11Query;
     sd:feature sd:BasicFederatedQuery, sd:EmptyGraphs;
     sd:resultFormat frmt:SPARQL_Results_XML, frmt:SPARQL_Results_JSON, frmt:SPARQL_Results_CSV, frmt:SPARQL_Results_TSV,
                     frmt:RDF_XML, frmt:Turtle, frmt:JSON-LD, frmt:Trig;
-    schema:name "Flickr search for photos by biological taxon scientific name";
-    schema:description "SPARQL micro-service wrapping the Flickr Web API to search photos by biological taxon scientific name.";
+    schema:name "SPARQL service to search for Flickr photos by biological taxon scientific name";
+    schema:description '''This SPARQL micro-service searches <a href="https://flickr.com" target="_new">Flickr</a> photos related to a certain taxonomic name. It takes as input a species scientific name (without authority nor date), and relies on the common convention used e.g. in the <a href="https://www.flickr.com/groups/806927@N20"><em>Encyclopedia of Life</em></a> and by <a href="https://www.flickr.com/photos/biodivlibrary"><em>Biodiversity Heritage Library</em></a> where photos are tagged with a taxonomic name formatted as: <span class="font-weight-light">taxonomy:binomial=&lt;scientific name&gt;</span>.''';
+    schema:citation <https://www.mdpi.com/2078-2489/9/12/310>;
     
     sd:defaultDataset [
         a sd:Dataset, void:Dataset;
@@ -30,19 +32,43 @@
         
         void:vocabulary <http://schema.org/>, <http://www.w3.org/ns/shacl#>, <http://www.w3.org/ns/hydra/core#>;
         void:sparqlEndpoint <>;
-        
-        # Topics description
-        foaf:topic <http://dbpedia.org/resource/Photography>, <https://www.wikidata.org/entity/Q47041>; # Biodiversity
-        schema:keywords "photography"@en, "media"@en, "biodiversity"@en;
     ];
+
+    schema:keywords "biodiversity", "lifesciences", "fauna", "flora", "species", "photography", "media";
+    schema:citation <https://www.mdpi.com/2078-2489/9/12/310>;
+    schema:publisher [ a schema:Organization;
+        schema:name "Université Côte d'Azur, CNRS, Inria, I3S";
+        schema:contactPoint [ a schema:ContactPoint;
+            schema:contactType "developper";
+            schema:name "Franck Michel";
+            schema:email "franck.michel@cnrs.fr";
+            schema:url <http://modalis.i3s.unice.fr/fmichel>;
+        ];
+    ];
+
+    sms:exampleQuery '''
+        prefix schema: <http://schema.org/>
+        prefix dwc: <http://rs.tdwg.org/dwc/terms/>
+
+        SELECT ?photo ?title ?img WHERE {
+
+            ?taxon a dwc:Taxon;
+                dwc:scientificName "Delphinus delphis";
+                schema:image ?photo.
+
+            ?photo a schema:Photograph;
+                schema:name ?title;
+                schema:contentUrl ?img.
+        }
+        ''';
+    
+    sms:cacheExpiresAfter "P2592000S"^^xsd:duration;
 
     dct:source [
         a schema:WebAPI; schema:name "Flickr API";
         schema:url <https://www.flickr.com/services/api/>;
         schema:potentialAction <APIService>;
     ];
-    # Maxium time (in seconds) to cache responses from the Web API. Default: 2592000 = 30 days
-    sms:cacheExpiresAfter "P2592000S"^^xsd:duration;
     .
 
 # Web API service being wrapped by this µ-service + parameters binding
@@ -53,10 +79,11 @@
     a hydra:IriTemplate;
     hydra:mapping [
         hydra:variable "name";
-        schema:description "The taxon scientific name without authorship nor date information";
+        schema:description "The taxon scientific name without authorship nor date information.";
         hydra:required "true"^^xsd:boolean;
+        skos:example "Delphinus delphis";
         
         # Use either hydra:property or shacl:sourceShape
         hydra:property dwc:scientificName;
-        shacl:sourceShape <ShapesGraph#NamePropertyShape>;
+        #shacl:sourceShape <ShapesGraph#NamePropertyShape>;
     ].

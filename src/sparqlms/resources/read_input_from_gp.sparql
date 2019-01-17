@@ -1,17 +1,21 @@
-@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
-@prefix sd:      <http://www.w3.org/ns/sparql-service-description#>.
-@prefix shacl:   <http://www.w3.org/ns/shacl#>.
-@prefix hydra:   <http://www.w3.org/ns/hydra/core#>.
-@prefix dct:     <http://purl.org/dc/terms/>.
-@prefix sp:      <http://spinrdf.org/sp#> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix sd:     <http://www.w3.org/ns/sparql-service-description#>.
+@prefix shacl:  <http://www.w3.org/ns/shacl#>.
+@prefix hydra:  <http://www.w3.org/ns/hydra/core#>.
+@prefix dct:    <http://purl.org/dc/terms/>.
+@prefix sp:     <http://spinrdf.org/sp#>.
+@prefix schema: <http://schema.org/>.
+@prefix sms:    <http://ns.inria.fr/sparql-micro-service/>.
 
-SELECT DISTINCT ?name ?predicate ?value 
+SELECT DISTINCT ?name ?predicate ?result 
 FROM <{ServiceDescription}>     # Service Description graph
 FROM <{SpinQueryGraph}>         # SPARQL query in SPIN
 FROM <{ShapesGraph}>            # Optional shapes graph
 WHERE {
 
-    # Get the list of service custom arguments and their bindings to predicates of the SPARQL graph pattern
+    # Get the list of service custom arguments from the service description, 
+    # and their bindings to predicates of the SPARQL graph pattern.
+    # Bindings can be given either with hydra:property or in a property shape of the shapes graph.
     {
         # - Service Description - Predicate given directly with hydra:property
         [] a sd:Service; dct:source [ schema:potentialAction [ hydra:mapping [
@@ -20,12 +24,9 @@ WHERE {
         ]]].
 
         # - SPIN quey - Get the object of the predicates obtained in ?predicate
-        [] sp:predicate ?predicate; sp:object ?value.
-        FILTER (isLiteral(?value) || isIRI(?value))
+        [] sp:predicate ?predicate; sp:object ?obj.
     }
-    
     UNION
-    
     {
         # - Service Description - Predicate is given through a property shape with shacl:sourceShape
         [] a sd:Service; dct:source [ schema:potentialAction [ hydra:mapping [
@@ -39,8 +40,76 @@ WHERE {
         OPTIONAL { ?nodeShape shacl:property [ shacl:path rdf:type; shacl:hasValue ?class ] }
 
         # - SPIN quey - Get the object of the predicates obtained using ?propShape
-        [] sp:subject ?subject; sp:predicate ?predicate; sp:object ?value.
-        FILTER (isLiteral(?value) || isIRI(?value))
+        [] sp:subject ?subject; sp:predicate ?predicate; sp:object ?obj.
         OPTIONAL { [] sp:subject ?subject; sp:predicate rdf:type; sp:object ?class. }
+    }
+    
+    # If ?obj is not a static literal/IRI, it may still be provided by VALUES clauses
+    # e.g.: VALUES (... ?obj ...) { (... value1 ...) (... value2 ...)}
+    OPTIONAL {
+        [] a sp:Values; sp:variables ?vars; sp:values ?vals.
+        
+        # ?obj must be bound to call sms:index. So select only variables of the query.
+        ?vars rdf:rest*/rdf:first ?obj.
+
+        # Take the nth value of each group of values, 
+        # where n is the index of ?obj in the list of variables
+        BIND(sms:values( sms:listOfLists(?vals), sms:index(sms:list(?vars), ?obj)) as ?values)
+        VALUES ?value { unnest(?values) }
+    }
+    
+    # If ?obj is not a static literal/IRI nor provided by VALUES clauses, it may be provided by a FILTER
+    # e.g.: FILTER (?obj = "value")
+    OPTIONAL {
+        [] a sp:Filter; sp:expression [ a sp:eq; sp:arg1 ?arg1; sp:arg2 ?arg2 ].
+    }
+    
+    BIND ( 
+        # Either the object term is a static literal/IRI and we take it directly,
+        # or it is a variable and there is a VALUES or FILTER clause that gives values for that variable
+        if (isLiteral(?obj) || isIRI(?obj), ?obj, 
+            if (bound(?value), ?value, 
+                if (?arg1 = ?obj, ?arg2, 
+                    if (?arg2 = ?obj, ?arg1, "__no_value__")
+                )
+            )
+        )
+        as ?result
+    )
+    FILTER (?result != "__no_value__")
+}
+       
+        
+# Find index of an element in a list
+# @param ?list : a list of elements
+# @param ?elem: the element to look for in ?list
+function sms:index(?list, ?elem) {
+    let (?n = 0) {
+        for (?e in ?list) {
+            if (?e = ?elem, return(?n), set(?n = ?n + 1))
+        } ;
+        return (?n)
+    }
+}
+
+# Get nth value of each list in ?list
+# @param ?list: a list of lists
+# @param ?n: the index of the element to get from each list in ?list
+# @return: list of values
+function sms:values(?list, ?n) {
+    maplist(xt:get, ?list, ?n)
+}
+
+# Build a list from an RDF list ?l
+function sms:list(?l) {
+    let (select ?l (aggregate(?e) as ?list) where { ?l rdf:rest*/rdf:first ?e }) {
+        return (?list)
+    }
+}
+
+# Build a list of list from an RDF list of RDF lists ?l
+function sms:listOfLists(?l) {
+    let ( select ?l (aggregate(sms:list(?e)) as ?list) where { ?l rdf:rest*/rdf:first ?e })  {
+        return (?list)
     }
 }

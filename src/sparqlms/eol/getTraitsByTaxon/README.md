@@ -1,4 +1,4 @@
-# Encyclopedia of Life / getTraitsByTaxon
+# eol/getTraitsByTaxon
 
 This service searches the [Encyclopedia of Life traits bank](http://eol.org/traitbank) for data related to a given taxon name.
 
@@ -8,8 +8,6 @@ Unfortunately, the JSON-LD is invalid (see https://github.com/EOL/eol/issues/139
 As a result, a query to the trait bank with a URL such as http://eol.org/api/traits/314276 returns the JSON-LD content is in file
 ```example.jsonld```, and gets translated into the RDF depicted in file ```example.turtle```. This RDF remains questionable as it makes a bad use of Darwin Core terms: it uses reglar dwc: properties with URI objects although these are meant for literals only. The properties in namespace dwciri: have been introduced to address this isse (see the [Darwin Core RDF Guide](http://rs.tdwg.org/dwc/terms/guides/rdf/index.htm)). The example query below fixes this by constructing a graph using proper dwciri predicates.
 
-
-**Path**: eol/getTraitsByTaxon
 
 **Query mode**: SPARQL
 

@@ -1,0 +1,59 @@
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#>.
+@prefix sd:      <http://www.w3.org/ns/sparql-service-description#>.
+@prefix frmt:    <http://www.w3.org/ns/formats/>.
+@prefix dct:     <http://purl.org/dc/terms/>.
+@prefix shacl:   <http://www.w3.org/ns/shacl#>.
+@prefix void:    <http://rdfs.org/ns/void#>.
+@prefix hydra:   <http://www.w3.org/ns/hydra/core#>.
+@prefix schema:  <http://schema.org/>.
+@prefix sms:     <http://ns.inria.fr/sparql-micro-service/>.
+
+@base            <http://example.org/macaulaylibrary/getAudioByTaxonCode_sd/>.
+
+# This file is loaded as graph <ServiceDescription>
+<>
+    a sd:Service;
+    sd:endpoint <>;
+    sd:supportedLanguage sd:SPARQL11Query;
+    sd:feature sd:BasicFederatedQuery, sd:EmptyGraphs;
+    sd:resultFormat frmt:SPARQL_Results_XML, frmt:SPARQL_Results_JSON, frmt:SPARQL_Results_CSV, frmt:SPARQL_Results_TSV,
+                    frmt:RDF_XML, frmt:Turtle, frmt:JSON-LD, frmt:Trig;
+    schema:name "Search the Macaulay Library for audio recordings by taxon code";
+    schema:description "SPARQL micro-service wrapping the Macaulay Library Web API to search audio recordings by Macaulay's taxon code.";
+    
+    sd:defaultDataset [
+        a sd:Dataset, void:Dataset;
+        sd:defaultGraph [ a sd:Graph; shacl:shapesGraph <ShapesGraph> ];
+        sd:namedGraph   [ a sd:Graph; sd:name <ServiceDescription> ];
+        sd:namedGraph   [ a sd:Graph; sd:name <ShapesGraph> ];
+        
+        void:vocabulary <http://schema.org/>, <http://www.w3.org/ns/shacl#>, <http://www.w3.org/ns/hydra/core#>;
+        void:sparqlEndpoint <>;
+        
+        # Topics description
+        foaf:topic <http://dbpedia.org/page/Audio_signal>, <https://www.wikidata.org/entity/Q47041>; # Biodiversity
+        schema:keywords "audio"@en, "media"@en, "biodiversity"@en;
+    ];
+
+    dct:source [
+        a schema:WebAPI; schema:name "Macaulay Library Web API";
+        schema:url <https://www.macaulaylibrary.org/>;
+        schema:potentialAction <APIService>;
+    ];
+    # Maxium time (in seconds) to cache responses from the Web API. Default: 2592000 = 30 days
+    sms:cacheExpiresAfter "P2592000S"^^xsd:duration;
+    .
+
+# Web API service being wrapped by this µ-service + parameters binding
+<APIService>
+    a schema:SearchAction;
+    schema:documentation "The taxon code name must be provided by property schema:identifier in the SPARQL graph pattern.";
+
+    a hydra:IriTemplate;
+    hydra:template "https://search.macaulaylibrary.org/catalog.json?action=new_search&searchField=animals&sort=upload_date_desc&mediaType=a&taxonCode={identifier}";
+    hydra:mapping [
+        hydra:variable "identifier";
+        schema:description "The Macaulay's taxon code";
+        hydra:required "true"^^xsd:boolean;
+        hydra:property schema:identifier;
+    ].

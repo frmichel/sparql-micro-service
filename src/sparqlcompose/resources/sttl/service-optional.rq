@@ -1,0 +1,22 @@
+@prefix sp:  <http://spinrdf.org/sp#> .
+@prefix sms: <http://ns.inria.fr/sparql-micro-service/>.
+
+TEMPLATE st:service-optional(?serviceDescrGraph, ?service, ?optional) {
+
+    "        " xsd:string(?tpStr)
+}
+WHERE {
+    GRAPH ?serviceDescrGraph {
+        ?service sms:elements ?el.
+        ?el sp:subject ?s; sp:predicate ?p; sp:object ?o;
+            sms:optionalNode ?optional.
+        OPTIONAL { ?s sp:varName ?varNameS. }
+        OPTIONAL { ?p sp:varName ?varNameP. }
+        OPTIONAL { ?o sp:varName ?varNameO. }
+
+        BIND(if(bound(?varNameS), concat("?", ?varNameS), sms:strRep(?s, ?service)) as ?sf)
+        BIND(if(bound(?varNameP), concat("?", ?varNameP), sms:strRep(?p, ?service)) as ?pf)
+        BIND(if(bound(?varNameO), concat("?", ?varNameO), sms:strRep(?o, ?service)) as ?of)
+        BIND(concat(?sf, " ", ?pf, " ", ?of, ".") as ?tpStr)
+    }
+}

@@ -1,0 +1,16 @@
+@prefix sp:    <http://spinrdf.org/sp#> .
+
+# Create explicit variable names for terms of the SPARQL graph pattern that are simple blank nodes 
+WITH  <{SpinQueryGraph}>
+INSERT {
+    ?t sp:varName ?varName.
+}
+WHERE {
+    [] {predicate} ?t.      # "{predicate}" is one of sp:subject, sp:predicate or sp:object
+
+    FILTER (isBlank(?t) && NOT EXISTS { ?t sp:varName ?n })
+
+    # Build a unique name using the blank node identifier without the starting "_:".
+    # Since each blank node may be used multiple times, the {uniqid} must be the same for each use.
+    BIND(concat(substr(str(?t), 3), "{uniqid}", 3) as ?varName)
+}

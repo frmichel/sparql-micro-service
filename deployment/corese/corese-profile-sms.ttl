@@ -1,0 +1,37 @@
+# Content available in the default dataset at /sparql
+st:user a st:Server;
+    st:shareContent st:smsdesc.
+
+# SPARQL-to-SPIN rewriter. Use to transform the SPARQL query to SPIN
+# in order to extract the service input arguments from the graph pattern
+st:sparql-to-spin-server a st:Server ;
+    st:workflow st:sparql-to-spin-server ;
+    st:service "sparql-to-spin" ;
+    st:shareContent st:smsdesc;
+    sw:body (
+        [ a sw:Dataset ; sw:mode sw:new ]
+        [ a sw:Load    ; sw:mode sw:spin ] # sw:uri = st:param | text = st:arg
+        [ a sw:Transformation ; sw:uri st:turtle ]
+    ).
+
+    
+# Generation of an HTML document from the micro-serice Service Description graph.
+# Example: http://localhost:8080/service/sms-html-description?param=http://example.org/sparql-ms/flickr/getPhotosByTaxon_sd/
+st:sms-html-description a st:Server ;
+    st:service "sms-html-description" ;
+    st:shareContent st:smsdesc;
+    st:workflow [
+        a sw:Workflow ;
+        sw:body ([ a sw:Transformation ; sw:uri </home/fmichel/public_html/sparql-ms-live/src/sparqlms/resources/sms-html-description/sttl/> ])
+    ].
+
+
+# STTL transformation to generate the SPARQL SERVICE clauses during service composition
+# Example: curl --header "Accept: text/turtle" 'http://localhost:8080/service/sparql-composer?param=http://example.org/temp/matchmaking'
+st:sparql-compose a st:Server ;
+    st:service "sparql-compose" ;
+    st:shareContent st:smsdesc;
+    st:workflow [
+        a sw:Workflow ;
+        sw:body ([ a sw:Transformation ; sw:uri </home/fmichel/public_html/sparql-ms-live/src/sparqlcompose/resources/sttl/> ])
+    ].

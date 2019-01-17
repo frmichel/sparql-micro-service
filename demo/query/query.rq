@@ -1,11 +1,11 @@
-prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
-prefix schema: <http://schema.org/>
+prefix rdfs:       <http://www.w3.org/2000/01/rdf-schema#>
+prefix schema:     <http://schema.org/>
 prefix taxrefprop: <http://taxref.mnhn.fr/lod/property/>
-prefix taxrefrk: <http://taxref.mnhn.fr/lod/taxrank/>
-prefix dwc: <http://rs.tdwg.org/dwc/terms/>
-prefix dwciri: <http://rs.tdwg.org/dwc/iri/>
-prefix dct: <http://purl.org/dc/terms/>
-prefix sms: <http://sms.i3s.unice.fr/schema/>
+prefix taxrefrk:   <http://taxref.mnhn.fr/lod/taxrank/>
+prefix dwc:        <http://rs.tdwg.org/dwc/terms/>
+prefix dwciri:     <http://rs.tdwg.org/dwc/iri/>
+prefix dct:        <http://purl.org/dc/terms/>
+prefix sms:        <http://ns.inria.fr/sparql-micro-service/>
 
 CONSTRUCT {
     ?taxon a owl:Class;

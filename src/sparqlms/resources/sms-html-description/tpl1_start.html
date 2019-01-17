@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>SPARQL micro-services documentation</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+  </head>
+  
+  <body>
+
+    <!-- Top navigation bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <span class="mt-1 mb-1 pl-4 navbar-brand font-weight-light">SPARQL micro-service documentation</span>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-link text-white" target="_new" href="https://github.com/frmichel/sparql-micro-service">Code@Github</a>
+          <a class="nav-link text-white" target="_new" href="https://hal.archives-ouvertes.fr/search/index/?q=sparql+micro-services&submit=&sort=submittedDate_tdate+desc">Publications</a>
+          <a class="nav-link text-white" target="_new" href="http://sms.i3s.unice.fr/demo-sms?param=Delphinapterus+leucas">TDWG2018 Demo</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container"> <!-- main page container -->
+
+        <!-- Service description -->
+        <div class="card my-4 border-secondary">
+          <div class="card-header py-2"><h5><span class="font-weight-light">Service </span>%1$s</h5></div>
+          <div class="card-body">
+            <p>
+              %2$s
+            </p>
+              
+            <dl class="row">
+              <dt class="col-sm-3">Canonical URL</dt>
+              <dd class="col-sm-9"><a href="%3$s" target="_new">%3$s</a></dd>
+
+              <dt class="col-sm-3"><span data-toggle="tooltip" data-html="true" title="A SPARQL microservice may be invoked in two ways: as a regular SPARQL endpoint or as a URI dereferencing engine.">Query mode</span></dt>
+              <dd class="col-sm-9">SPARQL</dd>
+

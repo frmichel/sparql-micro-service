@@ -1,20 +1,18 @@
-# Macauley Library / getAudioById
+# macaulaylibrary/getAudioById
 
 This service retrieves an audio recording from the [Macaulay Library](https://www.macaulaylibrary.org/), a scientific media archive related to birds, amphibians, fishes and mammals.
-It is mostly meant to dereference URIs produced in the macaulaylibrary/getAudioByTaxon service, but can also be use with SPARQL.
+It is designed to dereference URIs produced in the `macaulaylibrary/getAudioBy*` services.
 
-A recording is depicted as an instance of the `schema:AudioObject` class that provides a link to the audio file (`schema:contentUrl`), the author (`schema:author`), a thumbnail (`schema:thumbnailUrl`), a description (`schema:description`) and the URL of the related Web page (`schema:mainEntityOfPage`).
+A recording is depicted as an instance of the `schema:AudioObject` class that provides a link to the audio file (`schema:contentUrl`), the author (`schema:author`), a thumbnail (`schema:thumbnailUrl`), a description (`schema:description`) and the URL of the related Web page (`schema:mainEntityOfPage`). Additional information may be provided such as a description, licence, and the individual that was recorded.
 
 
-**Path**: `macaulaylibrary/getAudioById`
-
-**Query mode**: dereferencing to RDF content, SPARQL
+**Query mode**: dereferencing to RDF content
 
 **Parameters**:
 - `catalogId`: audio recording identifier (internal Macaulay Library identifier)
 
 
-## Example of triples produced
+## Produced graph example
 
 ```turtle
 <http://example.org/ld/macaulaylibrary/audio/id/131396>
@@ -30,17 +28,6 @@ A recording is depicted as an instance of the `schema:AudioObject` class that pr
         foaf:gender "male";
         schema:name "Delphinus delphis"
     ].
-```
-
-## Usage example (SPARQL)
-
-```sparql
-prefix schema: <http://schema.org/>
-
-SELECT ?author WHERE {
-  SERVICE <https://example.org/sparql-ms/macaulaylibrary/getAudioById?catalogId=131396>
-  { [] schema:author ?author. }
-}
 ```
 
 ## Usage example (dereferencing)

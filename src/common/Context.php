@@ -5,7 +5,6 @@ use Monolog\Logger;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use EasyRdf_Sparql_Client;
-use Exception;
 
 /**
  * Application execution context containing the configuration, logger, cache, SPARQL client
@@ -69,11 +68,12 @@ class Context
 
     /**
      *
-     * @param string $configFile
      * @param integer $logLevel
      *            one of Logger::INFO, Logger::WARNING, Logger::DEBUG etc. (see Monolog\Logger.php)
+     * @param string $startMessage
+     *            an optional message to log once the logger is initialized
      */
-    private function __construct($logLevel)
+    private function __construct($logLevel, $startMessage = null)
     {
         // --- Initialize the logger
         if (array_key_exists('SCRIPT_FILENAME', $_SERVER))
@@ -87,7 +87,7 @@ class Context
         $this->logger->pushHandler($handler);
         // $this->logger->pushProcessor(new IntrospectionProcessor($logLevel));
         $logger = $this->logger;
-        $logger->notice("--------- Start --------");
+        $logger->notice($startMessage);
         
         // --- Read the global configuration file and check query parameters
         $this->config = Configuration::readGobalConfig();
@@ -113,16 +113,17 @@ class Context
     /**
      * Create and/or get singleton instance
      *
-     * @param string $configFile
+     * @param integer $logLevel
+     *            a log level from Monolog\Logger
+     * @param string $startMessage
+     *            an optional message to log once the logger is initialized
      * @return Context
      */
-    public static function getInstance($configFile = null, $logLevel = Logger::INFO)
+    public static function getInstance($logLevel = Logger::NOTICE, $startMessage = null)
     {
-        if (is_null(self::$singleton)) {
-            if (is_null($configFile))
-                throw new Exception("Error: application context not yet initialized.");
-            self::$singleton = new Context($configFile, $logLevel);
-        }
+        if (is_null(self::$singleton))
+            self::$singleton = new Context($logLevel, $startMessage);
+        
         return self::$singleton;
     }
 
@@ -177,6 +178,14 @@ class Context
     public function getConfigParam($param)
     {
         return $this->config[$param];
+    }
+
+    /**
+     * Set a parameter from the configuration (generic or custom)
+     */
+    public function setConfigParam($param, $value)
+    {
+        $this->config[$param] = $value;
     }
 
     /**
