@@ -1,0 +1,37 @@
+@prefix sd:      <http://www.w3.org/ns/sparql-service-description#>.
+@prefix dct:     <http://purl.org/dc/terms/>.
+@prefix shacl:   <http://www.w3.org/ns/shacl#>.
+@prefix hydra:   <http://www.w3.org/ns/hydra/core#>.
+@prefix schema:  <http://schema.org/>.
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#>.
+@prefix sms:     <http://ns.inria.fr/sparql-micro-service/>.
+
+template st:argument {
+
+    format { <../tpl2_argument.html> ?paramDescription ?paramRequiredStr ?paramPath ?paramExample }
+    
+} where {
+    # Retrieve the service URI from the URL query string (?param=http://example.org/service)
+    BIND(st:get(st:param) as ?param)
+    BIND(if (bound(?param) && ?param != "", IRI(?param), IRI("<no_service>")) as ?service)
+
+    ?service
+        a sd:Service;
+        dct:source [ schema:potentialAction [ hydra:mapping ?hydraMapping ]].
+        
+    OPTIONAL { ?hydraMapping schema:description ?paramDescription }
+    OPTIONAL { ?hydraMapping hydra:required ?paramRequired }
+    OPTIONAL { ?hydraMapping skos:example ?paramExample }
+        
+    # Use either hydra:property or shacl:sourceShape
+    { ?hydraMapping hydra:property ?paramPath }
+    UNION
+    {
+      ?hydraMapping shacl:sourceShape [ shacl:path ?paramPath ].
+      OPTIONAL { ?hydraMapping shacl:nodeKind ?paramType }
+      OPTIONAL { ?hydraMapping shacl:minCount ?paramMinCount }
+      OPTIONAL { ?hydraMapping shacl:maxCount ?paramMaxCount }
+    }
+    
+    BIND(IF(?paramRequired, "Mandatory", "Optional") as ?paramRequiredStr)
+}

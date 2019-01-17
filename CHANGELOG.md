@@ -4,12 +4,13 @@
 ## [UNVERSIONED] 
 
 ### Added
-- SPARQL compose (beta): service to split a SPARQL query into a union of invocations to multiples SPARQL micro-services
-- New Macaulay Library SPARQL micro-serivces getAudioByTaxonCode and getTaxonCodeByTaxonName
+- Allow passing arguments of SPARQL micro-services as variables of the graph pattern, along with possily VALUES or FILTER clauses to give the values of these variables
+- Generate HTML documentation of a SPARQL micro-service from its SPARQL Service description + JSON-LD embedded markup
+- Federated querying (beta): service to split a SPARQL query into a union of invocations (SERVICE clauses) to multiples SPARQL micro-services
 
 ### Changed
-- allow passing arguments of SPARQL micro-services as variables of the graph pattern along with VALUES or FILTER clausesto give the values of these variables
 - refactoring of code into packages common, sparqlms and sparqlcompose
+- refactoring of deployment resources into dedicated folder
 
 
 ## [0.2.0] 2018-11-26

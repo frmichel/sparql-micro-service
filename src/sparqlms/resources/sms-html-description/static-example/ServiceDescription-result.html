@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>SPARQL micro-services documentation</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+  </head>
+  
+  <body>
+
+    <!-- Top navigation bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <span class="mt-1 mb-1 pl-4 navbar-brand font-weight-light">SPARQL micro-service documentation</span>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-link text-white" target="_new" href="https://github.com/frmichel/sparql-micro-service">Code@Github</a>
+          <a class="nav-link text-white" target="_new" href="https://hal.archives-ouvertes.fr/search/index/?q=sparql+micro-services&submit=&sort=submittedDate_tdate+desc">Publications</a>
+          <a class="nav-link text-white" target="_new" href="http://sms.i3s.unice.fr/demo-sms?param=Delphinapterus+leucas">TDWG2018 Demo</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container"> <!-- main page container -->
+
+        <!-- Service description -->
+        <div class="card my-4 border-secondary">
+          <div class="card-header py-2"><h5><span class="font-weight-light">Service</span> flickr/getPhotosByTaxon_sd</h5></div>
+          <div class="card-body">
+            <p>This SPARQL micro-service searches <a href="https://flickr.com" target="_new">Flickr</a> photos related to a certain taxonomic name. It takes as input a species scientific name (without authority nor date), and relies on the common convention used e.g. in the <a href="https://www.flickr.com/groups/806927@N20" target="_new"><em>Encyclopedia of Life</em></a> and by <a href="https://www.flickr.com/photos/biodivlibrary" target="_new"><em>Biodiversity Heritage Library</em></a> where photos are tagged with a taxonomic name formatted as: <span class="font-weight-light">taxonomy:binomial=&lt;scientific name&gt;</span>.</p>
+              
+            <dl class="row">
+              <dt class="col-sm-3">Canonical URL</dt>
+              <dd class="col-sm-9"><a href="http://example.org/flickr/getPhotosByTaxon_sd/" target="_new">http://example.org/flickr/getPhotosByTaxon_sd/</a></dd>
+
+              <dt class="col-sm-3"><span data-toggle="tooltip" data-html="true" title="A SPARQL microservice may be invoked in two ways: as a regular SPARQL endpoint or as a URI dereferencing engine.">Query mode</span></dt>
+              <dd class="col-sm-9">SPARQL</dd>
+
+              <dt class="col-sm-3">Input parameter: name</dt>
+              <dd class="col-sm-9">
+                The taxon scientific name without authorship nor date information.
+                <br>Passed as the object of predicate <a href="http://rs.tdwg.org/dwc/terms/scientificName" target="_new">http://rs.tdwg.org/dwc/terms/scientificName</a>.
+                <br>Example: <em>Delphinus delphis</em>
+              </dd>
+              
+              <dt class="col-sm-3"><span data-toggle="tooltip" data-html="true" title="URI of the SHACL graph depicting the shape of the graph produced by this SPARQL micro-service.">SHACL graph</span></dt>
+              <dd class="col-sm-9"><a href="http://example.org/flickr/getPhotosByTaxon_sd/ShapesGraph" target="_new">http://example.org/flickr/getPhotosByTaxon_sd/ShapesGraph</a></dd>
+            </dl>
+          </div> <!-- card-body -->
+        </div> <!-- card -->
+
+        <!-- Example query form -->
+        <div class="card border-secondary">
+          <div class="card-header py-2"><h5><span class="font-weight-light">Try it out</span></h5></div>
+          <div class="card-body">
+            <form id="queryForm">
+              <div class="form-row">
+              
+                <div class="col col-md-7">
+                  <div class="form-group">
+                    <label for="sparqlQuery">SPARQL query</label>
+                    <textarea id="sparqlQuery" class="form-control form-control-sm" name="query" rows="10">
+prefix schema: &lt;http://schema.org/&gt;
+prefix dwc: &lt;http://rs.tdwg.org/dwc/terms/&gt;
+
+SELECT ?photo ?title ?img WHERE {
+
+    ?taxon a dwc:Taxon;
+        dwc:scientificName "Delphinus delphis";
+        schema:image ?photo.
+
+    ?photo a schema:Photograph;
+        schema:name ?title;
+        schema:contentUrl ?img.
+}
+                    </textarea>
+                  </div>
+                </div>
+              
+                <div class="ml-4 col col-md-4">
+                  <div class="form-group">
+                    <label for="formFormat">Output format</label>
+                    <select id="formFormat" class="form-control" data-toggle="tooltip" data-html="true" title="Adapt output format to SPARQL query type:<br> <b>SPARQL results</b> for SELECT and ASK query forms, <b>an RDF syntax</b> for CONSTRUCT and DESCRIBE.">
+                      <option>application/sparql-results+json</option>
+                      <option>application/sparql-results+xml</option>
+                      <option>application/ld+json</option>
+                      <option>text/turtle</option>
+                      <option>application/rdf+xml</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="submitSparqlQuery">&nbsp;</label>
+                    <button id="submitSparqlQuery" type="submit" class="btn btn-primary">Submit query</button>
+                  </div>
+                </div>
+                
+              </div>
+            </form>
+
+            <div id="responseBox" class="mt-4">
+              <label for="sparqlQuery">SPARQL response</label>
+              <div class="border-light bg-light p-1"><small><pre id="sparqlQueryResponse"></pre></small></div>
+            </div>
+
+          </div> <!-- card-body -->
+        </div> <!-- card -->
+
+    </div><!-- .container -->
+
+    <nav class="pt-1 pb-3 navbar">
+        <span class="mx-auto"><small>-- Page auto-generated from the micro-service's <a href="https://www.w3.org/TR/2013/REC-sparql11-service-description-20130321/" target="_new">SPARQL Service Description</a> -- </small></span>
+    </nav>
+    
+    <!-- Bootstrap core JavaScript ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- jQuery first, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" 
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" 
+        integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <script>    
+        $(document).ready(function() {
+
+            // Initialize the tooltips
+            $('[data-toggle="tooltip"]').tooltip()
+  
+            $("#responseBox").hide();
+
+            // Prevent reloading the page after form submission
+            $("#queryForm").submit(function (event) { event.preventDefault(); });
+        
+            $("#submitSparqlQuery").click(function() {
+            
+                $.ajax({
+                  type: "GET",
+                  beforeSend: function(request) {
+                    request.setRequestHeader("Accept", $("#formFormat").val());
+                  },
+                  url: "http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxon_sd/",
+                  data: $("#sparqlQuery").serialize(),
+                  processData: true,
+                  success: function(data, status, xhr) {
+                    $("#sparqlQueryResponse").text(xhr.responseText); // print the raw response
+                    $("#responseBox").show();
+                  },
+                  error: function(xhr, status, error) {
+                    $("#sparqlQueryResponse").text("Status: " + xhr.status + " " + xhr.statusText + "\n" + xhr.responseText); // print the raw response
+                    $("#responseBox").show();
+                  }
+                });
+            });
+        });
+    </script>
+    
+    <!-- Dataset markup -->
+    <script type="application/ld+json">
+    </script>
+        {
+          "@context": [
+              "http://schema.org",
+              { 
+                "dcat": "http://www.w3.org/ns/dcat#",
+                "frmt": "http://www.w3.org/ns/formats/"
+              }
+          ],
+          
+          "@type": "Dataset",
+          "identifier": "http://example.org/flickr/getPhotosByTaxon_sd/",
+          "name": "SPARQL service to search for Flickr photos by biological taxon scientific name",
+          "description": "This SPARQL micro-service searches Flickr photos related to a certain taxonomic name. It takes as input a species scientific name (without authority nor date), and relies on the common convention used e.g. in the Encyclopedia of Life group (https://www.flickr.com/groups/806927@N20) and by Biodiversity Heritage Library (https://www.flickr.com/photos/biodivlibrary) where photos are tagged with a taxonomic name formatted as: taxonomy:binomial=<scientific name>.",
+          "url": "http://example.org/flickr/getPhotosByTaxon_sd/",
+          "citation": "https://www.mdpi.com/2078-2489/9/12/310",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Université Côte d'Azur, CNRS, Inria, I3S",
+            "contactPoint":{
+                "@type":"ContactPoint",
+                "contactType": "developper",
+                "name": "Franck Michel",
+                "email": "franck.michel@cnrs.fr",
+                "url": "http://modalis.i3s.unice.fr/fmichel"
+            }
+          },
+          "keywords": [
+            "lifesciences", "biodiversity", "fauna", "flora", "species", "photography", "media"
+          ],
+          
+          "distribution": {
+            "@type": "DataDownload",
+            "contentUrl": "http://example.org/flickr/getPhotosByTaxon_sd/",
+            "name": "SPARQL endpoint",
+            "description": "SPARQL micro-service endpoint",
+            "fileFormat": "api/sparql",
+            "encodingFormat": [ "frmt:SPARQL_Results_XML", "frmt:SPARQL_Results_JSON", 
+              "frmt:SPARQL_Results_CSV", "frmt:SPARQL_Results_TSV",
+              "frmt:RDF_XML", "frmt:Turtle", "frmt:JSON-LD", "frmt:Trig"
+            ]
+          },
+          
+          "additionalType": [ "dcat:Dataset", "http://ns.inria.fr/sparql-micro-service/Service" ],
+          "dcat:distribution": {
+            "type": "dcat:Distribution",
+            "name": "SPARQL endpoint",
+            "description": "SPARQL micro-service endpoint",
+            "dact:accessUrl": "http://example.org/flickr/getPhotosByTaxon_sd/",
+            "dcat:mediaType": [ "frmt:SPARQL_Results_XML", "frmt:SPARQL_Results_JSON", 
+              "frmt:SPARQL_Results_CSV", "frmt:SPARQL_Results_TSV",
+              "frmt:RDF_XML", "frmt:Turtle", "frmt:JSON-LD", "frmt:Trig"
+            ],
+            "http://www.w3.org/ns/shacl#shapesGraph" "http://example.org/flickr/getPhotosByTaxon_sd/ShapesGraph"
+          }
+        }    
+  </body>
+</html>

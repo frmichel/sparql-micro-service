@@ -1,0 +1,106 @@
+              <dt class="col-sm-3"><span data-toggle="tooltip" data-html="true" title="URI of the SHACL graph depicting the shape of the graph produced by this SPARQL micro-service.">SHACL graph</span></dt>
+              <dd class="col-sm-9"><a href="%2$s" target="_new">%2$s</a></dd>
+            </dl>
+          </div> <!-- card-body -->
+        </div> <!-- card -->
+
+        <!-- Example query form -->
+        <div class="card border-secondary">
+          <div class="card-header py-2"><h5><span class="font-weight-light">Try it out</span></h5></div>
+          <div class="card-body">
+            <form id="queryForm">
+              <div class="form-row">
+              
+                <div class="col col-md-7">
+                  <div class="form-group">
+                    <label for="sparqlQuery">SPARQL query</label>
+                    <textarea id="sparqlQuery" class="form-control form-control-sm" name="query" rows="10">
+%3$s
+                    </textarea>
+                  </div>
+                </div>
+              
+                <div class="ml-4 col col-md-4">
+                  <div class="form-group">
+                    <label for="formFormat">Output format</label>
+                    <select id="formFormat" class="form-control" data-toggle="tooltip" data-html="true" title="Adapt output format to SPARQL query type:<br> <b>SPARQL results</b> for SELECT and ASK query forms, <b>an RDF syntax</b> for CONSTRUCT and DESCRIBE.">
+                      <option>application/sparql-results+json</option>
+                      <option>application/sparql-results+xml</option>
+                      <option>application/ld+json</option>
+                      <option>text/turtle</option>
+                      <option>application/rdf+xml</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="submitSparqlQuery">&nbsp;</label>
+                    <button id="submitSparqlQuery" type="submit" class="btn btn-primary">Submit query</button>
+                  </div>
+                </div>
+                
+              </div>
+            </form>
+
+            <div id="responseBox" class="mt-4">
+              <label for="sparqlQuery">SPARQL response</label>
+              <div class="border-light bg-light p-1"><small><pre id="sparqlQueryResponse"></pre></small></div>
+            </div>
+
+          </div> <!-- card-body -->
+        </div> <!-- card -->
+
+    </div><!-- .container -->
+
+    <nav class="pt-1 pb-3 navbar">
+        <span class="mx-auto"><small>-- Page auto-generated from the micro-service's <a href="https://www.w3.org/TR/2013/REC-sparql11-service-description-20130321/" target="_new">SPARQL Service Description</a> -- </small></span>
+    </nav>
+    
+    <!-- Bootstrap core JavaScript ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- jQuery first, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" 
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" 
+        integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <script>    
+        $(document).ready(function() {
+
+            // Initialize the tooltips
+            $('[data-toggle="tooltip"]').tooltip()
+  
+            $("#responseBox").hide();
+
+            // Prevent reloading the page after form submission
+            $("#queryForm").submit(function (event) { event.preventDefault(); });
+        
+            $("#submitSparqlQuery").click(function() {
+            
+                $.ajax({
+                  type: "GET",
+                  beforeSend: function(request) {
+                    request.setRequestHeader("Accept", $("#formFormat").val());
+                  },
+                  url: "%1$s",
+                  data: $("#sparqlQuery").serialize(),
+                  processData: true,
+                  success: function(data, status, xhr) {
+                    $("#sparqlQueryResponse").text(xhr.responseText); // print the raw response
+                    $("#responseBox").show();
+                  },
+                  error: function(xhr, status, error) {
+                    $("#sparqlQueryResponse").text("Status: " + xhr.status + " " + xhr.statusText + "\n" + xhr.responseText); // print the raw response
+                    $("#responseBox").show();
+                  }
+                });
+            });
+        });
+    </script>
+    
+    <!-- Dataset markup -->
+    <script type="application/ld+json">
+%4$s
+    </script>
+    
+  </body>
+</html>

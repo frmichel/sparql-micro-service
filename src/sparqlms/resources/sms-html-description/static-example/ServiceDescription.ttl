@@ -10,7 +10,7 @@
 @prefix dwc:     <http://rs.tdwg.org/dwc/terms/>.
 @prefix sms:     <http://ns.inria.fr/sparql-micro-service/>.
 
-@base            <http://example.org/macaulaylibrary/getAudioByTaxon_sd/>.
+@base            <http://example.org/flickr/getPhotosByTaxon_sd/>.
 
 # This file is loaded as graph <ServiceDescription>
 <>
@@ -20,8 +20,8 @@
     sd:feature sd:BasicFederatedQuery, sd:EmptyGraphs;
     sd:resultFormat frmt:SPARQL_Results_XML, frmt:SPARQL_Results_JSON, frmt:SPARQL_Results_CSV, frmt:SPARQL_Results_TSV,
                     frmt:RDF_XML, frmt:Turtle, frmt:JSON-LD, frmt:Trig;
-    schema:name "SPARQL service to search the Macaulay Library for audio recordings by biological taxon scientific name";
-    schema:description '''This SPARQL micro-service wraps the <a href="https://macaulaylibrary.org/" target="_new">Macaulay Library</a> Web API to search audio recordings by biological taxon scientific name.''';
+    schema:name "SPARQL service to search for Flickr photos by biological taxon scientific name";
+    schema:description '''This SPARQL micro-service searches <a href="https://flickr.com" target="_new">Flickr</a> photos related to a certain taxonomic name. It takes as input a species scientific name (without authority nor date), and relies on the common convention used e.g. in the <a href="https://www.flickr.com/groups/806927@N20"><em>Encyclopedia of Life</em></a> and by <a href="https://www.flickr.com/photos/biodivlibrary"><em>Biodiversity Heritage Library</em></a> where photos are tagged with a taxonomic name formatted as: <span class="font-weight-light">taxonomy:binomial=&lt;scientific name&gt;</span>.''';
     schema:citation <https://www.mdpi.com/2078-2489/9/12/310>;
     
     sd:defaultDataset [
@@ -32,13 +32,9 @@
         
         void:vocabulary <http://schema.org/>, <http://www.w3.org/ns/shacl#>, <http://www.w3.org/ns/hydra/core#>;
         void:sparqlEndpoint <>;
-        
-        # Topics description
-        foaf:topic <http://dbpedia.org/page/Audio_signal>, <https://www.wikidata.org/entity/Q47041>; # Biodiversity
-        schema:keywords "audio"@en, "media"@en, "biodiversity"@en;
     ];
 
-    schema:keywords "biodiversity", "lifesciences", "fauna", "bird", "amphibian", "mammal", "species", "audio", "recording";
+    schema:keywords "biodiversity", "lifesciences", "fauna", "flora", "species", "photography", "media";
     schema:citation <https://www.mdpi.com/2078-2489/9/12/310>;
     schema:publisher [ a schema:Organization;
         schema:name "Université Côte d'Azur, CNRS, Inria, I3S";
@@ -54,24 +50,25 @@
         prefix schema: <http://schema.org/>
         prefix dwc: <http://rs.tdwg.org/dwc/terms/>
 
-        SELECT ?audio ?audioFile ?description WHERE {
+        SELECT ?photo ?title ?img WHERE {
 
             ?taxon a dwc:Taxon;
                 dwc:scientificName "Delphinus delphis";
-                schema:audio ?audio.
+                schema:image ?photo.
 
-            ?audio a schema:AudioObject;
-                schema:contentUrl ?audioFile;
-                schema:description ?description.
-        }''';
-        
+            ?photo a schema:Photograph;
+                schema:name ?title;
+                schema:contentUrl ?img.
+        }
+        ''';
+    
+    sms:cacheExpiresAfter "P2592000S"^^xsd:duration;
+
     dct:source [
-        a schema:WebAPI; schema:name "Macaulay Library Web API";
-        schema:url <https://www.macaulaylibrary.org/>;
+        a schema:WebAPI; schema:name "Flickr API";
+        schema:url <https://www.flickr.com/services/api/>;
         schema:potentialAction <APIService>;
     ];
-    # Maxium time (in seconds) to cache responses from the Web API. Default: 2592000 = 30 days
-    sms:cacheExpiresAfter "P2592000S"^^xsd:duration;
     .
 
 # Web API service being wrapped by this µ-service + parameters binding
@@ -80,14 +77,13 @@
     schema:documentation "The taxon scientific name must be provided by property dwc:scientificName in the SPARQL graph pattern.";
 
     a hydra:IriTemplate;
-    hydra:template "https://search.macaulaylibrary.org/catalog.json?action=new_search&searchField=animals&sort=upload_date_desc&mediaType=a&taxonCode={taxonCode}";
     hydra:mapping [
         hydra:variable "name";
         schema:description "The taxon scientific name without authorship nor date information.";
         hydra:required "true"^^xsd:boolean;
         skos:example "Delphinus delphis";
-
+        
         # Use either hydra:property or shacl:sourceShape
         hydra:property dwc:scientificName;
-        #shacl:sourceShape <ShapesGraph#NamePropertyShape>;
+        shacl:sourceShape <ShapesGraph#NamePropertyShape>;
     ].

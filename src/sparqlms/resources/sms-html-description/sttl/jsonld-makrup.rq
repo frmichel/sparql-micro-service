@@ -1,0 +1,95 @@
+@prefix sd:      <http://www.w3.org/ns/sparql-service-description#>.
+@prefix shacl:   <http://www.w3.org/ns/shacl#>.
+@prefix schema:  <http://schema.org/>.
+@prefix dcat:    <http://www.w3.org/ns/dcat#>.
+@prefix sms:     <http://ns.inria.fr/sparql-micro-service/>.
+
+# This template constructs a graph complying with the schema:Dataset requirements, based on the service description.
+# Then, it serializes this graph in a piece of JSON-LD that can be embedded into the HTML service description page.
+template st:jsonld-markup {
+
+    st:apply-templates-with-graph(st:json, ?graph)
+    
+} WHERE {
+    BIND(
+        let (?g = 
+
+            CONSTRUCT {
+                ?service 
+                    a schema:Dataset;
+                    schema:identifier ?serviceUrl;
+                    schema:name ?serviceName;
+                    schema:description ?serviceDescription;
+                    schema:citation ?citation;
+                    schema:keywords ?keyword;
+                    shacl:shapesGraph ?shapesGraph;
+
+                    schema:publisher ?pubUri; 
+                    schema:distribution ?schemaDistribution;
+                    schema:additionalType dcat:Dataset, sms:Service;
+                    dcat:distribution ?dcatDistribution.
+
+                ?pubUri
+                    a ?pubType;
+                    schema:name ?pubName;
+                    schema:contactPoint ?pubContactPointUri.
+                    
+                ?pubContactPointUri
+                    schema:contactType ?pubContactType;
+                    schema:name ?pubContactName;
+                    schema:email ?pubContactEmail;
+                    schema:url ?pubContactUrl.
+
+                ?schemaDistribution
+                    a schema:DataDownload;
+                    schema:contentUrl ?serviceUrl;
+                    schema:name "SPARQL endpoint";
+                    schema:description "SPARQL micro-service endpoint";
+                    schema:fileFormat "api/sparql";
+                    schema:encodingFormat ?serviceResultFormat.
+
+                ?dcatDistribution
+                    a dcat:Distribution;
+                    schema:name "SPARQL endpoint";
+                    schema:description "SPARQL micro-service endpoint";
+                    dcat:accessUrl ?serviceUrl;
+                    dcat:mediaType ?serviceResultFormat.
+
+            } WHERE {
+                # Retrieve the service URI from the URL query string (?param=http://example.org/service)
+                BIND(st:get(st:param) as ?param)
+                BIND(if (bound(?param) && ?param != "", IRI(?param), IRI("<no_service>")) as ?service)
+
+                ?service 
+                    a sd:Service;
+                    sd:endpoint ?serviceUrl;
+                    schema:name ?serviceName;
+                    schema:description ?serviceDescription.
+                    
+                OPTIONAL { ?service sd:defaultDataset [ sd:defaultGraph [ shacl:shapesGraph ?shapesGraph ]] }
+
+                OPTIONAL { ?service sd:resultFormat ?serviceResultFormat }
+                OPTIONAL { ?service schema:keywords ?keyword }
+                OPTIONAL { ?service schema:citation ?citation }
+                OPTIONAL {  
+                    ?service schema:publisher ?pub.
+                    ?pub a ?pubType; schema:name ?pubName.
+                    OPTIONAL {  
+                        ?pub schema:contactPoint ?pubContactPoint. 
+                        OPTIONAL { ?pubContactPoint schema:contactType ?pubContactType }
+                        OPTIONAL { ?pubContactPoint schema:name ?pubContactName }
+                        OPTIONAL { ?pubContactPoint schema:email ?pubContactEmail }
+                        OPTIONAL { ?pubContactPoint schema:url ?pubContactUrl }
+                    }
+                }
+                
+                BIND(IRI(concat(?service, "Publisher")) as ?pubUri)
+                BIND(IRI(concat(?service, "PublisherContact")) as ?pubContactPointUri)
+                BIND(IRI(concat(?service, "DcatDistribution")) as ?dcatDistribution)
+                BIND(IRI(concat(?service, "SchemaDistribution")) as ?schemaDistribution)
+            }
+
+            ) { ?g } 
+        as ?graph
+    )
+}
