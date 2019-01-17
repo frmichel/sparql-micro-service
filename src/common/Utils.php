@@ -57,6 +57,7 @@ class Utils
         global $context;
         $logger = $context->getLogger();
         
+        header('Access-Control-Allow-Origin: *');
         http_response_code(400); // Bad Request
         $logger->error($message);
         print("Erroneous request: " . $message . "\n");
@@ -74,6 +75,7 @@ class Utils
         global $context;
         $logger = $context->getLogger();
         
+        header('Access-Control-Allow-Origin: *');
         http_response_code(405); // Method Not Allowed
         $logger->error($message);
         print("Erroneous request: " . $message . "\n");
@@ -93,6 +95,7 @@ class Utils
         global $context;
         $logger = $context->getLogger();
         
+        header('Access-Control-Allow-Origin: *');
         http_response_code(422); // Unprocessable entity
         $logger->error($message);
         print("Invalid request: " . $message . "\n");

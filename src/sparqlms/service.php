@@ -186,6 +186,7 @@ try {
         print("Could not process the request. Error:\n" . (string) $e . "\n");
         print("Second exception caught:\n" . (string) $f . "\n");
     }
+    header('Access-Control-Allow-Origin: *');
     http_response_code(500);
     print("Internal error: " . $e->getMessage() . "\n");
     exit(0);
