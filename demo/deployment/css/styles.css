@@ -1,0 +1,28 @@
+/* Changes to bootstrap styles */
+
+body {
+  padding:10px;
+  /* font:14px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif; */
+  color:#555;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color:#555;
+  margin:0 0 20px;
+}
+
+
+a {
+  color:#39c;
+  font-weight:400;
+  text-decoration:none;
+}
+
+.img-small {
+  max-width: 400px;
+  height: 300px;
+}
+.recording-thumbnail {
+  width: 270px;
+  height: 150px;
+}

@@ -1,5 +1,5 @@
 # --
-# Service URL: http://localhost:8080/service/demo?param=Delphinus+delphis
+# Service URL: http://localhost:8082/service/demo?param=Delphinus+delphis
 # --
 
 st:demo a st:Server ;
