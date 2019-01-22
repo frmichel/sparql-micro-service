@@ -28,10 +28,10 @@
 
         <!-- Service description -->
         <div class="card my-4 border-secondary">
-          <div class="card-header py-2"><h5><span class="font-weight-light">Service</span> flickr/getPhotosByTaxon_sd</h5></div>
+          <div class="card-header py-2"><h5><span class="font-weight-light">Service</span>http://example.org/flickr/getPhotosByTaxon_sd/</h5></div>
           <div class="card-body">
             <p>This SPARQL micro-service searches <a href="https://flickr.com" target="_new">Flickr</a> photos related to a certain taxonomic name. It takes as input a species scientific name (without authority nor date), and relies on the common convention used e.g. in the <a href="https://www.flickr.com/groups/806927@N20" target="_new"><em>Encyclopedia of Life</em></a> and by <a href="https://www.flickr.com/photos/biodivlibrary" target="_new"><em>Biodiversity Heritage Library</em></a> where photos are tagged with a taxonomic name formatted as: <span class="font-weight-light">taxonomy:binomial=&lt;scientific name&gt;</span>.</p>
-              
+
             <dl class="row">
               <dt class="col-sm-3">Canonical URL</dt>
               <dd class="col-sm-9"><a href="http://example.org/flickr/getPhotosByTaxon_sd/" target="_new">http://example.org/flickr/getPhotosByTaxon_sd/</a></dd>
@@ -46,7 +46,10 @@
                 <br>Example: <em>Delphinus delphis</em>
               </dd>
               
-              <dt class="col-sm-3"><span data-toggle="tooltip" data-html="true" title="URI of the SHACL graph depicting the shape of the graph produced by this SPARQL micro-service.">SHACL graph</span></dt>
+              <dt class="col-sm-3">Service Description graph</dt>
+              <dd class="col-sm-9"><a href="http://example.org/flickr/getPhotosByTaxon_sd/ServiceDescription" target="_new">http://example.org/flickr/getPhotosByTaxon_sd/ServiceDescription</a></dd>
+
+              <dt class="col-sm-3"><span data-toggle="tooltip" data-html="true" title="URI of the SHACL graph depicting the type of graphs produced by this SPARQL micro-service.">SHACL graph</span></dt>
               <dd class="col-sm-9"><a href="http://example.org/flickr/getPhotosByTaxon_sd/ShapesGraph" target="_new">http://example.org/flickr/getPhotosByTaxon_sd/ShapesGraph</a></dd>
             </dl>
           </div> <!-- card-body -->
@@ -123,7 +126,7 @@ SELECT ?photo ?title ?img WHERE {
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" 
         integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
-    <script>    
+    <script>
         $(document).ready(function() {
 
             // Initialize the tooltips
@@ -141,7 +144,7 @@ SELECT ?photo ?title ?img WHERE {
                   beforeSend: function(request) {
                     request.setRequestHeader("Accept", $("#formFormat").val());
                   },
-                  url: "http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxon_sd/",
+                  url: "http://example.org/flickr/getPhotosByTaxon_sd/",
                   data: $("#sparqlQuery").serialize(),
                   processData: true,
                   success: function(data, status, xhr) {
@@ -159,7 +162,6 @@ SELECT ?photo ?title ?img WHERE {
     
     <!-- Dataset markup -->
     <script type="application/ld+json">
-    </script>
         {
           "@context": [
               "http://schema.org",
@@ -212,8 +214,9 @@ SELECT ?photo ?title ?img WHERE {
               "frmt:SPARQL_Results_CSV", "frmt:SPARQL_Results_TSV",
               "frmt:RDF_XML", "frmt:Turtle", "frmt:JSON-LD", "frmt:Trig"
             ],
-            "http://www.w3.org/ns/shacl#shapesGraph" "http://example.org/flickr/getPhotosByTaxon_sd/ShapesGraph"
+            "http://www.w3.org/ns/shacl#shapesGraph": "http://example.org/flickr/getPhotosByTaxon_sd/ShapesGraph"
           }
         }    
+    </script>
   </body>
 </html>
