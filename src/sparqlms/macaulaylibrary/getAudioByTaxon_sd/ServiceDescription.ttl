@@ -30,7 +30,7 @@
         sd:namedGraph   [ a sd:Graph; sd:name <ServiceDescription> ];
         sd:namedGraph   [ a sd:Graph; sd:name <ShapesGraph> ];
         
-        void:vocabulary <http://schema.org/>, <http://www.w3.org/ns/shacl#>, <http://www.w3.org/ns/hydra/core#>;
+        void:vocabulary <http://schema.org/>, <http://rs.tdwg.org/dwc/terms/>, <http://www.w3.org/ns/shacl#>, <http://www.w3.org/ns/hydra/core#>;
         void:sparqlEndpoint <>;
         
         # Topics description

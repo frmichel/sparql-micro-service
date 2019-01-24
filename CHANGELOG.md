@@ -1,7 +1,7 @@
 # SPARQL Micro-Service Changelog
 
 
-## [UNVERSIONED] 
+## [0.3.0]
 
 ### Added
 - Allow passing arguments of SPARQL micro-services as variables of the graph pattern, along with possily VALUES or FILTER clauses to give the values of these variables

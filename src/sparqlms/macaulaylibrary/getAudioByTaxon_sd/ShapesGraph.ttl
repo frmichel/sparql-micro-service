@@ -6,16 +6,18 @@
 @base            <http://example.org/macaulaylibrary/getAudioByTaxon_sd/>.
 
 <ShapesGraph#TaxonShape> a shacl:NodeShape;
+    shacl:targetClass dwc:Taxon;
     shacl:property <ShapesGraph#NamePropertyShape>,
         [ a shacl:PropertyShape; shacl:path rdf:type;     shacl:hasValue dwc:Taxon ],
         [ a shacl:PropertyShape; shacl:path schema:audio; shacl:node <ShapesGraph#AudioShape> ];
-    shacl:closed false.
+    shacl:closed true.
 
 <ShapesGraph#NamePropertyShape> a shacl:PropertyShape; 
     shacl:path dwc:scientificName; shacl:nodeKind shacl:Literal;
     shacl:minCount 1; shacl:maxCount 1.
     
 <ShapesGraph#AudioShape> a shacl:NodeShape;
+    shacl:targetClass dwc:AudioObject;
     shacl:property
       [ a shacl:PropertyShape; shacl:path rdf:type;                shacl:hasValue schema:AudioObject ],
       [ a shacl:PropertyShape; shacl:path schema:contentUrl;       shacl:nodeKind shacl:IRI ],
@@ -23,4 +25,4 @@
       [ a shacl:PropertyShape; shacl:path schema:mainEntityOfPage; shacl:nodeKind shacl:IRI ],
       [ a shacl:PropertyShape; shacl:path schema:author;           shacl:nodeKind shacl:Literal ],
       [ a shacl:PropertyShape; shacl:path schema:description;      shacl:nodeKind shacl:Literal; shacl:minCount 0 ];
-    shacl:closed false.
+    shacl:closed true.

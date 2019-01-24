@@ -6,16 +6,19 @@
 @base            <http://example.org/flickr/getPhotosByTaxon_sd/>.
 
 <ShapesGraph#TaxonShape> a shacl:NodeShape;
-    shacl:property <ShapesGraph#NamePropertyShape>,
+    shacl:targetClass dwc:Taxon;
+    shacl:property
+        <ShapesGraph#NamePropertyShape>,
         [ a shacl:PropertyShape; shacl:path rdf:type;     shacl:hasValue dwc:Taxon ],
         [ a shacl:PropertyShape; shacl:path schema:image; shacl:node <ShapesGraph#PhotographShape> ];
-    shacl:closed false.
+    shacl:closed true.
 
 <ShapesGraph#NamePropertyShape> a shacl:PropertyShape; 
     shacl:path dwc:scientificName; shacl:nodeKind shacl:Literal;
     shacl:minCount 1; shacl:maxCount 1.
 
 <ShapesGraph#PhotographShape> a shacl:NodeShape;
+    shacl:targetClass dwc:Photograph;
     shacl:property
       [ a shacl:PropertyShape; shacl:path rdf:type;                shacl:hasValue schema:Photograph ],
       [ a shacl:PropertyShape; shacl:path schema:name;             shacl:nodeKind shacl:Literal; shacl:maxCount 1 ],
@@ -25,11 +28,12 @@
       [ a shacl:PropertyShape; shacl:path schema:mainEntityOfPage; shacl:nodeKind shacl:IRI ],
       [ a shacl:PropertyShape; shacl:path schema:fileFormat;       shacl:nodeKind shacl:Literal; shacl:maxCount 1 ],
       [ a shacl:PropertyShape; shacl:path schema:author;           shacl:node <ShapesGraph#PersonShape> ];
-    shacl:closed false.
+    shacl:closed true.
 
 <ShapesGraph#PersonShape> a shacl:NodeShape;
+    shacl:targetClass dwc:Person;
     shacl:property 
       [ a shacl:PropertyShape; shacl:path rdf:type;          shacl:hasValue schema:Person ],
       [ a shacl:PropertyShape; shacl:path schema:identifier; shacl:nodeKind shacl:Literal ],
       [ a shacl:PropertyShape; shacl:path schema:url;        shacl:nodeKind shacl:IRI ];
-    shacl:closed false.
+    shacl:closed true.
