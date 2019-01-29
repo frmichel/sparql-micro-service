@@ -1,7 +1,7 @@
 @prefix sd:    <http://www.w3.org/ns/sparql-service-description#>.
 @prefix shacl: <http://www.w3.org/ns/shacl#>.
 @prefix sp:    <http://spinrdf.org/sp#>.
-@prefix sms:   <http://ns.inria.fr/sparql-micro-service/>.
+@prefix sms:   <http://ns.inria.fr/sparql-micro-service#>.
 
 WITH  <{MatchmakingGraph}>
 INSERT {

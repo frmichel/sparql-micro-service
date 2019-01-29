@@ -2,7 +2,7 @@
 @prefix shacl:   <http://www.w3.org/ns/shacl#>.
 @prefix hydra:   <http://www.w3.org/ns/hydra/core#>.
 @prefix schema:  <http://schema.org/>.
-@prefix sms:     <http://ns.inria.fr/sparql-micro-service/>.
+@prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
 
 template st:start {
 

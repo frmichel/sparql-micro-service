@@ -8,7 +8,7 @@
 @prefix schema:  <http://schema.org/>.
 @prefix skos:    <http://www.w3.org/2004/02/skos/core#>.
 @prefix dwc:     <http://rs.tdwg.org/dwc/terms/>.
-@prefix sms:     <http://ns.inria.fr/sparql-micro-service/>.
+@prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
 
 @base            <http://example.org/macaulaylibrary/getAudioByTaxon_sd/>.
 
@@ -66,7 +66,8 @@
         }''';
         
     dct:source [
-        a schema:WebAPI; schema:name "Macaulay Library Web API";
+        a schema:WebAPI;
+        schema:name "Macaulay Library Web API";
         schema:url <https://www.macaulaylibrary.org/>;
         schema:potentialAction <APIService>;
     ];

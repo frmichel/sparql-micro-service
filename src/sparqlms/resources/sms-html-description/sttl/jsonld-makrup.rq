@@ -2,7 +2,8 @@
 @prefix shacl:   <http://www.w3.org/ns/shacl#>.
 @prefix schema:  <http://schema.org/>.
 @prefix dcat:    <http://www.w3.org/ns/dcat#>.
-@prefix sms:     <http://ns.inria.fr/sparql-micro-service/>.
+@prefix dct:     <http://purl.org/dc/terms/>.
+@prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
 
 # This template constructs a graph complying with the schema:Dataset requirements, based on the service description.
 # Then, it serializes this graph in a piece of JSON-LD that can be embedded into the HTML service description page.
@@ -32,7 +33,7 @@ template st:jsonld-markup {
 
                 ?apiUrl 
                     a schema:CreativeWork;
-                    shcema:name ?apiName.
+                    schema:name ?apiName.
 
                 ?pubUri
                     a ?pubType;
@@ -87,11 +88,8 @@ template st:jsonld-markup {
                     }
                 }
                 
-                OPTIONAL {  
-                    ?service dct:source [
-                        shcema:name ?apiName;
-                        schema:url ?apiUrl;
-                }
+                OPTIONAL {  ?service dct:source [ schema:name ?apiName ] }
+                OPTIONAL {  ?service dct:source [ schema:url ?apiUrl ] }
                 
                 BIND(IRI(concat(?service, "Publisher")) as ?pubUri)
                 BIND(IRI(concat(?service, "PublisherContact")) as ?pubContactPointUri)

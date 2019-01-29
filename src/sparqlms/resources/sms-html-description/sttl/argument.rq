@@ -4,7 +4,7 @@
 @prefix hydra:   <http://www.w3.org/ns/hydra/core#>.
 @prefix schema:  <http://schema.org/>.
 @prefix skos:    <http://www.w3.org/2004/02/skos/core#>.
-@prefix sms:     <http://ns.inria.fr/sparql-micro-service/>.
+@prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
 
 template st:argument {
 

@@ -1,5 +1,5 @@
 @prefix sp:  <http://spinrdf.org/sp#> .
-@prefix sms: <http://ns.inria.fr/sparql-micro-service/>.
+@prefix sms: <http://ns.inria.fr/sparql-micro-service#>.
 
 TEMPLATE st:service-tps(?serviceDescrGraph, ?service) {
 

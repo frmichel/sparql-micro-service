@@ -1,4 +1,4 @@
-@prefix sms: <http://ns.inria.fr/sparql-micro-service/>.
+@prefix sms: <http://ns.inria.fr/sparql-micro-service#>.
 
 TEMPLATE st:service-optionals(?serviceDescrGraph, ?service) {
 

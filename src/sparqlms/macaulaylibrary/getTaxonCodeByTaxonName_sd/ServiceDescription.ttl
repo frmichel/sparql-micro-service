@@ -7,7 +7,7 @@
 @prefix hydra:   <http://www.w3.org/ns/hydra/core#>.
 @prefix schema:  <http://schema.org/>.
 @prefix dwc:     <http://rs.tdwg.org/dwc/terms/>.
-@prefix sms:     <http://ns.inria.fr/sparql-micro-service/>.
+@prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
 
 @base            <http://example.org/macaulaylibrary/getTaxonCodeByTaxonName_sd/>.
 

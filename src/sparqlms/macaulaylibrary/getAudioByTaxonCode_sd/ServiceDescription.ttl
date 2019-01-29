@@ -6,7 +6,7 @@
 @prefix void:    <http://rdfs.org/ns/void#>.
 @prefix hydra:   <http://www.w3.org/ns/hydra/core#>.
 @prefix schema:  <http://schema.org/>.
-@prefix sms:     <http://ns.inria.fr/sparql-micro-service/>.
+@prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
 
 @base            <http://example.org/macaulaylibrary/getAudioByTaxonCode_sd/>.
 

@@ -8,7 +8,7 @@
 @prefix schema:  <http://schema.org/>.
 @prefix skos:    <http://www.w3.org/2004/02/skos/core#>.
 @prefix dwc:     <http://rs.tdwg.org/dwc/terms/>.
-@prefix sms:     <http://ns.inria.fr/sparql-micro-service/>.
+@prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
 
 @base            <http://example.org/flickr/getPhotosByTaxon_sd/>.
 

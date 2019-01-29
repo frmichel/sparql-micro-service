@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>SPARQL Micro-Service Core Vocabulary</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+  
+    <style type="text/css">
+      h1,h2,h3,h4,h5 {color:#00428C}
+    </style>
+  
+</head>
+
+
+<body>
+<div class="container"> <!-- main page container -->
+
+    <h1>SPARQL Micro-Service Core Vocabulary</h1>
+    <h2>28 January 2019</h2>
+
+    <h5 class="mb-0 mt-4">Authors</h5>
+    <div class="card-body pt-0">
+        Franck MICHEL, Catherine Faron Zucker, Olivier Corby, Fabien Gandon
+        <div class="text-muted">Université Côte d’Azur, Inria, CNRS, I3S laboratory (UMR 7271)</div>
+    </div>
+
+    <h5 class="mb-0">This version</h5>
+    <div class="card-body pt-0">
+        <a href="http://ns.inria.fr/sparql-micro-service">http://ns.inria.fr/sparql-micro-service</a>
+    </div>
+
+    <p>This document is also available in <a href="sms-terms-definitions.ttl">Turtle</a>.</p>
+
+
+    <h2>Abstract</h2>
+    <p>
+    The SPARQL Micro-Service architecture is aimed at querying Web APIs using SPARQL <a href="#bib-sparql11-query">[sparql11-query]</a>, thus bridging the Linked Data and Web API worlds <a href="#bib-ref1">[sparqlms1]</a> <a href="#bib-ref2">[sparqlms2]</a>.
+    </p>
+    
+    <p>
+    A SPARQL micro-services is described by means of a SPARQL Service Description (SD) document that leverages several vocabularies: SHACL <a href="#bib-shacl">[shacl]</a>, DCAT <a href="#bib-dcat"> [dcat]</a>, VoID<a href="#bib-void"> [void]</a>, <a href="https://schema.org">Schema.org</a> and Hydra <a href="#bib-hydra">[hydra]</a>. This provides rich functional description that allows a software agent to decide whether a micro-service can help in carrying out a certain task.
+    </p>
+
+    <p>
+    This document defines additional terms needed in the description of SPARQL micro-services, that were not available from other standard or well-adopted vocabularies.
+    </p>
+
+
+    <h2>Terms</h2>
+
+    <p>The namespace of the SPARQL Micro-Service core vocabulary is <a href="http://ns.inria.fr/sparql-micro-service#">http://ns.inria.fr/sparql-micro-service#</a> and the suggested prefix is <code>sms</code>.</p>
+  
+    <dl class="row border border-dark rounded">
+      <dt class="col-sm-3">Term Name</dt>
+      <dd id="Service" class="col-sm-9 font-weight-bold"><a href="http://ns.inria.fr/sparql-micro-service#Service">sms:Service</a></dd>
+
+      <dt class="col-sm-3">Label</dt>
+      <dd class="col-sm-9">SPARQL micro-service</dd>
+
+      <dt class="col-sm-3">Definition</dt>
+      <dd class="col-sm-9">The class of SPARQL micro-services</dd>
+
+      <dt class="col-sm-3 ">Type of Term</dt>
+      <dd class="col-sm-9">Class</dd>
+
+      <dt class="col-sm-3 ">Refines</dt>
+      <dd class="col-sm-9"><a href="https://schema.org/Service">schema:Service</a></dd>
+    </dl>
+
+    <dl class="row border border-dark rounded">
+      <dt class="col-sm-3">Term Name</dt>
+      <dd id="exampleQuery" class="col-sm-9 font-weight-bold"><a href="http://ns.inria.fr/sparql-micro-service#exampleQuery">sms:exampleQuery</a></dd>
+
+      <dt class="col-sm-3">Label</dt>
+      <dd class="col-sm-9">example SPARQL query</dd>
+
+      <dt class="col-sm-3">Definition</dt>
+      <dd class="col-sm-9">An example of SPARQL query that can be answered by the SPARQL micro-service</dd>
+
+      <dt class="col-sm-3 ">Type of Term</dt>
+      <dd class="col-sm-9">Property</dd>
+
+      <dt class="col-sm-3 ">Refines</dt>
+      <dd class="col-sm-9"><a href="http://www.w3.org/2004/02/skos/core#example">skos:example</a></dd>
+    </dl>
+
+    <dl class="row border border-dark rounded">
+      <dt class="col-sm-3">Term Name</dt>
+      <dd id="cacheExpiresAfter" class="col-sm-9 font-weight-bold"><a href="http://ns.inria.fr/sparql-micro-service#cacheExpiresAfter">sms:cacheExpiresAfter</a></dd>
+
+      <dt class="col-sm-3">Label</dt>
+      <dd class="col-sm-9">cache expiration time</dd>
+
+      <dt class="col-sm-3">Definition</dt>
+      <dd class="col-sm-9">Maximum time (in seconds) to cache responses from the Web API wrapped by a SPARQL micro-service</dd>
+
+      <dt class="col-sm-3 ">Type of Term</dt>
+      <dd class="col-sm-9">Property</dd>
+
+      <dt class="col-sm-3 ">Refines</dt>
+      <dd class="col-sm-9"><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a></dd>
+
+      <dt class="col-sm-3 ">Example</dt>
+      <dd class="col-sm-9">"P2592000S"^^xsd:duration</dd>
+    </dl>
+
+    
+    <h2>References</h2>
+
+    <dt id="bib-ref1">[sparqlms1] </dt>
+    <div class="card-body pt-0">
+        Franck Michel, Catherine Faron-Zucker and Fabien Gandon. <cite>SPARQL Micro-Services: Lightweight Integration of Web APIs and Linked Data</cite>. In Proceedings of the Linked Data on the Web Workshop (LDOW2018). <a target="_new" href="https://hal.archives-ouvertes.fr/hal-01722792">HAL 01722792</a>
+    </div>
+
+    <dt id="bib-ref2">[sparqlms2] </dt>
+    <div class="card-body pt-0">
+        Franck Michel, Catherine Faron Zucker, Olivier Gargominy, Fabien Gandon. <cite>Integration of Web APIs and Linked Data Using SPARQL Micro-Services - Application to Biodiversity Use Cases</cite>. Information, MDPI, 2018, Special Issue "Semantics for Big Data Integration", 9 (12). <a target="_new" href="https://hal.archives-ouvertes.fr/hal-01856365">HAL 01856365</a>,
+         <a target="_new" href="https://dx.doi.org/10.3390/info9120310">DOI: 10.3390/info9120310</a>.
+    </div>
+
+    <dt id="bib-sparql11-query">[sparql11-query]</dt>
+    <div class="card-body pt-0">
+        Steven Harris, Andy Seaborne. <cite>SPARQL 1.1 Query Language</cite>. 21 March 2013. W3C Recommendation. URL: <a href="https://www.w3.org/TR/sparql11-query/">https://www.w3.org/TR/sparql11-query/</a>
+    </div>
+                
+    <dt id="bib-shacl">[shacl]</dt>
+    <div class="card-body pt-0">
+        Holger Knublauch, Dimitris Kontokostas. <cite>Shapes Constraint Language (SHACL)</cite>.
+        20 July 2017. W3C Recommendation. 
+        URL: <a href="https://www.w3.org/TR/2017/REC-shacl-20170720/">https://www.w3.org/TR/2017/REC-shacl-20170720/</a>
+    </div>
+                
+    <dt id="bib-dcat">[dcat]</dt>
+    <div class="card-body pt-0">
+        Fadi Maali, John Erickson.
+        <cite>Data Catalog Vocabulary (DCAT)</cite>.
+        16 January 2014. W3C Recommendation.
+        URL: <a href="http://www.w3.org/TR/2014/REC-vocab-dcat-20140116/">http://www.w3.org/TR/2014/REC-vocab-dcat-20140116/</a>
+    </div>
+                
+    <dt id="bib-void">[void]</dt>
+    <div class="card-body pt-0">
+        Keith Alexander, Richard Cyganiak, Michael Hausenblas, Jun Zhao.
+        <cite>Describing Linked Datasets with the VoID Vocabulary</cite>.
+        03 March 2011. W3C Interest Group Note.
+        URL: <a href="http://www.w3.org/TR/2011/NOTE-void-20110303/">http://www.w3.org/TR/2011/NOTE-void-20110303/</a>
+    </div>
+                
+    <dt id="bib-hydra">[hydra]</dt>
+    <div class="card-body pt-0">
+        Markus Lanthaler. <cite>Hydra Core Vocabulary. A Vocabulary for Hypermedia-Driven Web APIs</cite>.
+        15 March 2018. Unofficial Draft.
+        URL: <a href="http://www.hydra-cg.com/spec/latest/core/">http://www.hydra-cg.com/spec/latest/core/</a>
+    </div>
+                
+    <!-- Bootstrap core JavaScript ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- jQuery first, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" 
+        integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+        <p class="mb-5"></p>
+    </div> <!-- main page container -->
+  </body>
+</html>
