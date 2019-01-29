@@ -39,7 +39,7 @@
     schema:publisher [ a schema:Organization;
         schema:name "Université Côte d'Azur, CNRS, Inria, I3S";
         schema:contactPoint [ a schema:ContactPoint;
-            schema:contactType "developper";
+            schema:contactType "technical support";
             schema:name "Franck Michel";
             schema:email "franck.michel@cnrs.fr";
             schema:url <http://modalis.i3s.unice.fr/fmichel>;

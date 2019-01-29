@@ -22,12 +22,17 @@ template st:jsonld-markup {
                     schema:description ?serviceDescription;
                     schema:citation ?citation;
                     schema:keywords ?keyword;
-                    shacl:shapesGraph ?shapesGraph;
-
+                    schema:isBasedOn ?apiUrl;
                     schema:publisher ?pubUri; 
+                    
+                    shacl:shapesGraph ?shapesGraph;
                     schema:distribution ?schemaDistribution;
                     schema:additionalType dcat:Dataset, sms:Service;
                     dcat:distribution ?dcatDistribution.
+
+                ?apiUrl 
+                    a schema:CreativeWork;
+                    shcema:name ?apiName.
 
                 ?pubUri
                     a ?pubType;
@@ -45,8 +50,7 @@ template st:jsonld-markup {
                     schema:contentUrl ?serviceUrl;
                     schema:name "SPARQL endpoint";
                     schema:description "SPARQL micro-service endpoint";
-                    schema:fileFormat "api/sparql";
-                    schema:encodingFormat ?serviceResultFormat.
+                    schema:encodingFormat "api/sparql".
 
                 ?dcatDistribution
                     a dcat:Distribution;
@@ -81,6 +85,12 @@ template st:jsonld-markup {
                         OPTIONAL { ?pubContactPoint schema:email ?pubContactEmail }
                         OPTIONAL { ?pubContactPoint schema:url ?pubContactUrl }
                     }
+                }
+                
+                OPTIONAL {  
+                    ?service dct:source [
+                        shcema:name ?apiName;
+                        schema:url ?apiUrl;
                 }
                 
                 BIND(IRI(concat(?service, "Publisher")) as ?pubUri)

@@ -176,13 +176,18 @@ SELECT ?photo ?title ?img WHERE {
           "name": "SPARQL service to search for Flickr photos by biological taxon scientific name",
           "description": "This SPARQL micro-service searches Flickr photos related to a certain taxonomic name. It takes as input a species scientific name (without authority nor date), and relies on the common convention used e.g. in the Encyclopedia of Life group (https://www.flickr.com/groups/806927@N20) and by Biodiversity Heritage Library (https://www.flickr.com/photos/biodivlibrary) where photos are tagged with a taxonomic name formatted as: taxonomy:binomial=<scientific name>.",
           "url": "http://example.org/flickr/getPhotosByTaxon_sd/",
+          "isBasedOn": {
+            "@type": "CreativeWork", 
+            "@id": "https://www.flickr.com/services/api/",
+            "name": "Flickr Web API"
+          },
           "citation": "https://www.mdpi.com/2078-2489/9/12/310",
           "publisher": {
             "@type": "Organization",
             "name": "Université Côte d'Azur, CNRS, Inria, I3S",
             "contactPoint":{
                 "@type":"ContactPoint",
-                "contactType": "developper",
+                "contactType": "technical support",
                 "name": "Franck Michel",
                 "email": "franck.michel@cnrs.fr",
                 "url": "http://modalis.i3s.unice.fr/fmichel"
@@ -197,16 +202,12 @@ SELECT ?photo ?title ?img WHERE {
             "contentUrl": "http://example.org/flickr/getPhotosByTaxon_sd/",
             "name": "SPARQL endpoint",
             "description": "SPARQL micro-service endpoint",
-            "fileFormat": "api/sparql",
-            "encodingFormat": [ "frmt:SPARQL_Results_XML", "frmt:SPARQL_Results_JSON", 
-              "frmt:SPARQL_Results_CSV", "frmt:SPARQL_Results_TSV",
-              "frmt:RDF_XML", "frmt:Turtle", "frmt:JSON-LD", "frmt:Trig"
-            ]
+            "encodingFormat": "api/sparql"
           },
           
           "additionalType": [ "dcat:Dataset", "http://ns.inria.fr/sparql-micro-service/Service" ],
           "dcat:distribution": {
-            "type": "dcat:Distribution",
+            "@type": "dcat:Distribution",
             "name": "SPARQL endpoint",
             "description": "SPARQL micro-service endpoint",
             "dact:accessUrl": "http://example.org/flickr/getPhotosByTaxon_sd/",
