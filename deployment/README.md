@@ -199,7 +199,6 @@ That should return an RDF description of the photographic resource:
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
 @prefix ma: <http://www.w3.org/ns/ma-ont#> .
-@prefix api: <http://sms.i3s.unice.fr/schema/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 
 <http://example.org/ld/flickr/photo/31173091516> dce:creator "" ;

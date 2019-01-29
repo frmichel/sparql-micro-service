@@ -1,6 +1,6 @@
 {
   "@context": {
-    "@base": "http://sms.i3s.unice.fr/item/",
+    "@base": "http://ns.inria.fr/sparql-micro-service/item/",
     "schema": "http://schema.org/",
     "dwc": "http://rs.tdwg.org/dwc/terms/",
     "dwciri": "http://rs.tdwg.org/dwc/iri/",

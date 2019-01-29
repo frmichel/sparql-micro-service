@@ -223,7 +223,7 @@ class Context
      * Return the URI of the service being called.
      * The URI ends with a '/'
      *
-     * @example http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/
+     * @example http://example.org/flickr/getPhotosByTaxonName/
      *         
      * @return string
      */
@@ -236,7 +236,7 @@ class Context
      * Return the URI of the Service Description graph, that is returned
      * when looking up the service URI.
      *
-     * @example http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/ServiceDescription
+     * @example http://example.org/flickr/getPhotosByTaxonName/ServiceDescription
      *         
      * @return string
      */
@@ -248,7 +248,7 @@ class Context
     /**
      * Return the URI of the shapes graph, if it exists
      *
-     * @example http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxonName/ShapesGraph
+     * @example http://example.org/flickr/getPhotosByTaxonName/ShapesGraph
      *         
      * @return string
      */

@@ -1,7 +1,14 @@
 # SPARQL Micro-Service Changelog
 
 
-## [0.3.0]
+## [0.3.1] 2019-01-31
+
+### Changed
+- change namespace of SPARQL micro-service core vocabulary to http://ns.inria.fr/sparql-micro-service# and add HTML documentation  
+- change namespace of Web API-specific terms to http://ns.inria.fr/sparql-micro-service/api# in the internal processing of SPARQL micro-services
+
+
+## [0.3.0] 2019-01-24
 
 ### Added
 - Allow passing arguments of SPARQL micro-services as variables of the graph pattern, along with possily VALUES or FILTER clauses to give the values of these variables

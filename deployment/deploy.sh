@@ -46,8 +46,16 @@ for FILE in `ls $SMSDIR/*/*/*.sparql`; do
     echo "Changing $replace into $SERVER in $FILE"
     substitute "$replace" "$SERVER" "$FILE"
 done
+
 # Replace example.org with local server URL in service description and shape graph files
 for FILE in `ls $SMSDIR/*/*/*.ttl`; do
+    replace='http:\/\/example.org'
+    echo "Changing $replace into $SERVER/sparql-ms in $FILE"
+    substitute "$replace" "$SERVER\/sparql-ms" "$FILE"
+done
+
+# Replace example.org with local server URL in config.ini file
+for FILE in `ls $SMSDIR/config.ini`; do
     replace='http:\/\/example.org'
     echo "Changing $replace into $SERVER/sparql-ms in $FILE"
     substitute "$replace" "$SERVER\/sparql-ms" "$FILE"

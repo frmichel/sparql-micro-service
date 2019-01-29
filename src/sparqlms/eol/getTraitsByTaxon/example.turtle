@@ -1093,7 +1093,7 @@ schema:source "http://eol.org/resources/26" ;
 schema:value "Spanish Exclusive Economic Zone" ;
 rdf:type dwc:MeasurementOrFact .
 
-<http://sms.i3s.unice.fr/item/314276> dwc:parentNameUsageID "http://eol.org/pages/39797" ;
+<http://http://ns.inria.fr/sparql-micro-service/item/314276> dwc:parentNameUsageID "http://eol.org/pages/39797" ;
 dwc:taxonRank "soort" ;
 schema:potentialAction _:b326 ;
 schema:sameAs "http://eol.org/pages/314276" ;
@@ -2310,7 +2310,7 @@ _:b326 schema:target _:b327 ;
     rdf:type schema:EntryPoint .
 
 _:b325 schema:dateModified "2017-11-27" ;
-    schema:item <http://sms.i3s.unice.fr/item/314276> ;
+    schema:item <http://http://ns.inria.fr/sparql-micro-service/item/314276> ;
     rdf:type schema:DataFeedItem .
 
 _:b327 schema:actionPlatform "http://schema.org/DesktopWebPlatform" ;

@@ -6,7 +6,7 @@ st:sms-html-description a st:Server ;
     st:service "sms-html-description" ;
     st:workflow [
         a sw:Workflow ; 
-        sw:body ([ a sw:Transformation ; sw:uri <sttl/> ]).
+        sw:body ([ a sw:Transformation ; sw:uri <sttl/> ])
     ];
 
     # Get the data from a static file

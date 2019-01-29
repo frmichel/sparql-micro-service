@@ -19,8 +19,8 @@
 <body>
 <div class="container"> <!-- main page container -->
 
-    <h1>SPARQL Micro-Service Core Vocabulary</h1>
-    <h2>28 January 2019</h2>
+<h1 class="mt-3">SPARQL Micro-Service Core Vocabulary</h1>
+<h2>28 January 2019</h2>
 
     <h5 class="mb-0 mt-4">Authors</h5>
     <div class="card-body pt-0">
@@ -33,10 +33,10 @@
         <a href="http://ns.inria.fr/sparql-micro-service">http://ns.inria.fr/sparql-micro-service</a>
     </div>
 
-    <p>This document is also available in <a href="sms-terms-definitions.ttl">Turtle</a>.</p>
+    <p>This document is also available in <a href="sms-core-vocabulary.ttl">Turtle</a>.</p>
 
 
-    <h2>Abstract</h2>
+<h2>Abstract</h2>
     <p>
     The SPARQL Micro-Service architecture is aimed at querying Web APIs using SPARQL <a href="#bib-sparql11-query">[sparql11-query]</a>, thus bridging the Linked Data and Web API worlds <a href="#bib-ref1">[sparqlms1]</a> <a href="#bib-ref2">[sparqlms2]</a>.
     </p>
@@ -50,10 +50,18 @@
     </p>
 
 
-    <h2>Terms</h2>
+<h2>Namespaces</h2>
 
-    <p>The namespace of the SPARQL Micro-Service core vocabulary is <a href="http://ns.inria.fr/sparql-micro-service#">http://ns.inria.fr/sparql-micro-service#</a> and the suggested prefix is <code>sms</code>.</p>
+    <p>The namespace of the SPARQL Micro-Service core vocabulary is <code>http://ns.inria.fr/sparql-micro-service#</code>. The suggested prefix is <code>sms</code>.</p>
+
+    <p>In addition, the namespace <code>http://ns.inria.fr/sparql-micro-service/api#</code> is used for turning Web API-specific terms into RDF terms (see JSON-LD profiles and insert.sparql/construct.sparql queries). It is usually used with prefix <code>api</code>. 
+    However, note that <strong>terms in this namespace are not dereferenceable</strong>.
+    .</p>
+    
+    
   
+<h2>Terms</h2>
+
     <dl class="row border border-dark rounded">
       <dt class="col-sm-3">Term Name</dt>
       <dd id="Service" class="col-sm-9 font-weight-bold"><a href="http://ns.inria.fr/sparql-micro-service#Service">sms:Service</a></dd>
@@ -109,7 +117,7 @@
     </dl>
 
     
-    <h2>References</h2>
+<h2>References</h2>
 
     <dt id="bib-ref1">[sparqlms1] </dt>
     <div class="card-body pt-0">

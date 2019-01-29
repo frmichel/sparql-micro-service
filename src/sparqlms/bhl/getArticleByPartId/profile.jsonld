@@ -1,7 +1,7 @@
 {
   "@context": {
-    "@base": "http://sms.i3s.unice.fr/item/",
-    "@vocab": "http://sms.i3s.unice.fr/terms/api/",
+    "@base": "http://ns.inria.fr/sparql-micro-service/item/",
+    "@vocab": "http://ns.inria.fr/sparql-micro-service/api#",
 
     "PartUrl": { "@type": "@id" },
     "PageUrl": { "@type": "@id" },
