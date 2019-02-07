@@ -6,7 +6,7 @@
 
 template st:start {
 
-    format { <../tpl1_start.html> ?service ?description ?serviceUrl  }
+    format { <../tpl1_start.html> ?name ?description ?serviceUrl  }
     
     # Generate one line for each argument of the SPARQL micro-service
     st:call-template(st:argument)
@@ -23,6 +23,8 @@ template st:start {
         sd:endpoint ?serviceUrl.
         
     OPTIONAL { ?service schema:description ?description }
+    
+    OPTIONAL { ?service schema:name ?name }
     
     OPTIONAL { ?service sd:defaultDataset [ sd:defaultGraph [ shacl:shapesGraph ?shapesGraph ]] }
 
