@@ -1,15 +1,10 @@
 {
   "@context": {
     "@base": "http://ns.inria.fr/sparql-micro-service/item/",
-    "schema": "http://schema.org/",
-    "dwc": "http://rs.tdwg.org/dwc/terms/",
-    "dwciri": "http://rs.tdwg.org/dwc/iri/",
-
-    "vernacularNames": null,
-    "actionPlatform": null,
-    "sameAs": {"@id": "schema:sameAs", "@type": "@id"},
-    "url": {"@id": "schema:url", "@type": "@id"},
-    "dwc:measurementType": {"@id": "dwciri:measurementType", "@type": "@id"},
-    "dwc:measurementUnit": {"@id": "dwciri:measurementUnit", "@type": "@id"}
+    "@vocab": "http://ns.inria.fr/sparql-micro-service/api#",
+    
+    "predUri": { "@type": "@id" },
+    "objUri": { "@type": "@id" },
+    "unitUri": { "@type": "@id" }
   }
 }

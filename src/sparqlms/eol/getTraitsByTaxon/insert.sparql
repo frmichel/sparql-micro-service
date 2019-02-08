@@ -1,0 +1,40 @@
+INSERT {
+    [] a dwc:MeasurementOrFact;
+
+        dwc:measurementType ?predName;
+        dwciri:measurementType ?predUri;
+
+        dwc:measurementValue ?value;
+        dwc:measurementUnit ?unit.
+}
+WHERE {
+    ?result api:data ?data.
+    ?data
+        api:predName ?predName;
+        api:pageId ?pageId.
+
+    OPTIONAL { ?data api:predUri ?predUri }
+
+    OPTIONAL { ?data api:measurement ?measurement }
+    OPTIONAL { ?data api:objName ?objName }
+    OPTIONAL { ?data api:objUri ?objUri }
+
+    OPTIONAL { ?data api:unitName ?unitName }
+    OPTIONAL { ?data api:unitUri ?unitUri }
+
+    BIND (
+        if (bound(?measurement), ?measurement,
+            if (bound(?objName), ?objName,
+                if (bound(?objUri), ?objUri, "")
+            )
+        )
+        as ?value)
+
+    BIND (
+        if (bound(?unitName), ?unitName,
+            if (bound(?unitUri), ?unitUri, "")
+        )
+        as ?unit)
+
+    FILTER (BOUND(?measurement) || BOUND(?objName) || BOUND(?objUri))
+}
