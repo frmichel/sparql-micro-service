@@ -1,6 +1,8 @@
 template st:literalOrLink(?x) {
+
     if ((isIRI(?x) || STRSTARTS(?x, "http")),
         concat('<a href="', str(?x), '" target="link">', str(?x), '</a>'),
-        ?x
+        str(?x)
     )
+
 } where {}

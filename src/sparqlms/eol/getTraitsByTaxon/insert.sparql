@@ -5,7 +5,8 @@ INSERT {
         dwciri:measurementType ?predUri;
 
         dwc:measurementValue ?value;
-        dwc:measurementUnit ?unit.
+        dwc:measurementUnit ?unitName;
+        dwciri:measurementUnit ?unitUri.
 }
 WHERE {
     ?result api:data ?data.
@@ -29,12 +30,5 @@ WHERE {
             )
         )
         as ?value)
-
-    BIND (
-        if (bound(?unitName), ?unitName,
-            if (bound(?unitUri), ?unitUri, "")
-        )
-        as ?unit)
-
     FILTER (BOUND(?measurement) || BOUND(?objName) || BOUND(?objUri))
 }

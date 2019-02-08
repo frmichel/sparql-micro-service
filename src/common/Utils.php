@@ -149,6 +149,7 @@ class Utils
                 
                 // Store the result into the cache db
                 if ($useCache) {
+                    // @todo Change this: the document is written to the cache even if it was retrieved from there
                     $cache->write($jsonUrl, $apiResp, $context->getService());
                     $logger->info("Stored JSON response into cache.");
                 }

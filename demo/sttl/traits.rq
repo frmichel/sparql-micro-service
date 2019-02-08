@@ -1,15 +1,24 @@
-prefix dwc: <http://rs.tdwg.org/dwc/terms/>
-prefix dwciri: <http://rs.tdwg.org/dwc/iri/>
-prefix schema:	<http://schema.org/> .
+prefix dwc:     <http://rs.tdwg.org/dwc/terms/>
+prefix dwciri:  <http://rs.tdwg.org/dwc/iri/>
 
 template st:traits {
     format { <../tpl_traits.html>
-        group { format { <../tpl_trait.html> ?measurePredicate ?measurementValue st:call-template(st:literalOrLink, ?measurementUnit)} }
+        group { format { <../tpl_trait.html> 
+                            ?measurementType 
+                            ?measurementValue
+                            ?unit 
+                            ?unitUri }
+        }
     }
 } where {
     ?measure a dwc:MeasurementOrFact;
-        dwciri:measurementType ?measurementType;
-        dwciri:measurementUnit ?measurementUnit;
-        dwc:measurementValue ?measurementValue;
-        schema:predicate ?measurePredicate.
-}
+        dwc:measurementType ?measurementType;
+        dwc:measurementValue ?measurementValue.
+
+    OPTIONAL { ?measure dwc:measurementUnit ?measurementUnit }
+    OPTIONAL { ?measure dwciri:measurementUnit ?measurementUnitUri }
+
+    BIND( IF(BOUND(?measurementUnit), ?measurementUnit, "") as ?unit )
+    BIND( IF(BOUND(?measurementUnitUri), concat("(", st:call-template(st:literalOrLink, ?measurementUnitUri), ")"), "") as ?unitUri )
+
+} ORDER BY ?measurementType
