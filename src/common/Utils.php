@@ -111,6 +111,7 @@ class Utils
      * @param null|string|object|array $jsonldProfile
      *            the JSON-LD profile (context)
      * @return string NQuadsd serialized as a string
+     * @throws Exception in case an error occurs
      */
     static public function translateJsonToNQuads($jsonUrl, $jsonldProfile)
     {
@@ -130,8 +131,19 @@ class Utils
             
             if ($apiResp == null) {
                 $logger->info("JSON response not found in cache.");
+                
                 // Query the Web API
-                $apiResp = self::loadJsonDocument($jsonUrl);
+                if ($context->hasConfigParam("http_header")) {
+                    if ($logger->isHandling(Logger::DEBUG))
+                        $logger->debug("Additional HTTP headers: " . print_r($context->getConfigParam("http_header"), true));
+                    $apiResp = self::loadJsonDocument($jsonUrl, $context->getConfigParam("http_header"));
+                } else
+                    $apiResp = self::loadJsonDocument($jsonUrl);
+            }
+            
+            if ($apiResp == null)
+                throw new Exception("Web API query failed.");
+            else {
                 if ($logger->isHandling(Logger::DEBUG))
                     $logger->debug("Web API JSON response: \n" . $apiResp);
                 
@@ -140,33 +152,32 @@ class Utils
                     $cache->write($jsonUrl, $apiResp, $context->getService());
                     $logger->info("Stored JSON response into cache.");
                 }
+                // -- Safety measures
+                // Remove unicodecontrol characters (0000 to 001f)
+                $apiResp = preg_replace("/\\\\u000./", "?", $apiResp);
+                $apiResp = preg_replace("/\\\\u001./", "?", $apiResp);
+                // Remove \n and \r
+                $search = array(
+                    '\n',
+                    '\r'
+                );
+                $replace = array(
+                    "",
+                    ""
+                );
+                $apiResp = str_replace($search, $replace, $apiResp);
+                
+                // Apply JSON-LD profile to the Web API response and transform the JSON-LD to RDF NQuads
+                $quads = JsonLD::toRdf($apiResp, array(
+                    'expandContext' => $jsonldProfile
+                ));
+                $nquads = new NQuads();
+                $serializedQuads = $nquads->serialize($quads);
+                if ($logger->isHandling(Logger::DEBUG))
+                    $logger->debug("Web API JSON response translated into NQuads:\n" . $serializedQuads);
+                
+                return $serializedQuads;
             }
-            
-            // -- Safety measures
-            // Remove unicodecontrol characters (0000 to 001f)
-            $apiResp = preg_replace("/\\\\u000./", "?", $apiResp);
-            $apiResp = preg_replace("/\\\\u001./", "?", $apiResp);
-            // Remove \n and \r
-            $search = array(
-                '\n',
-                '\r'
-            );
-            $replace = array(
-                "",
-                ""
-            );
-            $apiResp = str_replace($search, $replace, $apiResp);
-            
-            // Apply JSON-LD profile to the Web API response and transform the JSON-LD to RDF NQuads
-            $quads = JsonLD::toRdf($apiResp, array(
-                'expandContext' => $jsonldProfile
-            ));
-            $nquads = new NQuads();
-            $serializedQuads = $nquads->serialize($quads);
-            if ($logger->isHandling(Logger::DEBUG))
-                $logger->debug("Web API JSON response translated into NQuads:\n" . $serializedQuads);
-            
-            return $serializedQuads;
         } catch (Exception $e) {
             $logger->warning((string) $e);
             throw new Exception("Cannot query the Web API or transform its response to JSON-LD.");
@@ -178,19 +189,27 @@ class Utils
      *
      * @param string $url
      *            the URL of the JSON document
-     * @return string the result JSON content as a string
+     * @param null|array $additionalHeaders
+     *            an array of HTTP headers to send with the query
+     * @return null|string the result JSON content as a string. Null in case an error occured.
      */
-    static public function loadJsonDocument($url)
+    static public function loadJsonDocument($url, $additionalHeaders = null)
     {
         global $context;
         $logger = $context->getLogger();
         
+        // Build the list of HTTP headers
+        $headers = array();
+        $headers[] = "Accept: application/json; q=0.9, */*; q=0.1";
+        $headers[] = "User-Agent: SPARQL-Micro-Service";
+        if ($headers != null) {
+            foreach ($additionalHeaders as $hName => $hVal)
+                $headers[] = $hName . ": " . $hVal;
+        }
+        
         $streamContextOptions = array(
             'method' => 'GET',
-            'header' => "Accept: application/json; q=0.9, */*; q=0.1\r\n" . 
-            // Some Web API require a User-Agent.
-            // E.g. MusicBrainz returns error 403 if there is none.
-            "User-Agent: SPARQL-Micro-Service\r\n",
+            'header' => $headers,
             'timeout' => Processor::REMOTE_TIMEOUT,
             'ssl' => [
                 'verify_peer' => true,
@@ -204,7 +223,7 @@ class Utils
             'https' => $streamContextOptions
         ));
         
-        if (false === ($jsonContent = @file_get_contents($url, false, $jsonContext))) {
+        if (false === ($jsonContent = file_get_contents($url, false, $jsonContext))) {
             $logger->warning("Cannot load document " . $url);
             $jsonContent = null;
         }
