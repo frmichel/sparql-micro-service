@@ -8,4 +8,6 @@ template st:others {
     ?taxon
         a owl:Class;
         ?p ?o.
+        
+    FILTER ! isBlank(?o)
 }

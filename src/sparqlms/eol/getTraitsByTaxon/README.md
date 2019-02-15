@@ -1,65 +1,55 @@
 # eol/getTraitsByTaxon
 
 This service searches the [Encyclopedia of Life traits bank](http://eol.org/traitbank) for data related to a given taxon name.
+It uses the EoL trait bank v3 API that provides a [Neo4J Cypher](https://neo4j.com/docs/cypher-manual/current/) interface.
 
-The EoL trait bank v2 provides a JSON-LD representation using various vocabularies including Darwin Core terms.
-Unfortunately, the JSON-LD is invalid (see https://github.com/EOL/eol/issues/139) and thus cannot be parsed directly. Hence, we trick the process to still be able to work with it: (i) an additional profile (profile.jsonld) ignores (invalid) field ```vernacularNames```, and sets the @base tag to give resources a fixed URI; (ii) we modififed the JSON-LD php library to accept ```@id``` fields with a non-string value: the value is converted to a string.
+Cypher query results are JSON-based, therefore the SPARQL micro-service uses the same process as with any other JSON-based Web APIs to translate the response into RDF: first it applies a JSON-LD profile, then it runs an INSERT query to augment the produced graph with additional triples using domain ontologies.
 
-As a result, a query to the trait bank with a URL such as http://eol.org/api/traits/314276 returns the JSON-LD content is in file
-```example.jsonld```, and gets translated into the RDF depicted in file ```example.turtle```. This RDF remains questionable as it makes a bad use of Darwin Core terms: it uses reglar dwc: properties with URI objects although these are meant for literals only. The properties in namespace dwciri: have been introduced to address this isse (see the [Darwin Core RDF Guide](http://rs.tdwg.org/dwc/terms/guides/rdf/index.htm)). The example query below fixes this by constructing a graph using proper dwciri predicates.
-
+The produced graph consists of dwc:MeasurementOrFact instances having at least a measurement type and value.
 
 **Query mode**: SPARQL
 
 **Parameters**:
 - name: a taxon name
 
-## Example query
+## Produced graph example
+
+The graph below is the result of translating the response exemplified in [example.json](example.json).
 
 ```turtle
-CONSTRUCT {
-    ?measure
-        a                      dwc:MeasurementOrFact;
-        dwciri:measurementType ?measurementType;
-        dwciri:measurementUnit ?measurementUnit;
-        dwc:measurementValue   ?measurementValue;
-        schema:name            ?measurePredicate.
-} WHERE {
-    SERVICE SILENT <https://example.org/sparql-ms/eol/getTraitsByTaxon?name=Delphinus+delphis>
-    { ?measure                 a dwc:MeasurementOrFact;
-        dwciri:measurementType ?measurementType;
-        dwciri:measurementUnit ?measurementUnit;
-        dwc:measurementValue   ?measurementValue;
-        schema:predicate       ?measurePredicate.
-      OPTIONAL { ?measure      dwc:measurementUnit ?measurementUnit }
-      FILTER (?measurePredicate = "total life span" || ?measurePredicate = "body length (VT)" || ?measurePredicate = "conservation status")
-    }
-    }
-```
-
-## Triples produced by the example query
-
-```sparql
 @prefix dwc:    <http://rs.tdwg.org/dwc/terms/> .
 @prefix dwciri: <http://rs.tdwg.org/dwc/iri/> .
+@prefix api: <http://ns.inria.fr/sparql-micro-service/api#> .
+@prefix dwc: <http://rs.tdwg.org/dwc/terms/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 
-<http://eol.org/pages/314276/data#data_point_716247>
-    rdf:type                dwc:MeasurementOrFact ;
-    schema:name             "total life span"^^xsd:string ;
-    dwc:measurementValue    "240"^^xsd:string .
-    dwciri:measurementType  "http://purl.obolibrary.org/obo/VT_0001661"^^xsd:string ;
-    dwciri:measurementUnit  "http://purl.obolibrary.org/obo/UO_0000035"^^xsd:string .
+_:b8187 
+    a                       dwc:MeasurementOrFact;
+    dwc:measurementType     "habitat is";
+    dwciri:measurementType  <http://rs.tdwg.org/dwc/terms/habitat>;
+    dwc:measurementValue    "marine habitat", <http://purl.obolibrary.org/obo/ENVO_00000569>.
     
-<http://eol.org/pages/314276/data#data_point_716249>
-    rdf:type                dwc:MeasurementOrFact ;
-    schema:name             "body length (VT)"^^xsd:string ;
-    dwc:measurementValue    "2439.99"^^xsd:string ;
-    dwciri:measurementType  "http://purl.obolibrary.org/obo/VT_0001256"^^xsd:string ;
-    dwciri:measurementUnit  "http://purl.obolibrary.org/obo/UO_0000016"^^xsd:string .
+_:b8186 
+    a                       dwc:MeasurementOrFact;
+    dwc:measurementType     "body mass";
+    dwciri:measurementType  <http://purl.obolibrary.org/obo/VT_0001259>;
+    dwc:measurementUnit     "g";
+    dwciri:measurementUnit  <http://purl.obolibrary.org/obo/UO_0000021>;
+    dwc:measurementValue    "7069.65".
+```
 
-<http://eol.org/pages/314276/data#data_point_45845581>
-    rdf:type                dwc:MeasurementOrFact ;
-    schema:name             "conservation status"^^xsd:string ;
-    dwciri:measurementValue "http://eol.org/schema/terms/leastConcern"^^xsd:string ;
-    dwciri:measurementType  "http://rs.tdwg.org/ontology/voc/SPMInfoItems#ConservationStatus"^^xsd:string .
+## Usage example
+
+```turtle
+SELECT * WHERE {
+    SERVICE SILENT <https://example.org/sparql-ms/eol/getTraitsByTaxon?name=Delphinus+delphis>
+    { [] a dwc:MeasurementOrFact;
+        dwc:measurementType  ?measurementType;
+        dwc:measurementValue ?measurementValue.
+
+      OPTIONAL { ?measure dwc:measurementUnit ?measurementUnit }
+        
+      FILTER (?measurementType = "total life span" || ?measurementType = "body length (VT)" || ?measurementType = "conservation status")
+    }
+}
 ```
