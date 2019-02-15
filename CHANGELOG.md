@@ -6,7 +6,7 @@
 ### Changed
 - change namespace of SPARQL micro-service core vocabulary to http://ns.inria.fr/sparql-micro-service# and add HTML documentation  
 - change namespace of Web API-specific terms to http://ns.inria.fr/sparql-micro-service/api# in the internal processing of SPARQL micro-services
-
+- update JSON-LD embedded in HTML documentation of a SPARQL micro-service to match Googel's requirement
 
 ## [0.3.0] 2019-01-24
 

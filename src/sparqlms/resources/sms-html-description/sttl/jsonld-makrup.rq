@@ -6,10 +6,11 @@
 @prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
 
 # This template constructs a graph complying with the schema:Dataset requirements, based on the service description.
-# Then, it serializes this graph in a piece of JSON-LD that can be embedded into the HTML service description page.
+# Then, it serializes this graph in JSON-LD that can be embedded into the HTML service description page.
 template st:jsonld-markup {
 
-    st:apply-templates-with-graph(st:json, ?graph)
+    # JSON-LD transformation
+    st:apply-templates-with-graph(st:jsonld-light, ?graph)
     
 } WHERE {
     BIND(
@@ -18,47 +19,54 @@ template st:jsonld-markup {
             CONSTRUCT {
                 ?service 
                     a schema:Dataset;
-                    schema:identifier ?serviceUrl;
+                    schema:identifier ?serviceUrlStr;
                     schema:name ?serviceName;
                     schema:description ?serviceDescription;
-                    schema:citation ?citation;
+                    schema:citation ?citationStr;
                     schema:keywords ?keyword;
                     schema:isBasedOn ?apiUrl;
                     schema:publisher ?pubUri; 
                     
                     shacl:shapesGraph ?shapesGraph;
                     schema:distribution ?schemaDistribution;
-                    schema:additionalType dcat:Dataset, sms:Service;
+                    schema:additionalType ?dcatDataset, ?smsService;
                     dcat:distribution ?dcatDistribution.
 
                 ?apiUrl 
                     a schema:CreativeWork;
                     schema:name ?apiName.
 
+                # Dataset publisher information
                 ?pubUri
                     a ?pubType;
                     schema:name ?pubName;
                     schema:contactPoint ?pubContactPointUri.
                     
+                # Dataset publisher contact information
                 ?pubContactPointUri
+                    a ?pubContactPointType;
                     schema:contactType ?pubContactType;
                     schema:name ?pubContactName;
                     schema:email ?pubContactEmail;
-                    schema:url ?pubContactUrl.
+                    schema:url ?pubContactUrlStr.
 
+                # Dataset distribution with schema.org vocabulary
                 ?schemaDistribution
                     a schema:DataDownload;
-                    schema:contentUrl ?serviceUrl;
+                    schema:contentUrl ?serviceUrlStr;
                     schema:name "SPARQL endpoint";
                     schema:description "SPARQL micro-service endpoint";
                     schema:encodingFormat "api/sparql".
 
+                # Dataset distribution with DCAT vocabulary
                 ?dcatDistribution
                     a dcat:Distribution;
                     schema:name "SPARQL endpoint";
                     schema:description "SPARQL micro-service endpoint";
                     dcat:accessUrl ?serviceUrl;
-                    dcat:mediaType ?serviceResultFormat.
+                    dcat:mediaType ?serviceResultFormatStr.
+                    
+                ?shapesGraph a shacl:ShapesGraph.
 
             } WHERE {
                 # Retrieve the service URI from the URL query string (?param=http://example.org/service)
@@ -81,6 +89,7 @@ template st:jsonld-markup {
                     ?pub a ?pubType; schema:name ?pubName.
                     OPTIONAL {  
                         ?pub schema:contactPoint ?pubContactPoint. 
+                        ?pubContactPoint a ?pubContactPointType.
                         OPTIONAL { ?pubContactPoint schema:contactType ?pubContactType }
                         OPTIONAL { ?pubContactPoint schema:name ?pubContactName }
                         OPTIONAL { ?pubContactPoint schema:email ?pubContactEmail }
@@ -95,6 +104,18 @@ template st:jsonld-markup {
                 BIND(IRI(concat(?service, "PublisherContact")) as ?pubContactPointUri)
                 BIND(IRI(concat(?service, "DcatDistribution")) as ?dcatDistribution)
                 BIND(IRI(concat(?service, "SchemaDistribution")) as ?schemaDistribution)
+                
+                # Google's Structured Data Testing Tool (https://search.google.com/structured-data/testing-tool)
+                # requires some URLs to be written as simple strings, not as URIs with "field": {"@id": "http://..."}
+                # It is unclear whether this is an error in the Structured Data Testing Tool, or it this would
+                # indeed hamper the indexing of the JSON-LD content. 
+                # So below we convert these URIs to strings.
+                BIND(str(dcat:Dataset) as ?dcatDataset)
+                BIND(str(sms:Service) as ?smsService)
+                BIND(str(?citation) as ?citationStr)
+                BIND(str(?serviceUrl) as ?serviceUrlStr)
+                BIND(str(?pubContactUrl) as ?pubContactUrlStr)
+                BIND(str(?serviceResultFormat) as ?serviceResultFormatStr)
             }
 
             ) { ?g } 
