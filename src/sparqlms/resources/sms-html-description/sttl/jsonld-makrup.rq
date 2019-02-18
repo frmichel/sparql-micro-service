@@ -27,7 +27,6 @@ template st:jsonld-markup {
                     schema:isBasedOn ?apiUrl;
                     schema:publisher ?pubUri; 
                     
-                    shacl:shapesGraph ?shapesGraph;
                     schema:distribution ?schemaDistribution;
                     schema:additionalType ?dcatDataset, ?smsService;
                     dcat:distribution ?dcatDistribution.
@@ -40,6 +39,7 @@ template st:jsonld-markup {
                 ?pubUri
                     a ?pubType;
                     schema:name ?pubName;
+                    schema:logo ?pubLogo;
                     schema:contactPoint ?pubContactPointUri.
                     
                 # Dataset publisher contact information
@@ -63,6 +63,7 @@ template st:jsonld-markup {
                     a dcat:Distribution;
                     schema:name "SPARQL endpoint";
                     schema:description "SPARQL micro-service endpoint";
+                    shacl:shapesGraph ?shapesGraph;
                     dcat:accessUrl ?serviceUrl;
                     dcat:mediaType ?serviceResultFormatStr.
                     
@@ -87,6 +88,7 @@ template st:jsonld-markup {
                 OPTIONAL {  
                     ?service schema:publisher ?pub.
                     ?pub a ?pubType; schema:name ?pubName.
+                    OPTIONAL { ?pub schema:logo ?pubLogo }
                     OPTIONAL {  
                         ?pub schema:contactPoint ?pubContactPoint. 
                         ?pubContactPoint a ?pubContactPointType.
