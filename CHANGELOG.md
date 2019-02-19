@@ -7,6 +7,7 @@
 - change namespace of SPARQL micro-service core vocabulary to http://ns.inria.fr/sparql-micro-service#
 - change namespace of Web API-specific terms to http://ns.inria.fr/sparql-micro-service/api# in the internal processing of SPARQL micro-services
 - update JSON-LD embedded in HTML documentation of a SPARQL micro-service to match requirements of Google's [Structured Dataset Testing Tool](https://search.google.com/structured-data/testing-tool)  
+- doc refactoring, add service configuration section
 
 ## [0.3.0] 2019-01-24
 

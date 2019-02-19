@@ -47,10 +47,10 @@ deployment/
 
 To install this project, you will need an Apache Web server and a write-enabled SPARQL endpoint and RDF triple store (in our case, we used the [Corese-KGRAM](http://wimmics.inria.fr/corese) lightweight in-memory triple-store), and an optional MongoDB instance to serve as the cache database (can be deactivated in src/sparqlms/config.ini).
 
-A Corese-KGRAM service is also required to execute components that rely on the STTL and LDScript features (see folder deployment/corese):
-  * An STTL transformation service able to transform a SPARQL query into a [SPIN](http://spinrdf.org/sp.html) representation (see folder src/sparqlms/config.ini) is required when [passing arguments within the SPARQL query graph pattern](#passing-arguments-within-the-sparql-query-graph-pattern)
+A Corese-KGRAM service is also required to execute components that rely on the STTL and LDScript features (see folder [/deployment/corese](/deployment/corese)):
+  * An STTL transformation service able to transform a SPARQL query into a [SPIN](http://spinrdf.org/sp.html) representation (see [/src/sparqlms/config.ini](/src/sparqlms/config.ini)) is required when [passing arguments within the SPARQL query graph pattern](01-usage.md#passing-arguments-within-the-sparql-query-graph-pattern)
   * An STTL transformation service transforms micro-services service descriptions into an HTML page with embedded JSON-LD (see src/sparqlms/resources/sms-html-description).
-  * In the sparqlcompose component, an STTL transformation service generates a federated query compsed of SERVICE clauses invoking SPARQL micro-services.
+  * In the sparqlcompose component, an STTL transformation service generates a federated query composed of SERVICE clauses invoking SPARQL micro-services.
 
 
 #### Pre-requisites
@@ -58,7 +58,7 @@ A Corese-KGRAM service is also required to execute components that rely on the S
 The following packages must be installed before installing the SPARQL micro-services.
   * PHP 5.3+. Below we assume our current vesrion is 5.6
   * Addition PHP packages: ```php56w-mbstring``` and ```php56w-xml```, ```php56w-devel```, ```php-pear``` (PECL)
-  * [Composer](https://getcomposer.org/doc/)
+  * [Composer](https://getcomposer.org/doc/) (PHP dependency management)
   * Make sure the time zone is defined in the php.ini file, for instance:
 ```ini
   [Date]
@@ -67,7 +67,8 @@ The following packages must be installed before installing the SPARQL micro-serv
   date.timezone = 'Europe/Paris'
 ```
   * To use MongoDB as a cache, install the [MongoDB PHP driver](https://secure.php.net/manual/en/mongodb.installation.manual.php) and add the following line to php.ini:```extension=mongodb.so```
-  * Corese-KGRAM v4.0.2+
+  * Corese-KGRAM v4.1.1+
+  * Java Runtime Environment 8+
 
 #### Installation procedure
 
@@ -84,15 +85,17 @@ Create directory ```logs``` with exec and write rights for all (```chmod 777 log
         vendor/
         logs/
 
-Set the URLs of your write-enabled SPARQL endpoint and optional SPARQL-to-SPIN service in ```src/sparqlms/config.ini```. These do not need to be exposed publicly on the Web, only the Apache process should have access to them. For instance:
+Set the URLs of your write-enabled SPARQL endpoint and optional SPARQL-to-SPIN service in ```src/sparqlms/config.ini```. These do not need to be exposed on the internet, only the Apache process should have access to them. For instance:
 ```
 sparql_endpoint = http://localhost:8080/sparql
 spin_endpoint   = http://localhost:8080/service/spin
 ```
 
-Use the ```deployment/deploy.sh``` script to customize the dereferenceable URIs generated in the different services: replace the ```http://example.org``` URL with the URL of your server. See the comments in construct.sparql and insert.sparql files.
+Use the [/deployment/deploy.sh](/src/deployment/deploy.sh) script to customize the dereferenceable URIs generated in the different services: 
+  - replace the ```http://example.org``` URL (variable $SERVER) with the URL of your server
+  - set the API_KEY values according with your own API keys.
 
-Set Apache [rewriting rules](http://httpd.apache.org/docs/2.4/rewrite/) to invoke micro-services using SPARQL or URI dereferencing: check the Apache rewriting examples in ```deployment/apache/httpd.conf```. See details in the sections below.
+Set Apache [rewriting rules](http://httpd.apache.org/docs/2.4/rewrite/) to invoke micro-services using SPARQL or URI dereferencing: check the Apache rewriting examples in [/deployment/apache/httpd.conf](/deployment/apache/httpd.conf). See details in the sections below.
 
 
 #### Rewriting rules for SPARQL querying
@@ -126,6 +129,9 @@ Rule example:
 
 Usage Example:
     ```curl --header "Accept:text/turtle" http://example.org/ld/flickr/photo/31173091516```
+
+This will invoke service ```flickr/getPhotoById``` with the ```photo_id``` parameter.
+Furthermore, the ```querymode=ld``` argument instructs the service to execute the query in file construct.sparql and return the response of this query as the response to the URI dereferencing query.
 
 
 ## Deploy with Docker
@@ -182,7 +188,7 @@ That should return a SPARQL JSON result.
 
 #### Test URI dereferencing
 
-Enter this URL in your browser: http://example.org/ld/flickr/photo/31173091246 or the following command in a bash:
+Enter this URL in your browser: http://example.org/ld/flickr/photo/31173091246 or the following command in a bash (replace example.org with your own server hostname):
 
 ```bash
 curl --header "Accept: text/turtle" http://example.org/ld/flickr/photo/31173091246
@@ -209,4 +215,3 @@ That should return an RDF description of the photographic resource:
     schema:thumbnailUrl <https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_q.jpg> ;
     schema:image        <https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_z.jpg> .
 ```
-
