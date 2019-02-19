@@ -6,7 +6,7 @@ Such descriptions can be dynamically translated into an HTML page documenting th
 
 ### Try it out
 
-Services [flickr/getPhotosByTaxon_sd](/src/sparqlms/flickr/getPhotosByTaxon_sd) and [macaulaylibrary/getAudioByTaxonCode_sd](/src/sparqlms/macaulaylibrary/getAudioByTaxonCode_sd) are deployed live. 
+Services [flickr/getPhotosByTaxon_sd](/src/sparqlms/flickr/getPhotosByTaxon_sd) and [macaulaylibrary/getAudioByTaxon_sd](/src/sparqlms/macaulaylibrary/getAudioByTaxon_sd) are deployed live. 
 
 Using content negotiation, their URLs can be looked up in a web browser, generating their HTML documentation and JSON-LD markup on-the-fly. Simply click on these URLs:
 http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByTaxon_sd/ and 
