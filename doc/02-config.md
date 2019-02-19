@@ -1,6 +1,6 @@
 # Configure a SPARQL micro-service
 
-Each SPARQL micro-service resides in a dedicated folder named after the convention: \<Web API\>/\<micro-service\>, e.g. [flickr/getPhotosByGroupByTag](/src/sparqlms/flickr/getPhotosByTaxon).
+Each SPARQL micro-service resides in a dedicated folder named after the convention: \<Web API\>/\<micro-service\>, e.g. [flickr/getPhotosByGroupByTag](/src/sparqlms/flickr/getPhotosByGroupByTag).
 
 A SPARQL micro-service can be configured following two different flavours that each corespond to a method for passing arguments to the micro-service:
 
@@ -85,7 +85,7 @@ The service description graph can also be accompanied with a [SHACL](https://www
 
 Translating the Web API JSON response into an RDF graph is carried out in two steps: 
 1. Apply a [JSON-LD 1.0](https://www.w3.org/TR/2014/REC-json-ld-20140116/) profile to the response;
-2. Optionnally, when mappings are needed that JSON-LD cannot express, a SPARQL Update query enriches the triples: an INSERT query (file insert.sparql) when the SPARQL micro-service is invoked regularly with SPARQL, or a CONSTRUCT query (file construct.sparql) when the SPARQL micro-service is invoked to dereference URIs (see the [installation details](/doc/04-install.md#rewriting-rules-for-uri-dereferencing)).
+2. Optionnally, when mappings are needed that JSON-LD cannot express, a SPARQL Update query enriches the triples: an INSERT query (file insert.sparql) when the SPARQL micro-service is invoked regularly with SPARQL, or a CONSTRUCT query (file construct.sparql) when the SPARQL micro-service is invoked to dereference URIs (see the [installation details](04-install.md#rewriting-rules-for-uri-dereferencing)).
 
 The most simple JSON-LD profile is depicted below. It creates ad-hoc terms in the ```http://ns.inria.fr/sparql-micro-service/api#``` namespace for each property of the JSON response.
 ```json

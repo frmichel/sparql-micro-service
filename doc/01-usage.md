@@ -6,7 +6,7 @@ __Two different flavours__ exist with respect to how arguments are passed to a S
 - as parameters on the HTTP query string of the endpoint URL, or
 - as values within the SPARQL query graph pattern.
 
-The method to use depends on how the SPARQL micro-service is described (see the [service configuration](/doc/02-config.md) page).
+The method to use depends on how the SPARQL micro-service is described (see the [service configuration](02-config.md) page).
 
 ### Passing arguments on the HTTP query string
 The query below exemplifies the first flavour. It retrieves information related to the common dolphin species (*Delphinus delphis*) from the Macaulay Library. The taxon name is passed as a parameter on the HTTP query string of the SPARQL micro-service URL, ```?name=Delphinus+delphis```:
