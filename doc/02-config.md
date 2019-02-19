@@ -1,6 +1,6 @@
 # Configure a SPARQL micro-service
 
-Each SPARQL micro-service resides in a dedicated folder named after the convention: <Web API>/<micro-service>, e.g. [flickr/getPhotosByTaxon](/src/sparqlms/flickr/getPhotosByTaxon).
+Each SPARQL micro-service resides in a dedicated folder named after the convention: \<Web API\>/\<micro-service\>, e.g. [flickr/getPhotosByGroupByTag](/src/sparqlms/flickr/getPhotosByTaxon).
 
 A SPARQL micro-service can be configured following two different flavours that each corespond to a method for passing arguments to the micro-service:
 
@@ -14,7 +14,7 @@ Additionally, whatever the configuration method, a SPARQL micro-serivce describe
 
 ### Service configuration methods
 
-##### Configuration with file config.ini
+#### Configuration with file config.ini
 
 In this configuration method, the micro-service folder is organized as follows:
 
@@ -41,14 +41,12 @@ Example:
 ```bash
 custom_parameter[] = param1
 custom_parameter[] = param2
-
-api_query =  "https://example.api.org/service/?param1={param1}&param2={param2}"
-
+api_query =  "https://example.org/api/service/?param1={param1}&param2={param2}"
 http_header[Authorization] = "token"
 ```
 
 
-##### Configuration with a SPARQL Service Description file
+#### Configuration with a SPARQL Service Description file
 
 In this configuration method, the micro-service folder is organized as follows:
 
@@ -62,7 +60,7 @@ In this configuration method, the micro-service folder is organized as follows:
     service.php             # optional script to perform specific actions (see 'src/sparqlms/manual_config_example')
 ```
 
-The micro-service description is provided by an RDF graph following the [SPARQL Service Description](https://www.w3.org/TR/2013/REC-sparql11-service-description-20130321/) specification. 
+The micro-service description is provided by an RDF graph following the [SPARQL Service Description](https://www.w3.org/TR/2013/REC-sparql11-service-description-20130321/) recommendation. 
 See the provided examples for more details: [flickr/getPhotosByTaxon_sd](/src/sparqlms/flickr/getPhotosByTaxon_sd/ServiceDescription.ttl) and [macaulaylibrary/getAudioByTaxonCode_sd](/src/sparqlms/macaulaylibrary/getAudioByTaxonCode_sd/ServiceDescription.ttl).
 
 File ServiceDescription.ttl describes an sd:Service instance whose data source (dct:source) is a Web API (schema:WebAPI) that has an action (schema:potentialAction) that is a search action (schema:SearchAction).
@@ -70,7 +68,7 @@ File ServiceDescription.ttl describes an sd:Service instance whose data source (
 Parameter | Mandatory/Optional | Description
 ------------ | ------------- | -------------
 Input arguments | Mandatory | Set of IriTemplateMapping resources (hydra:mapping) associated with the Web API potential action.
-Web API query string | Mandatory | A Hydra IriTemplate (hydra:template) of the Web API query string. It can contain placeholders for the input arguments.
+Web API query string | Mandatory | A Hydra IriTemplate (hydra:template) providing the Web API query string template. It can contain placeholders for the input arguments.
 sms:cacheExpiresAfter | Optional | Property of the sd:Service instance. Maximum time (in seconds) to cache responses from the Web API. Default: 2592000 = 30 days
 
 
@@ -87,7 +85,7 @@ The service description graph can also be accompanied with a [SHACL](https://www
 
 Translating the Web API JSON response into an RDF graph is carried out in two steps: 
 1. Apply a [JSON-LD 1.0](https://www.w3.org/TR/2014/REC-json-ld-20140116/) profile to the response;
-2. If mappings are needed that JSON-LD cannot express, a SPARQL Update query enriches the triples: an INSERT query (file insert.sparql) when the SPARQL micro-service is invoked regularly with SPARQL, or a CONSTRUCT query (file construct.sparql) when the SPARQL micro-service is invoked to dereference URIs (see the [installation details](/doc/04-install.md#rewriting-rules-for-uri-dereferencing)).
+2. Optionnally, when mappings are needed that JSON-LD cannot express, a SPARQL Update query enriches the triples: an INSERT query (file insert.sparql) when the SPARQL micro-service is invoked regularly with SPARQL, or a CONSTRUCT query (file construct.sparql) when the SPARQL micro-service is invoked to dereference URIs (see the [installation details](/doc/04-install.md#rewriting-rules-for-uri-dereferencing)).
 
 The most simple JSON-LD profile is depicted below. It creates ad-hoc terms in the ```http://ns.inria.fr/sparql-micro-service/api#``` namespace for each property of the JSON response.
 ```json
@@ -97,7 +95,7 @@ The most simple JSON-LD profile is depicted below. It creates ad-hoc terms in th
 }}
 ```
 
-This is a handy way of turning the JSON response into RDF, and allow manipulating it in a SPARQL query (either insert.sparql or construct.sparql).
+This is a handy way of turning the Web API JSON response into RDF; this allows manipulating the Web API response in a SPARQL query (either insert.sparql or construct.sparql).
 
 Note that default namespaces are defined in the [global config.ini file](/src/sparqlms/config.ini):
 ```

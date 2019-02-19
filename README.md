@@ -10,7 +10,7 @@ This project is a prototype PHP implementation for JSON-based Web APIs. It comes
 - retrieve audio recordings for a given taxon name from the [Macaulay Library](https://www.macaulaylibrary.org/), a scientific media archive related to birds, amphibians, fishes and mammals;
 - search the [Biodiversity Heritage Library](https://www.biodiversitylibrary.org/) for scientific articles related to a given taxon name.
 - search the [Encyclopedia of Life traits bank](http://eol.org/traitbank) for data related to a given taxon name. The API wrapped is a [Neo4J Cypher](https://neo4j.com/docs/cypher-manual/current/) endpoint;
-- search the [MusicBrainz encyclopedia](https://musicbrainz.org/) for music tunes whose titles matching a given name.
+- search the [MusicBrainz encyclopedia](https://musicbrainz.org/) for music tunes whose titles match a given name.
 
 **Each micro-service is further detailed in its own dedicated folder**.
 
@@ -73,4 +73,4 @@ Michel F., Faron-Zucker C. & Gandon F. (2018). *Bridging Web APIs and Linked Dat
 
 #### Demo
 
-Michel F., Faron-Zucker C. & Gandon F. (2018). *Integration of Biodiversity Linked Data and Web APIs using SPARQL Micro-Services*. In Biodiversity Information Science and Standards, TDWG 2018 Proceedings, vol. 2, p. e25481. Dunedin, New Zealand. Pensoft.
+Michel F., Faron-Zucker C. & Gandon F. (2018). *Integration of Biodiversity Linked Data and Web APIs using SPARQL Micro-Services*. In Biodiversity Information Science and Standards, TDWG 2018 Proceedings, vol. 2, p. e25481. Dunedin, New Zealand. Pensoft. Available online: http://sms.i3s.unice.fr/demo-sms?param=Delphinapterus+leucas
