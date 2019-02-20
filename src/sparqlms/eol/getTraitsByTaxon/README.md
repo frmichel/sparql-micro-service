@@ -43,13 +43,15 @@ _:b8186
 ```turtle
 SELECT * WHERE {
     SERVICE SILENT <https://example.org/sparql-ms/eol/getTraitsByTaxon?name=Delphinus+delphis>
-    { [] a dwc:MeasurementOrFact;
-        dwc:measurementType  ?measurementType;
-        dwc:measurementValue ?measurementValue.
+    {   ?measure 
+            a                       dwc:MeasurementOrFact;
+            dwc:measurementType     ?measurementType;
+            dwc:measurementValue    ?measurementValue.
 
-      OPTIONAL { ?measure dwc:measurementUnit ?measurementUnit }
-        
-      FILTER (?measurementType = "total life span" || ?measurementType = "body length (VT)" || ?measurementType = "conservation status")
+        OPTIONAL { ?measure dwc:measurementUnit     ?measurementUnit }
+        OPTIONAL { ?measure dwciri:measurementUnit  ?measurementUnitUri }
+
+        FILTER (?measurementType  != 'habitat includes')
     }
 }
 ```
