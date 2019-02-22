@@ -8,14 +8,4 @@ st:sms-html-description a st:Server ;
         a sw:Workflow ; 
         sw:body ([ a sw:Transformation ; sw:uri <sttl/> ])
     ];
-
-    # Get the data from a static file
-    st:content st:dataContent ;
     .
-
-
-# load data from a static file (for test purpose only)
-st:dataContent a sw:Workflow ;
-    sw:body (
-        [ a sw:Load ; sw:path <static-example/ServiceDescription.ttl> ; sw:name st:data1 ]    
-    ).

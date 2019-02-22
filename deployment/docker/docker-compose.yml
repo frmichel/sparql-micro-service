@@ -4,6 +4,10 @@ services:
     image: frmichel/corese
     networks:
       - sms-net
+    ports:
+      - "8081:8081"
+    volumes:
+      - "./logs:/usr/local/corese/log"
   sms-mongo:
     image: mongo:3.6-jessie
     networks:
@@ -13,7 +17,7 @@ services:
     networks:
       - sms-net
     ports:
-      - "81:80"
+      - "80:80"
     volumes:
       - "./logs:/var/www/html/sparqlms-install/logs"
 networks:
