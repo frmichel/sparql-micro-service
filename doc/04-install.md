@@ -49,7 +49,7 @@ To install this project, you will need an Apache Web server and a write-enabled 
 
 A Corese-KGRAM service is also required to execute components that rely on the STTL and LDScript features (see folder [/deployment/corese](/deployment/corese)):
   * An STTL transformation service able to transform a SPARQL query into a [SPIN](http://spinrdf.org/sp.html) representation (see [/src/sparqlms/config.ini](/src/sparqlms/config.ini)) is required when [passing arguments within the SPARQL query graph pattern](01-usage.md#passing-arguments-within-the-sparql-query-graph-pattern)
-  * An STTL transformation service transforms micro-services service descriptions into an HTML page with embedded JSON-LD (see src/sparqlms/resources/sms-html-description).
+  * An STTL transformation service transforms micro-services service descriptions into an HTML page with embedded JSON-LD (see [/src/sparqlms/resources/sms-html-description](/src/sparqlms/resources/sms-html-description)).
   * In the sparqlcompose component, an STTL transformation service generates a federated query composed of SERVICE clauses invoking SPARQL micro-services.
 
 
@@ -91,7 +91,7 @@ sparql_endpoint = http://localhost:8080/sparql
 spin_endpoint   = http://localhost:8080/service/spin
 ```
 
-Use the [/deployment/deploy.sh](/src/deployment/deploy.sh) script to customize the dereferenceable URIs generated in the different services: 
+Use the [/deployment/deploy.sh](/deployment/deploy.sh) script to customize the dereferenceable URIs generated in the different services: 
   - replace the ```http://example.org``` URL (variable $SERVER) with the URL of your server
   - set the API_KEY values according with your own API keys.
 
@@ -101,13 +101,19 @@ Set Apache [rewriting rules](http://httpd.apache.org/docs/2.4/rewrite/) to invok
 #### Rewriting rules for SPARQL querying
 
 Micro-service URL pattern if arguments are passed on the HTTP query string:
-    ```http://example.org/sparqlms/<Web API>/<service>?param=value```
+```
+    http://example.org/sparqlms/<Web API>/<service>?param=value
+```
 
 Micro-service URL pattern if arguments are passed within the SPARQL query graph pattern:
-    ```http://example.org/sparqlms/<Web API>/<service>```
+```
+    http://example.org/sparqlms/<Web API>/<service>
+```
 
 Rule:
-    ```RewriteRule "^/sparqlms/([^/?]+)/([^/?]+).*$" http://example.org/~userdir/sparqlms/src/sparqlms/service.php?querymode=sparql&service=$1/$2 [QSA,P,L]```
+```
+    RewriteRule "^/sparqlms/([^/?]+)/([^/?]+).*$" http://example.org/~userdir/sparqlms/src/sparqlms/service.php?querymode=sparql&service=$1/$2 [QSA,P,L]
+```
 
 Usage Example:
 ```sparql
@@ -119,16 +125,22 @@ SELECT * WHERE {
 
 #### Rewriting rules for URI dereferencing
 
-The ```deployment/apache``` directory contains more detailed Apache configuration examples.
+The [/deployment/apache](/deployment/apache) directory contains more detailed Apache configuration examples.
 
 URI pattern:
-    ```http://example.org/ld/<Web API>/<service>/<identifier>```
+```
+    http://example.org/ld/<Web API>/<service>/<identifier>
+```
 
 Rule example:
-    ```RewriteRule "^/ld/flickr/photo/(.*)$" http://example.org/~userdir/sparqlms/src/sparqlms/service.php?querymode=ld&service=flickr/getPhotoById&query=&photo_id=$1 [P,L]```
+```
+    RewriteRule "^/ld/flickr/photo/(.*)$" http://example.org/~userdir/sparqlms/src/sparqlms/service.php?querymode=ld&service=flickr/getPhotoById&query=&photo_id=$1 [P,L]
+```
 
 Usage Example:
-    ```curl --header "Accept:text/turtle" http://example.org/ld/flickr/photo/31173091516```
+```
+    curl --header "Accept:text/turtle" http://example.org/ld/flickr/photo/31173091516
+```
 
 This will invoke service ```flickr/getPhotoById``` with the ```photo_id``` parameter.
 Furthermore, the ```querymode=ld``` argument instructs the service to execute the query in file construct.sparql and return the response of this query as the response to the URI dereferencing query.

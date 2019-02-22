@@ -1,6 +1,6 @@
 # HTML documentation from a SPARQL micro-service Service Description
 
-To document SPARQL micro-services and spur their discovery, they [can be described](02-config.md#configuration-with-a-sparql-service-description-file) by an RDF graph following the [SPARQL Service Description](https://www.w3.org/TR/2013/REC-sparql11-service-description-20130321/) recommendation.
+To document SPARQL micro-services and spur their discovery, they can be described by an RDF graph following the [SPARQL Service Description](https://www.w3.org/TR/2013/REC-sparql11-service-description-20130321/) recommendation. See the [configuration guide](02-config.md#configuration-with-a-sparql-service-description-file) for more details.
 
 Such descriptions can be dynamically translated into an HTML page documenting the service using content negotiation, along with markup data (formatted as JSON-LD) representing the service as a https://schema.org/Dataset.
 

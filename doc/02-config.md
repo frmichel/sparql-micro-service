@@ -12,9 +12,9 @@ Advanced: ServiceDescription.ttl RDF document | Terms of the SPARQL query graph 
 Additionally, whatever the configuration method, a SPARQL micro-serivce describes how to map responses from the Web API to RDF triples. This is explained in section [Mapping a Web API response to RDF triples](#mapping-a-web-api-response-to-rdf-triples).
  
 
-### Service configuration methods
+## Service configuration methods
 
-#### Configuration with file config.ini
+### Configuration with file config.ini
 
 In this configuration method, the micro-service folder is organized as follows:
 
@@ -46,7 +46,7 @@ http_header[Authorization] = "token"
 ```
 
 
-#### Configuration with a SPARQL Service Description file
+### Configuration with a SPARQL Service Description file
 
 In this configuration method, the micro-service folder is organized as follows:
 
@@ -81,7 +81,7 @@ An example is provided in service [flickr/getPhotosByTaxon_sd](/src/sparqlms/fli
 The service description graph can also be accompanied with a [SHACL](https://www.w3.org/TR/2017/REC-shacl-20170720/) shapes graph that specifies the type of graph that the SPARQL micro-service is designed to produce.
 
 
-### Mapping a Web API response to RDF triples
+## Mapping a Web API response to RDF triples
 
 Translating the Web API JSON response into an RDF graph is carried out in two steps: 
 1. Apply a [JSON-LD 1.0](https://www.w3.org/TR/2014/REC-json-ld-20140116/) profile to the response;
