@@ -1,7 +1,7 @@
 # SPARQL Micro-Service Changelog
 
 
-## [Unreleased] 2019-02-18
+## [3.0.1] 2019-03-04
 
 ### Changed
 - change namespace of SPARQL micro-service core vocabulary to http://ns.inria.fr/sparql-micro-service#
