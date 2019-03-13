@@ -66,13 +66,13 @@ try {
     
     // --- Create explicit variable names for terms of the SPARQL graph pattern that are simple blank nodes
     /*
-     * For each BN, add a variable name only once. In particular the same BN can be used e.g. as a subject or object.
+     * For each BN, add a variable name only once. The same BN can be used e.g. as a subject or an object.
      * Therefore, it is not possible to create those variable names in a single query. Instead, we enrich the graph
-     * alternatively for subject BNs, prodicate BNs and object BNs.
+     * successively for subject BNs, predicate BNs and object BNs.
      *
-     * Also, the var name is built from the BN identifier and a uniq id. But the same BN may be the subject or several
-     * triples. So we must use the same uniq id for each use of the BN. This is why the uniq id is built here and not
-     * within the SPARQL query using a rand() that would generate a new value for each use of the same BN.
+     * Also, the variable name is built from the BN identifier. Tthe same BN may be the subject of several SPIN triples,
+     * still we must use the same var name for each use of the BN. This is why the uniq id is built here and not
+     * within the SPARQL query using rand() that would generate a new value for each use of the same BN.
      */
     $query = file_get_contents('resources/spin_query_explicit_bn.sparql');
     $query = str_replace('{SpinQueryGraph}', $spinQueryGraph, $query);
