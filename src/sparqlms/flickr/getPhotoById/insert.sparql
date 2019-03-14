@@ -21,11 +21,10 @@ WHERE {
         api:title       [ api:_content ?title ];
         api:description [ api:_content ?description ];
         api:owner       [ api:nsid ?owner; api:realname ?ownerName ];
-        api:urls        [ api:url [ api:type ?photoType; api:_content ?page ] ];
+        api:urls        [ api:url [ api:type ?photoType; api:_content ?page ] ].
         
     OPTIONAL { ?photo api:dates [ api:taken ?dateTaken ] }
     OPTIONAL { ?photo api:tags  [ api:tag [ api:_content ?tag ] ] }
-    .
 
     # Dereferenceable URI: customize with the hostname of your Web server
     bind (IRI(concat("http://example.org/ld/flickr/photo/", ?id)) AS ?photoUri)
