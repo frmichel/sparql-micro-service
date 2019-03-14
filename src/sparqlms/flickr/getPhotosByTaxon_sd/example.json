@@ -1,32 +1,38 @@
+# https://api.flickr.com/services/rest/? \
+#    method=flickr.photos.search& \
+#    api_key=<api_key>& \
+#    tags=sunset%2Cbrooklyn%2Cbike& \
+#    tag_mode=all&sort=relevance&privacy_filter=1& \
+#    extras=date_upload%2C+date_taken%2C+owner_name& \
+#    per_page=500&format=json&nojsoncallback=1
+
 {
   "photos": {
-    "page": 1, "pages": 1, "perpage": 100, "total": "18",
+    "page": 1, "pages": 1, "perpage": 500, "total": "189",
     "photo": [
-      { "id": "21873161962",
-        "owner": "58213213@N00",
-        "secret": "240ce2049e",
-        "server": "597",
-        "farm": 1,
-        "title": "Golfinho-comum // Short-beaked Common Dolphin (Delphinus delphis)",
-        "ispublic": 1, "isfriend": 0, "isfamily": 0
+      {
+        "id": "41926925170",
+        "owner": "15782558@N07", "ownername": "Shu-Sin"
+        "secret": "459e3a473a", "server": "854", "farm": 1,
+        "title": "T-Top Corvette",
+        "ispublic": 1, "isfriend": 0, "isfamily": 0,
+        "dateupload": "1532952172",
+        "datetaken": "2018-07-30 08:01:00",
+        "datetakengranularity": 0,
+        "datetakenunknown": "1",
       },
-      { "id": "21106725323",
-        "owner": "49828152@N00",
-        "secret": "928de05ffd",
-        "server": "5756",
-        "farm": 6,
-        "title": "Common Dolphin",
-        "ispublic": 1, "isfriend": 0, "isfamily": 0
-      },
-      { "id": "21403579250",
-        "owner": "49828152@N00",
-        "secret": "d8a4df4f2b",
-        "server": "5834",
-        "farm": 6,
-        "title": "Common Dolphins",
-        "ispublic": 1, "isfriend": 0, "isfamily": 0
+      {
+        "id": "27681100148",
+        "owner": "15782558@N07", "ownername": "Shu-Sin"
+        "secret": "8da44783cf", "server": "873", "farm": 1,
+        "title": "Apocalyptic Like",
+        "ispublic": 1, "isfriend": 0, "isfamily": 0,
+        "dateupload": "1524106826",
+        "datetaken": "2018-04-18 22:58:19",
+        "datetakengranularity": 0,
+        "datetakenunknown": "1",
       }
-   ]
+    ]
   },
   "stat": "ok"
 }

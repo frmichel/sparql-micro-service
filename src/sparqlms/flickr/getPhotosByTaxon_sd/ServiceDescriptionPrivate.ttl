@@ -12,4 +12,4 @@
 
 # This file is loaded as graph <ServiceDescriptionPrivate>
 <APIService>
-    hydra:template "https://api.flickr.com/services/rest/?method=flickr.photos.search&format=json&nojsoncallback=1&api_key=<api_key>&per_page=500&tags=taxonomy%3Abinomial%3D{name}".
+    hydra:template "https://api.flickr.com/services/rest/?method=flickr.photos.search&format=json&nojsoncallback=1&api_key=<api_key>&tag_mode=all&sort=relevance&privacry_filter=1&extras=date_upload%2Cdate_taken%2Cowner_name%2Ctags&per_page=500&tags=taxonomy%3Abinomial%3D{name}".

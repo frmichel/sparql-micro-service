@@ -18,7 +18,7 @@
     shacl:minCount 1; shacl:maxCount 1.
 
 <ShapesGraph#PhotographShape> a shacl:NodeShape;
-    shacl:targetClass dwc:Photograph;
+    shacl:targetClass schema:Photograph;
     shacl:property
       [ a shacl:PropertyShape; shacl:path rdf:type;                shacl:hasValue schema:Photograph ],
       [ a shacl:PropertyShape; shacl:path schema:name;             shacl:nodeKind shacl:Literal; shacl:maxCount 1 ],
@@ -26,14 +26,16 @@
       [ a shacl:PropertyShape; shacl:path foaf:depiction;          shacl:nodeKind shacl:IRI ],
       [ a shacl:PropertyShape; shacl:path schema:thumbnailUrl;     shacl:nodeKind shacl:IRI ],
       [ a shacl:PropertyShape; shacl:path schema:mainEntityOfPage; shacl:nodeKind shacl:IRI ],
+      [ a shacl:PropertyShape; shacl:path schema:dateCreated;      shacl:nodeKind shacl:Literal; shacl:minCount 0; shacl:maxCount 1 ],
       [ a shacl:PropertyShape; shacl:path schema:fileFormat;       shacl:nodeKind shacl:Literal; shacl:maxCount 1 ],
       [ a shacl:PropertyShape; shacl:path schema:author;           shacl:node <ShapesGraph#PersonShape> ];
     shacl:closed true.
 
 <ShapesGraph#PersonShape> a shacl:NodeShape;
-    shacl:targetClass dwc:Person;
+    shacl:targetClass schema:Person;
     shacl:property 
       [ a shacl:PropertyShape; shacl:path rdf:type;          shacl:hasValue schema:Person ],
-      [ a shacl:PropertyShape; shacl:path schema:identifier; shacl:nodeKind shacl:Literal ],
+      [ a shacl:PropertyShape; shacl:path schema:name;       shacl:nodeKind shacl:Literal; shacl:minCount 0 ],
+      [ a shacl:PropertyShape; shacl:path schema:identifier; shacl:nodeKind shacl:Literal; shacl:minCount 1; shacl:maxCount 1 ],
       [ a shacl:PropertyShape; shacl:path schema:url;        shacl:nodeKind shacl:IRI ];
     shacl:closed true.
