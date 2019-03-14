@@ -122,14 +122,19 @@ class Utils
         
         $apiResp = null;
         try {
+            $cacheHit = false;
             if ($useCache) {
                 // Check if response is already in cache db
                 $apiResp = $cache->read($jsonUrl);
-                if ($apiResp != null && $logger->isHandling(Logger::DEBUG))
-                    $logger->debug("Retrieved JSON response from cache: \n" . JsonLD::toString($apiResp));
+                if ($apiResp != null) {
+                    $cacheHit = true;
+                    $logger->info("The JSON response was retrieved from cache.");
+                    if ($logger->isHandling(Logger::DEBUG))
+                        $logger->debug("JSON response retrieved from cache: \n" . JsonLD::toString($apiResp));
+                }
             }
             
-            if ($apiResp == null) {
+            if (! $cacheHit) {
                 $logger->info("JSON response not found in cache.");
                 
                 // Query the Web API
@@ -148,8 +153,7 @@ class Utils
                     $logger->debug("Web API JSON response: \n" . $apiResp);
                 
                 // Store the result into the cache db
-                if ($useCache) {
-                    // @todo Change this: the document is written to the cache even if it was retrieved from there
+                if ($useCache && ! $cacheHit) {
                     $cache->write($jsonUrl, $apiResp, $context->getService());
                     $logger->info("Stored JSON response into cache.");
                 }
@@ -269,8 +273,9 @@ class Utils
      * If any parameter in not found, the function returns an HTTP error 400 and exits.
      *
      * @param array $args
-     *            array of parameter names to read from the query string
-     * @return array associative array of parameter names and values read from the query string
+     *            array of argument names to read from the query string
+     * @return array associative array where the key is the argument name,
+     *         and the value is an array of values for that argument
      */
     static public function getQueryStringArgs($args)
     {
@@ -285,15 +290,14 @@ class Utils
         
         $result = array();
         foreach ($args as $name) {
-            
             if (array_key_exists($name, $_REQUEST)) {
                 if ($name != "query")
                     // Escape special chars
                     $argValue = strip_tags($_REQUEST[$name]);
                 else
-                    // Dp NOT escape special chars in case of the 'query' parameter that contains the SPARQL query
+                    // Do NOT escape special chars in case of the 'query' parameter that contains the SPARQL query
                     $argValue = $_REQUEST[$name];
-                $result[$name] = $argValue;
+                $result[$name][] = $argValue;
             } else
                 self::httpBadRequest("Query argument '" . $name . "' undefined.");
         }
@@ -306,15 +310,18 @@ class Utils
      *
      * This is achieved by a SPARQL query over the SPIN graph of the user's query, the Service Description
      * graph and the shapes graph.
+     *
      * For each argument declared in the Service Description, we look for it in the user's query either
      * with its hydra:property or using the property shape denoted by shacl:sourceShape (the SD graph
-     * should provuide one or the other).
+     * should provide one or the other).
      *
-     * If any parameter in not found, the function returns an HTTP error 400 and exits.
+     * If one of the expected parameters in not found, a warning is logged but the function still
+     * returns the result anyway.
      *
      * @param string $sparqlQuery
-     *            the SPARQL query string
-     * @return array associative array of parameter names and values
+     *            the SPARQL query
+     * @return array associative array where the key is the argument name,
+     *         and the value is an array of values for that argument
      */
     static private function getServiceCustomArgsFromSparqlQuery($sparqlQuery)
     {
@@ -322,41 +329,44 @@ class Utils
         $logger = $context->getLogger();
         
         // --- Convert the SPARQL query to SPIN and load it into a temporary graph
+        
         $spinInvocation = $context->getConfigParam('spin_endpoint') . '?arg=' . urlencode($sparqlQuery);
-        $spinQueryGraph = $context->getConfigParam('root_url') . '/tempgraph-spin-' . uniqid("-", true);
-        $query = 'LOAD <' . $spinInvocation . '> INTO GRAPH <' . $spinQueryGraph . '>';
+        $spinGraphUri = $context->getConfigParam('root_url') . '/tempgraph-spin' . uniqid("-", true);
+        
+        $query = 'LOAD <' . $spinInvocation . '> INTO GRAPH <' . $spinGraphUri . '>';
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("SPARQL query converted to SPIN: \n" . file_get_contents($spinInvocation));
-        $logger->info('Loading SPIN SPARQL query into temp graph ' . $spinQueryGraph);
+        $logger->info('Loading SPIN SPARQL query into temp graph ' . $spinGraphUri);
         $context->getSparqlClient()->update($query);
         
         // --- For each service custom argument, read its value from the SPARQL query.
-        // Each argument may be provided either directly with hydra:property or by a property shape denoted by shacl:sourceShape
+        // Each argument is provided either with hydra:property or by a property shape denoted by shacl:sourceShape
         
         $query = file_get_contents('resources/read_input_from_gp.sparql');
-        $query = str_replace('{SpinQueryGraph}', $spinQueryGraph, $query);
+        $query = str_replace('{SpinQueryGraph}', $spinGraphUri, $query);
         $query = str_replace('{ServiceDescription}', $context->getServiceDescriptionGraphUri(), $query);
         $query = str_replace('{ShapesGraph}', $context->getShapesGraphUri(), $query);
         
         $jsonResult = self::runSparqlSelectQuery($query);
         $result = array();
-        foreach ($jsonResult as $jsonResultN) {
-            $name = $jsonResultN['name']['value'];
-            if (array_key_exists($name, $result)) {
-                $predicate = $jsonResultN['predicate']['value'];
-                Utils::httpUnprocessableEntity("Only one value is allowed for property '" . $predicate . "' (argument '" . $name . "').");
-            }
-            $result[$name] = $jsonResultN['result']['value'];
+        // The response consists of mappings for 3 variables: ?argName ?predicate ?argValue
+        foreach ($jsonResult as $varMapping) {
+            $argName = $varMapping['argName']['value'];
+            $predicate = $varMapping['predicate']['value'];
+            $argValue = $varMapping['argValue']['value'];
+            
+            // Return an array of values of that variable
+            $result[$argName][] = $argValue;
         }
         
         // Make sure we have values for all expected arguments
-        foreach ($context->getConfigParam('custom_parameter') as $name)
-            if (! array_key_exists($name, $result))
-                $logger->warning("No triple for argument '" . $name . "' found in the SPARQL query. Will return empty response.");
+        foreach ($context->getConfigParam('custom_parameter_binding') as $argName => $mapping)
+            if (! array_key_exists($argName, $result))
+                self::httpBadRequest('No triple patterns with predicate "' . $mapping['predicate'] . '" (for service argument "' . $argName . '")');
         
         // Drop the temporary SPIN graph
-        $logger->info("Dropping graph: <" . $spinQueryGraph . ">");
-        $context->getSparqlClient()->update("DROP SILENT GRAPH <" . $spinQueryGraph . ">");
+        $logger->info("Dropping graph: <" . $spinGraphUri . ">");
+        $context->getSparqlClient()->update("DROP SILENT GRAPH <" . $spinGraphUri . ">");
         
         return $result;
     }
@@ -367,7 +377,8 @@ class Utils
      *
      * If any parameter in not found, the function returns an HTTP error 400 and exits.
      *
-     * @return array associative array of parameter names and values
+     * @return array associative array where the key is the argument name,
+     *         and the value is an array of values for that argument
      */
     static public function getServiceCustomArgs()
     {
@@ -426,23 +437,25 @@ class Utils
     }
 
     /**
-     * Execute a SPARQL SELECT query asking for a JSON response and return only the bindings part of the response
+     * Execute a SPARQL SELECT query asking for a SPARQL JSON result
+     * and return only the bindings part of the response
      *
      * @param string $query
      *            SPARQL query
-     * @return array JSON document containnig only an array (possibly empty) of bindings
+     * @return array JSON document containnig only the array (possibly empty) of bindings
      * @example The returned document would typically look like this:
-     *          <pre><code>
-     *          [ {
-     *          "book": { "type": "uri" , "value": "http://example.org/book/book6" } ,
-     *          "title": { "type": "literal" , "value": "Harry Potter and the Half-Blood Prince" }
-     *          },
-     *          {
-     *          "book": { "type": "uri" , "value": "http://example.org/book/book7" } ,
-     *          "title": { "type": "literal" , "value": "Harry Potter and the Deathly Hallows" }
-     *          }
-     *          ]
-     *          </code></pre>
+     * <pre><code>
+     * [
+     *   {
+     *      "book" : { "type": "uri", "value": "http://example.org/book/book6" } ,
+     *      "title": { "type": "literal", "value": "Harry Potter and the Half-Blood Prince" }
+     *   },
+     *   {
+     *      "book" : { "type": "uri" , "value": "http://example.org/book/book7" } ,
+     *      "title": { "type": "literal" , "value": "Harry Potter and the Deathly Hallows" }
+     *   }
+     * ]
+     * </code></pre>
      */
     static public function runSparqlSelectQuery($query)
     {

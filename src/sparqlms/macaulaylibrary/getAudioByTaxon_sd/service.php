@@ -5,17 +5,19 @@ namespace frmichel\sparqlms;
  * This script can be provided to complement the service config.ini file.
  *
  * It receives 3 global variables:
+ * - $apiQuery contains the Web API query template. The script must set the parameters to
+ * produce the ready-to-run query string.
  * - $customArgs is the set of custom arguments that have been passed to the service.
- * - $apiQuery contains the Web API query template. The script must set the parameters to  
- *   produce the ready-to-run query string.
+ * It is associative array where the key is the argument name,
+ * and the value is an array of values for that argument
  * - $logger is provided as a convenience in case the script wants to log any information.
  */
 global $apiQuery;
 global $customArgs;
 global $logger;
 
-// Read the service custom arguments
-$name = $customArgs['name'];
+// Read the service custom arguments. There should be only one name
+$name = $customArgs['name'][0];
 
 // Call another API service to get the code associated with the taxon name
 $taxonCode = getTaxonCode($name);
@@ -39,7 +41,7 @@ function getTaxonCode($taxonName)
     global $logger;
     
     $apiQuery = 'https://search.macaulaylibrary.org/api/v1/find/taxon?q=' . urlencode($taxonName);
-    $logger->notice("Web API request: " . $apiQuery);
+    $logger->notice("Retrieving taxon code for name '" . $taxonName . "'. Web API request: " . $apiQuery);
     
     $result = file_get_contents($apiQuery);
     if ($result !== FALSE) {

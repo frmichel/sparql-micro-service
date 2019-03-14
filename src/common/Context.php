@@ -137,7 +137,7 @@ class Context
     {
         $customCfg = Configuration::getCustomConfig($this);
         if ($this->logger->isHandling(Logger::INFO))
-            $this->logger->info("Service custom configuration: " . print_r($customCfg, TRUE));
+            $this->logger->info("Have read following service custom configuration: " . print_r($customCfg, TRUE));
         $this->config = array_merge($this->config, $customCfg);
     }
 

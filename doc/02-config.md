@@ -80,6 +80,26 @@ An example is provided in service [flickr/getPhotosByTaxon_sd](/src/sparqlms/fli
 **Shapes graph**.
 The service description graph can also be accompanied with a [SHACL](https://www.w3.org/TR/2017/REC-shacl-20170720/) shapes graph that specifies the type of graph that the SPARQL micro-service is designed to produce.
 
+#### Dealing with multiple values for a single argument
+
+If the graph pattern provides multiple values for a single argument, the values will passed in the API query string as a comma-separated list. 
+
+**Example**: a Web API has an argument ```tags``` that takes a comma-separated list of tags, and the query string template is as follows:
+
+```  https://example.org/api/service/?param1={param}```
+ 
+The SPARQL query passes values with the ```schema:keyword``` property:
+
+```
+  ?photo
+    a schema:Photograph;
+    schema:keywords "keyword1", "keyword2".
+```
+
+The will result in invoking the Web API with this query string:
+
+```  https://example.org/api/service/?param1=keyword1,keyword2```
+
 
 ## Mapping a Web API response to RDF triples
 

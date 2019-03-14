@@ -39,9 +39,12 @@ class Configuration
 
     /**
      * Read the SPARQL micro-serivce custom configuration, either from the service/config.ini file
-     * or from the Service Description graph (stored in the local RDF store)
+     * or from the Service Description graph (stored in the local RDF store).
+     * 
+     * In addition, parameter 'service_description' is set to false in case of config.ini and to true
+     * in case of Service Description graph.
      *
-     * @return array associative array of config parameters and values
+     * @return array associative array of config parameters and values, with additional parameter 'service_description'
      */
     static public function getCustomConfig()
     {

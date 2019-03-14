@@ -1,3 +1,7 @@
+# This file is a template for the query that retrieves the values of the micro-service arguments 
+# from the SPARQL query graph pattern. Graph URIs between '{' and '}' must be replaced with URIs.
+# The client's SPARQL query is provided in SPIN as named graph {SpinQueryGraph}.
+
 @prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix sd:     <http://www.w3.org/ns/sparql-service-description#>.
 @prefix shacl:  <http://www.w3.org/ns/shacl#>.
@@ -7,7 +11,7 @@
 @prefix schema: <http://schema.org/>.
 @prefix sms:    <http://ns.inria.fr/sparql-micro-service#>.
 
-SELECT DISTINCT ?name ?predicate ?result 
+SELECT DISTINCT ?argName ?predicate ?argValue 
 FROM <{ServiceDescription}>     # Service Description graph
 FROM <{SpinQueryGraph}>         # SPARQL query in SPIN
 FROM <{ShapesGraph}>            # Optional shapes graph
@@ -19,7 +23,7 @@ WHERE {
     {
         # - Service Description - Predicate given directly with hydra:property
         [] a sd:Service; dct:source [ schema:potentialAction [ hydra:mapping [
-            hydra:variable ?name;
+            hydra:variable ?argName;
             hydra:property ?predicate;
         ]]].
 
@@ -30,7 +34,7 @@ WHERE {
     {
         # - Service Description - Predicate is given through a property shape with shacl:sourceShape
         [] a sd:Service; dct:source [ schema:potentialAction [ hydra:mapping [
-            hydra:variable ?name;
+            hydra:variable ?argName;
             shacl:sourceShape ?propShape;
         ]]].
 
@@ -74,9 +78,9 @@ WHERE {
                 )
             )
         )
-        as ?result
+        as ?argValue
     )
-    FILTER (?result != "__no_value__")
+    FILTER (?argValue != "__no_value__")
 }
        
         
