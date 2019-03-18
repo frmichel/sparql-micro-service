@@ -61,16 +61,24 @@ CONSTRUCT {
 
 ## Publications
 
-[1] Franck Michel, Catherine Faron-Zucker and Fabien Gandon. *SPARQL Micro-Services: Lightweight Integration of Web APIs and Linked Data*. In Proceedings of the Linked Data on the Web Workshop (LDOW2018). https://hal.archives-ouvertes.fr/hal-01722792
+### Journal
 
-[2] Franck Michel, Olivier Gargominy, Sandrine Tercerie & Catherine Faron-Zucker (2017). *A Model to Represent Nomenclatural and Taxonomic Information as Linked Data. Application to the French Taxonomic Register, TAXREF*. In Proceedings of the 2nd International Workshop on Semantics for Biodiversity (S4BioDiv) co-located with ISWC 2017 vol. 1933. Vienna, Austria. CEUR. https://hal.archives-ouvertes.fr/hal-01617708
+[3] Michel F., Zucker C., Gargominy O. & Gandon F. (2018). Integration of Web APIs and Linked Data Using SPARQL Micro-Services—Application to Biodiversity Use Cases. *Information 9(12):310*. [DOI](https://dx.doi.org/10.3390/info9120310), [HAL](https://hal.archives-ouvertes.fr/hal-01947589).
 
-[3] Michel F., Zucker C., Gargominy O. & Gandon F. (2018). *Integration of Web APIs and Linked Data Using SPARQL Micro-Services—Application to Biodiversity Use Cases*. Information 9(12):310. DOI: https://dx.doi.org/10.3390/info9120310
+### Conference
 
-#### Poster
+[1] Michel F., Faron-Zucker C. and Gandon F. SPARQL Micro-Services: Lightweight Integration of Web APIs and Linked Data. In *Proceedings of the Linked Data on the Web Workshop (LDOW2018)*. [HAL](https://hal.archives-ouvertes.fr/hal-01722792).
 
-Michel F., Faron-Zucker C. & Gandon F. (2018). *Bridging Web APIs and Linked Data with SPARQL Micro-Services*. In The Semantic Web: ESWC 2018 Satellite Events, LNCS vol. 11155, pp. 187–191. Heraklion, Greece. Springer, Cham.
+[2] Michel F., Gargominy O., Tercerie S. & Faron-Zucker C. (2017). A Model to Represent Nomenclatural and Taxonomic Information as Linked Data. Application to the French Taxonomic Register, TAXREF. In *Proceedings of the 2nd International Workshop on Semantics for Biodiversity (S4BioDiv) co-located with ISWC 2017*. Vienna, Austria. CEUR vol. 1933. [HAL](https://hal.archives-ouvertes.fr/hal-01617708).
 
-#### Demo
+[4] Michel F., Faron-Zucker C., Corby O. and Gandon F. Enabling Automatic Discovery and Querying of Web APIs at Web Scale using Linked Data Standards. In *LDOW/LDDL'19, companion proceedings of the 2019 World Wide Web Conference (WWW'19 Companion)*. [HAL](https://hal.archives-ouvertes.fr/hal-02060966).
 
-Michel F., Faron-Zucker C. & Gandon F. (2018). *Integration of Biodiversity Linked Data and Web APIs using SPARQL Micro-Services*. In Biodiversity Information Science and Standards, TDWG 2018 Proceedings, vol. 2, p. e25481. Dunedin, New Zealand. Pensoft. Available online: http://sms.i3s.unice.fr/demo-sms?param=Delphinapterus+leucas
+
+### Poster
+
+Michel F., Faron-Zucker C. & Gandon F. (2018). Bridging Web APIs and Linked Data with SPARQL Micro-Services. In *The Semantic Web: ESWC 2018 Satellite Events, LNCS vol. 11155, pp. 187–191*. Heraklion, Greece. Springer, Cham. [HAL](https://hal.archives-ouvertes.fr/hal-01783936v1).
+
+### Demo
+
+Michel F., Faron-Zucker C. & Gandon F. (2018). Integration of Biodiversity Linked Data and Web APIs using SPARQL Micro-Services. In *Biodiversity Information Science and Standards 2: e25481 (TDWG 2018)*. Dunedin, New Zealand. Pensoft. [DOI](https://dx.doi.org/10.3897/biss.2.25481), [HAL](https://hal.archives-ouvertes.fr/hal-01856365). 
+Available online: http://sms.i3s.unice.fr/demo-sms?param=Delphinapterus+leucas
