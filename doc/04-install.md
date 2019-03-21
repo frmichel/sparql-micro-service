@@ -153,6 +153,13 @@ Usage Example:
 ```
 
 
+##### Rewriting rules for Service Descriptions and SHACL graphs
+
+Additional rewrinting rules must be set to allow dereferencing the Service Description and SHACL graphs, as well as the translation of the Service Description graph into an HTML page.
+
+Complete examples are given with appropriate cmments in the first part of the [/deployment/apache/httpd.conf](/deployment/apache/httpd.conf).
+
+
 ### Change the log level
 
 The application writes log traces in files named like ```logs/sms-<date>.log```. The default log level is NOTICE. To change it, simply update the following line in script [service.php](/src/sparqlms/service.php) with e.g. INFO or DEBUG:

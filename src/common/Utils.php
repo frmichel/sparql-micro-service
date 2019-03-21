@@ -130,12 +130,12 @@ class Utils
                     $cacheHit = true;
                     $logger->info("The JSON response was retrieved from cache.");
                     if ($logger->isHandling(Logger::DEBUG))
-                        $logger->debug("JSON response retrieved from cache: \n" . JsonLD::toString($apiResp));
+                        $logger->debug("JSON response retrieved from cache: \n" . $apiResp);
                 }
             }
             
             if (! $cacheHit) {
-                $logger->info("JSON response not found in cache.");
+                $logger->info("JSON response not found in cache or cache not active.");
                 
                 // Query the Web API
                 if ($context->hasConfigParam("http_header")) {
@@ -207,7 +207,7 @@ class Utils
         $headers = array();
         $headers[] = "Accept: application/json; q=0.9, */*; q=0.1";
         $headers[] = "User-Agent: SPARQL-Micro-Service";
-        if ($headers != null) {
+        if ($additionalHeaders != null) {
             foreach ($additionalHeaders as $hName => $hVal)
                 $headers[] = $hName . ": " . $hVal;
         }
@@ -444,18 +444,18 @@ class Utils
      *            SPARQL query
      * @return array JSON document containnig only the array (possibly empty) of bindings
      * @example The returned document would typically look like this:
-     * <pre><code>
-     * [
-     *   {
-     *      "book" : { "type": "uri", "value": "http://example.org/book/book6" } ,
-     *      "title": { "type": "literal", "value": "Harry Potter and the Half-Blood Prince" }
-     *   },
-     *   {
-     *      "book" : { "type": "uri" , "value": "http://example.org/book/book7" } ,
-     *      "title": { "type": "literal" , "value": "Harry Potter and the Deathly Hallows" }
-     *   }
-     * ]
-     * </code></pre>
+     *          <pre><code>
+     *          [
+     *          {
+     *          "book" : { "type": "uri", "value": "http://example.org/book/book6" } ,
+     *          "title": { "type": "literal", "value": "Harry Potter and the Half-Blood Prince" }
+     *          },
+     *          {
+     *          "book" : { "type": "uri" , "value": "http://example.org/book/book7" } ,
+     *          "title": { "type": "literal" , "value": "Harry Potter and the Deathly Hallows" }
+     *          }
+     *          ]
+     *          </code></pre>
      */
     static public function runSparqlSelectQuery($query)
     {

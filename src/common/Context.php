@@ -173,11 +173,19 @@ class Context
     /**
      * Read a parameter from the configuration (generic or custom)
      *
+     * @param string $param
+     *            name of the config parameter
+     * @param mixed $defaultValue
+     *            optional default value to return if the parameter does not exist
+     *            
      * @return string
      */
-    public function getConfigParam($param)
+    public function getConfigParam($param, $defaultValue = null)
     {
-        return $this->config[$param];
+        if (array_key_exists($param, $this->config))
+            return $this->config[$param];
+        else
+            return $defaultValue;
     }
 
     /**
@@ -280,8 +288,8 @@ class Context
     /**
      * Set the SPARQL query
      *
-     * @param
-     *            string q SPARQL query
+     * @param string $q
+     *            SPARQL query
      */
     public function setSparqlQuery($q)
     {

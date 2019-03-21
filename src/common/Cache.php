@@ -47,13 +47,6 @@ class Cache
     private $cacheDbName = "sparql_micro_service";
 
     /**
-     * Cache expiration time.
-     *
-     * @var \DateInterval
-     */
-    private $cacheExpiresAfter = null;
-
-    /**
      * MongoDB database collection
      *
      * @var \MongoDB\Collection
@@ -68,20 +61,16 @@ class Cache
     private function __construct($context)
     {
         $this->logger = $context->getLogger();
-
+        
         if ($context->hasConfigParam('cache_endpoint'))
             $this->cacheEndpoint = $context->getConfigParam('cache_endpoint');
-
+        
         if ($context->hasConfigParam('cache_db_name'))
             $this->cacheDbName = $context->getConfigParam('cache_db_name');
-
+        
         // Create the database client and default collection: 'cache'
         $client = new \MongoDB\Client($this->cacheEndpoint);
         $this->cacheDb = $client->selectCollection($this->cacheDbName, 'cache');
-
-        // Create the date interval corresponding to the cache expiration duration
-        $cacheExpirationSec = $context->hasConfigParam('cache_expires_after') ? $context->getConfigParam('cache_expires_after') : self::CACHE_EXP_SEC;
-        $this->cacheExpiresAfter = new \DateInterval('PT' . $cacheExpirationSec . 'S');
     }
 
     /**
@@ -94,12 +83,12 @@ class Cache
     {
         if (is_null(self::$singleton))
             self::$singleton = new Cache($context);
-
+        
         return self::$singleton;
     }
 
     /**
-     * Write a document (query response) to the cache db along with the query and an expiration date.
+     * Write a document (query response) to the cache db along with the query and the date it was obtained.
      *
      * @param string $query
      *            the Web API query. Its hash is used as a key
@@ -111,11 +100,11 @@ class Cache
     public function write($query, $resp, $service = null)
     {
         try {
-            $expDate = (new \DateTime('now'))->add($this->cacheExpiresAfter);
+            $now = (new \DateTime('now'));
             $this->cacheDb->insertOne([
                 'hash' => hash("sha256", $query),
                 'service' => $service,
-                'expires' => $expDate->format('Y-m-d H:i:s'),
+                'fetch_date' => $now->format('Y-m-d H:i:s'),
                 'query' => $query,
                 'payload' => $resp
             ]);
@@ -138,7 +127,16 @@ class Cache
             'hash' => hash("sha256", $query)
         ]);
         if ($found != null) {
-            if ((new \DateTime($found['expires'])) >= (new \DateTime('now')))
+            
+            // Create the date interval corresponding to the cache expiration duration
+            $context = Context::getInstance();
+            $cacheExpirationInterval = new \DateInterval('PT' . $context->getConfigParam('cache_expires_after', self::CACHE_EXP_SEC) . 'S');
+            $cacheExpiresAt = (new \DateTime($found['fetch_date']))->add($cacheExpirationInterval);
+            
+            if ($this->logger->isHandling(Logger::DEBUG))
+                $this->logger->debug("Cached document expires at: " . $cacheExpiresAt->format('Y-m-d H:i:s'));
+            
+            if ($cacheExpiresAt >= (new \DateTime('now')))
                 // If the expiration date is not passed, return the document
                 return $found['payload'];
             else {

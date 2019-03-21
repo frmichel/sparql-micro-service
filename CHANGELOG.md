@@ -1,12 +1,14 @@
 # SPARQL Micro-Service Changelog
 
 
-## [UNVERSIONED] 2019-03-14
+## [UNVERSIONED] 2019-03-21
 
 ### Changed
-- Github issue [#4](https://github.com/frmichel/sparql-micro-service/issues/4): support for multiple values of an argument. 
 - Add service flickr/getPhotosByTags_sd
-
+- Fix issue [#3](https://github.com/frmichel/sparql-micro-service/issues/3): document rewriting rules for HTML doc generation
+- Fix issue [#4](https://github.com/frmichel/sparql-micro-service/issues/4): support for multiple values of an argument. 
+- Fix issue [#5](https://github.com/frmichel/sparql-micro-service/issues/5): pb about cache expiration
+ 
 
 ## [0.3.1] 2019-03-04
 
