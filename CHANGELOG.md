@@ -4,7 +4,7 @@
 ## [UNVERSIONED] 2019-03-14
 
 ### Changed
-- Support for multiple values of an argument. Github issue [#4](https://github.com/frmichel/sparql-micro-service/issues/4)
+- Github issue [#4](https://github.com/frmichel/sparql-micro-service/issues/4): support for multiple values of an argument. 
 - Add service flickr/getPhotosByTags_sd
 
 
