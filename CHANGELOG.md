@@ -8,7 +8,7 @@
 - Add service flickr/getPhotosByTags_sd
 
 
-## [3.0.1] 2019-03-04
+## [0.3.1] 2019-03-04
 
 ### Changed
 - change namespace of SPARQL micro-service core vocabulary to http://ns.inria.fr/sparql-micro-service#
