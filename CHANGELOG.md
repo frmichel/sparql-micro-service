@@ -1,6 +1,13 @@
 # SPARQL Micro-Service Changelog
 
 
+## [UNVERSIONED] 2019-03-14
+
+### Changed
+- Github issue [#4](https://github.com/frmichel/sparql-micro-service/issues/4): support for multiple values of an argument. 
+- Add service flickr/getPhotosByTags_sd
+
+
 ## [3.0.1] 2019-03-04
 
 ### Changed

@@ -5,9 +5,11 @@ namespace frmichel\sparqlms;
  * This script can be provided to complement the service config.ini file.
  *
  * It receives 3 global variables:
- * - $customArgs is the set of custom arguments that have been passed to the service.
  * - $apiQuery contains the Web API query template. The script must set the parameters to
- *   produce the ready-to-run query string.
+ * produce the ready-to-run query string.
+ * - $customArgs is the set of custom arguments that have been passed to the service.
+ * It is associative array where the key is the argument name, 
+ * and the value is an array of values for that argument
  * - $logger is provided as a convenience in case the script wants to log any information.
  */
 global $apiQuery;
@@ -15,8 +17,8 @@ global $customArgs;
 global $logger;
 
 // Read the service custom arguments
-$param1 = $customArgs['param1'];
-$param2 = $customArgs['param2'];
+$param1 = $customArgs['param1'][0];
+$param2 = $customArgs['param2'][0];
 
 /*
  * ----------------- Your specific code --------------------

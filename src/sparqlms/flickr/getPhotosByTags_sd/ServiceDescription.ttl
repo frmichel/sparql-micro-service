@@ -7,10 +7,9 @@
 @prefix hydra:   <http://www.w3.org/ns/hydra/core#>.
 @prefix schema:  <http://schema.org/>.
 @prefix skos:    <http://www.w3.org/2004/02/skos/core#>.
-@prefix dwc:     <http://rs.tdwg.org/dwc/terms/>.
 @prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
 
-@base            <http://example.org/flickr/getPhotosByTaxon_sd/>.
+@base            <http://example.org/flickr/getPhotosByTags_sd/>.
 
 # This file is loaded as graph <ServiceDescription>
 <>
@@ -20,8 +19,8 @@
     sd:feature sd:BasicFederatedQuery, sd:EmptyGraphs;
     sd:resultFormat frmt:SPARQL_Results_XML, frmt:SPARQL_Results_JSON, frmt:SPARQL_Results_CSV, frmt:SPARQL_Results_TSV,
                     frmt:RDF_XML, frmt:Turtle, frmt:JSON-LD, frmt:Trig;
-    schema:name "SPARQL micro-service searching for photos of biological species on Flickr";
-    schema:description '''This SPARQL micro-service searches photos on <a href="https://flickr.com" target="_new">Flickr</a>, related to a certain taxonomic name. It takes as input a species scientific name (without authority nor date), and relies on the common convention used e.g. in the <a href="https://www.flickr.com/groups/806927@N20"><em>Encyclopedia of Life</em></a> and by <a href="https://www.flickr.com/photos/biodivlibrary"><em>Biodiversity Heritage Library</em></a> where photos are tagged with a taxonomic name formatted as: <span class="font-weight-light">taxonomy:binomial=&lt;scientific name&gt;</span>. A maximum of 100 photos are returned.''';
+    schema:name "SPARQL micro-service searching for photos on Flickr, that match all of the given tags";
+    schema:description '''This SPARQL micro-service searches photos on <a href="https://flickr.com" target="_new">Flickr</a>, that match all of the given tags. A maximum of 100 photos are returned.''';
     
     sd:defaultDataset [
         a sd:Dataset, void:Dataset;
@@ -29,12 +28,11 @@
         sd:namedGraph   [ a sd:Graph; sd:name <ServiceDescription> ];
         sd:namedGraph   [ a sd:Graph; sd:name <ShapesGraph> ];
         
-        void:vocabulary <http://schema.org/>, <http://rs.tdwg.org/dwc/terms/>, <http://www.w3.org/ns/shacl#>, <http://www.w3.org/ns/hydra/core#>;
+        void:vocabulary <http://schema.org/>, <http://www.w3.org/ns/shacl#>, <http://www.w3.org/ns/hydra/core#>;
         void:sparqlEndpoint <>;
     ];
 
-    schema:keywords "biodiversity", "lifesciences", "fauna", "flora", "species", "photography", "photo", "media";
-    schema:citation <https://www.mdpi.com/2078-2489/9/12/310>;
+    schema:keywords "photography", "flickr", "photo", "picture", "snapshot";
     schema:publisher [ a schema:Organization;
         schema:name "Université Côte d'Azur, CNRS, Inria, I3S";
         schema:logo
@@ -51,21 +49,18 @@
 
     sms:exampleQuery '''
         prefix schema: <http://schema.org/>
-        prefix dwc: <http://rs.tdwg.org/dwc/terms/>
 
         SELECT ?photo ?title ?img WHERE {
 
-            ?taxon a dwc:Taxon;
-                dwc:scientificName "Delphinus delphis";
-                schema:image ?photo.
-
             ?photo a schema:Photograph;
+                schema:keywords "brooklyn", "bicycle";
                 schema:name ?title;
                 schema:contentUrl ?img.
         }
         ''';
-    
-    sms:cacheExpiresAfter "P2592000S"^^xsd:duration;
+
+    # 432000s = 5 days
+    sms:cacheExpiresAfter "P432000S"^^xsd:duration;
 
     dct:source [
         a schema:WebAPI; schema:name "Flickr API";
@@ -77,16 +72,15 @@
 # Web API service being wrapped by this µ-service + parameters binding
 <APIService>
     a schema:SearchAction;
-    schema:documentation "The taxon scientific name must be provided by property dwc:scientificName in the SPARQL graph pattern.";
-
+    schema:documentation "Each tag is provided as a value of property schema:keyowrds in the SPARQL graph pattern.";
     a hydra:IriTemplate;
     hydra:mapping [
-        hydra:variable "name";
-        schema:description "The taxon scientific name without authorship nor date information.";
+        hydra:variable "tags";
+        schema:description "Tags that retrieved photos must be associated with.";
         hydra:required "true"^^xsd:boolean;
-        skos:example "Delphinus delphis";
+        skos:example "bicycle";
         
         # Use either hydra:property or shacl:sourceShape
-        hydra:property dwc:scientificName;
+        hydra:property schema:keywords;
         #shacl:sourceShape <ShapesGraph#NamePropertyShape>;
     ].

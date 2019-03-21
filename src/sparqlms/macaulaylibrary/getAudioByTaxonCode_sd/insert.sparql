@@ -1,7 +1,9 @@
 INSERT {
-    <http://example.org/ld/taxon/{urlencode(name)}>
+    <http://example.org/ld/taxon/{urlencode(identifier)}>
+        # Reinject the service argument
+        schema:identifier {identifier};
+
         a dwc:Taxon;
-        schema:identifier "{identifier}";
         schema:audio ?audioUri.
 
     ?audioUri a schema:AudioObject;

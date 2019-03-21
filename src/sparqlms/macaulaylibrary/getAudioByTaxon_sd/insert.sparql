@@ -1,7 +1,7 @@
 INSERT {
     <http://example.org/ld/taxon/{urlencode(name)}>
         a dwc:Taxon;
-        dwc:scientificName "{name}";
+        dwc:scientificName {name};
         schema:audio ?audioUri.
 
     ?audioUri a schema:AudioObject;

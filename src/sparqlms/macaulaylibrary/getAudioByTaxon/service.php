@@ -14,8 +14,8 @@ global $apiQuery;
 global $customArgs;
 global $logger;
 
-// Read the service custom arguments
-$name = $customArgs['name'];
+// Read the service custom arguments. There should be only one name
+$name = $customArgs['name'][0];
 
 // Call another API service to get the code associated with the taxon name
 $taxonCode = getTaxonCode($name);
