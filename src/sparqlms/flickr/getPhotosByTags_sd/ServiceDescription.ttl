@@ -76,7 +76,7 @@
     a hydra:IriTemplate;
     hydra:mapping [
         hydra:variable "tags";
-        schema:description "One tag that must be matched by retrieved photos.";
+        schema:description "Tags that retrieved photos must be associated with.";
         hydra:required "true"^^xsd:boolean;
         skos:example "bicycle";
         

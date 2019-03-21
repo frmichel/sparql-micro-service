@@ -4,7 +4,7 @@ To document SPARQL micro-services and spur their discovery, they can be describe
 
 Such descriptions can be dynamically translated into an HTML page documenting the service using content negotiation. The Web page embeds markup data (formatted as JSON-LD) representing the service as a https://schema.org/Dataset. In turn, services like Google Dataset Search can crawl and index it properly.
 
-The mechanism is described in the article [4](../README.md#Publications).
+The mechanism is described in the article [[4]](../README.md#Publications).
 
 
 ### Try it out
