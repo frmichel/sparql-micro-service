@@ -60,7 +60,7 @@ class Cache
      */
     private function __construct($context)
     {
-        $this->logger = $context->getLogger();
+        $this->logger = $context->getLogger("Cache");
         
         if ($context->hasConfigParam('cache_endpoint'))
             $this->cacheEndpoint = $context->getConfigParam('cache_endpoint');

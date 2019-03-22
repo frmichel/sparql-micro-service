@@ -24,7 +24,7 @@ class Utils
     static public function getHttpHeaders()
     {
         global $context;
-        $logger = $context->getLogger();
+        $logger = $context->getLogger("Utils");
         
         if (array_key_exists('CONTENT_TYPE', $_SERVER)) {
             $contentType = $_SERVER['CONTENT_TYPE'];
@@ -55,7 +55,7 @@ class Utils
     static public function httpBadRequest($message)
     {
         global $context;
-        $logger = $context->getLogger();
+        $logger = $context->getLogger("Utils");
         
         header('Access-Control-Allow-Origin: *');
         http_response_code(400); // Bad Request
@@ -73,7 +73,7 @@ class Utils
     static public function httpMethodNotAllowed($message)
     {
         global $context;
-        $logger = $context->getLogger();
+        $logger = $context->getLogger("Utils");
         
         header('Access-Control-Allow-Origin: *');
         http_response_code(405); // Method Not Allowed
@@ -93,7 +93,7 @@ class Utils
     static public function httpUnprocessableEntity($message)
     {
         global $context;
-        $logger = $context->getLogger();
+        $logger = $context->getLogger("Utils");
         
         header('Access-Control-Allow-Origin: *');
         http_response_code(422); // Unprocessable entity
@@ -116,7 +116,7 @@ class Utils
     static public function translateJsonToNQuads($jsonUrl, $jsonldProfile)
     {
         global $context;
-        $logger = $context->getLogger();
+        $logger = $context->getLogger("Utils");
         $useCache = $context->useCache();
         $cache = $context->getCache();
         
@@ -201,7 +201,7 @@ class Utils
     static public function loadJsonDocument($url, $additionalHeaders = null)
     {
         global $context;
-        $logger = $context->getLogger();
+        $logger = $context->getLogger("Utils");
         
         // Build the list of HTTP headers
         $headers = array();
@@ -280,7 +280,7 @@ class Utils
     static public function getQueryStringArgs($args)
     {
         global $context;
-        $logger = $context->getLogger();
+        $logger = $context->getLogger("Utils");
         
         if (array_key_exists('QUERY_STRING', $_SERVER)) {
             if ($logger->isHandling(Logger::DEBUG))
@@ -326,7 +326,7 @@ class Utils
     static private function getServiceCustomArgsFromSparqlQuery($sparqlQuery)
     {
         global $context;
-        $logger = $context->getLogger();
+        $logger = $context->getLogger("Utils");
         
         // --- Convert the SPARQL query to SPIN and load it into a temporary graph
         
@@ -460,7 +460,7 @@ class Utils
     static public function runSparqlSelectQuery($query)
     {
         global $context;
-        $logger = $context->getLogger();
+        $logger = $context->getLogger("Utils");
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("Executing SPARQL query:\n" . $query);
         

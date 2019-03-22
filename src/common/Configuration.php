@@ -49,7 +49,7 @@ class Configuration
     static public function getCustomConfig()
     {
         global $context;
-        $logger = $context->getLogger();
+        $logger = $context->getLogger("Configuration");
         
         $customCfgFile = $context->getService() . '/config.ini';
         if (file_exists($customCfgFile)) {
