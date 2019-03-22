@@ -67,30 +67,58 @@ class Context
     private $sparqlClient = null;
 
     /**
+     * Default constructor
      *
-     * @param integer $logLevel
-     *            one of Logger::INFO, Logger::WARNING, Logger::DEBUG etc. (see Monolog\Logger.php)
      * @param string $startMessage
      *            an optional message to log once the logger is initialized
      */
-    private function __construct($logLevel, $startMessage = null)
+    private function __construct($startMessage = null)
     {
         // --- Initialize the logger
         if (array_key_exists('SCRIPT_FILENAME', $_SERVER))
             $scriptName = basename($_SERVER['SCRIPT_FILENAME']);
         else
             $scriptName = basename(__FILE__);
-        $handler = new RotatingFileHandler(__DIR__ . '/../../logs/sms.log', 5, $logLevel, true, 0666);
+        $handler = new RotatingFileHandler(__DIR__ . '/../../logs/sms.log', 5, Logger::NOTICE, true, 0666);
         $handler->setFormatter(new LineFormatter("[%datetime%] %level_name%: %message%\n", null, true));
         // $handler->setFormatter(new LineFormatter("[%datetime%] %level_name%: %message% %context% %extra%\n", null, true));
         $this->logger = new Logger($scriptName);
         $this->logger->pushHandler($handler);
-        // $this->logger->pushProcessor(new IntrospectionProcessor($logLevel));
         $logger = $this->logger;
-        $logger->notice($startMessage);
+        if ($startMessage == null)
+            $logger->notice("--------- Starting service --------");
+        else
+            $logger->notice($startMessage);
         
         // --- Read the global configuration file and check query parameters
         $this->config = Configuration::readGobalConfig();
+        
+        // Set the log level
+        $log_level = $this->getConfigParam("log_level", "NOTICE");
+        switch ($log_level) {
+            case "DEBUG":
+                $handler->setLevel(Logger::DEBUG);
+                break;
+            case "INFO":
+                $handler->setLevel(Logger::INFO);
+                break;
+            case "NOTICE":
+                $handler->setLevel(Logger::NOTICE);
+                break;
+            case "WARNING":
+                $handler->setLevel(Logger::WARNING);
+                break;
+            case "ERROR":
+                $handler->setLevel(Logger::ERROR);
+                break;
+            case "CRITICAL":
+                $handler->setLevel(Logger::CRITICAL);
+                break;
+            case "ALERT":
+                $handler->setLevel(Logger::ALERT);
+                break;
+        }
+
         if ($logger->isHandling(Logger::INFO))
             $logger->info("Global configuration read from config.ini: " . print_r($this->config, TRUE));
         
@@ -113,16 +141,14 @@ class Context
     /**
      * Create and/or get singleton instance
      *
-     * @param integer $logLevel
-     *            a log level from Monolog\Logger
      * @param string $startMessage
      *            an optional message to log once the logger is initialized
      * @return Context
      */
-    public static function getInstance($logLevel = Logger::NOTICE, $startMessage = null)
+    public static function getInstance($startMessage = null)
     {
         if (is_null(self::$singleton))
-            self::$singleton = new Context($logLevel, $startMessage);
+            self::$singleton = new Context($startMessage);
         
         return self::$singleton;
     }

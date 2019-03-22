@@ -27,7 +27,7 @@ try {
     $metro->startTimer(1);
     
     // Init the context: read the global config.ini file, init the cache, logger and SPARQL client
-    $context = Context::getInstance(Logger::NOTICE, "--------- Starting SPARQL micro-service --------");
+    $context = Context::getInstance("--------- Starting SPARQL micro-service --------");
     $logger = $context->getLogger();
     $sparqlClient = $context->getSparqlClient();
     
