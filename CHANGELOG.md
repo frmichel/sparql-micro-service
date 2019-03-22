@@ -9,7 +9,7 @@
 - Fix issue [#4](https://github.com/frmichel/sparql-micro-service/issues/4): support for multiple values of an argument. 
 - Fix issue [#5](https://github.com/frmichel/sparql-micro-service/issues/5): pb about cache expiration
 - Add configuration parameter log_level in main config.ini file
-
+- Improve logging with log names
 
 ## [0.3.1] 2019-03-04
 
