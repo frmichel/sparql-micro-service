@@ -31,6 +31,18 @@ class Context
 
     /**
      *
+     * @var array array of all loggers defined
+     */
+    private $loggers = array();
+
+    /**
+     *
+     * @var \Monolog\Handler\RotatingFileHandler
+     */
+    private $logHandler = null;
+
+    /**
+     *
      * @var Cache
      */
     private $cache = null;
@@ -75,20 +87,14 @@ class Context
     private function __construct($startMessage = null)
     {
         // --- Initialize the logger
-        if (array_key_exists('SCRIPT_FILENAME', $_SERVER))
-            $scriptName = basename($_SERVER['SCRIPT_FILENAME']);
-        else
-            $scriptName = basename(__FILE__);
-        $handler = new RotatingFileHandler(__DIR__ . '/../../logs/sms.log', 5, Logger::NOTICE, true, 0666);
-        $handler->setFormatter(new LineFormatter("[%datetime%] %level_name%: %message%\n", null, true));
-        // $handler->setFormatter(new LineFormatter("[%datetime%] %level_name%: %message% %context% %extra%\n", null, true));
-        $this->logger = new Logger($scriptName);
-        $this->logger->pushHandler($handler);
-        $logger = $this->logger;
+        $this->logHandler = new RotatingFileHandler(__DIR__ . '/../../logs/sms.log', 5, Logger::NOTICE, true, 0666);
+        $this->logHandler->setFormatter(new LineFormatter("[%datetime%] %channel%.%level_name%: %message%\n", null, true));
+        
+        $this->logger = $this->getLogger("Context");
         if ($startMessage == null)
-            $logger->notice("--------- Starting service --------");
+            $this->logger->notice("--------- Starting service --------");
         else
-            $logger->notice($startMessage);
+            $this->logger->notice($startMessage);
         
         // --- Read the global configuration file and check query parameters
         $this->config = Configuration::readGobalConfig();
@@ -97,36 +103,36 @@ class Context
         $log_level = $this->getConfigParam("log_level", "NOTICE");
         switch ($log_level) {
             case "DEBUG":
-                $handler->setLevel(Logger::DEBUG);
+                $this->logHandler->setLevel(Logger::DEBUG);
                 break;
             case "INFO":
-                $handler->setLevel(Logger::INFO);
+                $this->logHandler->setLevel(Logger::INFO);
                 break;
             case "NOTICE":
-                $handler->setLevel(Logger::NOTICE);
+                $this->logHandler->setLevel(Logger::NOTICE);
                 break;
             case "WARNING":
-                $handler->setLevel(Logger::WARNING);
+                $this->logHandler->setLevel(Logger::WARNING);
                 break;
             case "ERROR":
-                $handler->setLevel(Logger::ERROR);
+                $this->logHandler->setLevel(Logger::ERROR);
                 break;
             case "CRITICAL":
-                $handler->setLevel(Logger::CRITICAL);
+                $this->logHandler->setLevel(Logger::CRITICAL);
                 break;
             case "ALERT":
-                $handler->setLevel(Logger::ALERT);
+                $this->logHandler->setLevel(Logger::ALERT);
                 break;
         }
-
-        if ($logger->isHandling(Logger::INFO))
-            $logger->info("Global configuration read from config.ini: " . print_r($this->config, TRUE));
+        
+        if ($this->logger->isHandling(Logger::INFO))
+            $this->logger->info("Global configuration read from config.ini: " . print_r($this->config, TRUE));
         
         // Set default namespaces. See other existing default namespaces in EasyRdf/Namespace.php
         if (array_key_exists('namespace', $this->config))
             foreach ($this->config['namespace'] as $nsName => $nsVal) {
-                if ($logger->isHandling(Logger::DEBUG))
-                    $logger->debug('Adding namespace: ' . $nsName . " = " . $nsVal);
+                if ($this->logger->isHandling(Logger::DEBUG))
+                    $this->logger->debug('Adding namespace: ' . $nsName . " = " . $nsVal);
                 \EasyRdf_Namespace::set($nsName, $nsVal);
             }
         
@@ -180,11 +186,20 @@ class Context
 
     /**
      *
+     * @param string $logName
+     *            logger name (aka. channel). Defaults to "default"
+     *            
      * @return \Monolog\Logger
      */
-    public function getLogger()
+    public function getLogger($logName = "default")
     {
-        return $this->logger;
+        if (! array_key_exists($logName, $this->loggers)) {
+            $newlogger = new Logger($logName);
+            $newlogger->pushHandler($this->logHandler);
+            $this->loggers[$logName] = $newlogger;
+        }
+        
+        return $this->loggers[$logName];
     }
 
     /**

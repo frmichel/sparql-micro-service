@@ -30,7 +30,7 @@ try {
     
     // Init the context: read the global config.ini file & init the logger and SPARQL client
     $context = Context::getInstance("--------- Starting SPARQL composer --------");
-    $logger = $context->getLogger();
+    $logger = $context->getLogger("sparqlcompose\service");
     $sparqlClient = $context->getSparqlClient();
     
     if (! $context->hasConfigParam('spin_endpoint'))
@@ -206,7 +206,7 @@ try {
     //
 } catch (Exception $e) {
     try {
-        $logger = Context::getInstance()->getLogger();
+        $logger = Context::getInstance()->getLogger("sparqlcompose\service");
         $logger->error((string) $e . "\n");
         $logger->notice("Returning HTTP status 500.\n");
         $logger->notice("--------- Done - SPARQL µS composition --------");

@@ -28,7 +28,7 @@ try {
     
     // Init the context: read the global config.ini file, init the cache, logger and SPARQL client
     $context = Context::getInstance("--------- Starting SPARQL micro-service --------");
-    $logger = $context->getLogger();
+    $logger = $context->getLogger("sparqlms\service");
     $sparqlClient = $context->getSparqlClient();
     
     // ------------------------------------------------------------------------------------
@@ -190,7 +190,7 @@ try {
     $metro->appendTimer($service, "Total|API", 1, 2);
 } catch (Exception $e) {
     try {
-        $logger = Context::getInstance()->getLogger();
+        $logger = Context::getInstance()->getLogger("sparqlms\service");
         $logger->error((string) $e . "\n");
         $logger->notice("Returning HTTP status 500.\n");
         $logger->notice("--------- Done - SPARQL µS execution --------");
