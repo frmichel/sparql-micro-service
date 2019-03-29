@@ -1,30 +1,29 @@
 # --
-# Service URL: http://localhost:8082/service/demo?param=Delphinus+delphis
+# Service URL: http://localhost:8080/service/demo-sparql-micro-service?param=Delphinus+delphis
 # --
 
-st:demo a st:Server ;
-    st:service "demo" ;
+st:demosms a st:Server ;
+    st:service "demo-sparql-micro-service" ;
 
     st:param [
         st:export true ;
         st:hyperlink true ;
     ] ;
 
-    st:workflow st:demoWorkflow ;
-
-    # Get the data from a static file
-#    st:content st:democontent ;
+    # Select how to get the data (query vs. static file)
+    st:workflow st:demosmsWorkflow ;
+#    st:content st:demosmsContent ;
     .
 
-# Load data from a query and apply transformation
-st:demoWorkflow a sw:Workflow ; 
+# Load data from a query
+st:demosmsWorkflow a sw:Workflow ; 
     sw:body (
         [ a sw:Query ;          sw:uri <query/query.rq> ]
         [ a sw:Transformation ; sw:uri <sttl/> ]
     ).
 
-# load data from a static file (for test purpose only)
-st:democontent a sw:Workflow ;
+# loading data from a file
+st:demosmsContent a sw:Workflow ;
     sw:body (
-        [ a sw:Load ; sw:path <static-example/data.ttl> ; sw:name st:data1 ]    
+        [ a sw:Load ; sw:path <static-example/data.ttl>  ; sw:name st:data1 ]    
     ).

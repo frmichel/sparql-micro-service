@@ -5,7 +5,7 @@
 
 CORESE=$HOME/Corese
 LOG4J=file://$CORESE/log4j2-demosms.xml
-JAR=$CORESE/corese-server-4.0.1-SNAPSHOT-jar-with-dependencies.jar
+JAR=$CORESE/corese-server-4.1.1-SNAPSHOT-jar-with-dependencies.jar
 
 PROFILE=file://$HOME/public_html/sparql-ms-live/demo/profile.ttl
 
