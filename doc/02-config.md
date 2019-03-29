@@ -16,8 +16,7 @@ Whatever the configuration method, a SPARQL micro-serivce describes how to map r
 
 In this configuration method, the micro-service folder is organized as follows:
 
-```bash
-<Web API>/<service>
+```<Web API>/<service>
     config.ini        # micro-service configuration
     profile.jsonld    # JSON-LD profile to translate the JSON response into JSON-LD
     insert.sparql     # optional SPARQL INSERT query to create triples that JSON-LD cannot create
@@ -48,8 +47,7 @@ http_header[Authorization] = "token"
 
 In this configuration method, the micro-service folder is organized as follows:
 
-```bash
-<Web API>/<service>/
+```<Web API>/<service>/
     ServiceDescription.ttl  # SPARQL Service Description describing this micro-service
     ShapesGraph.ttl         # optional SHACL description of the graphs produced by the service
     profile.jsonld          # JSON-LD profile to translate the JSON response into JSON-LD
@@ -78,7 +76,7 @@ Therefore, a companion file ```ServiceDescriptionPrivate.ttl``` may be defined, 
 An example is provided in service [flickr/getPhotosByTaxon_sd](/src/sparqlms/flickr/getPhotosByTaxon_sd).
 
 ### Shapes graph
-The service description graph can also be accompanied with a [SHACL](https://www.w3.org/TR/2017/REC-shacl-20170720/) shapes graph that specifies the type of graph that the SPARQL micro-service is designed to produce.
+The service description graph can optionally be accompanied by a [SHACL](https://www.w3.org/TR/2017/REC-shacl-20170720/) shapes graph that specifies the type of graph that the SPARQL micro-service is designed to produce.
 
 ## Re-injecting arguments in the graph produced by the micro-service
 
@@ -88,11 +86,11 @@ The micro-service then builds the response graph and evaluates the query against
 Therefore, for the graph produced to match the query graph pattern, the micro-serivce must re-inject the arguments into this graph. 
 
 **Example**. In the query below, "sunset" is the service argument.  
-```
-  ?photo
-    a schema:Photograph;
-    schema:keywords "sunset".
-    schema:url ?url.
+```sparql
+?photo
+  a schema:Photograph;
+  schema:keywords "sunset".
+  schema:url ?url.
 ```
 
 To match this query, the service must not only generate triples with the photos URLs, but also the triples with the keyword "sunset".
@@ -110,9 +108,9 @@ INSERT {
 
 ```
 
-The placeholder ```{tag}``` is replaced with "sunset" (including the double-quotes). If more than one value were provided, it will be replaced by the list of comma-separated, double-quoted values, e.g.: "sunset", "sea", ...
+The ```{tag}``` placeholder is replaced with "sunset" (including the double-quotes). If more than one value were provided, it will be replaced by the list of comma-separated, double-quoted values, e.g.: "sunset", "sea", ...
 
-In case the argument is used to build a URI, the placeholder can contain the keyword ```urlencode``` to escape special characters, as illustrated in ```<http://example.org/photo/{urlencode(tag)}>```.
+In case the argument is used to build a URI, the placeholder can contain the ```urlencode``` keyword to escape special characters, as illustrated in ```<http://example.org/photo/{urlencode(tag)}>```.
 
 
 ## Passing multiple values for the same argument
@@ -125,16 +123,16 @@ Using HTTP query string parameters, simply add the same parameter several times,
 
 Using terms of the SPARQL query graph pattern, the values are simply passed as multiple values of a predicate, example:
 
-```
-  ?photo
-    a schema:Photograph;
-    schema:keywords "keyword1", "keyword2".
-    schema:url ?url.
+```sparql
+?photo
+  a schema:Photograph;
+  schema:keywords "keyword1", "keyword2".
+  schema:url ?url.
 ```
 
 In both cases, the argument passed to the Web API will be a comma-separated list of the multiple values, example:
 
-```  https://webapi.org/service/?tags=keyword1,keyword2```
+```https://webapi.org/service/?tags=keyword1,keyword2```
 
 
 ## Mapping a Web API response to RDF triples
