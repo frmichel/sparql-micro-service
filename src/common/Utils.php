@@ -228,10 +228,14 @@ class Utils
             'https' => $streamContextOptions
         ));
         
-        if (false === ($jsonContent = file_get_contents($url, false, $jsonContext))) {
+        $jsonContent = file_get_contents($url, false, $jsonContext);
+        if ($jsonContent === false) {
             $logger->warning("Cannot load document " . $url);
             $jsonContent = null;
-        }
+        } else if ($jsonContent == null || $jsonContent == "")
+            // In case of HTTP 204 No Content, the API may return null although this should
+            // not be considered as an error. In that case, return an empty JSON document
+            $jsonContent = "{}";
         
         $headers = self::parseHttpHeaders($http_response_header);
         if ($logger->isHandling(Logger::DEBUG)) {
