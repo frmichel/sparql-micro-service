@@ -142,7 +142,7 @@ try {
     // Optional: calculate the number of triples in the temporary graph
     if ($metro->isHandling(Logger::INFO)) {
         $nbTriplesQuery = "select (count(*) as ?count) where { ?s ?p ?o }";
-        $result = $sparqlClient->queryRaw($nbTriplesQuery, "application/sparql-results+json", $namedGraphUri = $graphUri);
+        $result = $sparqlClient->queryRaw($nbTriplesQuery, "application/sparql-results+json", $defaultGraphUri = $graphUri);
         $jsonResult = json_decode($result->getBody(), true);
         $metro->appendMessage($service, "No triples", $jsonResult['results']['bindings'][0]['count']['value']);
     }
@@ -164,7 +164,7 @@ try {
         $logger->notice('Evaluating client SPARQL query against temporary graph...');
     
     // Run the query against the temporary graph
-    $result = $sparqlClient->queryRaw($sparqlQuery, $accept, $namedGraphUri = $graphUri);
+    $result = $sparqlClient->queryRaw($sparqlQuery, $accept, $defaultGraphUri = $graphUri);
     if ($logger->isHandling(Logger::INFO))
         foreach ($result->getHeaders() as $header => $headerVal)
             $logger->info('Received response header: ' . $header . ": " . $headerVal);

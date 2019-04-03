@@ -146,7 +146,7 @@ try {
     $sparqlClient->update($query);
     if ($logger->isHandling(Logger::DEBUG)) {
         // Read the graph that we just generated - just for logging
-        $result = $sparqlClient->queryRaw("CONSTRUCT WHERE { ?s ?p ?o }", "text/turtle", $namedGraphUri = $matchmakingGraph);
+        $result = $sparqlClient->queryRaw("CONSTRUCT WHERE { ?s ?p ?o }", "text/turtle", $defaultGraphUri = $matchmakingGraph);
         // $logger->debug("Matchmaking result graph:\n" . $result);
     }
     
@@ -167,7 +167,7 @@ try {
     
     if ($logger->isHandling(Logger::DEBUG)) {
         // Read the graph that we just generated - just for logging
-        $result = $sparqlClient->queryRaw("CONSTRUCT WHERE { ?s ?p ?o }", "text/turtle", $namedGraphUri = $evalFedQueryGraph);
+        $result = $sparqlClient->queryRaw("CONSTRUCT WHERE { ?s ?p ?o }", "text/turtle", $defaultGraphUri = $evalFedQueryGraph);
         // $logger->debug("Federated query result graph: \n" . $result);
     }
     
@@ -176,7 +176,7 @@ try {
     // ------------------------------------------------------------------------------------
     
     // Run the rewritten query againt the fed query result graph
-    $result = $sparqlClient->queryRaw($sparqlQuery, $accept, $namedGraphUri = $evalFedQueryGraph);
+    $result = $sparqlClient->queryRaw($sparqlQuery, $accept, $defaultGraphUri = $evalFedQueryGraph);
     if ($logger->isHandling(Logger::INFO))
         foreach ($result->getHeaders() as $header => $headerVal)
             $logger->info('Received response header: ' . $header . ": " . $headerVal);
