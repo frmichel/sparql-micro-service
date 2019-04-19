@@ -102,9 +102,9 @@ CONSTRUCT {
                     dwc:measurementValue ?measurementValue.
                 OPTIONAL { ?measure dwc:measurementUnit ?measurementUnit }
                 OPTIONAL { ?measure dwciri:measurementUnit ?measurementUnitUri }
-                FILTER (?measurementType  != 'habitat includes')
+                FILTER (?measurementType  != 'habitat includes' && ! strStarts(?measurementType, "water"))
                 #FILTER (?measurementType = "total life span" || ?measurementType = "body length (VT)" || ?measurementType = "conservation status")
-              } LIMIT 200
+              } LIMIT 20
             }
         }
 }

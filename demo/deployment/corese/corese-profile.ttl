@@ -1,5 +1,5 @@
 # --
-# Service URL: http://localhost:8080/service/demo-sparql-micro-service?param=Delphinus+delphis
+# Service URL: http://localhost:8082/service/demo-sparql-micro-service?param=Delphinus+delphis
 # --
 
 st:demosms a st:Server ;
