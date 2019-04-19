@@ -19,9 +19,6 @@ The graph below is the result of translating the response exemplified in [exampl
 ```turtle
 @prefix dwc:    <http://rs.tdwg.org/dwc/terms/> .
 @prefix dwciri: <http://rs.tdwg.org/dwc/iri/> .
-@prefix api: <http://ns.inria.fr/sparql-micro-service/api#> .
-@prefix dwc: <http://rs.tdwg.org/dwc/terms/> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 
 _:b8187 
     a                       dwc:MeasurementOrFact;

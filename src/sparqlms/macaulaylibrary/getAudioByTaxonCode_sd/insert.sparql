@@ -1,10 +1,10 @@
 INSERT {
     <http://example.org/ld/taxon/{urlencode(identifier)}>
-        # Reinject the service argument
-        schema:identifier {identifier};
-
         a dwc:Taxon;
-        schema:audio ?audioUri.
+        schema:audio ?audioUri;
+
+        # Reinject the service argument into the graph
+        schema:identifier {identifier}.
 
     ?audioUri a schema:AudioObject;
         schema:contentUrl ?contentUrl;

@@ -1,10 +1,11 @@
 INSERT {
     <http://example.org/ld/taxon/{urlencode(name)}>
-        # Reinject the service argument
-        dwc:scientificName {name};
-
         a dwc:Taxon;
-        schema:image ?photoUri.
+        schema:image ?photoUri;
+
+        # Reinject the service argument into the graph
+        dwc:scientificName {name}.
+
 
     ?photoUri a schema:Photograph;
 

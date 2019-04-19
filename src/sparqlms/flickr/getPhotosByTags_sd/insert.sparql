@@ -1,7 +1,7 @@
 INSERT {
     ?photoUri a schema:Photograph;
         
-        # Reinject the service argument
+        # Reinject the service argument into the graph
         schema:keywords         {tags};
 
         schema:name             ?title;
