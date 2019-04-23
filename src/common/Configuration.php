@@ -40,7 +40,7 @@ class Configuration
     /**
      * Read the SPARQL micro-serivce custom configuration, either from the service/config.ini file
      * or from the Service Description graph (stored in the local RDF store).
-     * 
+     *
      * In addition, parameter 'service_description' is set to false in case of config.ini and to true
      * in case of Service Description graph.
      *
@@ -54,7 +54,9 @@ class Configuration
         $customCfgFile = $context->getService() . '/config.ini';
         if (file_exists($customCfgFile)) {
             
-            // --- Read the custom service configuration file
+            // ---------------------------------------------------------------
+            // --- Read the custom service configuration from config.ini file
+            // ---------------------------------------------------------------
             
             $customCfg = parse_ini_file($customCfgFile);
             if (! $customCfg)
@@ -68,25 +70,29 @@ class Configuration
             
             $customCfg['service_description'] = false;
         } else {
-            
-            // --- Read config parameters from the service description graph
+            // ----------------------------------------------------------------------------
+            // --- Read the custom service configuration from the service description graph
+            // ----------------------------------------------------------------------------
             
             $logger->info("No custom configuration file " . $customCfgFile . ". Trying service description graph...");
             $customCfg = array();
             $customCfg['service_description'] = true;
             $serviceUri = $context->getServiceUri();
             
-            // Read Web API query string and cache expiration time
+            // --- Read Web API query string and cache expiration time from service description graph
+            
+            // Exec the SPARQL query to read the config parameters
             $query = file_get_contents('resources/read_custom_config.sparql');
             $query = str_replace('{serviceUri}', $serviceUri, $query);
             $jsonResult = Utils::runSparqlSelectQuery($query);
             if (sizeof($jsonResult) == 0)
                 throw new Exception("No service description found for service <" . $serviceUri . ">.");
-            
             $jsonResult0 = $jsonResult[0];
+            
+            // Read the Web API query string
             $customCfg['api_query'] = $jsonResult0['apiQuery']['value'];
             
-            // Variable ?expiresAfter may be unbound (optional triple pattern)
+            // Read cache expiration time: variable ?expiresAfter may be unbound (optional triple pattern)
             if (array_key_exists('expiresAfter', $jsonResult0)) {
                 $expVal = $jsonResult0['expiresAfter']['value'];
                 if (array_key_exists('datatype', $jsonResult0['expiresAfter'])) {
@@ -101,7 +107,20 @@ class Configuration
                 $customCfg['cache_expires_after'] = $expVal;
             }
             
-            // Read the service input arguments from the Hydra mapping (possibly multiple values for variable arg)
+            // --- Read optional HTTP headers
+            
+            $query = file_get_contents('resources/read_custom_config_httpheaders.sparql');
+            $query = str_replace('{serviceUri}', $serviceUri, $query);
+            $jsonResult = Utils::runSparqlSelectQuery($query);
+            
+            foreach ($jsonResult as $binding) {
+                $headerName = $binding['headerName']['value'];
+                $headerValue = $binding['headerValue']['value'];
+                $customCfg['http_header'][$headerName] = $headerValue;
+            }
+            
+            // --- Read the service input arguments from the Hydra mapping (possibly multiple values for variable arg)
+            
             $query = file_get_contents('resources/read_custom_config_args.sparql');
             $query = str_replace('{serviceUri}', $serviceUri, $query);
             $jsonResult = Utils::runSparqlSelectQuery($query);

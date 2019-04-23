@@ -1,0 +1,20 @@
+@prefix sd:      <http://www.w3.org/ns/sparql-service-description#>.
+@prefix httpvoc: <http://www.w3.org/2011/http#>.
+@prefix schema:  <http://schema.org/>.
+@prefix dct:     <http://purl.org/dc/terms/>.
+
+# Read the optional HTTP headers from the service description graph of a SPARQL micro-service
+SELECT ?headerName ?headerValue WHERE {
+
+    <{serviceUri}> 
+        a sd:Service;
+        dct:source [
+            schema:potentialAction [
+                httpvoc:headers [ rdf:rest*/rdf:first ?header ]
+            ]
+        ].
+    
+    ?header 
+        httpvoc:fieldName  ?headerName;
+        httpvoc:fieldValue ?headerValue.
+}

@@ -3,6 +3,8 @@
 @prefix schema:  <http://schema.org/>.
 @prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
 
+# Read the Web API query string template and the cache experiration period 
+# from the service description graph of a SPARQL micro-service
 SELECT ?apiQuery ?expiresAfter WHERE {
 
     <{serviceUri}> 
