@@ -1,0 +1,10 @@
+{
+  "@context": {
+    "@base": "http://ns.inria.fr/sparql-micro-service/item/",
+    "@vocab": "http://ns.inria.fr/sparql-micro-service/api#",
+    
+    "predUri": { "@type": "@id" },
+    "objUri": { "@type": "@id" },
+    "unitUri": { "@type": "@id" }
+  }
+}

@@ -49,7 +49,11 @@ for FILE in $(ls $SMSDIR/eol/*/config.ini 2> /dev/null); do
     echo "Changing $replace into $API_KEY in $FILE"
     substitute "$replace" "$API_KEY" "$FILE"
 done
-
+for FILE in $(ls $SMSDIR/eol/*/ServiceDescription*.ttl 2> /dev/null); do
+    replace='<api_personal_token>'
+    echo "Changing $replace into $API_KEY in $FILE"
+    substitute "$replace" "$API_KEY" "$FILE"
+done
 
 # --- Replace example.org with local server URL in sparql files ---
 for FILE in `ls $SMSDIR/*/*/*.sparql`; do
