@@ -88,7 +88,7 @@ class Context
     {
         // --- Initialize the logger
         $this->logHandler = new RotatingFileHandler(__DIR__ . '/../../logs/sms.log', 5, Logger::NOTICE, true, 0666);
-        $this->logHandler->setFormatter(new LineFormatter("[%datetime%] %channel%.%level_name%: %message%\n", null, true));
+        $this->logHandler->setFormatter(new LineFormatter("[%datetime%] %level_name% %channel%: %message%\n", null, true));
         
         $this->logger = $this->getLogger("Context");
         if ($startMessage == null)
