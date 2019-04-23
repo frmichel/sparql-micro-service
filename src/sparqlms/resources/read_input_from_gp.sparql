@@ -65,7 +65,7 @@ WHERE {
     # If ?obj is not a static literal/IRI nor provided by VALUES clauses, it may be provided by a FILTER
     # e.g.: FILTER (?obj = "value")
     OPTIONAL {
-        [] a sp:Filter; sp:expression [ a sp:eq; sp:arg1 ?arg1; sp:arg2 ?arg2 ].
+        [] a sp:Filter; sp:expression/(sp:arg1|sp:arg2)* [ a sp:eq; sp:arg1 ?arg1; sp:arg2 ?arg2 ].
     }
     
     BIND ( 

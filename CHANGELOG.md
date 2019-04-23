@@ -1,13 +1,15 @@
 # SPARQL Micro-Service Changelog
 
 
-## [UNVERSIONED] 2019-03-22
+## [UNVERSIONED] 2019-04-23
 
 ### Added
-- New srvice ```flickr/getPhotosByTags_sd```
+- New service ```eol/getTraitsByName_sd```
+- New service ```flickr/getPhotosByTags_sd```
 - Configuration parameter ```log_level``` in main config.ini file
 
 ### Changed
+- Fix issue [#2](https://github.com/frmichel/sparql-micro-service/issues/2): Implement http_header config param in the Service Description mode
 - Fix issue [#3](https://github.com/frmichel/sparql-micro-service/issues/3): document rewriting rules for HTML doc generation
 - Fix issue [#4](https://github.com/frmichel/sparql-micro-service/issues/4): support for multiple values of an argument. 
 - Fix issue [#5](https://github.com/frmichel/sparql-micro-service/issues/5): pb about cache expiration

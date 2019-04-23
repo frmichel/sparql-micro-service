@@ -39,74 +39,81 @@ CONSTRUCT {
     .
 
 } WHERE {
-        # First, retrieve the taxon name from the URL query string (?param=taxon+name)
-        BIND(st:get(st:param) as ?param)
-        BIND(if (bound(?param) && ?param != "", ?param, "") as ?taxonName)
+    # First, retrieve the taxon name from the URL query string (?param=taxon+name)
+    BIND(st:get(st:param) as ?param)
+    BIND(if (bound(?param) && ?param != "", ?param, "") as ?taxonName)
 
-        SERVICE <http://taxref.mnhn.fr/sparql> {
-            ?taxon a owl:Class;
-                rdfs:label ?taxonName.
-            FILTER (STRENDS(STR(?taxon), "/10.0"))
-        }
+    SERVICE <http://taxref.mnhn.fr/sparql> {
+        ?taxon a owl:Class;
+            rdfs:label ?taxonName.
+        FILTER (STRENDS(STR(?taxon), "/10.0"))
+    }
 
-        BIND(sms:flickrService("806927@N20", ?taxonName) as ?flickr)
-        OPTIONAL {
-            SERVICE SILENT ?flickr
-            { SELECT * WHERE {
-                ?photo schema:contentUrl ?img; schema:thumbnailUrl ?imgThumbnail; schema:author ?imgAuthor.
-                ?imgAuthor schema:name ?imgAuthorName; schema:url ?imgAuthorUrl.
-            } LIMIT 10 }
-        }
+    BIND(sms:flickrService("806927@N20", ?taxonName) as ?flickr)
+    OPTIONAL {
+        SERVICE SILENT ?flickr
+        { SELECT * WHERE {
+            ?photo schema:contentUrl ?img; schema:thumbnailUrl ?imgThumbnail; schema:author ?imgAuthor.
+            ?imgAuthor schema:name ?imgAuthorName; schema:url ?imgAuthorUrl.
+        } LIMIT 10 }
+    }
 
-        BIND(sms:macauleyService(?taxonName) as ?macaulay)
-        OPTIONAL {
-            SERVICE SILENT ?macaulay
-            { SELECT * WHERE {
-                ?audio
-                    schema:contentUrl ?audioUrl; schema:thumbnailUrl ?audioThumbnail;
-                    schema:mainEntityOfPage ?audioPage; schema:author ?audioAuthor; schema:description ?audioDesc.
-              } limit 6
-            }
+    OPTIONAL {
+        SERVICE SILENT <http://sms.i3s.unice.fr/sparql-ms/macaulaylibrary/getAudioByTaxon_sd>
+        { SELECT * WHERE {
+            []  a dwc:Taxon;
+                dwc:scientificName ?taxonName;
+                schema:audio ?audio.
+                
+            ?audio
+                schema:contentUrl ?audioUrl; schema:thumbnailUrl ?audioThumbnail;
+                schema:mainEntityOfPage ?audioPage; schema:author ?audioAuthor; schema:description ?audioDesc.
+          } limit 6
         }
+    }
 
-        BIND(sms:musicBrainzService(?taxonName) as ?musicbrainz)
-        OPTIONAL {
-            SERVICE SILENT ?musicbrainz
-            { [] schema:sameAs ?mbzPage; schema:name ?mbzTitle. }
-        }
+    BIND(sms:musicBrainzService(?taxonName) as ?musicbrainz)
+    OPTIONAL {
+        SERVICE SILENT ?musicbrainz
+        { [] schema:sameAs ?mbzPage; schema:name ?mbzTitle. }
+    }
 
-        BIND(sms:bhlService(?taxonName) as ?bhl)
-        OPTIONAL {
-            SERVICE SILENT ?bhl
-            { SELECT * WHERE {
-                ?article
-                    schema:name ?articleTitle;
-                    schema:thumbnailUrl ?articleThumbnailUrl;
-                    schema:author ?articleAuthorName;
-                    schema:mainEntityOfPage ?articlePage;
-                    schema:isPartOf [
-                        schema:name ?articleContainerTitle;
-                        schema:datePublished ?articleDate;
-                    ].
-              } LIMIT 6
-            }
-            BIND( CONCAT(?articleTitle, ". ", ?articleContainerTitle, " (", ?articleDate, ").") AS ?articleCitation )
+    BIND(sms:bhlService(?taxonName) as ?bhl)
+    OPTIONAL {
+        SERVICE SILENT ?bhl
+        { SELECT * WHERE {
+            ?article
+                schema:name ?articleTitle;
+                schema:thumbnailUrl ?articleThumbnailUrl;
+                schema:author ?articleAuthorName;
+                schema:mainEntityOfPage ?articlePage;
+                schema:isPartOf [
+                    schema:name ?articleContainerTitle;
+                    schema:datePublished ?articleDate;
+                ].
+          } LIMIT 6
         }
+        BIND( CONCAT(?articleTitle, ". ", ?articleContainerTitle, " (", ?articleDate, ").") AS ?articleCitation )
+    }
 
-        BIND(sms:eolService(?taxonName) as ?eol)
-        OPTIONAL {
-            SERVICE SILENT ?eol
-            { SELECT * WHERE {
-                ?measure a dwc:MeasurementOrFact;
-                    dwc:measurementType ?measurementType;
-                    dwc:measurementValue ?measurementValue.
-                OPTIONAL { ?measure dwc:measurementUnit ?measurementUnit }
-                OPTIONAL { ?measure dwciri:measurementUnit ?measurementUnitUri }
-                FILTER (?measurementType  != 'habitat includes' && ! strStarts(?measurementType, "water"))
-                #FILTER (?measurementType = "total life span" || ?measurementType = "body length (VT)" || ?measurementType = "conservation status")
-              } LIMIT 20
-            }
+    OPTIONAL {
+        SERVICE SILENT <http://sms.i3s.unice.fr/sparql-ms/eol/getTraitsByTaxon_sd>
+        { SELECT * WHERE {
+            []  a dwc:Taxon;
+                dwc:scientificName ?taxonName;
+                dct:relation ?measure.
+
+            ?measure a dwc:MeasurementOrFact;
+                dwc:measurementType ?measurementType;
+                dwc:measurementValue ?measurementValue.
+            OPTIONAL { ?measure dwc:measurementUnit ?measurementUnit }
+            OPTIONAL { ?measure dwciri:measurementUnit ?measurementUnitUri }
+            
+            FILTER (?measurementType  != 'habitat includes' && ! strStarts(?measurementType, "water"))
+            
+          } LIMIT 20
         }
+    }
 }
 
 
@@ -115,15 +122,9 @@ function sms:flickrService(?group_id, ?biname) {
         "group_id=", encode_for_uri(?group_id),
         "&tags=", encode_for_uri(concat("taxonomy:binomial=", ?biname))))
 }
-function sms:macauleyService(?name) {
-    IRI(concat("http://sms.i3s.unice.fr/sparql-ms/macaulaylibrary/getAudioByTaxon?name=", encode_for_uri(?name)))
-}
 function sms:musicBrainzService(?name) {
     IRI(concat("http://sms.i3s.unice.fr/sparql-ms/musicbrainz/getSongByName?name=", encode_for_uri(?name)))
 }
 function sms:bhlService(?name) {
     IRI(concat("http://sms.i3s.unice.fr/sparql-ms/bhl/getArticlesByTaxon?name=", encode_for_uri(?name)))
-}
-function sms:eolService(?name) {
-    IRI(concat("http://sms.i3s.unice.fr/sparql-ms/eol/getTraitsByTaxon?name=", encode_for_uri(?name)))
 }

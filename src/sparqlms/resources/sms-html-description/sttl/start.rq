@@ -6,13 +6,13 @@
 
 template st:start {
 
-    format { <../tpl1_start.html> ?name ?description ?serviceUrl  }
-    
+    format { <../tpl1_start.html> ?name ?boundDescription ?serviceUrl  }
+
     # Generate one line for each argument of the SPARQL micro-service
     st:call-template(st:argument)
-    
-    format { <../tpl3_end.html> ?serviceUrl ?shapesGraph ?exampleQuery st:call-template(st:jsonld-markup) }
-    
+
+    format { <../tpl3_end.html> ?serviceUrl ?boundShapesGraph ?boundExampleQuery st:call-template(st:jsonld-markup) }
+
 } where {
     # Retrieve the service URI from the URL query string (?param=http://example.org/service)
     BIND(st:get(st:param) as ?param)
@@ -20,13 +20,16 @@ template st:start {
 
     ?service
         a sd:Service;
-        sd:endpoint ?serviceUrl.
-        
+        sd:endpoint ?serviceUrl;
+        schema:name ?name;
+        .
+
     OPTIONAL { ?service schema:description ?description }
-    
-    OPTIONAL { ?service schema:name ?name }
-    
+    BIND(coalesce(?description, "") as ?boundDescription)
+
     OPTIONAL { ?service sd:defaultDataset [ sd:defaultGraph [ shacl:shapesGraph ?shapesGraph ]] }
+    BIND(coalesce(?shapesGraph, "") as ?boundShapesGraph)
 
     OPTIONAL { ?service sms:exampleQuery ?exampleQuery }
+    BIND(coalesce(?exampleQuery, "") as ?boundExampleQuery)
 }
