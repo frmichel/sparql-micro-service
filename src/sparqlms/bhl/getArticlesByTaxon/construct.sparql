@@ -1,4 +1,4 @@
-INSERT {
+CONSTRUCT {
     ?articleUri
         a schema:ScholarlyArticle;
         schema:mainEntityOfPage ?partUrl;

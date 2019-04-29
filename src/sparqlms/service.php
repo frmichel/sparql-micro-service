@@ -57,10 +57,11 @@ try {
         $sparqlQuery = Utils::getSparqlQuery();
         if ($sparqlQuery == "")
             Utils::httpBadRequest("Empty SPARQL query.");
-    } else
-        $sparqlQuery = "";
-    
-    $logger->notice("Client SPARQL query (html special chars encoded):\n" . htmlspecialchars($sparqlQuery));
+        $logger->notice("Client SPARQL query (html special chars encoded):\n" . htmlspecialchars($sparqlQuery));
+    } else {
+        $sparqlQuery = "CONSTRUCT WHERE { ?s ?p ?o }";
+        $logger->notice("No SPARQL query provided in ld mode. Setting URI dereferencing query:\n" . $sparqlQuery);
+    }
     $context->setSparqlQuery($sparqlQuery);
     
     // ------------------------------------------------------------------------------------
@@ -100,27 +101,30 @@ try {
     $serializedQuads = ($apiQuery == "") ? "" : Utils::translateJsonToNQuads($apiQuery, $service . '/profile.jsonld');
     $metro->stopTimer(2);
     
-    // Query string set to empty string in case an error occured.
-    
     // ------------------------------------------------------------------------------------
-    // --- Populate the temporary graph
+    // --- Create the temporary graph
     // ------------------------------------------------------------------------------------
     
-    // URI of the temporary work graph
-    $graphUri = $context->getConfigParam('root_url') . '/tempgraph' . uniqid("-", true);
+    // URIs of the temporary work graphs
+    $apiGraphUri = $context->getConfigParam('root_url') . '/api-graph' . uniqid("-", true);
+    $respGraphUri = $context->getConfigParam('root_url') . '/resp-graph' . uniqid("-", true);
     
     // Insert the triples generated from the Web API response
-    $logger->info("Creating temporary graph: <" . $graphUri . ">");
-    $query = "INSERT DATA { GRAPH <" . $graphUri . "> {\n" . $serializedQuads . "\n}}\n";
+    if ($logger->isHandling(Logger::INFO))
+        $logger->info("Creating temporary graph: <" . $apiGraphUri . ">");
+    $query = "INSERT DATA { GRAPH <" . $apiGraphUri . "> {\n" . $serializedQuads . "\n}}\n";
     $sparqlClient->update($query);
     
     // Add the triples for which this SPARQL service is meant
-    $sparqlInsert = $service . '/insert.sparql';
-    if ($querymode == 'sparql' && file_exists($sparqlInsert)) {
-        $logger->notice("Executing SPARQL INSERT query from file: " . $sparqlInsert);
-        $query = "WITH <" . $graphUri . ">\n" . file_get_contents($sparqlInsert);
+    $sparqlConstr = $service . '/construct.sparql';
+    if (file_exists($sparqlConstr)) {
         
-        // Reinject service custom arguments into the INSERT query
+        // Execute the construct query against the temp graph that was just created
+        $logger->notice("Executing SPARQL CONSTRUCT query from file: " . $sparqlConstr);
+        $query = file_get_contents($sparqlConstr);
+        
+        // Reinject the service arguments into the CONSTRUCT query.
+        // See doc/02-config.md#re-injecting-arguments-in-the-graph-produced-by-the-micro-service
         $sparqlVal = "";
         foreach ($customArgs as $argName => $argVal) {
             // In case there are multiple values, they are injected like "val1", "val2"...
@@ -135,36 +139,46 @@ try {
         }
         
         if ($logger->isHandling(Logger::INFO))
-            $logger->info("Generating triples with INSERT query:\n" . $query);
+            $logger->info("Generating additional triples with CONSTRUCT query:\n" . $query);
+        $constrResult = $sparqlClient->queryRaw($query, "text/turtle", $defaultGraphUri = $apiGraphUri);
+        
+        // With the result of the construct, create a new insert data query
+        $prefixes = "";
+        $triples = "";
+        foreach (explode("\n", $constrResult->getBody()) as $line)
+            if (stripos($line, '@prefix') === 0 || stripos($line, 'prefix') === 0)
+                $prefixes .= $line . "\n";
+            else
+                $triples .= "    " . $line . "\n";
+        
+        // And create a new temp graph with the result of the construct
+        $logger->info("Creating temporary graph: <" . $respGraphUri . ">");
+        $query = $prefixes . "\nINSERT DATA { \n  GRAPH <" . $respGraphUri . "> {\n" . $triples . "\n}}\n";
+        if ($logger->isHandling(Logger::DEBUG))
+            $logger->DEBUG("Creating temporary graph: <" . $respGraphUri . "> with insert data query:\n" . $query);
         $sparqlClient->update($query);
     }
     
-    // Optional: calculate the number of triples in the temporary graph
+    // Optional: calculate the number of triples in the temporary graphs
     if ($metro->isHandling(Logger::INFO)) {
-        $nbTriplesQuery = "select (count(*) as ?count) where { ?s ?p ?o }";
-        $result = $sparqlClient->queryRaw($nbTriplesQuery, "application/sparql-results+json", $defaultGraphUri = $graphUri);
+        $nbTriplesQuery = "SELECT (COUNT(*) AS ?count) FROM <" . $apiGraphUri . "> WHERE { ?s ?p ?o }";
+        $result = $sparqlClient->queryRaw($nbTriplesQuery, "application/sparql-results+json");
         $jsonResult = json_decode($result->getBody(), true);
-        $metro->appendMessage($service, "No triples", $jsonResult['results']['bindings'][0]['count']['value']);
+        $metro->appendMessage($service, "No triples generated with JSON-LD profile", $jsonResult['results']['bindings'][0]['count']['value']);
+        
+        $nbTriplesQuery = "SELECT (COUNT(*) AS ?count) FROM <" . $respGraphUri . "> WHERE { ?s ?p ?o }";
+        $result = $sparqlClient->queryRaw($nbTriplesQuery, "application/sparql-results+json");
+        $jsonResult = json_decode($result->getBody(), true);
+        $metro->appendMessage($service, "No triples generated with CONSTRUCT query", $jsonResult['results']['bindings'][0]['count']['value']);
     }
     
     // ------------------------------------------------------------------------------------
-    // --- Run the SPARQL query against temporary graph
+    // --- Run the client's SPARQL query against the response temporary graph
     // ------------------------------------------------------------------------------------
     
-    if ($querymode == 'ld') {
-        $sparqlConstruct = $service . '/construct.sparql';
-        if (file_exists($sparqlConstruct)) {
-            $logger->notice("Executing SPARQL CONSTRUCT query from file: " . $sparqlConstruct);
-            $sparqlQuery = file_get_contents($sparqlConstruct);
-            if ($logger->isHandling(Logger::DEBUG))
-                $logger->debug("Generating triples with CONSTRUCT query:\n" . $sparqlQuery);
-        } else
-            throw new Exception("LD mode required but no SPARQL CONSTRUCT query is defined.");
-    } else
-        $logger->notice('Evaluating client SPARQL query against temporary graph...');
+    $logger->notice('Evaluating client SPARQL query against temporary graph...');
     
-    // Run the query against the temporary graph
-    $result = $sparqlClient->queryRaw($sparqlQuery, $accept, $defaultGraphUri = $graphUri);
+    $result = $sparqlClient->queryRaw($sparqlQuery, $accept, $defaultGraphUri = $respGraphUri);
     if ($logger->isHandling(Logger::INFO))
         foreach ($result->getHeaders() as $header => $headerVal)
             $logger->info('Received response header: ' . $header . ": " . $headerVal);
@@ -178,12 +192,14 @@ try {
     header('Server: SPARQL-Micro-Service');
     header('Access-Control-Allow-Origin: *');
     if ($logger->isHandling(Logger::DEBUG))
-        $logger->debug("Sending response body: " . $result->getBody());
+        $logger->debug("Sending response body:\n" . $result->getBody());
     print($result->getBody());
     
-    // Drop the temporary graph
-    $logger->info("Dropping graph: <" . $graphUri . ">");
-    $sparqlClient->update("DROP SILENT GRAPH <" . $graphUri . ">");
+    // Drop the temporary graphs
+    $logger->info("Dropping graph: <" . $apiGraphUri . ">");
+    $sparqlClient->update("DROP SILENT GRAPH <" . $apiGraphUri . ">");
+    $logger->info("Dropping graph: <" . $respGraphUri . ">");
+    $sparqlClient->update("DROP SILENT GRAPH <" . $respGraphUri . ">");
     $logger->notice("--------- Done - SPARQL µS execution --------");
     
     $metro->stopTimer(1);

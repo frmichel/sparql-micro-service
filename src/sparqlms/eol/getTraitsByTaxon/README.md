@@ -3,7 +3,7 @@
 This service searches the [Encyclopedia of Life traits bank](http://eol.org/traitbank) for data related to a given taxon name.
 It uses the EoL trait bank v3 API that provides a [Neo4J Cypher](https://neo4j.com/docs/cypher-manual/current/) interface.
 
-Cypher query results are JSON-based, therefore the SPARQL micro-service uses the same process as with any other JSON-based Web APIs to translate the response into RDF: first it applies a JSON-LD profile, then it runs an INSERT query to augment the produced graph with additional triples using domain ontologies.
+Cypher query results are JSON-based, therefore the SPARQL micro-service uses the same process as with any other JSON-based Web APIs to translate the response into RDF: first it applies a JSON-LD profile, then it runs a CONSTRUCT query to augment the produced graph with additional triples using domain ontologies.
 
 The produced graph consists of dwc:MeasurementOrFact instances having at least a measurement type and value.
 

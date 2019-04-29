@@ -47,15 +47,13 @@ src/sparqlms/
         <service>/
             config.ini        # micro-service configuration
             profile.jsonld    # JSON-LD profile to translate the JSON response into JSON-LD
-            insert.sparql     # optional SPARQL INSERT query to create triples that JSON-LD cannot create
-            construct.sparql  # optional SPARQL CONSTRUCT query used to process URI dereferencing queries
+            construct.sparql  # optional SPARQL CONSTRUCT query to create triples that JSON-LD cannot create
             service.php       # optional script to perform specific actions (see folder 'manual_config_example')
                               
         # Service with arguments passed in the SPARQL query graph pattern
         <service>/
             profile.jsonld    # JSON-LD profile to translate the JSON response into JSON-LD
-            insert.sparql     # optional SPARQL INSERT query to create triples that JSON-LD cannot create
-            construct.sparql  # optional SPARQL CONSTRUCT query used to process URI dereferencing queries
+            construct.sparql  # optional SPARQL CONSTRUCT query to create triples that JSON-LD cannot create
             service.php       # optional script to perform specific actions (see folder 'manual_config_example')
             ServiceDescription.ttl # SPARQL Service Description describing this micro-service
             ShapesGraph.ttl   # optional SHACL description of the graphs produced by the service
