@@ -1,7 +1,11 @@
 # SPARQL Micro-Service Changelog
 
 
-## [UNVERSIONED] 2019-04-23
+## [0.4.0] 2019-04-29
+
+**CONFIGURATION CHANGE requires upgrade of existing micro-services**: in this version, files ```insert.sparql``` are removed. Instead, only a ```construct.sparql``` may be defined that replaces the function of both ```insert.sparql``` and ```construct.sparql``` in earlier versions.
+
+**Upgrade procedure**: simply remove ```insert.sparql``` from services that have both an ```insert.sparql``` and ```construct.sparql```, or rename ```insert.sparql``` into ```construct.sparql``` and replace the INSERT with CONSTRUCT within the queries themselves.
 
 ### Added
 - New service ```eol/getTraitsByName_sd```
@@ -9,6 +13,7 @@
 - Configuration parameter ```log_level``` in main config.ini file
 
 ### Changed
+- Removal of files ```insert.sparql```. Instead, only a ```construct.sparql``` may be defined that replaces the function of both ```insert.sparql``` and ```construct.sparql``` in versions 0.3.*.
 - Fix issue [#2](https://github.com/frmichel/sparql-micro-service/issues/2): Implement http_header config param in the Service Description mode
 - Fix issue [#3](https://github.com/frmichel/sparql-micro-service/issues/3): document rewriting rules for HTML doc generation
 - Fix issue [#4](https://github.com/frmichel/sparql-micro-service/issues/4): support for multiple values of an argument. 
