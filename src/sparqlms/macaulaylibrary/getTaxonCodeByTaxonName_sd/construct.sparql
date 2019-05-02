@@ -1,4 +1,4 @@
-INSERT {
+CONSTRUCT {
     <http://example.org/ld/taxon/{urlencode(name)}>
         a dwc:Taxon;
         schema:identifier ?code;

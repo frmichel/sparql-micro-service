@@ -1,11 +1,11 @@
-INSERT {
-    <http://example.org/ld/taxon/{urlencode(identifier)}>
+CONSTRUCT {
+    <http://example.org/ld/taxon/{urlencode(name)}>
         a dwc:Taxon;
         schema:audio ?audioUri;
 
         # Reinject the service argument into the graph
-        schema:identifier {identifier}.
-
+        dwc:scientificName {name}.
+        
     ?audioUri a schema:AudioObject;
         schema:contentUrl ?contentUrl;
         schema:thumbnailUrl ?thumbnail;

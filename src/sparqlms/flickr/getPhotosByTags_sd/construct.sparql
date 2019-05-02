@@ -1,21 +1,16 @@
-INSERT {
-    <http://example.org/ld/taxon/{urlencode(name)}>
-        a dwc:Taxon;
-        schema:image ?photoUri;
-
-        # Reinject the service argument into the graph
-        dwc:scientificName {name}.
-
-
+CONSTRUCT {
     ?photoUri a schema:Photograph;
+        
+        # Reinject the service argument into the graph
+        schema:keywords         {tags};
 
-        schema:name ?title;
-        schema:contentUrl ?img; foaf:depiction ?img;
-        schema:thumbnailUrl ?thumbnail;
+        schema:name             ?title;
+        schema:contentUrl       ?img; foaf:depiction ?img;
+        schema:thumbnailUrl     ?thumbnail;
 
         schema:mainEntityOfPage ?pageUrl;
-        schema:fileFormat "image/jpeg";
-        schema:dateCreated ?dateTaken;
+        schema:fileFormat       "image/jpeg";
+        schema:dateCreated      ?dateTaken;
 
         schema:author [ 
             a schema:Person;
@@ -25,10 +20,10 @@ INSERT {
 }
 WHERE {
     ?photo 
-        api:id ?id;
-        api:title ?title;
-        api:owner ?owner;
-        api:secret ?secret; api:server ?server; api:farm ?farm.
+        api:id      ?id; api:secret ?secret; api:server ?server; api:farm ?farm;
+        api:title   ?title;
+        api:owner   ?owner;
+        .
 
     OPTIONAL { ?photo api:ownername ?ownerName }
     OPTIONAL { ?photo api:datetaken ?dateTaken }

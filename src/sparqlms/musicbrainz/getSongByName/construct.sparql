@@ -1,4 +1,4 @@
-INSERT {
+CONSTRUCT {
     ?work schema:sameAs ?page;
         schema:name ?title;
     .

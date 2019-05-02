@@ -1,5 +1,15 @@
-INSERT {
-    [] a dwc:MeasurementOrFact;
+CONSTRUCT {
+    <http://example.org/ld/taxon/{urlencode(name)}>
+        a dwc:Taxon;
+        
+        # ?data is a per-measurement blank node for which we typically don't want to create URIs
+        dct:relation ?data;
+
+        # Reinject the service argument into the graph
+        dwc:scientificName {name}.
+
+    ?data
+        a dwc:MeasurementOrFact;
 
         dwc:measurementType ?predName;
         dwciri:measurementType ?predUri;

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This script customizes the configuration files (config.ini), SPARQL files (insert.sparql, construct.sparql)
+# This script customizes the configuration files (config.ini), SPARQL files (construct.sparql)
 # and service description files (ServiceDescription.ttl) of each SPARQL micro-serive by replacing 
 # the "example.org" hostname and "<api_key>" values commited on the public repo.
 #
