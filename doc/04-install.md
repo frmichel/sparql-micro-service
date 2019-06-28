@@ -137,7 +137,7 @@ Here we describe the example of the Flickr Web API.
 Services ```flickr/getPhotosByGroupByTag``` and ```flickr/getPhotosByTaxon_sd``` generate RDF triples with photo URIs formatted as follows:
 ```http://example.org/ld/flickr/photo/<identifier>```, where ```<identifier>``` is the Flickr internal identifier.
 
-A lookup to such a URI is rewritten by the rule below to invoke service ```flickr/getPhotoById``` that is specifically designed to dereference such URIs:
+A lookup to such a URI is rewritten by the rule below that invokes script  ```service.php``` with parameter ```querymode``` set to ```ld``` and ```service``` set to ```flickr/getPhotoById```:
 ```
     RewriteRule "^/ld/flickr/photo/(.*)$" http://example.org/~userdir/sparqlms/src/sparqlms/service.php?querymode=ld&service=flickr/getPhotoById&query=&photo_id=$1 [P,L]
 ```

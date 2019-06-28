@@ -59,7 +59,7 @@ class Utils
         
         header('Access-Control-Allow-Origin: *');
         http_response_code(400); // Bad Request
-        $logger->error($message);
+        $logger->warn($message);
         print("Erroneous request: " . $message . "\n");
         $logger->notice("--------- Done - SPARQL µS execution --------");
         exit(0);
@@ -78,7 +78,7 @@ class Utils
         
         header('Access-Control-Allow-Origin: *');
         http_response_code(405); // Method Not Allowed
-        $logger->error($message);
+        $logger->warn($message);
         print("Erroneous request: " . $message . "\n");
         $logger->notice("--------- Done - SPARQL µS execution --------");
         exit(0);
@@ -99,7 +99,7 @@ class Utils
         
         header('Access-Control-Allow-Origin: *');
         http_response_code(422); // Unprocessable entity
-        $logger->error($message);
+        $logger->warn($message);
         print("Invalid request: " . $message . "\n");
         $logger->notice("--------- Done - SPARQL µS execution --------");
         exit(0);
