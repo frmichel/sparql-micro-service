@@ -49,7 +49,8 @@ class Context
 
     /**
      * Configuration parameters: this includes the main config file (./config.ini)
-     * as well as the custom service config file (./<service name>/config.ini)
+     * as well as the custom service provded either thourhg the service config file (./<service name>/config.ini)
+     * or the service description graph (./<service name>/ServiceDescription.ttl)
      *
      * @var array
      */
@@ -136,12 +137,8 @@ class Context
                 \EasyRdf_Namespace::set($nsName, $nsVal);
             }
         
-        // --- Initialize the client to the local RDF store and SPARQL endpoint
+        // --- Initialize the SPARQL client to talk to the SPARQL endpoint from the config
         $this->sparqlClient = new EasyRdf_Sparql_Client($this->getConfigParam('sparql_endpoint'));
-        
-        // --- Initialize the cache database connection (must be done after the custom config has been loaded and merged, to get the expiration time)
-        if ($this->useCache())
-            $this->cache = Cache::getInstance($this);
     }
 
     /**
@@ -175,7 +172,7 @@ class Context
 
     /**
      * Wether to use the cache or not.
-     * Defaults to false if not in the configuration file
+     * Defaults to false if not in the configuration
      *
      * @return boolean
      */
@@ -185,6 +182,7 @@ class Context
     }
 
     /**
+     * Create named loggers
      *
      * @param string $logName
      *            logger name (aka. channel). Defaults to "default"

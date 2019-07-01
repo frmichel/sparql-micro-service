@@ -3,9 +3,9 @@
 @prefix schema:  <http://schema.org/>.
 @prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
 
-# Read the Web API query string template and the cache experiration period 
+# Read the Web API query string template and other config parameters
 # from the service description graph of a SPARQL micro-service
-SELECT ?apiQuery ?expiresAfter WHERE {
+SELECT ?apiQuery ?expiresAfter ?addProvenance WHERE {
 
     <{serviceUri}> 
         a sd:Service;
@@ -13,7 +13,7 @@ SELECT ?apiQuery ?expiresAfter WHERE {
             schema:potentialAction [ hydra:template ?apiQuery ]
         ].
         
-   OPTIONAL { 
-        <{serviceUri}> sms:cacheExpiresAfter ?expiresAfter.
-    }
+   OPTIONAL { <{serviceUri}> sms:cacheExpiresAfter ?expiresAfter. }
+
+   OPTIONAL { <{serviceUri}> sms:addProvenance ?addProvenance. }
 }

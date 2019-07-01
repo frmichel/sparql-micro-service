@@ -7,6 +7,7 @@ namespace frmichel\sparqlms;
 require_once '../../vendor/autoload.php';
 
 use Monolog\Logger;
+use frmichel\sparqlms\common\Cache;
 use frmichel\sparqlms\common\Context;
 use frmichel\sparqlms\common\Metrology;
 use frmichel\sparqlms\common\Utils;
@@ -32,19 +33,20 @@ try {
     $sparqlClient = $context->getSparqlClient();
     
     // ------------------------------------------------------------------------------------
-    // --- Parse the HTTP query, retrieve mandatory arguments
+    // --- Parse the HTTP query, retrieve mandatory arguments and SPARQL query
     // ------------------------------------------------------------------------------------
     
     // Read the service and querymode arguments
     $params = Utils::getQueryStringArgs($context->getConfigParam('parameter'));
+    
     $service = $params['service'][0];
-    $querymode = $params['querymode'][0];
     if ($service != '')
         $context->setService($service);
     else
         throw new Exception("Invalid configuration: empty argument 'service'.");
     $logger->notice("Query parameter (html special chars encoded) 'service': " . htmlspecialchars($service));
     
+    $querymode = $params['querymode'][0];
     if ($querymode != 'sparql' && $querymode != 'ld')
         throw new Exception("Invalid argument 'querymode': should be one of 'sparql' or 'ld'.");
     $logger->notice("Query parameter (html special chars encoded) 'querymode': " . htmlspecialchars($querymode));
@@ -59,17 +61,27 @@ try {
             Utils::httpBadRequest("Empty SPARQL query.");
         $logger->notice("Client SPARQL query (html special chars encoded):\n" . htmlspecialchars($sparqlQuery));
     } else {
+        // No SPARQL query is provided if querymode is 'ld': set a default construct query
         $sparqlQuery = "CONSTRUCT WHERE { ?s ?p ?o }";
         $logger->notice("No SPARQL query provided in ld mode. Setting URI dereferencing query:\n" . $sparqlQuery);
     }
     $context->setSparqlQuery($sparqlQuery);
     
     // ------------------------------------------------------------------------------------
-    // --- Build the Web API query string and call the service
+    // --- Read the service custom configuration (from config.ini or from the Service Description 
+    //     graph (stored in the local RDF store)), and init the cache DB connection
     // ------------------------------------------------------------------------------------
     
-    // Read the service-specific configuration, either from the config.ini file or from the service description graph
     $context->readCustomConfig();
+    
+    // Initialize the cache database connection
+    // (must be done after the custom config has been loaded and merged, to get the expiration time)
+    if ($context->useCache())
+        $context->cache = Cache::getInstance($context);
+    
+    // ------------------------------------------------------------------------------------
+    // --- Build the Web API query string and call the service
+    // ------------------------------------------------------------------------------------
     
     // Read the Web API query string template
     $apiQuery = $context->getConfigParam('api_query');

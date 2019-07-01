@@ -79,7 +79,7 @@ class Configuration
             $customCfg['service_description'] = true;
             $serviceUri = $context->getServiceUri();
             
-            // --- Read Web API query string and cache expiration time from service description graph
+            // --- Read Web API query string and config parameters from the service description graph
             
             // Exec the SPARQL query to read the config parameters
             $query = file_get_contents('resources/read_custom_config.sparql');
@@ -87,24 +87,35 @@ class Configuration
             $jsonResult = Utils::runSparqlSelectQuery($query);
             if (sizeof($jsonResult) == 0)
                 throw new Exception("No service description found for service <" . $serviceUri . ">.");
-            $jsonResult0 = $jsonResult[0];
-            
+            $jsonResult0 = $jsonResult[0]; // There should be no more than one result (max one value for each parameter)
+                                           
             // Read the Web API query string
             $customCfg['api_query'] = $jsonResult0['apiQuery']['value'];
             
             // Read cache expiration time: variable ?expiresAfter may be unbound (optional triple pattern)
             if (array_key_exists('expiresAfter', $jsonResult0)) {
-                $expVal = $jsonResult0['expiresAfter']['value'];
+                $configParamVal = $jsonResult0['expiresAfter']['value'];
                 if (array_key_exists('datatype', $jsonResult0['expiresAfter'])) {
-                    $expType = $jsonResult0['expiresAfter']['datatype'];
-                    if ($expType != "http://www.w3.org/2001/XMLSchema#duration")
-                        throw new Exception("Invalid datatype for sms:cacheExpiresAfter: should be an xsd:duration.");
+                    $configParamType = $jsonResult0['expiresAfter']['datatype'];
+                    if ($configParamType != "http://www.w3.org/2001/XMLSchema#duration")
+                        throw new Exception("Invalid datatype for sms:cacheExpiresAfter: should be xsd:duration.");
                     // Remove the starting 'P' and the last character
                     // @todo we assume the last character is 'S' for seconds, but that could be M, H...
                     // see https://www.w3schools.com/XML/schema_dtypes_date.asp
-                    $expVal = substr($expVal, 1, strlen($expVal) - 2);
+                    $configParamVal = substr($configParamVal, 1, strlen($configParamVal) - 2);
                 }
-                $customCfg['cache_expires_after'] = $expVal;
+                $customCfg['cache_expires_after'] = $configParamVal;
+            }
+            
+            // Read the provenance information boolean: may be unbound (optional triple pattern)
+            if (array_key_exists('addProvenance', $jsonResult0)) {
+                $configParamVal = $jsonResult0['addProvenance']['value'];
+                if (array_key_exists('datatype', $jsonResult0['addProvenance'])) {
+                    $configParamType = $jsonResult0['addProvenance']['datatype'];
+                    if ($configParamType != "http://www.w3.org/2001/XMLSchema#boolean")
+                        throw new Exception("Invalid datatype for sms:addProvenance: should be xsd:boolean.");
+                }
+                $customCfg['add_provenance'] = strcasecmp($configParamVal, "true");
             }
             
             // --- Read optional HTTP headers

@@ -62,6 +62,9 @@
     # 432000s = 5 days
     sms:cacheExpiresAfter "P432000S"^^xsd:duration;
 
+    # Add provenance information to the graph generated at each invocation
+    sms:addProvenance "false"^^xsd:boolean;
+    
     dct:source [
         a schema:WebAPI; schema:name "Flickr API";
         schema:url <https://www.flickr.com/services/api/>;
