@@ -10,13 +10,20 @@ sms:Service
     schema:description "The class of SPARQL micro-services";
     .
 
-sms:exampleQuery rdfs:subPropertyOf skos:example;
-    schema:name "example SPARQL query";
-    schema:description "An example of SPARQL query that can be answered by the SPARQL micro-service";
+sms:addProvenance a owl:DatatypeProperty;
+    schema:name "add provenance information";
+    schema:description "When turned on (true), the SPARQL micro-service will generate provenance triples along with the triples generated from the Web API response";
+    skos:example "true"^^xsd:boolean;
     .
     
 sms:cacheExpiresAfter a owl:DatatypeProperty;
     schema:name "cache expiration time";
     schema:description "Maximum time (in seconds) to cache responses from the Web API wrapped by a SPARQL micro-service";
     skos:example "P2592000S"^^xsd:duration;
+    .
+
+sms:exampleQuery rdfs:subPropertyOf skos:example;
+    schema:name "example SPARQL query";
+    schema:description "An example of SPARQL query that can be answered by the SPARQL micro-service";
+    skos:example "SELECT * WHERE { ?s schema:keyword "sunrise". }";
     .

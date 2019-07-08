@@ -20,7 +20,7 @@
 <div class="container"> <!-- main page container -->
 
 <h1 class="mt-3">SPARQL Micro-Service Core Vocabulary</h1>
-<h3>Jul. 1st, 2019</h3>
+<h3>Apr. 24th, 2019</h3>
 
     <h5 class="mb-0 mt-4">Authors</h5>
     <div class="card-body pt-0">
@@ -30,15 +30,11 @@
 
     <h5 class="mb-0">This version</h5>
     <div class="card-body pt-0">
-        <a href="http://ns.inria.fr/sparql-micro-service/index-20190701.html">http://ns.inria.fr/sparql-micro-service/index-20190701.html</a>
-    </div>
-    <h5 class="mb-0">Latest version</h5>
-    <div class="card-body pt-0">
-        <a href="http://ns.inria.fr/sparql-micro-service/index.html">http://ns.inria.fr/sparql-micro-service/index.html</a>
+        <a href="http://ns.inria.fr/sparql-micro-service">http://ns.inria.fr/sparql-micro-service</a>
     </div>
     <h5 class="mb-0">Previous version</h5>
     <div class="card-body pt-0">
-        <a href="http://ns.inria.fr/sparql-micro-service/index-20190419.html">http://ns.inria.fr/sparql-micro-service/index-20190419.html</a>
+        <a href="http://ns.inria.fr/sparql-micro-service/index-20190128.html">http://ns.inria.fr/sparql-micro-service/index-20190128.html</a>
     </div>
 
     <p>This document is also available in <a href="sms-core-vocabulary.ttl">Turtle</a>.</p>
@@ -100,20 +96,19 @@
 
     <dl class="row border border-dark rounded">
       <dt class="col-sm-3">Term Name</dt>
-      <dd id="addProvenance" class="col-sm-9 font-weight-bold"><a href="http://ns.inria.fr/sparql-micro-service#addProvenance">sms:addProvenance</a></dd>
+      <dd id="exampleQuery" class="col-sm-9 font-weight-bold"><a href="http://ns.inria.fr/sparql-micro-service#exampleQuery">sms:exampleQuery</a></dd>
 
       <dt class="col-sm-3">Label</dt>
-      <dd class="col-sm-9">add provenance information</dd>
+      <dd class="col-sm-9">example SPARQL query</dd>
 
       <dt class="col-sm-3">Definition</dt>
-      <dd class="col-sm-9">When turned on (true), the SPARQL micro-service will generate provenance triples along with the triples generated from the Web API response
-    </dd>
+      <dd class="col-sm-9">An example of SPARQL query that can be answered by the SPARQL micro-service</dd>
 
       <dt class="col-sm-3 ">Type of Term</dt>
       <dd class="col-sm-9">Property</dd>
 
-      <dt class="col-sm-3 ">Example</dt>
-      <dd class="col-sm-9">"true"^^xsd:boolean</dd>
+      <dt class="col-sm-3 ">Refines</dt>
+      <dd class="col-sm-9"><a href="http://www.w3.org/2004/02/skos/core#example">skos:example</a></dd>
     </dl>
 
     <dl class="row border border-dark rounded">
@@ -129,28 +124,11 @@
       <dt class="col-sm-3 ">Type of Term</dt>
       <dd class="col-sm-9">Property</dd>
 
+      <dt class="col-sm-3 ">Refines</dt>
+      <dd class="col-sm-9"><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a></dd>
+
       <dt class="col-sm-3 ">Example</dt>
       <dd class="col-sm-9">"P2592000S"^^xsd:duration</dd>
-    </dl>
-
-    <dl class="row border border-dark rounded">
-      <dt class="col-sm-3">Term Name</dt>
-      <dd id="exampleQuery" class="col-sm-9 font-weight-bold"><a href="http://ns.inria.fr/sparql-micro-service#exampleQuery">sms:exampleQuery</a></dd>
-
-      <dt class="col-sm-3">Label</dt>
-      <dd class="col-sm-9">example SPARQL query</dd>
-
-      <dt class="col-sm-3">Definition</dt>
-      <dd class="col-sm-9">An example of SPARQL query that can be answered by the SPARQL micro-service</dd>
-
-      <dt class="col-sm-3 ">Type of Term</dt>
-      <dd class="col-sm-9">Property</dd>
-
-      <dt class="col-sm-3 ">Refines</dt>
-      <dd class="col-sm-9"><a href="http://www.w3.org/2004/02/skos/core#example">skos:example</a></dd>
-
-      <dt class="col-sm-3 ">Example</dt>
-      <dd class="col-sm-9">SELECT * WHERE { ?s schema:keyword "sunrise". }</dd>
     </dl>
 
     
