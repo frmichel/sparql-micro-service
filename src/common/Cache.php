@@ -115,6 +115,7 @@ class Cache
 
     /**
      * Try to get a document from the cache db and return it.
+     *
      * If it is found and the expiration date is passed, the document is deleted from the cache db.
      *
      * @param string $query
@@ -123,27 +124,35 @@ class Cache
      */
     public function read($query)
     {
+        $hash = hash("sha256", $query);
         $found = $this->cacheDb->findOne([
-            'hash' => hash("sha256", $query)
+            'hash' => $hash
         ]);
         if ($found != null) {
             
             // Create the date interval corresponding to the cache expiration duration
             $context = Context::getInstance();
             $cacheExpirationInterval = new \DateInterval('PT' . $context->getConfigParam('cache_expires_after', self::CACHE_EXP_SEC) . 'S');
-            $cacheExpiresAt = (new \DateTime($found['fetch_date']))->add($cacheExpirationInterval);
+            $cacheExpiresAt = new \DateTime($found['fetch_date']);
+            $cacheExpiresAt->add($cacheExpirationInterval);
             
             if ($this->logger->isHandling(Logger::DEBUG))
                 $this->logger->debug("Cached document expires at: " . $cacheExpiresAt->format('Y-m-d H:i:s'));
             
-            if ($cacheExpiresAt >= (new \DateTime('now')))
-                // If the expiration date is not passed, return the document
+            if ($cacheExpiresAt >= (new \DateTime('now'))) {
+                // If the expiration date is not passed, the document can be returned as is
+                
+                // Save the date and time at which the document was fetched (for provenance needs)
+                $cacheFetchedAt = new \DateTime($found['fetch_date']);
+                $context->setCacheHitDateTime($cacheFetchedAt);
+                
                 return $found['payload'];
-            else {
+            } else {
+                // If the expiration date is passed, remove the document from the cache and return null = no cache hit
                 if ($this->logger->isHandling(Logger::INFO))
                     $this->logger->info("Cached document found but has expired, removing it.");
                 $this->cacheDb->deleteOne([
-                    'hash' => hash("sha256", $query)
+                    'hash' => $hash
                 ]);
                 return null;
             }

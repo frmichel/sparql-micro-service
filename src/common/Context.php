@@ -7,7 +7,7 @@ use Monolog\Handler\RotatingFileHandler;
 use EasyRdf_Sparql_Client;
 
 /**
- * Application execution context containing the configuration, logger, cache, SPARQL client
+ * Service execution context containing the configuration, logger, cache, SPARQL client
  *
  * The constructor also checks the presence of the HTTP query string parameters
  * listed in the configuration.
@@ -42,6 +42,7 @@ class Context
     private $logHandler = null;
 
     /**
+     * Connector to the cache DB
      *
      * @var Cache
      */
@@ -49,7 +50,7 @@ class Context
 
     /**
      * Configuration parameters: this includes the main config file (./config.ini)
-     * as well as the custom service provded either thourhg the service config file (./<service name>/config.ini)
+     * as well as the custom service provided either through the service config file (./<service name>/config.ini)
      * or the service description graph (./<service name>/ServiceDescription.ttl)
      *
      * @var array
@@ -66,7 +67,7 @@ class Context
     private $service = null;
 
     /**
-     * Local RDF store and SPARQL endpoint
+     * SPARQL query submitted to the SPARQL micro-service
      *
      * @var EasyRdf_Sparql_Client
      */
@@ -78,6 +79,14 @@ class Context
      * @var EasyRdf_Sparql_Client
      */
     private $sparqlClient = null;
+
+    /**
+     * If the cache is used to retrieve Web API responses, this field contains the
+     * date and time at which the document was retrieved
+     *
+     * @var \DateTime
+     */
+    private $cacheHitDateTime = null;
 
     /**
      * Default constructor
@@ -210,6 +219,15 @@ class Context
     }
 
     /**
+     *
+     * @param \frmichel\sparqlms\common\Cache $cache
+     */
+    public function setCache($cache)
+    {
+        $this->cache = $cache;
+    }
+
+    /**
      * Read a parameter from the configuration (generic or custom)
      *
      * @param string $param
@@ -333,6 +351,26 @@ class Context
     public function setSparqlQuery($q)
     {
         $this->sparqlQuery = $q;
+    }
+
+    /**
+     * Get the date and time at which the document was retrieved from the Web API
+     *
+     * @return \DateTime
+     */
+    public function getCacheHitDateTime()
+    {
+        return $this->cacheHitDateTime;
+    }
+
+    /**
+     * Set the date and time at which the document was retrieved from the Web API
+     *
+     * @param \DateTime $cacheHitDateTime
+     */
+    public function setCacheHitDateTime($cacheHitDateTime)
+    {
+        $this->cacheHitDateTime = $cacheHitDateTime;
     }
 }
 ?>
