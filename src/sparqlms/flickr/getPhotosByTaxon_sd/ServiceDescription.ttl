@@ -65,8 +65,12 @@
         }
         ''';
     
+    # 432000s = 5 days, 2592000s = 30 days
     sms:cacheExpiresAfter "P2592000S"^^xsd:duration;
 
+    # Add provenance information to the graph generated at each invocation?
+    sms:addProvenance "false"^^xsd:boolean;
+    
     dct:source [
         a schema:WebAPI; schema:name "Flickr API";
         schema:url <https://www.flickr.com/services/api/>;

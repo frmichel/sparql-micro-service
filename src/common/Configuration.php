@@ -23,6 +23,9 @@ class Configuration
         if (! $config)
             throw new Exception("Cannot read configuration file config/config.ini.");
         
+        if (! array_key_exists('version', $config))
+            throw new Exception("Missing configuration property 'version'. Check config.ini.");
+        
         if (! array_key_exists('root_url', $config))
             throw new Exception("Missing configuration property 'root_url'. Check config.ini.");
         
@@ -115,7 +118,7 @@ class Configuration
                     if ($configParamType != "http://www.w3.org/2001/XMLSchema#boolean")
                         throw new Exception("Invalid datatype for sms:addProvenance: should be xsd:boolean.");
                 }
-                $customCfg['add_provenance'] = strcasecmp($configParamVal, "true");
+                $customCfg['add_provenance'] = $configParamVal == "true";
             }
             
             // --- Read optional HTTP headers

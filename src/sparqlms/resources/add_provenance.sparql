@@ -1,0 +1,54 @@
+@prefix sd:      <http://www.w3.org/ns/sparql-service-description#>.
+@prefix httpvoc: <http://www.w3.org/2011/http#>.
+@prefix dct:     <http://purl.org/dc/terms/>.
+
+# This query template creates provenance information triples into the result grap.
+# Used when the SPARQL micro-service is configured with a full service description graph.
+INSERT {
+    GRAPH <{graphUri}> {
+        []
+            a sd:Graph;
+            a prov:Entity;
+            prov:generatedAtTime "{date_time_sms_invocation}"^^xsd:dateTime;
+            prov:wasGeneratedBy [
+                a prov:Activity;
+                rdfs:label "SPARQL micro-service invocation";
+                prov:wasAssociatedWith [
+                    a               prov:SoftwareAgent;
+                    a               schema:SoftwareApplication;
+                    schema:url      <{serviceUri}>;
+                    foaf:homepage   <https://github.com/frmichel/sparql-micro-service/>;
+                    schema:version  "{sms_version}";
+                    rdfs:label      ?serviceName;
+                ];
+                prov:used [
+                    a                    prov:Entity;
+                    rdfs:label           "Web API invocation result";
+                    prov:generatedAtTime "{date_time_cachehit}"^^xsd:dateTime;
+                    prov:wasGeneratedBy [
+                        a                   prov:Activity;
+                        rdfs:label          "Web API invocation";
+                        httpvoc:requestUri  "{webapi_query_string}";
+                        prov:wasAssociatedWith [
+                            a           prov:SoftwareAgent;
+                            schema:name ?webApiName;
+                            schema:url  ?webApiUrl;
+                        ];
+                    ];
+                ];
+            ];
+            .
+    }
+}
+WHERE {
+    <{serviceUri}> 
+        a           sd:Service;
+        schema:name ?serviceName;
+        dct:source  ?webApi.
+        
+    OPTIONAL { ?webApi schema:name ?webApiName. }
+    OPTIONAL { ?webApi schema:url  ?webApiUrl. }
+}
+
+
+

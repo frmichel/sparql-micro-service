@@ -41,8 +41,12 @@
         schema:url <https://www.macaulaylibrary.org/>;
         schema:potentialAction <APIService>;
     ];
+    
     # Maxium time (in seconds) to cache responses from the Web API. Default: 2592000 = 30 days
     sms:cacheExpiresAfter "P2592000S"^^xsd:duration;
+
+    # Add provenance information to the graph generated at each invocation?
+    sms:addProvenance "false"^^xsd:boolean;
     .
 
 # Web API service being wrapped by this µ-service + parameters binding
