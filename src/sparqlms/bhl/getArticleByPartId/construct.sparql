@@ -23,7 +23,9 @@ CONSTRUCT {
     .
 }
 WHERE {
-    ?result api:Result [
+    ?result api:Result ?result.
+    
+    ?result
         api:PartID ?partId;
         api:PartUrl ?partUrl;
         api:GenreName ?genreName;
@@ -39,17 +41,20 @@ WHERE {
         api:EndPageNumber ?endPageNumber;
 
         api:Authors [ api:Name ?authorName; api:CreatorID ?creatorID ];
+        .
 
+    OPTIONAL {
+    ?result 
         api:Pages [
           api:PageUrl ?pageUrl;
           api:ThumbnailUrl ?thumbnailUrl;
           api:FullSizeImageUrl ?fullSizeImageUrl;
           api:PageNumbers [ api:Number ?pageNumber ]
-        ];
-    ].
-
+        ].
+    }
+    
     FILTER (LCASE(?genreName) = "article")
-    FILTER (?pageNumber = ?startPageNumber)
+    FILTER (CONTAINS(?pageNumber, ?startPageNumber))
 
     # Dereferenceable URI: customize with the hostname of your Web server
     BIND (IRI(concat("http://example.org/ld/bhl/part/", ?partId)) AS ?articleUri)
