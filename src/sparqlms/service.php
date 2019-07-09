@@ -192,8 +192,17 @@ try {
         $_query = str_replace('{serviceUri}', $context->getServiceUri(), $_query);
         $_query = str_replace('{date_time_sms_invocation}', $now->format('c'), $_query);
         $_query = str_replace('{date_time_cachehit}', $cacheDateTime->format('c'), $_query);
-        $_query = str_replace('{webapi_query_string}', $apiQuery, $_query);
         $_query = str_replace('{sms_version}', $context->getConfigParam("version"), $_query);
+        
+        // Add the Web API query string but obfuscate the API key if any
+        if (strpos($apiQuery, "apikey") !== false) {
+            $apiKeyObfuscated = preg_replace('/([\?&])apikey=[^&]*/', '${1}apikey=obfuscated', $apiQuery);
+            $_query = str_replace('{webapi_query_string}', $apiKeyObfuscated, $_query);
+        }
+        if (strpos($apiQuery, "api_key") !== false) {
+            $apiKeyObfuscated = preg_replace('/([\?&])api_key=[^&]*/', '${1}api_key=obfuscated', $apiQuery);
+            $_query = str_replace('{webapi_query_string}', $apiKeyObfuscated, $_query);
+        }
         
         $logger->info("Adding provenance triples into graph: <" . $respGraphUri . ">");
         if ($logger->isHandling(Logger::DEBUG))
