@@ -39,7 +39,7 @@ src/common
 src/sparqlms/
     config.ini                # generic configuration of the SPARQL micro-service engine
     service.php               # core logics of the SPARQL micro-services
-    resources/
+    resources/                # SPARQL queries used while executing a SPARQL micro-service
 
     <Web API>/                # directory of the services related to one Web API
     
@@ -81,7 +81,7 @@ Create directory ```logs``` with execution and modification rights for all (```c
         vendor/
         logs/
 
-Set the URLs of your write-enabled SPARQL endpoint and optional SPARQL-to-SPIN service in ```src/sparqlms/config.ini```. These do not need to be exposed on the internet, only the Apache process should have access to them. For instance:
+Set the URLs of your write-enabled SPARQL endpoint and optional SPARQL-to-SPIN service in [/src/sparqlms/config.ini](/src/sparqlms/config.ini). These do not need to be exposed on the internet, only the Apache process should have access to them. For instance:
 ```
 sparql_endpoint = http://localhost:8081/sparql
 spin_endpoint   = http://localhost:8081/service/sparql-to-spin
@@ -160,10 +160,10 @@ Complete examples are given with appropriate cmments in the first part of the [/
 
 ### Change the log level
 
-The application writes log traces in files named like ```logs/sms-<date>.log```. The default log level is NOTICE. To change it, simply update the following line in script [service.php](/src/sparqlms/service.php) with e.g. INFO or DEBUG:
+The application writes log traces in files named like ```logs/sms-<date>.log```. The default log level is NOTICE. To change it, simply update the following line in [/src/sparqlms/config.ini](/src/sparqlms/config.ini) with e.g. INFO or DEBUG:
 
-```php
-    $context = Context::getInstance(Logger::NOTICE, "--------- Starting SPARQL micro-service --------");
+```
+    log_level = INFO
 ```
 
 Log levels are described in [Monolog documentation](https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#log-levels).

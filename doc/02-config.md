@@ -2,7 +2,7 @@
 
 Each SPARQL micro-service resides in a dedicated folder named after the convention: \<Web API\>/\<micro-service\>, e.g. [flickr/getPhotosByTags_sd](/src/sparqlms/flickr/getPhotosByGroupByTag).
 
-A SPARQL micro-service can be configured following two different flavours that each corespond to a method for passing arguments to the micro-service:
+A SPARQL micro-service can be configured following two different flavours that each correspond to a method for passing arguments to the micro-service:
 
 Configuration method | Argument-passing method
 ------------ | -------------
@@ -30,15 +30,17 @@ Parameter | Mandatory/Optional | Description
 custom_parameter | Mandatory | Array of arguments of the service to be passed as HTTP query string parameters.
 api_query | Mandatory | The template of the Web API query string. It contains placeholders for the arguments defined in custom_parameter.
 cache_expires_after | Optional | Maximum time (in seconds) to cache responses from the Web API. Default: 2592000 = 30 days
-http_header | Optional | Array of HTTP headers sent along with the Web API query
+http_header | Optional | Array of HTTP headers sent along with the Web API query. Default: none
+add_provenance | Optional | Wether to add provenance information as part of the graph that is being produced. Values are true or false. Default: false
 
 
 Example:
 ```bash
 custom_parameter[] = param1
 custom_parameter[] = param2
-api_query =  "https://example.org/api/service/?param1={param1}&param2={param2}"
+api_query = "https://example.org/api/service/?param1={param1}&param2={param2}"
 http_header[Authorization] = "token"
+add_provenance = true
 ```
 
 
@@ -111,6 +113,9 @@ In turn, the search action defines the arguments expected by the service and how
     
     sms:cacheExpiresAfter "P2592000S"^^xsd:duration;
 
+    # Add provenance information to the graph generated at each invocation?
+    sms:addProvenance "false"^^xsd:boolean;
+
     dct:source [
         a schema:WebAPI;
         schema:name "Macaulay Library Web API";
@@ -138,8 +143,9 @@ Parameter or property | Mandatory/Optional | Description
 Web API query string template | Mandatory | A ```hydra:IriTemplate``` (```hydra:template```) providing the Web API query string template. It contains placeholders for the service's input arguments.
 Input arguments | Mandatory | Set of ```hydra:IriTemplateMapping``` resources (```hydra:mapping```) associated with the Web API's potential action. Each argument comes with a name (```hydra:variale```) mentioned in the template, and a mapping to a term of the input SPARQL query's graph pattern, along two methods: ```hydra:property``` simply gives the predicate to look for in the SPARQL graph pattern, while ```shacl:sourceShape``` points to the property shape that can help find the term in the graph pattern.
 HTTP headers | Optional | Property of the the Web API's potential action. An ```http:headers``` list whose elements are HTTP headers to be sent to the Web API. Each header consists of a ```http:fieldName```, ```http:fieldValue``` and an optional ```http:hdrName```. See the [HTTP Vocabulary in RDF 1.0](https://www.w3.org/WAI/ER/HTTP/WD-HTTP-in-RDF10-20110502). A usage example is provided in [eol/getTraitsByTaxon_sd](/src/sparqlms/eol/getTraitsByTaxon_sd/ServiceDescriptionPrivate.ttl).
-```sms:cacheExpiresAfter``` | Optional | Property of the ```sd:Service``` instance. Maximum time (in seconds) to cache responses from the Web API. Default: 2592000 = 30 days
+```sms:cacheExpiresAfter``` | Optional | Property of the ```sd:Service``` instance. Maximum time (in seconds) to cache responses from the Web API. Default: ```"P2592000S"^^xsd:duration``` = 30 days
 ```sms:exampleQuery``` | Optional | Property of the ```sd:Service``` instance. A typical query used to generate the test interface on the Web page.
+```sms:addProvenance``` | Optional | Property of the ```sd:Service``` instance. Whether to add provenance information as part of the graph that is being produced. Values are ```"true"^^xsd:boolean``` or ```"false"^^xsd:boolean```. Default is false
 
 
 **Private information**. 
@@ -157,7 +163,7 @@ The service description graph can optionally be accompanied by a [SHACL](https:/
 In certain situations, it may be necessary to re-inject the service arguments into the graph being produced by the service, so that this graph matches the query graph pattern.
 This is even required when passing the arguments in client's SPARQL query.
 
-**Example**. In the query below, assume that "sunset" is the service argument.  
+**Example**. In the query below, assume that "sunset" is the value of the ```tag``` argument that the service expect.
 ```sparql
 ?photo
   a schema:Photograph;
@@ -165,7 +171,7 @@ This is even required when passing the arguments in client's SPARQL query.
   schema:url ?url.
 ```
 
-To match this query, the service must not only generate triples with the ```schema:url``` predicate, but also the triple with the keyword "sunset". This is achieved using placeholder in the ```construct.sparql``` file.
+To match this query, the service must not only generate triples with the ```schema:url``` predicate, but also the triple with the keyword "sunset". This is achieved using a placeholder in the ```construct.sparql``` file.
 
 In the example below, the ```tag``` argument (whose value is "sunset" in the query) is re-injected in the graph using placeholder ```{tag}```:
  

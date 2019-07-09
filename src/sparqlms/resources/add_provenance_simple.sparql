@@ -22,11 +22,11 @@ INSERT DATA {
                 ];
                 prov:used [
                     a                    prov:Entity;
-                    rdfs:label           "Web API invocation result";
+                    schema:name          "Web API invocation result";
                     prov:generatedAtTime "{date_time_cachehit}"^^xsd:dateTime;
                     prov:wasGeneratedBy [
                         a                   prov:Activity;
-                        rdfs:label          "Web API invocation";
+                        schema:name         "Web API invocation";
                         httpvoc:requestUri  "{webapi_query_string}";
                     ];
                 ];
