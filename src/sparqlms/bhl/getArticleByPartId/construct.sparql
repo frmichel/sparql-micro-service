@@ -23,9 +23,7 @@ CONSTRUCT {
     .
 }
 WHERE {
-    ?result api:Result ?result.
-    
-    ?result
+    ?result api:Result [
         api:PartID ?partId;
         api:PartUrl ?partUrl;
         api:GenreName ?genreName;
@@ -41,18 +39,15 @@ WHERE {
         api:EndPageNumber ?endPageNumber;
 
         api:Authors [ api:Name ?authorName; api:CreatorID ?creatorID ];
-        .
 
-    OPTIONAL {
-    ?result 
         api:Pages [
           api:PageUrl ?pageUrl;
           api:ThumbnailUrl ?thumbnailUrl;
           api:FullSizeImageUrl ?fullSizeImageUrl;
           api:PageNumbers [ api:Number ?pageNumber ]
-        ].
-    }
-    
+        ];
+    ].
+
     FILTER (LCASE(?genreName) = "article")
     FILTER (CONTAINS(?pageNumber, ?startPageNumber))
 
