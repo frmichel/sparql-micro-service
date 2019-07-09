@@ -165,7 +165,7 @@ try {
         $logger->info("Adding result of the CONSTRUCT query into new temporary graph: <" . $respGraphUri . ">");
         $_query = $prefixes . "\nINSERT DATA { \n  GRAPH <" . $respGraphUri . "> {\n" . $triples . "\n}}\n";
         if ($logger->isHandling(Logger::DEBUG))
-            $logger->DEBUG("Creating temporary graph: <" . $respGraphUri . "> with INSERT DATA query:\n" . $_query);
+            $logger->debug("Creating temporary graph: <" . $respGraphUri . "> with INSERT DATA query:\n" . $_query);
         $sparqlClient->update($_query);
     }
     
@@ -195,6 +195,7 @@ try {
         $_query = str_replace('{webapi_query_string}', $apiQuery, $_query);
         $_query = str_replace('{sms_version}', $context->getConfigParam("version"), $_query);
         
+        $logger->info("Adding provenance triples into graph: <" . $respGraphUri . ">");
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("Adding provenance triples with query:\n" . $_query);
         $sparqlClient->update($_query);

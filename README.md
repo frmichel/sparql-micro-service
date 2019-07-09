@@ -4,7 +4,7 @@ The SPARQL Micro-Service architecture [1, 3] is meant to allow the combination o
 
 Each SPARQL micro-service is a **lightweight, task-specific SPARQL endpoint** that provides access to a **small, resource-centric graph**. The graph is delineated by the Web API service being wrapped, the arguments passed to this service, and the types of RDF triples that the SPARQL micro-service is designed to spawn.
 
-Optionally, **provenance information** can be generated on the fly and added to the graph being produced at th time a SPARQL micro-service is invoked.
+Optionally, **provenance information** can be generated on the fly and added to the graph being produced at the time a SPARQL micro-service is invoked.
 
 This project is a PHP implementation for JSON-based Web APIs. It comes with several example SPARQL micro-services, allowing the search of photos by tag on [Flickr](https://www.flickr.com/), or tunes whose titles match a given name in [MusicBrainz encyclopedia](https://musicbrainz.org/).
 

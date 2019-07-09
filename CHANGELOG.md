@@ -1,6 +1,15 @@
 # SPARQL Micro-Service Changelog
 
 
+## [0.4.1] 2019-07-09
+
+### Added
+- Implemented issue [#8](https://github.com/frmichel/sparql-micro-service/issues/8): generate provenance information
+
+### Changed
+- Mandatory parameter ```version``` added to the global config.ini file
+
+
 ## [0.4.0] 2019-04-29
 
 **CONFIGURATION CHANGE requires upgrade of existing micro-services**: in this version, files ```insert.sparql``` are removed. Instead, only a ```construct.sparql``` may be defined that replaces the function of both ```insert.sparql``` and ```construct.sparql``` in earlier versions.
