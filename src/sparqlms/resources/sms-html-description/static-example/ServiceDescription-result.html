@@ -14,12 +14,20 @@
 
     <!-- Top navigation bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      <span class="mt-1 mb-1 pl-4 navbar-brand font-weight-light">SPARQL micro-service documentation</span>
+      <span class="mt-1 mb-1 pl-4 navbar-brand">SPARQL micro-service documentation</span>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-          <a class="nav-link text-white" target="_new" href="https://github.com/frmichel/sparql-micro-service">Code@Github</a>
-          <a class="nav-link text-white" target="_new" href="https://hal.archives-ouvertes.fr/search/index/?q=sparql+micro-services&submit=&sort=submittedDate_tdate+desc">Publications</a>
-          <a class="nav-link text-white" target="_new" href="http://sms.i3s.unice.fr/demo-sms?param=Delphinapterus+leucas">TDWG2018 Demo</a>
+          <a class="nav-link text-white font-weight-light" target="_new" href="https://github.com/frmichel/sparql-micro-service">Code@Github</a>
+          <a class="nav-link text-white font-weight-light" target="_new" href="https://hal.archives-ouvertes.fr/search/index/?q=sparql+micro-service&submit=&sort=submittedDate_tdate+desc">Publications</a>
+          
+          <div class="dropdown">
+              <button class="btn btn-primary font-weight-light dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Demos</button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                <a class="dropdown-item" target="_new" href="http://sms.i3s.unice.fr/demo-sms?param=Delphinapterus+leucas">TDWG 2018 Demo</a>
+                <a class="dropdown-item" target="_new" href="http://sms.i3s.unice.fr/~taxrefweb/taxrefweb/taxon.php?id=60878">TAXREF Web</a>
+                <a class="dropdown-item" target="_new" href="https://github.com/frmichel/taxrefweb">TAXREF Web (Github)</a>
+              </div>
+          </div>
         </div>
       </div>
     </nav>
@@ -28,7 +36,7 @@
 
         <!-- Service description -->
         <div class="card my-4 border-secondary">
-          <div class="card-header py-2"><h5><span class="font-weight-light">Service</span>http://example.org/flickr/getPhotosByTaxon_sd/</h5></div>
+          <div class="card-header py-2"><h5><span class="font-weight-light">SPARQL micro-service searching for photos of biological species on Flickr</span></h5></div>
           <div class="card-body">
             <p>This SPARQL micro-service searches <a href="https://flickr.com" target="_new">Flickr</a> photos related to a certain taxonomic name. It takes as input a species scientific name (without authority nor date), and relies on the common convention used e.g. in the <a href="https://www.flickr.com/groups/806927@N20" target="_new"><em>Encyclopedia of Life</em></a> and by <a href="https://www.flickr.com/photos/biodivlibrary" target="_new"><em>Biodiversity Heritage Library</em></a> where photos are tagged with a taxonomic name formatted as: <span class="font-weight-light">taxonomy:binomial=&lt;scientific name&gt;</span>.</p>
 
@@ -36,14 +44,11 @@
               <dt class="col-sm-3">Canonical URL</dt>
               <dd class="col-sm-9"><a href="http://example.org/flickr/getPhotosByTaxon_sd/" target="_new">http://example.org/flickr/getPhotosByTaxon_sd/</a></dd>
 
-              <dt class="col-sm-3"><span data-toggle="tooltip" data-html="true" title="A SPARQL microservice may be invoked in two ways: as a regular SPARQL endpoint or as a URI dereferencing engine.">Query mode</span></dt>
-              <dd class="col-sm-9">SPARQL</dd>
-
-              <dt class="col-sm-3">Input parameter: name</dt>
+              <dt class="col-sm-3">Input parameter</dt>
               <dd class="col-sm-9">
                 The taxon scientific name without authorship nor date information.
                 <br>Passed as the object of predicate <a href="http://rs.tdwg.org/dwc/terms/scientificName" target="_new">http://rs.tdwg.org/dwc/terms/scientificName</a>.
-                <br>Example: <em>Delphinus delphis</em>
+                <br>Example value: <em>Delphinus delphis</em>
               </dd>
               
               <dt class="col-sm-3">Service Description graph</dt>
@@ -56,7 +61,7 @@
         </div> <!-- card -->
 
         <!-- Example query form -->
-        <div class="card border-secondary">
+        <div class="card my-4 border-secondary">
           <div class="card-header py-2"><h5><span class="font-weight-light">Try it out</span></h5></div>
           <div class="card-body">
             <form id="queryForm">
@@ -99,18 +104,29 @@ SELECT ?photo ?title ?img WHERE {
                     <button id="submitSparqlQuery" type="submit" class="btn btn-primary">Submit query</button>
                   </div>
                 </div>
-                
               </div>
             </form>
-
-            <div id="responseBox" class="mt-4">
-              <label for="sparqlQuery">SPARQL response</label>
-              <div class="border-light bg-light p-1"><small><pre id="sparqlQueryResponse"></pre></small></div>
-            </div>
 
           </div> <!-- card-body -->
         </div> <!-- card -->
 
+        <!-- URI dereferencing -->
+        <div class="card my-4 border-secondary">
+          <div class="card-header py-2"><h5><span class="font-weight-light">Invoke the service by dereferencing a URI</span></h5></div>
+          <div class="card-body">
+            <div class="col">
+              <div class="form-group">
+                <p>Simply click on this URI:
+                <a target="_uri" href="http://example.org/ld/gbif/taxon/2360305">http://example.org/ld/gbif/taxon/2360305</a></p>
+                <p>Or copy/paste this code in a bash:
+                <pre>
+                curl --header "Accept:text/turtle" http://example.org/ld/gbif/taxon/2360305
+                </pre></p>
+              </div>
+            </div>
+          </div> <!-- card-body -->
+        </div> <!-- card -->
+        
     </div><!-- .container -->
 
     <nav class="pt-1 pb-3 navbar">

@@ -27,3 +27,8 @@ sms:exampleQuery rdfs:subPropertyOf skos:example;
     schema:description "An example of SPARQL query that can be answered by the SPARQL micro-service";
     skos:example "SELECT * WHERE { ?s schema:keyword "sunrise". }";
     .
+
+sms:exampleURI rdfs:subPropertyOf skos:example;
+    schema:name "example deferenceable URI";
+    schema:description "An example of URI that can be deferenced (resolved to RDF content) using the SPARQL micro-service";
+    .

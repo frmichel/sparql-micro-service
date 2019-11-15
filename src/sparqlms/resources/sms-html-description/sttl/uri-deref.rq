@@ -1,0 +1,24 @@
+@prefix sd:      <http://www.w3.org/ns/sparql-service-description#>.
+@prefix dct:     <http://purl.org/dc/terms/>.
+@prefix shacl:   <http://www.w3.org/ns/shacl#>.
+@prefix hydra:   <http://www.w3.org/ns/hydra/core#>.
+@prefix schema:  <http://schema.org/>.
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#>.
+@prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
+
+# This template constructs an additional HTML section only if the service description contains 
+# an sms:exampleURI property.
+template st:uri-deref {
+
+    format { <../tpl4_uri_deref.html> ?exampleURI }
+    
+} where {
+    # Retrieve the service URI from the URL query string (?param=http://example.org/service)
+    BIND(st:get(st:param) as ?param)
+    BIND(if (bound(?param) && ?param != "", IRI(?param), IRI("<no_service>")) as ?service)
+
+    ?service
+        a sd:Service;
+        sms:exampleURI ?exampleURI;
+        .
+}

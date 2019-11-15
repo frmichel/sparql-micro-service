@@ -14,12 +14,20 @@
 
     <!-- Top navigation bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      <span class="mt-1 mb-1 pl-4 navbar-brand font-weight-light">SPARQL micro-service documentation</span>
+      <span class="mt-1 mb-1 pl-4 navbar-brand">SPARQL micro-service documentation</span>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-          <a class="nav-link text-white" target="_new" href="https://github.com/frmichel/sparql-micro-service">Code@Github</a>
-          <a class="nav-link text-white" target="_new" href="https://hal.archives-ouvertes.fr/search/index/?q=sparql+micro-services&submit=&sort=submittedDate_tdate+desc">Publications</a>
-          <a class="nav-link text-white" target="_new" href="http://sms.i3s.unice.fr/demo-sms?param=Delphinapterus+leucas">TDWG2018 Demo</a>
+          <a class="nav-link text-white font-weight-light" target="_new" href="https://github.com/frmichel/sparql-micro-service">Code@Github</a>
+          <a class="nav-link text-white font-weight-light" target="_new" href="https://hal.archives-ouvertes.fr/search/index/?q=sparql+micro-service&submit=&sort=submittedDate_tdate+desc">Publications</a>
+          
+          <div class="dropdown">
+              <button class="btn btn-primary font-weight-light dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Demos</button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                <a class="dropdown-item" target="_new" href="http://sms.i3s.unice.fr/demo-sms?param=Delphinapterus+leucas">TDWG 2018 Demo</a>
+                <a class="dropdown-item" target="_new" href="http://sms.i3s.unice.fr/~taxrefweb/taxrefweb/taxon.php?id=60878">TAXREF Web</a>
+                <a class="dropdown-item" target="_new" href="https://github.com/frmichel/taxrefweb">TAXREF Web (Github)</a>
+              </div>
+          </div>
         </div>
       </div>
     </nav>
@@ -37,7 +45,4 @@
             <dl class="row">
               <dt class="col-sm-3">Canonical URL</dt>
               <dd class="col-sm-9"><a href="%3$s" target="_new">%3$s</a></dd>
-
-              <dt class="col-sm-3"><span data-toggle="tooltip" data-html="true" title="A SPARQL microservice may be invoked in two ways: as a regular SPARQL endpoint or as a URI dereferencing engine.">Query mode</span></dt>
-              <dd class="col-sm-9">SPARQL</dd>
 

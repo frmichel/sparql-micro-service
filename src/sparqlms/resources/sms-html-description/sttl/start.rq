@@ -11,7 +11,13 @@ template st:start {
     # Generate one line for each argument of the SPARQL micro-service
     st:call-template(st:argument)
 
-    format { <../tpl3_end.html> ?serviceUrl ?boundShapesGraph ?boundExampleQuery st:call-template(st:jsonld-markup) }
+    format { <../tpl3_end.html> 
+                ?serviceUrl 
+                ?boundShapesGraph 
+                ?boundExampleQuery 
+                st:call-template(st:uri-deref)
+                st:call-template(st:jsonld-markup) 
+    }
 
 } where {
     # Retrieve the service URI from the URL query string (?param=http://example.org/service)
