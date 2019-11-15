@@ -322,7 +322,7 @@ class Utils
      * with its hydra:property or using the property shape denoted by shacl:sourceShape (the SD graph
      * should provide one or the other).
      *
-     * If one of the expected parameters in not found, a warning is logged but the function still
+     * If one of the expected parameters in not found, the function logs a warning and exits with an HTTP 400 error
      * returns the result anyway.
      *
      * @param string $sparqlQuery
@@ -382,6 +382,10 @@ class Utils
      * Get the Web API arguments passed to the micro-service either as query string arguments
      * or within the SPARQL graph pattern.
      *
+     * If the service is invoked with querymod 'ld', then the arguments are expected to be
+     * passed on the query string, not in a SPARQL query (there is no SPARQL query in the 
+     * 'ld' query mode).
+     * 
      * If any parameter in not found, the function returns an HTTP error 400 and exits.
      *
      * @return array associative array where the key is the argument name,
@@ -391,7 +395,7 @@ class Utils
     {
         global $context;
         
-        if (! $context->getConfigParam('service_description'))
+        if (! $context->getConfigParam('service_description') || $context->getQueryMode() == 'ld')
             return self::getQueryStringArgs($context->getConfigParam('custom_parameter'));
         else
             return self::getServiceCustomArgsFromSparqlQuery($context->getSparqlQuery());

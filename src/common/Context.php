@@ -67,6 +67,13 @@ class Context
     private $service = null;
 
     /**
+     * Query mode: 'sparql' for regular SPARQL querying, or 'ld' for URI dereferencing
+     *
+     * @var string
+     */
+    private $queryMode = null;
+
+    /**
      * SPARQL query submitted to the SPARQL micro-service
      *
      * @var EasyRdf_Sparql_Client
@@ -191,7 +198,7 @@ class Context
     }
 
     /**
-     * Create named loggers
+     * Create a named logger
      *
      * @param string $logName
      *            logger name (aka. channel). Defaults to "default"
@@ -295,6 +302,24 @@ class Context
     public function getServiceUri()
     {
         return $this->getConfigParam('root_url') . "/" . $this->getService() . "/";
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getQueryMode()
+    {
+        return $this->queryMode;
+    }
+
+    /**
+     *
+     * @param string $queryMode
+     */
+    public function setQueryMode($queryMode)
+    {
+        $this->queryMode = $queryMode;
     }
 
     /**

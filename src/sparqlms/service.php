@@ -50,6 +50,7 @@ try {
     if ($querymode != 'sparql' && $querymode != 'ld')
         throw new Exception("Invalid argument 'querymode': should be one of 'sparql' or 'ld'.");
     $logger->notice("Query parameter (html special chars encoded) 'querymode': " . htmlspecialchars($querymode));
+    $context->setQueryMode($querymode);
     
     // Read HTTP headers
     list ($contentType, $accept) = Utils::getHttpHeaders();
@@ -69,7 +70,7 @@ try {
     
     // ------------------------------------------------------------------------------------
     // --- Read the service custom configuration (from config.ini or from the Service Description
-    // graph (stored in the local RDF store)), and init the cache DB connection
+    // graph), and init the cache DB connection
     // ------------------------------------------------------------------------------------
     
     $context->readCustomConfig();
@@ -86,12 +87,13 @@ try {
     // Read the Web API query string template
     $apiQuery = $context->getConfigParam('api_query');
     
-    // Read the service custom arguments either from the HTTP query string or from the SPARQL graph pattern
+    // Read the values of the service custom arguments either from the HTTP query string or from the SPARQL graph pattern
     $customArgs = Utils::getServiceCustomArgs();
-    if (sizeof($customArgs) != sizeof($context->getConfigParam('custom_parameter')))
+    if (sizeof($customArgs) != sizeof($context->getConfigParam('custom_parameter'))) {
         // In case one argument is not found in the query, do not query the API and just return an empty response
+        $logger->warn("Not all service arguments were found. Expected: " . print_r($context->getConfigParam('custom_parameter'), TRUE) . "\nbut read: " . print_r($customCfg, TRUE));
         $apiQuery = "";
-    else {
+    } else {
         if (file_exists($service . '/service.php')) {
             // Web API query string will be formatted by the custom service script
             require $service . '/service.php';
@@ -198,11 +200,11 @@ try {
         if (strpos($apiQuery, "apikey") !== false) {
             $apiKeyObfuscated = preg_replace('/([\?&])apikey=[^&]*/', '${1}apikey=obfuscated', $apiQuery);
             $_query = str_replace('{webapi_query_string}', $apiKeyObfuscated, $_query);
-        }
-        if (strpos($apiQuery, "api_key") !== false) {
+        } else if (strpos($apiQuery, "api_key") !== false) {
             $apiKeyObfuscated = preg_replace('/([\?&])api_key=[^&]*/', '${1}api_key=obfuscated', $apiQuery);
             $_query = str_replace('{webapi_query_string}', $apiKeyObfuscated, $_query);
-        }
+        } else
+            $_query = str_replace('{webapi_query_string}', $apiQuery, $_query);
         
         $logger->info("Adding provenance triples into graph: <" . $respGraphUri . ">");
         if ($logger->isHandling(Logger::DEBUG))

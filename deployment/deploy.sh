@@ -21,6 +21,8 @@ function substitute() {
     mv $3.tmp $3
 }
 
+# ================================== Set API keys ==========================
+
 # --- BHL API key ---
 API_KEY=<paste your api key here>
 for FILE in $(ls $SMSDIR/bhl/*/config.ini 2> /dev/null); do
@@ -55,6 +57,9 @@ for FILE in $(ls $SMSDIR/eol/*/ServiceDescription*.ttl 2> /dev/null); do
     substitute "$replace" "$API_KEY" "$FILE"
 done
 
+
+# ================================== Set server hostname ==========================
+
 # --- Replace example.org with local server URL in sparql files ---
 for FILE in `ls $SMSDIR/*/*/*.sparql`; do
     replace='http:\/\/example.org'
@@ -63,6 +68,12 @@ for FILE in `ls $SMSDIR/*/*/*.sparql`; do
 done
 
 # --- Replace example.org with local server URL in service description and shape graph files ---
+for FILE in `ls $SMSDIR/*/*/*.ttl`; do
+    replace='http:\/\/example.org\/ld'
+    echo "Changing $replace into $SERVER/sparql-ms in $FILE"
+    substitute "$replace" "$SERVER\/ld" "$FILE"
+done
+
 for FILE in `ls $SMSDIR/*/*/*.ttl`; do
     replace='http:\/\/example.org'
     echo "Changing $replace into $SERVER/sparql-ms in $FILE"
