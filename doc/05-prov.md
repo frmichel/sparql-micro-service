@@ -21,4 +21,4 @@ The provenance information is modelled according to the [Provenance Ontology](ht
 
 ##### Date and time
 
-Note that graph (```_:b1```) and the Web API invocation result (```_:b4```) may have been generated at different dates and times. This happens when a cache database is used: the Web API invocation result was has the date and time at which the cached document was fetched. Whereas the graph was generated at the date and time the SPARQL micro-service was invoked.
+Note that the graph (```_:b1```) and the Web API invocation result (```_:b4```) may have been generated at different dates and times. This happens when a cache database is used: the Web API invocation result was generated at the date and time at which the cached document was fetched from the WebAPI. Whereas the graph was generated at the date and time the SPARQL micro-service was invoked. Hence, the Web API invocation may be older than the SPARQL micro-service invocation.

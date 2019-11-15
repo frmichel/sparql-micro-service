@@ -161,9 +161,9 @@ The service description graph can optionally be accompanied by a [SHACL](https:/
 ## Re-injecting arguments in the graph produced by the micro-service
 
 In certain situations, it may be necessary to re-inject the service arguments into the graph being produced by the service, so that this graph matches the query graph pattern.
-This is even required when passing the arguments in client's SPARQL query.
+This is even mandatory when passing the arguments in client's SPARQL query.
 
-**Example**. In the query below, assume that "sunset" is the value of the ```tag``` argument that the service expect.
+**Example**. In the SPARQL graph pattern below, assume that "sunset" is the value of the ```tag``` argument that the service expects.
 ```sparql
 ?photo
   a schema:Photograph;
@@ -178,16 +178,14 @@ In the example below, the ```tag``` argument (whose value is "sunset" in the que
 ```sparql
 CONSTRUCT {
     <http://example.org/photo/{urlencode(tag)}>
-
         a schema:Photograph;
         schema:keywords {tag};
         ...
-
 ```
 
-The ```{tag}``` placeholder is replaced with ```"sunset"```, including the double-quotes.
+The ```{tag}``` placeholder is replaced with ```"sunset"```. **Do not add the double-quotes**, they will be added automatically.
 
-If more than one value were provided, the placeholder will be replaced by the list of comma-separated, double-quoted values, e.g.: "sunset", "sea", ...
+If more than one value were provided, the placeholder will be replaced by the list of comma-separated, double-quoted values, e.g.: ```"sunset", "sea"```.
 
 In case the argument is used to build a URI, the placeholder can contain the ```urlencode``` keyword to escape special characters, as illustrated above in ```<http://example.org/photo/{urlencode(tag)}>```.
 
