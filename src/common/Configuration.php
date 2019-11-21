@@ -4,8 +4,8 @@ namespace frmichel\sparqlms\common;
 use Exception;
 
 /**
- * Utility class to load configuration parameters from config.ini file
- * or from service description graphs loaded in the local triple store
+ * Utility class to load configuration parameters from the global config.ini file,
+ * and from the service's config.ini or service description graphs.
  *
  * @author fmichel
  */
@@ -28,6 +28,13 @@ class Configuration
         
         if (! array_key_exists('root_url', $config))
             throw new Exception("Missing configuration property 'root_url'. Check config.ini.");
+        
+        if (! array_key_exists('services_paths', $config))
+            throw new Exception("Missing configuration property 'services_paths'. Check config.ini.");
+        
+        foreach ($config['services_paths'] as $path)
+            if (! file_exists($path))
+                throw new Exception("Directoy " . $path . " does not exist. Check property 'services_paths' in config.ini.");
         
         if (! array_key_exists('sparql_endpoint', $config))
             throw new Exception("Missing configuration property 'sparql_endpoint'. Check config.ini.");
@@ -54,7 +61,7 @@ class Configuration
         global $context;
         $logger = $context->getLogger("Configuration");
         
-        $customCfgFile = $context->getService() . '/config.ini';
+        $customCfgFile = $context->getServicePath() . '/config.ini';
         if (file_exists($customCfgFile)) {
             
             // ---------------------------------------------------------------

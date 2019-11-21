@@ -36,37 +36,55 @@ try {
     // --- Parse the HTTP query, retrieve mandatory arguments and SPARQL query
     // ------------------------------------------------------------------------------------
     
-    // Read the service and querymode arguments
-    $params = Utils::getQueryStringArgs($context->getConfigParam('parameter'));
+    // --- Read the service's arguments from the query string
+    $_params = Utils::getQueryStringArgs($context->getConfigParam('parameter'));
     
-    $service = $params['service'][0];
-    if ($service != '')
-        $context->setService($service);
+    $_service = $_params['service'][0];
+    if ($_service != '')
+        $context->setService($_service);
     else
-        throw new Exception("Invalid configuration: empty argument 'service'.");
-    $logger->notice("Query parameter (html special chars encoded) 'service': " . htmlspecialchars($service));
+        Utils::httpBadRequest("Invalid invokation: empty argument 'service'.");
+    $logger->notice("Query parameter (html special chars encoded) 'service': " . htmlspecialchars($_service));
     
-    $querymode = $params['querymode'][0];
-    if ($querymode != 'sparql' && $querymode != 'ld')
-        throw new Exception("Invalid argument 'querymode': should be one of 'sparql' or 'ld'.");
-    $logger->notice("Query parameter (html special chars encoded) 'querymode': " . htmlspecialchars($querymode));
-    $context->setQueryMode($querymode);
+    // --- Set the path to the directory where the service being invoked is deployed
+    foreach ($context->getConfigParam('services_paths') as $_path) {
+        $_servicePath = $_path . '/' . $context->getService();
+        if (file_exists($_servicePath))
+            $context->setServicePath($_servicePath);
+    }
+    if ($context->getServicePath() == null)
+        throw new Exception("Directoy not found for service " . $context->getService());
+    if ($logger->isHandling(Logger::INFO))
+        $logger->info("Directory where the service is deployed: " . $context->getServicePath());
+    
+    $_querymode = $_params['querymode'][0];
+    if ($_querymode != 'sparql' && $_querymode != 'ld')
+        Utils::httpBadRequest("Invalid argument 'querymode': " . $_querymode . ". Should be one of 'sparql' or 'ld'.");
+    $logger->notice("Query parameter (html special chars encoded) 'querymode': " . htmlspecialchars($_querymode));
+    $context->setQueryMode($_querymode);
+    
+    $_rootUrl = $_params['root_url'][0];
+    if ($_rootUrl != '') {
+        $context->setConfigParam('root_url', $_rootUrl);
+        if ($logger->isHandling(Logger::INFO))
+            $logger->info("Root URL overridden by query string parameter 'root_url' (html special chars encoded):  " . htmlspecialchars($_rootUrl));
+    }
     
     // Read HTTP headers
     list ($contentType, $accept) = Utils::getHttpHeaders();
     
     // Get the SPARQL query using either GET or POST methods
-    if ($querymode == "sparql") {
-        $sparqlQuery = Utils::getSparqlQuery();
-        if ($sparqlQuery == "")
+    if ($context->getQueryMode() == "sparql") {
+        $_sparqlQuery = Utils::getSparqlQuery();
+        if ($_sparqlQuery == "")
             Utils::httpBadRequest("Empty SPARQL query.");
-        $logger->notice("Client SPARQL query (html special chars encoded):\n" . htmlspecialchars($sparqlQuery));
+        $logger->notice("Client SPARQL query (html special chars encoded):\n" . htmlspecialchars($_sparqlQuery));
     } else {
         // No SPARQL query is provided if querymode is 'ld': set a default construct query
-        $sparqlQuery = "CONSTRUCT WHERE { ?s ?p ?o }";
-        $logger->notice("No SPARQL query provided in ld mode. Setting URI dereferencing query:\n" . $sparqlQuery);
+        $_sparqlQuery = "CONSTRUCT WHERE { ?s ?p ?o }";
+        $logger->notice("No SPARQL query provided in ld mode. Setting URI dereferencing query:\n" . $_sparqlQuery);
     }
-    $context->setSparqlQuery($sparqlQuery);
+    $context->setSparqlQuery($_sparqlQuery);
     
     // ------------------------------------------------------------------------------------
     // --- Read the service custom configuration (from config.ini or from the Service Description
@@ -94,9 +112,9 @@ try {
         $logger->warn("Not all service arguments were found. Expected: " . print_r($context->getConfigParam('custom_parameter'), TRUE) . "\nbut read: " . print_r($customCfg, TRUE));
         $apiQuery = "";
     } else {
-        if (file_exists($service . '/service.php')) {
+        if (file_exists($context->getServicePath() . '/service.php')) {
             // Web API query string will be formatted by the custom service script
-            require $service . '/service.php';
+            require $context->getServicePath() . '/service.php';
         } else {
             foreach ($customArgs as $argName => $argVal)
                 $apiQuery = str_replace('{' . $argName . '}', urlencode(implode(",", $argVal)), $apiQuery);
@@ -119,7 +137,7 @@ try {
     
     // Call the Web API service, apply the JSON-LD profile and translate to NQuads
     $metro->startTimer(2);
-    $serializedQuads = ($apiQuery == "") ? "" : Utils::translateJsonToNQuads($apiQuery, $service . '/profile.jsonld');
+    $serializedQuads = ($apiQuery == "") ? "" : Utils::translateJsonToNQuads($apiQuery, $context->getServicePath() . '/profile.jsonld');
     $metro->stopTimer(2);
     
     // Insert the triples generated from the Web API response into the temp graph
@@ -129,7 +147,7 @@ try {
     $sparqlClient->update($_query);
     
     // --- Create the triples for which this SPARQL service is meant
-    $sparqlConstr = $service . '/construct.sparql';
+    $sparqlConstr = $context->getServicePath() . '/construct.sparql';
     if (file_exists($sparqlConstr)) {
         
         // Prepare the CONSTRUCT query to execute against the temp graph that was just created
@@ -220,12 +238,12 @@ try {
         $nbTriplesQuery = "SELECT (COUNT(*) AS ?count) FROM <" . $apiGraphUri . "> WHERE { ?s ?p ?o }";
         $result = $sparqlClient->queryRaw($nbTriplesQuery, "application/sparql-results+json");
         $jsonResult = json_decode($result->getBody(), true);
-        $metro->appendMessage($service, "No triples generated with JSON-LD profile", $jsonResult['results']['bindings'][0]['count']['value']);
+        $metro->appendMessage($context->getService(), "No triples generated with JSON-LD profile", $jsonResult['results']['bindings'][0]['count']['value']);
         
         $nbTriplesQuery = "SELECT (COUNT(*) AS ?count) FROM <" . $respGraphUri . "> WHERE { ?s ?p ?o }";
         $result = $sparqlClient->queryRaw($nbTriplesQuery, "application/sparql-results+json");
         $jsonResult = json_decode($result->getBody(), true);
-        $metro->appendMessage($service, "No triples generated with CONSTRUCT query", $jsonResult['results']['bindings'][0]['count']['value']);
+        $metro->appendMessage($context->getService(), "No triples generated with CONSTRUCT query", $jsonResult['results']['bindings'][0]['count']['value']);
     }
     
     // ------------------------------------------------------------------------------------
@@ -234,7 +252,7 @@ try {
     
     $logger->notice('Evaluating client SPARQL query against temporary graph...');
     
-    $result = $sparqlClient->queryRaw($sparqlQuery, $accept, $defaultGraphUri = $respGraphUri);
+    $result = $sparqlClient->queryRaw($context->getSparqlQuery(), $accept, $defaultGraphUri = $respGraphUri);
     if ($logger->isHandling(Logger::INFO))
         foreach ($result->getHeaders() as $header => $headerVal)
             $logger->info('Received response header: ' . $header . ": " . $headerVal);
@@ -261,7 +279,7 @@ try {
     $logger->notice("--------- Done - SPARQL µS execution --------");
     
     $metro->stopTimer(1);
-    $metro->appendTimer($service, "Total|API", 1, 2);
+    $metro->appendTimer($context->getService(), "Total|API", 1, 2);
 } catch (Exception $e) {
     try {
         $logger = Context::getInstance()->getLogger("sparqlms\service");

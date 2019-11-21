@@ -305,8 +305,7 @@ class Utils
                     // Do NOT escape special chars in case of the 'query' parameter that contains the SPARQL query
                     $argValue = $_REQUEST[$name];
                 $result[$name][] = $argValue;
-            } else
-                self::httpBadRequest("Query argument '" . $name . "' undefined.");
+            }
         }
         
         return $result;
@@ -383,9 +382,9 @@ class Utils
      * or within the SPARQL graph pattern.
      *
      * If the service is invoked with querymod 'ld', then the arguments are expected to be
-     * passed on the query string, not in a SPARQL query (there is no SPARQL query in the 
+     * passed on the query string, not in a SPARQL query (there is no SPARQL query in the
      * 'ld' query mode).
-     * 
+     *
      * If any parameter in not found, the function returns an HTTP error 400 and exits.
      *
      * @return array associative array where the key is the argument name,
