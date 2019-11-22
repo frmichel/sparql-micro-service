@@ -1,6 +1,6 @@
 # Configure a SPARQL micro-service
 
-Each SPARQL micro-service resides in a dedicated folder named after the convention: \<Web API\>/\<micro-service\>, e.g. [flickr/getPhotosByTags_sd](/src/sparqlms/flickr/getPhotosByGroupByTag).
+Each SPARQL micro-service resides in a dedicated folder named after the convention: \<Web API\>/\<micro-service\>, e.g. [flickr/getPhotosByTags_sd](/services/flickr/getPhotosByGroupByTag).
 
 A SPARQL micro-service can be configured following two different flavours that each correspond to a method for passing arguments to the micro-service:
 
@@ -20,7 +20,7 @@ In this configuration method, the micro-service folder is organized as follows:
     config.ini        # micro-service configuration
     profile.jsonld    # JSON-LD profile to translate the JSON response into JSON-LD
     construct.sparql  # optional SPARQL CONSTRUCT query to create triples that JSON-LD cannot create
-    service.php       # optional script to perform specific actions (see 'src/sparqlms/manual_config_example')
+    service.php       # optional script to perform specific actions (see 'services/manual_config_example')
 ```
 
 The config.ini file provides the following parameters:
@@ -31,7 +31,7 @@ custom_parameter | Mandatory | Array of arguments of the service to be passed as
 api_query | Mandatory | The template of the Web API query string. It contains placeholders for the arguments defined in custom_parameter.
 cache_expires_after | Optional | Maximum time (in seconds) to cache responses from the Web API. Default: 2592000 = 30 days
 http_header | Optional | Array of HTTP headers sent along with the Web API query. Default: none
-add_provenance | Optional | Wether to add provenance information as part of the graph that is being produced. Values are true or false. Default: false
+add_provenance | Optional | Whether to add provenance information as part of the graph that is being produced. Values are true or false. Default: false. More details about produced provenance information can be found [here](/doc/05-prov.md).
 
 
 Example:
@@ -53,17 +53,18 @@ In this configuration method, the micro-service folder is organized as follows:
     ShapesGraph.ttl         # optional SHACL description of the graphs produced by the service
     profile.jsonld          # JSON-LD profile to translate the JSON response into JSON-LD
     construct.sparql        # optional SPARQL CONSTRUCT query to create triples that JSON-LD cannot create
-    service.php             # optional script to perform specific actions (see 'src/sparqlms/manual_config_example')
+    service.php             # optional script to perform specific actions (see 'services/manual_config_example')
 ```
 ### Service Description Graph
 
 The micro-service description is provided by an RDF graph following the [SPARQL Service Description](https://www.w3.org/TR/2013/REC-sparql11-service-description-20130321/) recommendation (SD).
-See provided examples for more details (conventionally named with extension '_sd'), e.g. [flickr/getPhotosByTaxon_sd](/src/sparqlms/flickr/getPhotosByTaxon_sd/ServiceDescription.ttl) or [macaulaylibrary/getAudioByTaxonCode_sd](/src/sparqlms/macaulaylibrary/getAudioByTaxonCode_sd/ServiceDescription.ttl).
+See provided examples for more details (conventionally named with extension '_sd'), e.g. [flickr/getPhotosByTaxon_sd](/services/flickr/getPhotosByTaxon_sd/ServiceDescription.ttl) or [macaulaylibrary/getAudioByTaxonCode_sd](/services/macaulaylibrary/getAudioByTaxonCode_sd/ServiceDescription.ttl).
 
-The SD graph in file ```ServiceDescription.ttl``` is described in article [4](../README.md#Publications). Very briefly, it describes an ```sd:Service``` and ```sms:Service``` instance whose data source (```dct:source```) is a Web API (```schema:WebAPI```) that has a search action (```schema:potentialAction```).
-In turn, the search action defines the arguments expected by the service and how they may to parameters of the Web API query string.
+The SD graph in file ```ServiceDescription.ttl``` is described in article [4](../README.md#Publications).
+Very briefly, it describes an ```sd:Service``` and ```sms:Service``` instance (namespace ```sms``` stands for ```http://ns.inria.fr/sparql-micro-service#```) whose data source (```dct:source```) is a Web API (```schema:WebAPI```) that has a search action (```schema:potentialAction```).
+In turn, the search action defines the arguments expected by the service and how they are passed on the Web API query string.
 
-**Example**. The example below is a subset of the [macaulaylibrary/getAudioByTaxonCode_sd](/src/sparqlms/macaulaylibrary/getAudioByTaxonCode_sd/ServiceDescription.ttl) description graph.
+**Example**. The example below is a subset of the [macaulaylibrary/getAudioByTaxonCode_sd](/services/macaulaylibrary/getAudioByTaxonCode_sd/ServiceDescription.ttl) description graph.
 ```sparql
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#>.
 @prefix sd:      <http://www.w3.org/ns/sparql-service-description#>.
@@ -123,13 +124,12 @@ In turn, the search action defines the arguments expected by the service and how
         schema:potentialAction [
             a schema:SearchAction;
             a hydra:IriTemplate;
-            hydra:template "https://search.macaulaylibrary.org/catalog.json?action=new_search&searchField=animals&sort=upload_date_desc&mediaType=a&taxonCode={taxonCode}";
+            hydra:template "https://search.macaulaylibrary.org/catalog.json?action=new_search&searchField=animals&sort=upload_date_desc&mediaType=a&taxonCode={identifier}";
             hydra:mapping [
-                hydra:variable "name";
-                schema:description "The taxon scientific name without authorship nor date information.";
+                hydra:variable "identifier";
+                schema:description "The Macaulay's taxon code";
                 hydra:required "true"^^xsd:boolean;
-                skos:example "Delphinus delphis";
-                hydra:property dwc:scientificName;
+                hydra:property schema:identifier;
             ];
         ];
     ].
@@ -142,18 +142,19 @@ Parameter or property | Mandatory/Optional | Description
 ```dct:source``` | Mandatory | An instance of ```schema:WebAPI``` that describes the Web API; its associated search action (```schema:potentialAction```) describes the Web API query string template, the service arguments and optional HTTP headers. See below.
 Web API query string template | Mandatory | A ```hydra:IriTemplate``` (```hydra:template```) providing the Web API query string template. It contains placeholders for the service's input arguments.
 Input arguments | Mandatory | Set of ```hydra:IriTemplateMapping``` resources (```hydra:mapping```) associated with the Web API's potential action. Each argument comes with a name (```hydra:variale```) mentioned in the template, and a mapping to a term of the input SPARQL query's graph pattern, along two methods: ```hydra:property``` simply gives the predicate to look for in the SPARQL graph pattern, while ```shacl:sourceShape``` points to the property shape that can help find the term in the graph pattern.
-HTTP headers | Optional | Property of the the Web API's potential action. An ```http:headers``` list whose elements are HTTP headers to be sent to the Web API. Each header consists of a ```http:fieldName```, ```http:fieldValue``` and an optional ```http:hdrName```. See the [HTTP Vocabulary in RDF 1.0](https://www.w3.org/WAI/ER/HTTP/WD-HTTP-in-RDF10-20110502). A usage example is provided in [eol/getTraitsByTaxon_sd](/src/sparqlms/eol/getTraitsByTaxon_sd/ServiceDescriptionPrivate.ttl).
+HTTP headers | Optional | Property of the the Web API's potential action. An ```http:headers``` list whose elements are HTTP headers to be sent to the Web API. Each header consists of a ```http:fieldName```, ```http:fieldValue``` and an optional ```http:hdrName```. See the [HTTP Vocabulary in RDF 1.0](https://www.w3.org/WAI/ER/HTTP/WD-HTTP-in-RDF10-20110502). A usage example is provided in [eol/getTraitsByTaxon_sd](/services/eol/getTraitsByTaxon_sd/ServiceDescriptionPrivate.ttl).
 ```sms:cacheExpiresAfter``` | Optional | Property of the ```sd:Service``` instance. Maximum time (in seconds) to cache responses from the Web API. Default: ```"P2592000S"^^xsd:duration``` = 30 days
 ```sms:exampleQuery``` | Optional | Property of the ```sd:Service``` instance. A typical query used to generate the test interface on the Web page.
 ```sms:addProvenance``` | Optional | Property of the ```sd:Service``` instance. Whether to add provenance information as part of the graph that is being produced. Values are ```"true"^^xsd:boolean``` or ```"false"^^xsd:boolean```. Default is false
 
 
-**Private information**. 
+### Private information of the Service Description Graph
+
 Since the service description graph is public (it can be queried and dereferenced), it is not suitable to keep sensitive information such as an API private key or security token.
 Therefore, a companion file ```ServiceDescriptionPrivate.ttl``` may be defined, loaded into as separate named graph that is not made public.
 Both ```ServiceDescription.ttl``` and ```ServiceDescriptionPrivate.ttl``` do state facts about the same service, so that triples can be asserted in one or the other. The service will always work the same, only the public description will vary.
 
-An example is provided in service [flickr/getPhotosByTaxon_sd](/src/sparqlms/flickr/getPhotosByTaxon_sd).
+An example is provided in service [flickr/getPhotosByTaxon_sd](/services/flickr/getPhotosByTaxon_sd).
 
 ### Shapes graph
 The service description graph can optionally be accompanied by a [SHACL](https://www.w3.org/TR/2017/REC-shacl-20170720/) shapes graph that specifies the type of graph that the SPARQL micro-service is designed to produce.
@@ -228,14 +229,4 @@ The most simple JSON-LD profile is depicted below. It creates ad-hoc terms in th
 
 This is a handy way of turning the Web API JSON response into RDF, and this allows manipulating the Web API response in a SPARQL query using the ```construct.sparql``` file.
 
-Note that **namespaces must NOT be declared in the ```construct.sparql``` file**. Instead they must be defined in the [global config.ini file](/src/sparqlms/config.ini).
-
-Many well-known namespaces are already [declared in the EasyRDF library](https://github.com/njh/easyrdf/blob/master/lib/RdfNamespace.php), in addition to the following ones in the config.ini file:
-```
-namespace[dce]      = http://purl.org/dc/elements/1.1/
-namespace[dct]      = http://purl.org/dc/terms/
-namespace[dwc]      = http://rs.tdwg.org/dwc/terms/
-namespace[dwciri]   = http://rs.tdwg.org/dwc/iri/
-namespace[api]      = http://ns.inria.fr/sparql-micro-service/api#
-namespace[sms]      = http://ns.inria.fr/sparql-micro-service#
-```
+Note that many well-known namespaces are already [declared in the EasyRDF library](https://github.com/njh/easyrdf/blob/master/lib/RdfNamespace.php), in addition to the following ones in the global [config.ini](/src/sparql/config.ini) file.
