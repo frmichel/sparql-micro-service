@@ -37,9 +37,9 @@ try {
     // ------------------------------------------------------------------------------------
     
     // --- Read the service's arguments from the query string
-    $_params = Utils::getQueryStringArgs($context->getConfigParam('parameter'));
+    $_queryStringParams = Utils::getQueryStringArgs($context->getConfigParam('parameter'));
     
-    $_service = $_params['service'][0];
+    $_service = $_queryStringParams['service'][0];
     if ($_service != '')
         $context->setService($_service);
     else
@@ -57,17 +57,19 @@ try {
     if ($logger->isHandling(Logger::INFO))
         $logger->info("Directory where the service is deployed: " . $context->getServicePath());
     
-    $_querymode = $_params['querymode'][0];
+    $_querymode = $_queryStringParams['querymode'][0];
     if ($_querymode != 'sparql' && $_querymode != 'ld')
         Utils::httpBadRequest("Invalid argument 'querymode': " . $_querymode . ". Should be one of 'sparql' or 'ld'.");
     $logger->notice("Query parameter (html special chars encoded) 'querymode': " . htmlspecialchars($_querymode));
     $context->setQueryMode($_querymode);
     
-    $_rootUrl = $_params['root_url'][0];
-    if ($_rootUrl != '') {
-        $context->setConfigParam('root_url', $_rootUrl);
-        if ($logger->isHandling(Logger::INFO))
-            $logger->info("Root URL overridden by query string parameter 'root_url' (html special chars encoded):  " . htmlspecialchars($_rootUrl));
+    if (array_key_exists('root_url', $_queryStringParams)) {
+        $_rootUrl = $_queryStringParams['root_url'][0];
+        if ($_rootUrl != '') {
+            $context->setConfigParam('root_url', $_rootUrl);
+            if ($logger->isHandling(Logger::INFO))
+                $logger->info("Root URL overridden by query string parameter 'root_url' (html special chars encoded):  " . htmlspecialchars($_rootUrl));
+        }
     }
     
     // Read HTTP headers

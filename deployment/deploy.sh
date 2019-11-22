@@ -1,18 +1,21 @@
 #!/bin/bash
 #
 # This script customizes the configuration files (config.ini), SPARQL files (construct.sparql)
-# and service description files (ServiceDescription.ttl) of each SPARQL micro-serive by replacing 
-# the "example.org" hostname and "<api_key>" values commited on the public repo.
+# and service description files (ServiceDescription.ttl and ShapesGraph.ttl) of each SPARQL micro-serive
+# by replacing the "example.org" hostname and "<api_key>" values commited on the public repo.
 #
 # Usage: 
 # Copy this script in the public_html folder where the SPARQL micro-service code is installed
 # (there must be an src subfolder here). CD to public_html and run the script.
 
-# The machine where the services are deployed. Will replace the 'http://example.org'
+# The URL of the server where the services are accessible. Will replace the 'http://example.org'
 SERVER='http:\/\/sms.i3s.unice.fr'
 
+# Path to append to the server URL
+SERVERPATH=service
+
 # Directory where to search for SPARQL microservices, from the directory where this script is launched
-SMSDIR=src/sparqlms
+SMSDIR=services
 
 function substitute() {
     # Optional: first reset commited version
@@ -58,31 +61,32 @@ for FILE in $(ls $SMSDIR/eol/*/ServiceDescription*.ttl 2> /dev/null); do
 done
 
 
-# ================================== Set server hostname ==========================
+# ================================== Set hostname ==========================
 
-# --- Replace example.org with local server URL in sparql files ---
+# --- Replace server hostname in URIs http://example.org/ld/... of sparql files
 for FILE in `ls $SMSDIR/*/*/*.sparql`; do
-    replace='http:\/\/example.org'
-    echo "Changing $replace into $SERVER in $FILE"
-    substitute "$replace" "$SERVER" "$FILE"
-done
-
-# --- Replace example.org with local server URL in service description and shape graph files ---
-for FILE in `ls $SMSDIR/*/*/*.ttl`; do
     replace='http:\/\/example.org\/ld'
-    echo "Changing $replace into $SERVER/sparql-ms in $FILE"
+    echo "Changing $replace into $SERVER/ld in $FILE"
     substitute "$replace" "$SERVER\/ld" "$FILE"
 done
 
-for FILE in `ls $SMSDIR/*/*/*.ttl`; do
-    replace='http:\/\/example.org'
-    echo "Changing $replace into $SERVER/sparql-ms in $FILE"
-    substitute "$replace" "$SERVER\/sparql-ms" "$FILE"
+# --- Replace server hostname in example URIs http://example.org/ld/... of service description files
+for FILE in `ls $SMSDIR/*/*/ServiceDescription.ttl`; do
+    replace='http:\/\/example.org\/ld'
+    echo "Changing $replace into $SERVER/ld in $FILE"
+    substitute "$replace" "$SERVER\/ld" "$FILE"
 done
 
-# --- Replace example.org with local server URL in config.ini file ---
-for FILE in `ls $SMSDIR/config.ini`; do
+# --- Replace http://example.org with deployment URL in service description and shape graph files
+for FILE in `ls $SMSDIR/*/*/*.ttl`; do
     replace='http:\/\/example.org'
-    echo "Changing $replace into $SERVER/sparql-ms in $FILE"
-    substitute "$replace" "$SERVER\/sparql-ms" "$FILE"
+    echo "Changing $replace into $SERVER/$SERVERPATH in $FILE"
+    substitute "$replace" "$SERVER\/$SERVERPATH" "$FILE"
+done
+
+# --- Replace http://example.org with deployment URL in root_url in config.ini file
+for FILE in `ls src/sparqlms/config.ini`; do
+    replace='http:\/\/example.org'
+    echo "Changing $replace into $SERVER/$SERVERPATH in $FILE"
+    substitute "$replace" "$SERVER\/$SERVERPATH" "$FILE"
 done
