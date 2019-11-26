@@ -1,14 +1,15 @@
 # SPARQL Micro-Service Changelog
 
 
-## [0.4.2] XXXX-XX-XX
+## [0.4.2] 2019-11-26
 
 ### Added
-- Enable the deployement of SPARQL micro-services in multiple locations (not only src/sparqlms): see property `services_paths` in file `/src/sparql/config.ini`
-- Added new property `sms:exampleURI` in ServiceDescription graph and updated dynamic HTML description
+- Enable the deployement of SPARQL micro-services in multiple locations (not only src/sparqlms): see property `services_paths` in`/src/sparql/config.ini`
 - Allow to deploy services with multiple hostnames: the `root_url` property in file `/src/sparql/config.ini` can now be overridden using argument `root_url` passed to the `/src/sparqlms/service.php` main script
+- Added new property `sms:exampleURI` in ServiceDescription graph and updated dynamic HTML description
 
 ### Changed
+- Allow HTTP proxy configuration with properties `proxy.*` in  `/src/sparql/config.ini` (issue [#9](https://github.com/frmichel/sparql-micro-service/issues/9)
 - Support of URI dereferencing with services configured using a ServiceDescription graph (was not possible before)
 - SPARQL micro-services moved from `/src/sparql` to `/service`
 

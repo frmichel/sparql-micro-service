@@ -270,12 +270,13 @@ class Context
 
     /**
      * Check if the configuration (generic or custom) contains a parameter
+     * and its value is not empty
      *
      * @return boolean
      */
     public function hasConfigParam($param)
     {
-        return array_key_exists($param, $this->config);
+        return array_key_exists($param, $this->config) && $this->config[$param] != '';
     }
 
     /**

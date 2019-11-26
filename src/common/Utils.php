@@ -215,6 +215,12 @@ class Utils
                 $headers[] = $hName . ": " . $hVal;
         }
         
+        // Add the proxy authentication header, if any
+        if ($context->hasConfigParam('proxy.user') && $context->hasConfigParam('proxy.password')) {
+            $auth = base64_encode($context->getConfigParam('proxy.user') . ':' . $context->getConfigParam('proxy.password'));
+            $headers[] = "Proxy-Authorization: Basic $auth";
+        }
+        
         $streamContextOptions = array(
             'method' => 'GET',
             'header' => $headers,
@@ -225,6 +231,17 @@ class Utils
                 'allow_self_signed' => false
             ]
         );
+        
+        if ($context->hasConfigParam('proxy.host')) {
+            $_proxy = "tcp://" . $context->getConfigParam('proxy.host');
+            if ($context->hasConfigParam('proxy.port')) {
+                $_proxy .= ':' . $context->getConfigParam('proxy.port');
+            }
+            $streamContextOptions['proxy'] = $_proxy;
+        }
+        
+        if ($logger->isHandling(Logger::DEBUG))
+            $logger->debug("Web API query HTTP context: " . print_r($streamContextOptions, TRUE));
         
         $jsonContext = stream_context_create(array(
             'http' => $streamContextOptions,
