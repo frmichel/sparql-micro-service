@@ -11,7 +11,6 @@
       [ a shacl:PropertyShape; shacl:path schema:keywords;         shacl:nodeKind shacl:Literal; shacl:minCount 1 ],
       [ a shacl:PropertyShape; shacl:path schema:name;             shacl:nodeKind shacl:Literal; shacl:maxCount 1 ],
       [ a shacl:PropertyShape; shacl:path schema:contentUrl;       shacl:nodeKind shacl:IRI ],
-      [ a shacl:PropertyShape; shacl:path foaf:depiction;          shacl:nodeKind shacl:IRI ],
       [ a shacl:PropertyShape; shacl:path schema:thumbnailUrl;     shacl:nodeKind shacl:IRI ],
       [ a shacl:PropertyShape; shacl:path schema:mainEntityOfPage; shacl:nodeKind shacl:IRI ],
       [ a shacl:PropertyShape; shacl:path schema:dateCreated;      shacl:nodeKind shacl:Literal; shacl:minCount 0; shacl:maxCount 1 ],

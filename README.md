@@ -16,6 +16,30 @@ Others were designed in the context of a biodiversity-related use case to:
 
 **Each micro-service is further detailed in its own dedicated folder**.
 
+### Cite this work:
+
+Michel F., Zucker C., Gargominy O. & Gandon F. (2018). Integration of Web APIs and Linked Data Using SPARQL Micro-Services—Application to Biodiversity Use Cases. *Information 9(12):310*. [DOI](https://dx.doi.org/10.3390/info9120310), [HAL](https://hal.archives-ouvertes.fr/hal-01947589).
+
+
+```bibtex
+@article{michel_sparqlmicroservices_2018,
+  title = {Integration of {{Web APIs}} and {{Linked Data Using SPARQL Micro}}-{{Services}}\textemdash{{Application}} to {{Biodiversity Use Cases}}},
+  volume = {9},
+  copyright = {Licence Creative Commons Attribution 4.0 International (CC-BY)},
+  issn = {2078-2489},
+  language = {en},
+  number = {12},
+  journal = {Information},
+  doi = {10.3390/info9120310},
+  author = {Michel, Franck and Zucker, Catherine and Gargominy, Olivier and Gandon, Fabien},
+  month = dec,
+  year = {2018},
+  pages = {310},
+  url = {https://hal.archives-ouvertes.fr/hal-01947589}
+}
+```
+
+
 ## Documentation
 
 - [Usage of SPARQL micro-services](/doc/01-usage.md)

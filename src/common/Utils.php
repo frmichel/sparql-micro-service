@@ -215,6 +215,12 @@ class Utils
                 $headers[] = $hName . ": " . $hVal;
         }
         
+        // Add the proxy authentication header, if any
+        if ($context->hasConfigParam('proxy.user') && $context->hasConfigParam('proxy.password')) {
+            $auth = base64_encode($context->getConfigParam('proxy.user') . ':' . $context->getConfigParam('proxy.password'));
+            $headers[] = "Proxy-Authorization: Basic $auth";
+        }
+        
         $streamContextOptions = array(
             'method' => 'GET',
             'header' => $headers,
@@ -225,6 +231,17 @@ class Utils
                 'allow_self_signed' => false
             ]
         );
+        
+        if ($context->hasConfigParam('proxy.host')) {
+            $_proxy = "tcp://" . $context->getConfigParam('proxy.host');
+            if ($context->hasConfigParam('proxy.port')) {
+                $_proxy .= ':' . $context->getConfigParam('proxy.port');
+            }
+            $streamContextOptions['proxy'] = $_proxy;
+        }
+        
+        if ($logger->isHandling(Logger::DEBUG))
+            $logger->debug("Web API query HTTP context: " . print_r($streamContextOptions, TRUE));
         
         $jsonContext = stream_context_create(array(
             'http' => $streamContextOptions,
@@ -305,8 +322,7 @@ class Utils
                     // Do NOT escape special chars in case of the 'query' parameter that contains the SPARQL query
                     $argValue = $_REQUEST[$name];
                 $result[$name][] = $argValue;
-            } else
-                self::httpBadRequest("Query argument '" . $name . "' undefined.");
+            }
         }
         
         return $result;
@@ -322,7 +338,7 @@ class Utils
      * with its hydra:property or using the property shape denoted by shacl:sourceShape (the SD graph
      * should provide one or the other).
      *
-     * If one of the expected parameters in not found, a warning is logged but the function still
+     * If one of the expected parameters in not found, the function logs a warning and exits with an HTTP 400 error
      * returns the result anyway.
      *
      * @param string $sparqlQuery
@@ -382,6 +398,10 @@ class Utils
      * Get the Web API arguments passed to the micro-service either as query string arguments
      * or within the SPARQL graph pattern.
      *
+     * If the service is invoked with querymod 'ld', then the arguments are expected to be
+     * passed on the query string, not in a SPARQL query (there is no SPARQL query in the
+     * 'ld' query mode).
+     *
      * If any parameter in not found, the function returns an HTTP error 400 and exits.
      *
      * @return array associative array where the key is the argument name,
@@ -391,7 +411,7 @@ class Utils
     {
         global $context;
         
-        if (! $context->getConfigParam('service_description'))
+        if (! $context->getConfigParam('service_description') || $context->getQueryMode() == 'ld')
             return self::getQueryStringArgs($context->getConfigParam('custom_parameter'));
         else
             return self::getServiceCustomArgsFromSparqlQuery($context->getSparqlQuery());

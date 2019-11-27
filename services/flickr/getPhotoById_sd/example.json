@@ -1,0 +1,39 @@
+{ "photo": 
+  { "id": "37947618735", "secret": "f1f3aa8168", "server": "4529", "farm": 5, 
+    "dateuploaded": "1512416668", "isfavorite": 0, "license": 4, "safety_level": 0,
+    "rotation": 0, "originalsecret": "439f4f47b5", "originalformat": "jpg", 
+    "owner": {
+        "nsid": "33634811@N07", "username": "Franck_Michel",
+        "realname": "Franck Michel", "location": "Antibes, France", 
+        "iconserver": "391", "iconfarm": 1, "path_alias": "franckmichel"
+    },
+    "title": { "_content": "Bagel for breakfast" }, 
+    "description": { "_content": "New York city, June 2017" }, 
+    "visibility": { "ispublic": 1, "isfriend": 0, "isfamily": 0 }, 
+    "dates": { "posted": "1512416668", "taken": "2017-06-20 08:35:23",
+               "takengranularity": 0, "takenunknown": 0, "lastupdate": "1512566217" },
+    "views": "215", 
+    "editability": { "cancomment": 0, "canaddmeta": 0 }, 
+    "publiceditability": { "cancomment": 1, "canaddmeta": 0 }, 
+    "usage": { "candownload": 1, "canblog": 0, "canprint": 0, "canshare": 1 }, 
+    "comments": { "_content": 0 }, 
+    "notes": { "note": [] }, 
+    "people": { "haspeople": 0 }, 
+    "tags": { 
+      "tag": [
+        { "id": "33613481-37947618735-1677", "author": "33634811@N07",
+          "authorname": "Franck_Michel", "raw": "table", "_content": "table", "machine_tag": "" },
+        { "id": "33613481-37947618735-5862", "author": "33634811@N07",
+          "authorname": "Franck_Michel", "raw": "seat", "_content": "seat", "machine_tag": "" },
+        { "id": "33613481-37947618735-374054", "author": "33634811@N07",
+          "authorname": "Franck_Michel", "raw": "bric", "_content": "bric", "machine_tag": "" }
+      ] }, 
+    "urls": { 
+      "url": [
+        { "type": "photopage",
+          "_content": "https:\/\/www.flickr.com\/photos\/franckmichel\/37947618735\/" }
+      ] },
+    "media": "photo"
+  },
+  "stat": "ok"
+}

@@ -24,6 +24,7 @@ class Context
     private static $singleton = null;
 
     /**
+     * Logger used in this class
      *
      * @var \Monolog\Logger
      */
@@ -31,7 +32,7 @@ class Context
 
     /**
      *
-     * @var array array of all loggers defined
+     * @var array array of all named loggers used by all classes of the application
      */
     private $loggers = array();
 
@@ -49,9 +50,9 @@ class Context
     private $cache = null;
 
     /**
-     * Configuration parameters: this includes the main config file (./config.ini)
-     * as well as the custom service provided either through the service config file (./<service name>/config.ini)
-     * or the service description graph (./<service name>/ServiceDescription.ttl)
+     * Configuration parameters: this merges the main config file (./config.ini) as well as the custom
+     * service configuration provided either through the service config.ini file (<service name>/config.ini)
+     * or the service description graph (<service name>/ServiceDescription.ttl)
      *
      * @var array
      */
@@ -65,6 +66,21 @@ class Context
      * @var string
      */
     private $service = null;
+
+    /**
+     * Path (absolute or relative) to the directory where the service being invoked is deployed
+     *
+     * @var string
+     */
+    private $servicePath = null;
+
+    /**
+     * Query mode: 'sparql' for regular SPARQL querying, or 'ld' for URI dereferencing
+     * Retrived from query string parameter 'querymode',
+     *
+     * @var string
+     */
+    private $queryMode = null;
 
     /**
      * SPARQL query submitted to the SPARQL micro-service
@@ -99,7 +115,6 @@ class Context
         // --- Initialize the logger
         $this->logHandler = new RotatingFileHandler(__DIR__ . '/../../logs/sms.log', 5, Logger::NOTICE, true, 0666);
         $this->logHandler->setFormatter(new LineFormatter("[%datetime%] %level_name% %channel%: %message%\n", null, true));
-        
         $this->logger = $this->getLogger("Context");
         if ($startMessage == null)
             $this->logger->notice("--------- Starting service --------");
@@ -109,7 +124,7 @@ class Context
         // --- Read the global configuration file and check query parameters
         $this->config = Configuration::readGobalConfig();
         
-        // Set the log level
+        // --- Set the log level
         $log_level = $this->getConfigParam("log_level", "NOTICE");
         switch ($log_level) {
             case "DEBUG":
@@ -138,7 +153,7 @@ class Context
         if ($this->logger->isHandling(Logger::INFO))
             $this->logger->info("Global configuration read from config.ini: " . print_r($this->config, TRUE));
         
-        // Set default namespaces. See other existing default namespaces in EasyRdf/Namespace.php
+        // --- Set default namespaces. See other existing default namespaces in EasyRdf/Namespace.php
         if (array_key_exists('namespace', $this->config))
             foreach ($this->config['namespace'] as $nsName => $nsVal) {
                 if ($this->logger->isHandling(Logger::DEBUG))
@@ -191,7 +206,7 @@ class Context
     }
 
     /**
-     * Create named loggers
+     * Create a named logger
      *
      * @param string $logName
      *            logger name (aka. channel). Defaults to "default"
@@ -255,12 +270,13 @@ class Context
 
     /**
      * Check if the configuration (generic or custom) contains a parameter
+     * and its value is not empty
      *
      * @return boolean
      */
     public function hasConfigParam($param)
     {
-        return array_key_exists($param, $this->config);
+        return array_key_exists($param, $this->config) && $this->config[$param] != '';
     }
 
     /**
@@ -285,6 +301,27 @@ class Context
     }
 
     /**
+     * Return the path (absolute or relative) to the directory where the service being invoked is deployed
+     * for example '../../services/flickr/getPhotoById'
+     *
+     * @return string
+     */
+    public function getServicePath()
+    {
+        return $this->servicePath;
+    }
+
+    /**
+     * Set the path (absolute or relative) to the directory where the service being invoked is deployed
+     *
+     * @param string $servicePath
+     */
+    public function setServicePath($servicePath)
+    {
+        $this->servicePath = $servicePath;
+    }
+
+    /**
      * Return the URI of the service being called.
      * The URI ends with a '/'
      *
@@ -295,6 +332,24 @@ class Context
     public function getServiceUri()
     {
         return $this->getConfigParam('root_url') . "/" . $this->getService() . "/";
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getQueryMode()
+    {
+        return $this->queryMode;
+    }
+
+    /**
+     *
+     * @param string $queryMode
+     */
+    public function setQueryMode($queryMode)
+    {
+        $this->queryMode = $queryMode;
     }
 
     /**

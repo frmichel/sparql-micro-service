@@ -1,28 +1,41 @@
 # SPARQL Micro-Service Changelog
 
 
+## [0.4.2] 2019-11-26
+
+### Added
+- Enable the deployement of SPARQL micro-services in multiple locations (not only src/sparqlms): see property `services_paths` in`/src/sparql/config.ini`
+- Allow to deploy services with multiple hostnames: the `root_url` property in file `/src/sparql/config.ini` can now be overridden using argument `root_url` passed to the `/src/sparqlms/service.php` main script
+- Added new property `sms:exampleURI` in ServiceDescription graph and updated dynamic HTML description
+
+### Changed
+- Allow HTTP proxy configuration with properties `proxy.*` in  `/src/sparql/config.ini` (issue [#9](https://github.com/frmichel/sparql-micro-service/issues/9)
+- Support of URI dereferencing with services configured using a ServiceDescription graph (was not possible before)
+- SPARQL micro-services moved from `/src/sparql` to `/service`
+
+
 ## [0.4.1] 2019-07-09
 
 ### Added
 - Implemented issue [#8](https://github.com/frmichel/sparql-micro-service/issues/8): generate provenance information
 
 ### Changed
-- Mandatory parameter ```version``` added to the global config.ini file
+- Mandatory parameter `version` added to the global config.ini file
 
 
 ## [0.4.0] 2019-04-29
 
-**CONFIGURATION CHANGE requires upgrade of existing micro-services**: in this version, files ```insert.sparql``` are removed. Instead, only a ```construct.sparql``` may be defined that replaces the function of both ```insert.sparql``` and ```construct.sparql``` in earlier versions.
+**CONFIGURATION CHANGE requires upgrade of existing micro-services**: in this version, files `insert.sparql` are removed. Instead, only a `construct.sparql` may be defined that replaces the function of both `insert.sparql` and `construct.sparql` in earlier versions.
 
-**Upgrade procedure**: simply remove ```insert.sparql``` from services that have both an ```insert.sparql``` and ```construct.sparql```, or rename ```insert.sparql``` into ```construct.sparql``` and replace the INSERT with CONSTRUCT within the queries themselves.
+**Upgrade procedure**: simply remove `insert.sparql` from services that have both an `insert.sparql` and `construct.sparql`, or rename `insert.sparql` into `construct.sparql` and replace the INSERT with CONSTRUCT within the queries themselves.
 
 ### Added
-- New service ```eol/getTraitsByName_sd```
-- New service ```flickr/getPhotosByTags_sd```
-- Configuration parameter ```log_level``` in main config.ini file
+- New service `eol/getTraitsByName_sd`
+- New service `flickr/getPhotosByTags_sd`
+- Configuration parameter `log_level` in main config.ini file
 
 ### Changed
-- Removal of files ```insert.sparql```. Instead, only a ```construct.sparql``` may be defined that replaces the function of both ```insert.sparql``` and ```construct.sparql``` in versions 0.3.*.
+- Removal of files `insert.sparql`. Instead, only a `construct.sparql` may be defined that replaces the function of both `insert.sparql` and `construct.sparql` in versions 0.3.*.
 - Fix issue [#2](https://github.com/frmichel/sparql-micro-service/issues/2): Implement http_header config param in the Service Description mode
 - Fix issue [#3](https://github.com/frmichel/sparql-micro-service/issues/3): document rewriting rules for HTML doc generation
 - Fix issue [#4](https://github.com/frmichel/sparql-micro-service/issues/4): support for multiple values of an argument. 
@@ -63,9 +76,9 @@
 - new service macaulaylibrary/getAudioById for URI dereferencing
 
 ### Changed
-- change interface of services' custom service.php scripts (see folder ```src/sparqlms/manual_config_example```)
+- change interface of services' custom service.php scripts (see folder `src/sparqlms/manual_config_example`)
 - update Docker deployment with code version 0.1.0 and a MongoDB container
-- comply with composer common structure (remove directory ```vendor```, point to own forks of the JsonLD and EasyRDF libraries)
+- comply with composer common structure (remove directory `vendor`, point to own forks of the JsonLD and EasyRDF libraries)
 - fix typos in TDWG demo
 
 
