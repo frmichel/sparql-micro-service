@@ -1,6 +1,7 @@
 CONSTRUCT {
     ?photoUri a schema:Photograph;
 
+        schema:identifier       {photo_id};
         schema:name             ?title;
         schema:contentUrl       ?img;
         schema:thumbnailUrl     ?thumbnail;
@@ -8,10 +9,13 @@ CONSTRUCT {
         schema:mainEntityOfPage ?pageUrl;
         schema:fileFormat       "image/jpeg";
         schema:dateCreated      ?dateTaken;
-        schema:keyword          ?tag;
+        schema:keywords         ?tag;
         schema:description      ?description;
 
-        schema:author           [ schema:identifier ?owner; schema:name ?ownerName; schema:url ?ownerUrl ];
+        schema:author [ 
+            a schema:Person; 
+            schema:identifier ?owner; schema:name ?ownerName; schema:url ?ownerUrl
+        ];
         .
 }
 WHERE {
