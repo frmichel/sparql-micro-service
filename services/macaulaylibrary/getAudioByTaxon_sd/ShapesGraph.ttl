@@ -3,7 +3,7 @@
 @prefix schema:  <http://schema.org/>.
 @prefix dwc:     <http://rs.tdwg.org/dwc/terms/>.
 
-@base            <http://example.org/macaulaylibrary/getAudioByTaxon_sd/>.
+@base            <http://example.org/sparql-ms/macaulaylibrary/getAudioByTaxon_sd/>.
 
 <ShapesGraph#TaxonShape> a shacl:NodeShape;
     shacl:targetClass dwc:Taxon;

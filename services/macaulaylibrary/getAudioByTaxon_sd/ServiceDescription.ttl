@@ -10,7 +10,7 @@
 @prefix dwc:     <http://rs.tdwg.org/dwc/terms/>.
 @prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
 
-@base            <http://example.org/macaulaylibrary/getAudioByTaxon_sd/>.
+@base            <http://example.org/sparql-ms/macaulaylibrary/getAudioByTaxon_sd/>.
 
 # This file is loaded as graph <ServiceDescription>
 <>

@@ -1,10 +1,12 @@
 # Installation, configuration and deployment
 
-To install this project, you will need an Apache Web server and a write-enabled SPARQL endpoint (in our case, we used the [Corese-KGRAM](https://project.inria.fr/corese/) lightweight in-memory triple-store), and optionally an MongoDB instance to serve as the cache database (can be deactivated in [/src/sparqlms/config.ini](/src/sparqlms/config.ini)).
+To deploy and run this project, you will need an Apache Web server and a write-enabled SPARQL endpoint (in our case, we used the [Corese-KGRAM](https://project.inria.fr/corese/) lightweight in-memory triple-store), and optionally a MongoDB instance to serve as the cache database (can be deactivated in [/src/sparqlms/config.ini](../src/sparqlms/config.ini)).
 
-A Corese-KGRAM service is also required (possibly the same) to execute components that rely on the [STTL](http://ns.inria.fr/sparql-template/) and [LDScript](http://ns.inria.fr/sparql-extension/) features (see folder [/deployment/corese](/deployment/corese)):
-  * An STTL transformation service able to transform a SPARQL query into a [SPIN](http://spinrdf.org/sp.html) representation (see property `spin_endpoint` in [/src/sparqlms/config.ini](/src/sparqlms/config.ini)) is required when [passing arguments within the SPARQL query graph pattern](/doc/01-usage.md#passing-arguments-within-the-sparql-query-graph-pattern)
-  * An STTL transformation service transforms micro-services Service Descriptions graphs into HTML pages with embedded JSON-LD (see [/src/sparqlms/resources/sms-html-description](/src/sparqlms/resources/sms-html-description)).
+If you configure SPARQL micro-services using the [config.ini method](02-config.md#configuration-with-file-configini) configuration method, this is all you need.
+
+If you configure SPARQL micro-services using the [Service Description method](02-config.md#configuration-with-a-sparql-service-description-file), you also need a Corese-KGRAM service to execute the components that rely on the [STTL](http://ns.inria.fr/sparql-template/) and [LDScript](http://ns.inria.fr/sparql-extension/) features (see folder [/deployment/corese](../deployment/corese)):
+  * An STTL transformation service able to transform a SPARQL query into a [SPIN](http://spinrdf.org/sp.html) representation (see property `spin_endpoint` in [/src/sparqlms/config.ini](../src/sparqlms/config.ini)) is required when [passing arguments within the SPARQL query graph pattern](01-usage.md#passing-arguments-within-the-sparql-query-graph-pattern)
+  * An STTL transformation service transforms micro-services Service Descriptions graphs into HTML pages with embedded JSON-LD (see [/src/sparqlms/resources/sms-html-description](../src/sparqlms/resources/sms-html-description)).
 
 
 ## Pre-requisites
@@ -87,7 +89,7 @@ sparqlms/
     vendor/
 ```
 
-### Customize the properties in file [/src/sparqlms/config.ini](/src/sparqlms/config.ini):
+### Customize the properties in file [/src/sparqlms/config.ini](../src/sparqlms/config.ini):
 
 - Set the URL of your write-enabled SPARQL endpoint and optional SPARQL-to-SPIN service. These do not need to be exposed on the internet, only the Apache process should have access to them, e.g.:
 ```
@@ -100,14 +102,14 @@ services_paths[] = ../../services
 services_paths[] = /home/user/services
 ```
 
-Update and run the [/deployment/deploy.sh](/deployment/deploy.sh) script to customize the services' configuration files. 
+Update and run the [/deployment/deploy.sh](../deployment/deploy.sh) script to customize the services' configuration files. 
 This will replace the `http://example.org` hostname from ServiceDescription files  with the URL of your own server, 
 and replace the API_KEY placeholders with your own private API keys.
 
 
 ### Change the log level
 
-The application writes log traces in files named like `logs/sms-<date>.log`. The default log level is NOTICE. To change it, simply update the following line in [/src/sparqlms/config.ini](/src/sparqlms/config.ini) with e.g. INFO or DEBUG:
+The application writes log traces in files named like `logs/sms-<date>.log`. The default log level is NOTICE. To change it, simply update the following line in [/src/sparqlms/config.ini](../src/sparqlms/config.ini) with e.g. INFO or DEBUG:
 
 ```
     log_level = INFO
@@ -119,27 +121,27 @@ Log levels are described in [Monolog documentation](https://github.com/Seldaek/m
 ### URL rewriting rules
 
 You now need to configure [rewriting rules](http://httpd.apache.org/docs/2.4/rewrite/) so that Apache will route SPARQL micro-service invocations appropriately. Several rules are needed to deal with the regular invocation with a SPARQL query, or the invocation to dereference URIs.
-Complete examples are given in [/deployment/apache/httpd.conf](/deployment/apache/httpd.conf), and the sections below provide further explanations.
+Complete examples are given in [/deployment/apache/example.org.conf](../deployment/apache/example.org.conf), and the sections below provide further explanations.
 
-The main entry point of SPARQL micro-services is the [service.php](/src/sparqlms/service.php) script. This script takes several parameters listed in the table below:
+The main entry point of SPARQL micro-services is the [service.php](../src/sparqlms/service.php) script. This script takes several parameters listed in the table below:
 
 Parameter | Description
 --------- | -------------
 service | the name of SPARQL micro-service being invoked, formatted as `<Web API>/<service>`
 querymode | either `sparql` for regular SPARQL invocation or `ld` when the service is invoked to dereference a URI
-root_url | URL at which the SPARQL micro-service is deployed (optional). If provided, this parameter overrides the `root_url` parameter in the main `config.ini` file.
+root_url | URL at which the SPARQL micro-service is deployed (optional). If provided, this parameter overrides the `root_url` parameter in the [main config.ini](../src/sparqlms/config.ini) file.
 query, default-graph-uri, named-graph-uri | the regular SPARQL parameters described in the [SPARQL Protocol](https://www.w3.org/TR/2013/REC-sparql11-protocol-20130321/). When the service is invoked for URI dereferencing, these parameters are ignored.
 *service custom arguments* | any other arguments of the SPARQL micro-service in case they are passed as query string parameters
 
-Apache rewriting rules are used to route invocations to `service.php` while setting the `querymode`, `service` and `root_url` parameters appropriately. Other parameters (`query`, `default-graph-uri`, `named-graph-uri` and the service custom arguments) must be passed in by the client invoking the service.
+Apache rewriting rules are used to route invocations to `service.php` while setting the `querymode`, `service` and `root_url` parameters appropriately. Other parameters (`query`, `default-graph-uri`, `named-graph-uri` and the service custom arguments) that are passed by the client invoking the service are transmitted transparantly to `service.php`.
 
 
 #### Rewriting rules for SPARQL querying
 
-If the service custom arguments are passed on the HTTP query string, the URL pattern is a follows:
+If the service custom arguments are passed on the HTTP query string ([config.ini method](02-config.md#configuration-with-file-configini)), the URL pattern is a follows:
 ```http://example.org/sparqlms/<Web API>/<service>?param=value```.
 
-If they are passed passed within the SPARQL query graph pattern, the pattern is a follows:
+If they are passed passed within the SPARQL query graph pattern ([Service Description method](02-config.md#configuration-with-a-sparql-service-description-file)), the URL pattern is simply:
 ```http://example.org/sparqlms/<Web API>/<service>```.
 
 The rewriting rule below invokes script  `service.php` with parameter `querymode` set to `sparql` and `service` set to `<Web API>/<service>`.
@@ -170,8 +172,8 @@ Services `flickr/getPhotosByGroupByTag` and `flickr/getPhotosByTaxon_sd` generat
 
 To produce a graph in response to the lookup of such a URI, service `flickr/getPhotoById` is used. The rewriting rule below invokes script  `service.php` with parameter `querymode` set to `ld` and `service` set to `flickr/getPhotoById`:
 
-```
     RewriteRule "^/ld/flickr/photo/(.*)$" http://example.org/~userdir/sparqlms/src/sparqlms/service.php?querymode=ld&service=flickr/getPhotoById&photo_id=$1 [P,L]
+```
 ```
 
 This invokes service `flickr/getPhotoById` with the `photo_id` parameter whose value is extract from the URI.
@@ -192,7 +194,28 @@ http://example.org/~userdir/sparqlms/src/sparqlms/service.php?querymode=ld&servi
 
 Additional rewrinting rules must be set to allow dereferencing the ServiceDescription and SHACL graphs, as well as the translation of the ServiceDescription graph into an HTML page.
 
-Complete examples are given in the first part of the [/deployment/apache/httpd.conf](/deployment/apache/httpd.conf).
+Complete examples are given in the first part of the [/deployment/apache/example.org.conf](../deployment/apache/example.org.conf).
+
+
+## Customize the SPARQL micro-serivces' URIs
+
+The services provided in folder [/services](../services) are configured as if they were deployed at http://example.org/sparql-ms, and the dereferenceable URIs the generate are in the form http://example.org/ld.
+These must be customized before you can use the services, to match the URL at which they are deployed.
+
+Script [/deployment/deploy.sh](../deployment/deploy.sh) do that for you: copy the script to the folder where the services are located (for instance /services), update the variables `SERVER`, `SERVERPATH` and `SMSDIR`, and run the script.
+
+Note that you can also use it to replace the Web APIs' keys with your own personal keys.
+
+
+## Initialize the RDF triple store and start the SPARQL endpoint
+
+The write-enabled SPARQL endpoint given by property `sparql_endpoint` (see the [section above](#customize-the-properties-in-file-srcsparqlmsconfigini)) is necessary for two tasks:
+  - At each invocation of a SPARQL micro-service, the result of transforming the Web API response into RDF is loaded as a temporary named graph and the user's SPARQL query is executed against this named graph.
+  - It also hosts the named graphs corresponding to the ServiceDescription.ttl, ServiceDescriptionPrivate.ttl and ShapesGraph.ttl files of each SPARQL micro-service (if any).
+
+Hence, you should make sure to **load these files as named graphs into your triple store**.
+Depending on the triple store that you are using, you may have to use different methods.
+As an example, script [corese-server.sh](../deployment/corese/corese-server.sh) prepares a list of those files as well as their named graphs URIs, then it starts up the Corese-KGRAM triple store that immediately loads the files.
 
 
 # Deploy with Docker
@@ -201,7 +224,7 @@ You can test SPARQL micro-services using the two [Docker](https://www.docker.com
 - [frmichel/corese](https://hub.docker.com/r/frmichel/corese/): built upon debian:buster, runs the [Corese-KGRAM](http://wimmics.inria.fr/corese) RDF store and SPARQL endpoint. Corese-KGRAM listens on port 8081.
 - [frmichel/sparql-micro-service](https://hub.docker.com/r/frmichel/sparql-micro-service/): provides the Apache Web server, PHP 5.6, and the SPARQL micro-services described above. Apache listens on port 80, it is exposed as port 80 of the Docker server.
 
-To run these images, simply download the file [docker-compose.yml](/deployment/docker/docker-compose.yml) on a Docker server and run:
+To run these images, simply download the file [docker-compose.yml](../deployment/docker/docker-compose.yml) on a Docker server and run:
 ```
 docker-compose up -d
 ```

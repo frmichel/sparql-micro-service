@@ -5,8 +5,8 @@ When a SPARQL micro-service is invoked, it generates a small, resource-centric g
 Optionally, **provenance information** can be added to the graph. This is configured on a micro-service--basis with parameter ```add_provenance = true```in the config.ini file, or with triple ```<> sms:addProvenance "true"^^xsd:boolean;``` in the service description graph (see the [configuration page](02-config.md)).
 
 Two SPARQL queries are used to generate the provenance information:
-- [add_provenance.sparql](/src/sparqlms/resources/add_provenance.sparql) applies to micro-services configured using the [service description method](/doc/02-config.md#configuration-with-a-sparql-service-description-file)
-- [add_provenance_simple.sparql](/src/sparqlms/resources/add_provenance_simple.sparql) applies to micro-services configured using the [config.ini method](/doc/02-config.md#configuration-with-file-configini), and generates more simple provenance information (because some information, such as the Web API name and URL, are only provided in the service description method).
+- [add_provenance.sparql](../src/sparqlms/resources/add_provenance.sparql) applies to micro-services configured using the [service description method](../doc/02-config.md#configuration-with-a-sparql-service-description-file)
+- [add_provenance_simple.sparql](../src/sparqlms/resources/add_provenance_simple.sparql) applies to micro-services configured using the [config.ini method](../doc/02-config.md#configuration-with-file-configini), and generates more simple provenance information (because some information, such as the Web API name and URL, are only provided in the service description method).
 
 ## Provenance information model 
 

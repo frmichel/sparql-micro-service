@@ -9,7 +9,7 @@
 # (there must be an src subfolder here). CD to public_html and run the script.
 
 # The URL of the server where the services are accessible. Will replace the 'http://example.org'
-SERVER='http:\/\/sms.i3s.unice.fr'
+SERVER='http:\/\/sparql-micro-services.org'
 
 # Path to append to the server URL
 SERVERPATH=service
@@ -86,7 +86,7 @@ done
 
 # --- Replace http://example.org with deployment URL in root_url in config.ini file
 for FILE in `ls src/sparqlms/config.ini`; do
-    replace='http:\/\/example.org'
+    replace='http:\/\/example.org\/sparql-ms'
     echo "Changing $replace into $SERVER/$SERVERPATH in $FILE"
     substitute "$replace" "$SERVER\/$SERVERPATH" "$FILE"
 done

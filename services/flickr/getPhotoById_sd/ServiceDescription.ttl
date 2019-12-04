@@ -9,7 +9,7 @@
 @prefix skos:    <http://www.w3.org/2004/02/skos/core#>.
 @prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
 
-@base            <http://example.org/flickr/getPhotoById_sd/>.
+@base            <http://example.org/sparql-ms/flickr/getPhotoById_sd/>.
 
 # This file is loaded as graph <ServiceDescription>
 <>

@@ -2,7 +2,7 @@
 @prefix shacl:   <http://www.w3.org/ns/shacl#>.
 @prefix schema:  <http://schema.org/>.
 
-@base            <http://example.org/flickr/getPhotoById_sd/>.
+@base            <http://example.org/sparql-ms/flickr/getPhotoById_sd/>.
 
 <ShapesGraph#PhotographShape> a shacl:NodeShape;
     shacl:targetClass schema:Photograph;

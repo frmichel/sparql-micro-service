@@ -47,8 +47,8 @@ rm -f $PROFILE
 echo "st:smsdesc a sw:Workflow; sw:body (" >> $PROFILE
 
 # Generate the loading instructions for the SPARQL micro-services from all locations
-genMultipleLoad "http://sms.i3s.unice.fr/sparql-ms"        "$HOME/public_html/sparql-ms-live/services"
-genMultipleLoad "http://sparql-micro-services.org/service" "$HOME/public_html/sparql-micro-services.org"
+genMultipleLoad "http://sms.i3s.unice.fr/sparql-ms"         "$HOME/public_html/sparql-ms-live/services"
+genMultipleLoad "https://sparql-micro-services.org/service" "$HOME/public_html/sparql-micro-services.org"
 
 # Complete the profile
 echo ').' >> $PROFILE

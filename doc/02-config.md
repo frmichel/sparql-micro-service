@@ -1,6 +1,6 @@
 # Configure a SPARQL micro-service
 
-Each SPARQL micro-service resides in a dedicated folder named after the convention: \<Web API\>/\<micro-service\>, e.g. [flickr/getPhotosByTags_sd](/services/flickr/getPhotosByGroupByTag).
+Each SPARQL micro-service resides in a dedicated folder named after the convention: \<Web API\>/\<micro-service\>, e.g. [flickr/getPhotosByTags_sd](/services/flickr/getPhotosByTags_sd).
 
 A SPARQL micro-service can be configured following two different flavours that each correspond to a method for passing arguments to the micro-service:
 
@@ -58,7 +58,7 @@ In this configuration method, the micro-service folder is organized as follows:
 ### Service Description Graph
 
 The micro-service description is provided by an RDF graph following the [SPARQL Service Description](https://www.w3.org/TR/2013/REC-sparql11-service-description-20130321/) recommendation (SD).
-See provided examples for more details (conventionally named with extension '_sd'), e.g. [flickr/getPhotosByTaxon_sd](/services/flickr/getPhotosByTaxon_sd/ServiceDescription.ttl) or [macaulaylibrary/getAudioByTaxonCode_sd](/services/macaulaylibrary/getAudioByTaxonCode_sd/ServiceDescription.ttl).
+See provided examples for more details (conventionally named with extension '_sd'), e.g. [flickr/getPhotosByTags_sd](/services/flickr/getPhotosByTags_sd/ServiceDescription.ttl) or [macaulaylibrary/getAudioByTaxonCode_sd](/services/macaulaylibrary/getAudioByTaxonCode_sd/ServiceDescription.ttl).
 
 The SD graph in file ```ServiceDescription.ttl``` is described in article [4](../README.md#Publications).
 Very briefly, it describes an ```sd:Service``` and ```sms:Service``` instance (namespace ```sms``` stands for ```http://ns.inria.fr/sparql-micro-service#```) whose data source (```dct:source```) is a Web API (```schema:WebAPI```) that has a search action (```schema:potentialAction```).
@@ -144,7 +144,8 @@ Web API query string template | Mandatory | A ```hydra:IriTemplate``` (```hydra:
 Input arguments | Mandatory | Set of ```hydra:IriTemplateMapping``` resources (```hydra:mapping```) associated with the Web API's potential action. Each argument comes with a name (```hydra:variale```) mentioned in the template, and a mapping to a term of the input SPARQL query's graph pattern, along two methods: ```hydra:property``` simply gives the predicate to look for in the SPARQL graph pattern, while ```shacl:sourceShape``` points to the property shape that can help find the term in the graph pattern.
 HTTP headers | Optional | Property of the the Web API's potential action. An ```http:headers``` list whose elements are HTTP headers to be sent to the Web API. Each header consists of a ```http:fieldName```, ```http:fieldValue``` and an optional ```http:hdrName```. See the [HTTP Vocabulary in RDF 1.0](https://www.w3.org/WAI/ER/HTTP/WD-HTTP-in-RDF10-20110502). A usage example is provided in [eol/getTraitsByTaxon_sd](/services/eol/getTraitsByTaxon_sd/ServiceDescriptionPrivate.ttl).
 ```sms:cacheExpiresAfter``` | Optional | Property of the ```sd:Service``` instance. Maximum time (in seconds) to cache responses from the Web API. Default: ```"P2592000S"^^xsd:duration``` = 30 days
-```sms:exampleQuery``` | Optional | Property of the ```sd:Service``` instance. A typical query used to generate the test interface on the Web page.
+```sms:exampleQuery``` | Optional | Property of the ```sd:Service``` instance. A typical SPARQL query that can be submitted to the service. Used to generate the test interface on the Web page.
+```sms:exampleURI``` | Optional | Property of the ```sd:Service``` instance. A URI that can be dereferenced using this service. Used to generate the test interface on the Web page.
 ```sms:addProvenance``` | Optional | Property of the ```sd:Service``` instance. Whether to add provenance information as part of the graph that is being produced. Values are ```"true"^^xsd:boolean``` or ```"false"^^xsd:boolean```. Default is false
 
 
@@ -154,7 +155,7 @@ Since the service description graph is public (it can be queried and dereference
 Therefore, a companion file ```ServiceDescriptionPrivate.ttl``` may be defined, loaded into as separate named graph that is not made public.
 Both ```ServiceDescription.ttl``` and ```ServiceDescriptionPrivate.ttl``` do state facts about the same service, so that triples can be asserted in one or the other. The service will always work the same, only the public description will vary.
 
-An example is provided in service [flickr/getPhotosByTaxon_sd](/services/flickr/getPhotosByTaxon_sd).
+An example is provided in service [flickr/getPhotosByTags_sd](/services/flickr/getPhotosByTags_sd).
 
 ### Shapes graph
 The service description graph can optionally be accompanied by a [SHACL](https://www.w3.org/TR/2017/REC-shacl-20170720/) shapes graph that specifies the type of graph that the SPARQL micro-service is designed to produce.
@@ -229,4 +230,4 @@ The most simple JSON-LD profile is depicted below. It creates ad-hoc terms in th
 
 This is a handy way of turning the Web API JSON response into RDF, and this allows manipulating the Web API response in a SPARQL query using the ```construct.sparql``` file.
 
-Note that many well-known namespaces are already [declared in the EasyRDF library](https://github.com/njh/easyrdf/blob/master/lib/RdfNamespace.php), in addition to the following ones in the global [config.ini](/src/sparql/config.ini) file.
+Note that many well-known namespaces are already [declared in the EasyRDF library](https://github.com/njh/easyrdf/blob/master/lib/RdfNamespace.php), in addition to the ones in the global [config.ini](/src/sparqlms/config.ini) file.

@@ -11,7 +11,7 @@
 @prefix dwc:     <http://rs.tdwg.org/dwc/terms/>.
 @prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
 
-@base            <http://example.org/eol/getTraitsByTaxon_sd/>.
+@base            <http://example.org/sparql-ms/eol/getTraitsByTaxon_sd/>.
 
 # This file is loaded as named graph <ServiceDescriptionPrivate>
 <APIService>

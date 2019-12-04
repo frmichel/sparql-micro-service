@@ -4,13 +4,13 @@ To document SPARQL micro-services and spur their discovery, they can be describe
 
 Such descriptions can be dynamically translated into an HTML page documenting the service using content negotiation. The Web page embeds markup data (formatted as JSON-LD) representing the service as a https://schema.org/Dataset. In turn, services like Google Dataset Search can crawl and index it properly.
 
-The HTML page generation is carried out using an [STTL](http://ns.inria.fr/sparql-template/) transformation (see [/src/sparqlms/resources/sms-html-description](/src/sparqlms/resources/sms-html-description)).
+The HTML page generation is carried out using an [STTL](http://ns.inria.fr/sparql-template/) transformation (see [/src/sparqlms/resources/sms-html-description](../src/sparqlms/resources/sms-html-description)).
 
 The mechanism is further described in article [[4]](../README.md#Publications).
 
 ### Try it out
 
-Services [flickr/getPhotosByTaxon_sd](/services/flickr/getPhotosByTaxon_sd) and [macaulaylibrary/getAudioByTaxon_sd](/services/macaulaylibrary/getAudioByTaxon_sd) are deployed live. 
+Services [flickr/getPhotosByTaxon_sd](../services/flickr/getPhotosByTaxon_sd) and [macaulaylibrary/getAudioByTaxon_sd](../services/macaulaylibrary/getAudioByTaxon_sd) are deployed live. 
 
 Using content negotiation, their URLs can be looked up in a web browser, generating their HTML documentation and JSON-LD markup on-the-fly. Simply click on these URLs:
 http://sparql-micros-services.org/services/flickr/getPhotosByTaxon_sd/ and 

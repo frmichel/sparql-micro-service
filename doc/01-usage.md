@@ -36,4 +36,4 @@ SERVICE <https://example.org/sparqlms/macaulaylibrary/getAudioByTaxon_sd>
 }
 ```
 
-The arguments expected by the micro-service (```name``` in this case) are described in the service description (file [macaulaylibrary/getAudioByTaxon/ServiceDescription.ttl](/services/macaulaylibrary/getAudioByTaxon/ServiceDescription.ttl)) either using the [Hydra](https://www.hydra-cg.com/spec/latest/core/) vocabulary or by pointing to a property shape within the [SHACL](https://www.w3.org/TR/shacl/) graph that describes the type of graph that this micro-service can spawn.   
+The arguments expected by the micro-service (```name``` in this case) are described in the service description (file [macaulaylibrary/getAudioByTaxon/ServiceDescription.ttl](../services/macaulaylibrary/getAudioByTaxon/ServiceDescription.ttl)) either using the [Hydra](https://www.hydra-cg.com/spec/latest/core/) vocabulary or by pointing to a property shape within the [SHACL](https://www.w3.org/TR/shacl/) graph that describes the type of graph that this micro-service can spawn.   

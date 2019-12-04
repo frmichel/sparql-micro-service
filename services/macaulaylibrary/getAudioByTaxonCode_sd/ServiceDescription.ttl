@@ -8,7 +8,7 @@
 @prefix schema:  <http://schema.org/>.
 @prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
 
-@base            <http://example.org/macaulaylibrary/getAudioByTaxonCode_sd/>.
+@base            <http://example.org/sparql-ms/macaulaylibrary/getAudioByTaxonCode_sd/>.
 
 # This file is loaded as graph <ServiceDescription>
 <>

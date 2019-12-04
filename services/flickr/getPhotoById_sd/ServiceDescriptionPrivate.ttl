@@ -7,7 +7,7 @@
 @prefix schema:  <http://schema.org/>.
 @prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
 
-@base            <http://example.org/flickr/getPhotoById_sd/>.
+@base            <http://example.org/sparql-ms/flickr/getPhotoById_sd/>.
 
 # This file is loaded as graph <ServiceDescriptionPrivate>
 <APIService>
