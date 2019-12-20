@@ -13,6 +13,9 @@ CORESE=$HOME/Corese
 LOG4J=file://$CORESE/log4j2.xml
 JAR=$CORESE/corese-server-4.1.1-SNAPSHOT-20190408.jar
 
+# Root path of the SPARQL micro-service Github repository
+SMSPATH=$HOME/public_html/sparql-ms-live
+
 function genLoad() {
     echo "  [ a sw:Load; " >> $PROFILE
     echo "      sw:path <$1>;" >> $PROFILE
@@ -53,7 +56,7 @@ genMultipleLoad "https://sparql-micro-services.org/service" "$HOME/public_html/s
 # Complete the profile
 echo ').' >> $PROFILE
 echo '' >> $PROFILE
-cat $CORESE/corese-profile-sms.ttl >> $PROFILE
+cat $CORESE/corese-profile-sms.ttl | sed "s|{INSTALL}|$SMSPATH|g" >> $PROFILE
 
 echo "Corese profile:"
 cat $PROFILE

@@ -14,7 +14,7 @@ st:sparql-to-spin-server a st:Server ;
         [ a sw:Transformation ; sw:uri st:turtle ]
     ).
 
-    
+
 # Generation of an HTML document from the micro-serice Service Description graph.
 # Example: http://localhost:8080/service/sms-html-description?param=http://example.org/sparql-ms/flickr/getPhotosByTaxon_sd/
 st:sms-html-description a st:Server ;
@@ -22,7 +22,7 @@ st:sms-html-description a st:Server ;
     st:shareContent st:smsdesc;
     st:workflow [
         a sw:Workflow ;
-        sw:body ([ a sw:Transformation ; sw:uri </home/fmichel/public_html/sparql-ms-live/src/sparqlms/resources/sms-html-description/sttl/> ])
+        sw:body ([ a sw:Transformation ; sw:uri <{INSTALL}/src/sparqlms/resources/sms-html-description/sttl/> ])
     ].
 
 
@@ -34,5 +34,5 @@ st:sparql-compose a st:Server ;
     st:shareContent st:smsdesc;
     st:workflow [
         a sw:Workflow ;
-        sw:body ([ a sw:Transformation ; sw:uri </home/fmichel/public_html/sparql-ms-live/src/sparqlcompose/resources/sttl/> ])
+        sw:body ([ a sw:Transformation ; sw:uri <{INSTALL}/src/sparqlcompose/resources/sttl/> ])
     ].
