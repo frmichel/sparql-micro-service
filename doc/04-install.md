@@ -199,10 +199,10 @@ Complete examples are given in the first part of the [/deployment/apache/example
 
 ## Customize the SPARQL micro-serivces' URIs
 
-The services provided in folder [/services](../services) are configured as if they were deployed at http://example.org/sparql-ms, and the dereferenceable URIs the generate are in the form http://example.org/ld.
+The services provided in folder [/services](../services) are configured as if they were deployed at http://example.org/sparql-ms, and the dereferenceable URIs they generate are in the form http://example.org/ld.
 These must be customized before you can use the services, to match the URL at which they are deployed.
 
-Script [/deployment/deploy.sh](../deployment/deploy.sh) do that for you: copy the script to the folder where the services are located (for instance /services), update the variables `SERVER`, `SERVERPATH` and `SMSDIR`, and run the script.
+Script [/deployment/deploy.sh](../deployment/deploy.sh) does that for you: copy the script to the folder where the services are located (for instance /services), update the variables `SERVER`, `SERVERPATH` and `SMSDIR`, and run the script.
 
 Note that you can also use it to replace the Web APIs' keys with your own personal keys.
 

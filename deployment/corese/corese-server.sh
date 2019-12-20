@@ -24,8 +24,8 @@ function genLoad() {
 
 # Generate the instructions for loading all ServiceDescription and ShapesGraph files in a given location
 # Parameters:
-#   $1: path where the SPARQL micro-services are deployed
-#   $2: URL at which they should be made accessible
+#   $1: URL at which the SPARQL micro-services are accessible
+#   $2: path where the SPARQL micro-services are deployed
 function genMultipleLoad() {
     SERVER_URL=$1
     SMS_PATH=$2
@@ -49,8 +49,9 @@ PROFILE=/tmp/corese-profile-sms.ttl
 rm -f $PROFILE
 echo "st:smsdesc a sw:Workflow; sw:body (" >> $PROFILE
 
-# Generate the loading instructions for the SPARQL micro-services from all locations
-genMultipleLoad "http://sms.i3s.unice.fr/sparql-ms"         "$HOME/public_html/sparql-ms-live/services"
+# Generate the loading instructions for the SPARQL micro-services installed at different locations.
+# Take example on the lines below:
+#genMultipleLoad "http://sms.i3s.unice.fr/sparql-ms"         "$HOME/public_html/sparql-ms-live/services"
 genMultipleLoad "https://sparql-micro-services.org/service" "$HOME/public_html/sparql-micro-services.org"
 
 # Complete the profile
@@ -63,4 +64,10 @@ cat $PROFILE
 
 #--- Start Corese with the profile
 cd $CORESE
-java -Dfile.encoding="UTF-8" -Dlog4j.configurationFile=$LOG4J -jar $JAR -lp -pp file://$PROFILE -p 8081 -re
+java \
+    -Dfile.encoding="UTF-8" \
+    -Dlog4j.configurationFile=$LOG4J \
+    -jar $JAR \
+    -lp \
+    -pp file://$PROFILE -p 8081 \
+    -re
