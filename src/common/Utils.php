@@ -316,12 +316,17 @@ class Utils
         foreach ($args as $name) {
             if (array_key_exists($name, $_REQUEST)) {
                 if ($name != "query")
-                    // Escape special chars
+                    // Security measure: escape special chars, html or php code
                     $argValue = strip_tags($_REQUEST[$name]);
                 else
                     // Do NOT escape special chars in case of the 'query' parameter that contains the SPARQL query
                     $argValue = $_REQUEST[$name];
-                $result[$name][] = $argValue;
+                
+                // If multiple comma-separated values, return the separate values
+                if (strstr($argValue, ','))
+                    $result[$name] = explode(',', $argValue);
+                else
+                    $result[$name][] = $argValue;
             }
         }
         

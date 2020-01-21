@@ -104,28 +104,28 @@ class Configuration
             
             // Read cache expiration time: variable ?expiresAfter may be unbound (optional triple pattern)
             if (array_key_exists('expiresAfter', $jsonResult0)) {
-                $configParamVal = $jsonResult0['expiresAfter']['value'];
+                $_configParamVal = $jsonResult0['expiresAfter']['value'];
                 if (array_key_exists('datatype', $jsonResult0['expiresAfter'])) {
-                    $configParamType = $jsonResult0['expiresAfter']['datatype'];
-                    if ($configParamType != "http://www.w3.org/2001/XMLSchema#duration")
+                    $_configParamType = $jsonResult0['expiresAfter']['datatype'];
+                    if ($_configParamType != "http://www.w3.org/2001/XMLSchema#duration")
                         throw new Exception("Invalid datatype for sms:cacheExpiresAfter: should be xsd:duration.");
                     // Remove the starting 'P' and the last character
                     // @todo we assume the last character is 'S' for seconds, but that could be M, H...
                     // see https://www.w3schools.com/XML/schema_dtypes_date.asp
-                    $configParamVal = substr($configParamVal, 1, strlen($configParamVal) - 2);
+                    $_configParamVal = substr($_configParamVal, 1, strlen($_configParamVal) - 2);
                 }
-                $customCfg['cache_expires_after'] = $configParamVal;
+                $customCfg['cache_expires_after'] = $_configParamVal;
             }
             
             // Read the provenance information boolean: may be unbound (optional triple pattern)
             if (array_key_exists('addProvenance', $jsonResult0)) {
-                $configParamVal = $jsonResult0['addProvenance']['value'];
+                $_configParamVal = $jsonResult0['addProvenance']['value'];
                 if (array_key_exists('datatype', $jsonResult0['addProvenance'])) {
-                    $configParamType = $jsonResult0['addProvenance']['datatype'];
-                    if ($configParamType != "http://www.w3.org/2001/XMLSchema#boolean")
+                    $_configParamType = $jsonResult0['addProvenance']['datatype'];
+                    if ($_configParamType != "http://www.w3.org/2001/XMLSchema#boolean")
                         throw new Exception("Invalid datatype for sms:addProvenance: should be xsd:boolean.");
                 }
-                $customCfg['add_provenance'] = $configParamVal == "true";
+                $customCfg['add_provenance'] = $_configParamVal == "true";
             }
             
             // --- Read optional HTTP headers
@@ -161,6 +161,7 @@ class Configuration
                     throw new Exception("No hydra:property nor shacl:sourceShape found for argument " . $name . " of service <" . $serviceUri . ">. Fix the service description graph.");
             }
         }
+        
         return $customCfg;
     }
 }

@@ -1,6 +1,14 @@
 # SPARQL Micro-Service Changelog
 
 
+## [0.4.3] 2010-01-xx
+
+### Changed
+- Bug fix. Suppot for multiple values of a custom parameter on the HTTP query string (issue [#12](https://github.com/frmichel/sparql-micro-service/issues/12))
+- In [scr/sparqlms/service.php](scr/sparqlms/service.php), when invoking the Web API, the service parameters are encoded with [rawurlencode](https://www.php.net/manual/function.rawurlencode.php) rather then [urlencode](https://www.php.net/manual/function.urlencode.php). The main difference is tu turn space into '%20' rather than '+'.
+
+
+
 ## [0.4.2] 2019-11-26
 
 ### Added
@@ -9,7 +17,7 @@
 - Added new property `sms:exampleURI` in ServiceDescription graph and updated dynamic HTML description
 
 ### Changed
-- Allow HTTP proxy configuration with properties `proxy.*` in  `/src/sparql/config.ini` (issue [#9](https://github.com/frmichel/sparql-micro-service/issues/9)
+- Allow HTTP proxy configuration with properties `proxy.*` in  `/src/sparql/config.ini` (issue [#9](https://github.com/frmichel/sparql-micro-service/issues/9))
 - Support of URI dereferencing with services configured using a ServiceDescription graph (was not possible before)
 - SPARQL micro-services moved from `/src/sparql` to `/service`
 
