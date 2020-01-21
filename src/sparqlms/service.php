@@ -119,7 +119,7 @@ try {
             require $context->getServicePath() . '/service.php';
         } else {
             foreach ($customArgs as $argName => $argVal)
-                $apiQuery = str_replace('{' . $argName . '}', urlencode(implode(",", $argVal)), $apiQuery);
+                $apiQuery = str_replace('{' . $argName . '}', rawurlencode(implode(",", $argVal)), $apiQuery);
         }
     }
     
