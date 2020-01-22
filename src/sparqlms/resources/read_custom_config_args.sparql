@@ -3,7 +3,7 @@
 @prefix shacl:   <http://www.w3.org/ns/shacl#>.
 
 # Read the service arguments from the service description graph of a SPARQL micro-service
-SELECT ?name ?predicate ?shape WHERE {
+SELECT ?name ?predicate ?shape ?csvAsMulpInvoc WHERE {
 
     <{serviceUri}> 
         a sd:Service;
@@ -14,4 +14,6 @@ SELECT ?name ?predicate ?shape WHERE {
     OPTIONAL { ?mapping hydra:property ?predicate. }
     
     OPTIONAL { ?mapping shacl:sourceShape ?shape. }
+
+    OPTIONAL { ?mapping sms:csvAsMultipleInvocations ?csvAsMulpInvoc. }
 }

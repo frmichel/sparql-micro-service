@@ -101,41 +101,54 @@ try {
         $context->setCache(Cache::getInstance($context));
     
     // ------------------------------------------------------------------------------------
-    // --- Build the Web API query string
+    // --- Build the Web API query string, execute it and generate the corresponding response graph
     // ------------------------------------------------------------------------------------
     
-    // Read the Web API query string template
-    $apiQuery = $context->getConfigParam('api_query');
-    
     // Read the values of the service custom arguments either from the HTTP query string or from the SPARQL graph pattern
-    $serviceArgs = Utils::getServiceCustomArgs();
+    $allServiceArgs = Utils::getServiceCustomArgs();
+    if ($logger->isHandling(Logger::INFO))
+        $logger->info("Read service custom arguments: " . print_r($allServiceArgs, true));
     
-    if (sizeof($serviceArgs) != sizeof($context->getConfigParam('custom_parameter'))) {
+    if (sizeof($allServiceArgs) != sizeof($context->getConfigParam('custom_parameter'))) {
         // In case one argument is not found in the query, do not query the API and just return an empty response
         $logger->warn("Not all service arguments were found. Expected: " . Utils::print_r($context->getConfigParam('custom_parameter')) . "\nbut read: " . Utils::print_r($customCfg));
         $apiQuery = "";
     } else {
-        if (file_exists($context->getServicePath() . '/service.php'))
-            // Web API query string will be formatted by the custom service script
-            require $context->getServicePath() . '/service.php';
-        else
-            foreach ($serviceArgs as $argName => $argVal)
-                $apiQuery = str_replace('{' . $argName . '}', rawurlencode(implode(",", $argVal)), $apiQuery);
+        // URI of the RDF graph to generate from the Web API answer
+        $respGraphUri = $context->getConfigParam('root_url') . '/resp-graph' . uniqid("-", true);
+        
+        // Unwind the array of arguments:
+        // "Unwind" means that when an argument has more than one value, we will generate
+        // one array of arguments for each of these values. This is repeated for all arguments, resulting
+        // in possibly many arrays being generated for all the combinations of all the values.
+        //
+        // Wether two values ['v1','v2'] should entail 2 separate arrays or be merged in a CSV value depends
+        // on the service's configuration parameter "custom_parameter.csv_as_multiple_invocations":
+        // if false, the values are passed as csv; if true, the values entail the creation of several arrays.
+        foreach (Utils::unwindArgumentValues($allServiceArgs) as $customArgs) {
+            
+            // Read the Web API query string template
+            $apiQuery = $context->getConfigParam('api_query');
+            
+            if (file_exists($context->getServicePath() . '/service.php'))
+                // Web API query string will be formatted by the custom service script
+                require $context->getServicePath() . '/service.php';
+            else
+                foreach ($customArgs as $argName => $argVal)
+                    $apiQuery = str_replace('{' . $argName . '}', rawurlencode($argVal), $apiQuery);
+            
+            if ($logger->isHandling(Logger::NOTICE)) {
+                if ($apiQuery != "") {
+                    $logger->notice("Will query the Web API with service custom arguments: " . print_r($customArgs, true));
+                    $logger->notice("Web API query string: " . $apiQuery);
+                } else
+                    $logger->notice("Web API query was set to empty string. Will return empty response.");
+            }
+            
+            // --- Execute the Web API query and create the response graph including provenance triples
+            queryWebAPIAndGenerateTriples($customArgs, $apiQuery, $respGraphUri);
+        }
     }
-    
-    if ($logger->isHandling(Logger::NOTICE)) {
-        if ($apiQuery != "") {
-            $logger->notice("Read service custom arguments: " . print_r($serviceArgs, true));
-            $logger->notice("Web API query string: " . $apiQuery);
-        } else
-            $logger->notice("Web API query was set to empty string. Will return empty response.");
-    }
-    
-    // ------------------------------------------------------------------------------------
-    // --- Execute the Web API query and create the response graph including provenance triples
-    // ------------------------------------------------------------------------------------
-    
-    $respGraphUri = queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery);
     
     // ------------------------------------------------------------------------------------
     // --- Run the client's SPARQL query against the response temporary graph
@@ -193,10 +206,10 @@ try {
  *            associative array of arguments passed to the service
  * @param string $apiQuery
  *            the WebAPI query string ready to invoke
- * @return string URI of the graph where the result of the contruct query is stored
- *        
+ * @param string $respGraphUri
+ *            URI of the result graph
  */
-function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery)
+function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery, $respGraphUri)
 {
     $context = Context::getInstance();
     $logger = $context->getLogger("sparqlms\service");
@@ -205,9 +218,6 @@ function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery)
     
     // URI of the graph where to store the result of applying the JSON-LD profile to the JSON response
     $apiGraphUri = $context->getConfigParam('root_url') . '/api-graph' . uniqid("-", true);
-    
-    // URI of the graph where to store the result of applying the JSON-LD profile to the JSON response
-    $respGraphUri = $context->getConfigParam('root_url') . '/resp-graph' . uniqid("-", true);
     
     // --- Call the Web API service, apply the JSON-LD profile and translate to NQuads
     $metro->startTimer(2);
@@ -232,8 +242,8 @@ function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery)
         // See doc/02-config.md#re-injecting-arguments-in-the-graph-produced-by-the-micro-service
         $_sparqlVal = "";
         foreach ($serviceArgs as $argName => $argVal) {
-            // In case there are multiple values, they are injected like "val1", "val2"...
-            foreach ($argVal as $val)
+            // In case there are multiple comma-separated values "val1,val2", they are injected like "val1", "val2"...
+            foreach (explode(',', $argVal) as $val)
                 if ($_sparqlVal == "")
                     $_sparqlVal = '"' . $val . '"';
                 else
@@ -257,7 +267,7 @@ function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery)
             else
                 $triples .= "    " . $line . "\n";
         
-        $logger->info("Adding result of the CONSTRUCT query into new temporary graph: <" . $respGraphUri . ">");
+        $logger->info("Adding result of the CONSTRUCT query into graph: <" . $respGraphUri . ">");
         $_query = $prefixes . "\nINSERT DATA { \n  GRAPH <" . $respGraphUri . "> {\n" . $triples . "\n}}\n";
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("Creating temporary graph: <" . $respGraphUri . "> with INSERT DATA query:\n" . $_query);
@@ -324,7 +334,5 @@ function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery)
     // Drop the temporary API response graph
     $logger->info("Dropping graph: <" . $apiGraphUri . ">");
     $sparqlClient->update("DROP SILENT GRAPH <" . $apiGraphUri . ">");
-    
-    return $respGraphUri;
 }
 ?>

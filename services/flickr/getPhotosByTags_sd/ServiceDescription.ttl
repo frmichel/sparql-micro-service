@@ -86,4 +86,6 @@
         # Use either hydra:property or shacl:sourceShape
         hydra:property schema:keywords;
         #shacl:sourceShape <ShapesGraph#NamePropertyShape>;
+        
+        sms:csvAsMultipleInvocations "false"^^xsd:boolean;
     ].

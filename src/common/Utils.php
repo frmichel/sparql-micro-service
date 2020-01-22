@@ -132,8 +132,6 @@ class Utils
                 if ($apiResp != null) {
                     $cacheHit = true;
                     $logger->info("The JSON response was retrieved from cache.");
-                    if ($logger->isHandling(Logger::DEBUG))
-                        $logger->debug("JSON response retrieved from cache: \n" . $apiResp);
                 }
             }
             
@@ -250,7 +248,7 @@ class Utils
         
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("Executing the Web API query now...");
-            $jsonContent = file_get_contents($url, false, $jsonContext);
+        $jsonContent = file_get_contents($url, false, $jsonContext);
         if ($jsonContent === false) {
             $logger->warning("Cannot load document " . $url);
             $jsonContent = null;
@@ -503,9 +501,75 @@ class Utils
         return $jsonResult;
     }
 
+    /**
+     * Pretty-print a variable.
+     * This replaces simple native print_r function that
+     * does not properly display boolean values
+     *
+     * @param mixed $arg
+     *            any type of variable to pretty-print
+     * @return string pretty print-out of the variable value
+     */
     static public function print_r($arg)
     {
         return str_replace("'", "", var_export($arg, true));
+    }
+
+    /**
+     * Unwind the array of arguments that were passed to the SPARQL micro-service.
+     * (named after the MongoDB unwind function: https://docs.mongodb.com/manual/reference/operator/aggregation/unwind/).
+     *
+     * "Unwind" means that when an argument has more than one value, this function will generate
+     * one array of arguments for each of these values. This is repeated for all arguments, resulting
+     * in possibly many arrays being generated for all the combinations of all the values.
+     *
+     * Wether two values ['v1','v2'] should entail 2 separate arrays or be merged in a CSV value depends
+     * on the service's configuration parameter "custom_parameter.csv_as_multiple_invocations":
+     * if false, the values are passed as csv; if true, the values entail the creation of several arrays.
+     *
+     * @param array $args
+     *            associative array of custom arguments passed to the SPARQL micro-service
+     *            either using the HTTP parameteter method or through the SPARQL graph pattern.
+     * @return array array of arrays
+     * @example If $args = <pre>[p1 => [v1], p2 => [v21, v22]]</pre> and
+     *          array <code>custom_parameter.csv_as_multiple_invocations</code> = <pre>[p1 => false, p2 => true]</pre>
+     *          then the result shall be:
+     *          <pre>[[p1 => v1, p2 => v21], [p1 => v1, p2 => v22]]</pre>
+     */
+    static public function unwindArgumentValues($args)
+    {
+        global $context;
+        $logger = $context->getLogger("Utils");
+        $argsValuePassing = $context->getConfigParam('custom_parameter.csv_as_multiple_invocations');
+        
+        $_results = array();
+        if (sizeof($args) == 0)
+            return $_results;
+        
+        // Process the first element of the array
+        reset($args); // point to first element
+        $argName = key($args);
+        $argVals = $args[$argName];
+        
+        if ($argsValuePassing[$argName])
+            foreach ($argVals as $singleVal)
+                // Create a new array for each value
+                $_results[][$argName] = $singleVal;
+        else
+            // Create one new array with the comma-separated list of values
+            $_results[][$argName] = implode(",", $argVals);
+        
+        // Proceed with the remaining elements (starting at the 2nd element)
+        if (sizeof($args) == 1)
+            return $_results;
+        
+        $_subResults = Utils::unwindArgumentValues(array_slice($args, 1));
+        $_newResults = array();
+        foreach ($_results as $_results1)
+            foreach ($_subResults as $_results2)
+                $_newResults[] = array_merge($_results1, $_results2);
+        
+        return $_newResults;
     }
 }
 ?>

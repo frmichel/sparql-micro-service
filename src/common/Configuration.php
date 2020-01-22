@@ -134,13 +134,13 @@ class Configuration
             $query = str_replace('{serviceUri}', $serviceUri, $query);
             $jsonResult = Utils::runSparqlSelectQuery($query);
             
-            foreach ($jsonResult as $binding) {
-                $headerName = $binding['headerName']['value'];
-                $headerValue = $binding['headerValue']['value'];
+            foreach ($jsonResult as $_binding) {
+                $headerName = $_binding['headerName']['value'];
+                $headerValue = $_binding['headerValue']['value'];
                 $customCfg['http_header'][$headerName] = $headerValue;
             }
             
-            // --- Read the service input arguments from the Hydra mapping (possibly multiple values for variable arg)
+            // --- Read the service input arguments from the Hydra mapping
             
             $query = file_get_contents('resources/read_custom_config_args.sparql');
             $query = str_replace('{serviceUri}', $serviceUri, $query);
@@ -148,20 +148,45 @@ class Configuration
             if (sizeof($jsonResult) == 0)
                 throw new Exception("No argument mapping found for service <" . $serviceUri . ">.");
             
-            foreach ($jsonResult as $binding) {
-                $name = $binding['name']['value'];
-                $customCfg['custom_parameter'][] = $name;
+            foreach ($jsonResult as $_binding) {
+                $_name = $_binding['name']['value'];
+                $customCfg['custom_parameter'][] = $_name;
                 
-                // Variables ?predicate and ?shape may be unbound (optional triple patterns), but one of them should be provided
-                if (array_key_exists('predicate', $binding))
-                    $customCfg['custom_parameter_binding'][$name]['predicate'] = $binding['predicate']['value'];
-                elseif (array_key_exists('shape', $binding))
-                    $customCfg['custom_parameter_binding'][$name]['shape'] = $binding['shape']['value'];
+                // --- Variables ?predicate and ?shape may be unbound (optional triple patterns), but one of them should be provided
+                if (array_key_exists('predicate', $_binding))
+                    $customCfg['custom_parameter_binding'][$_name]['predicate'] = $_binding['predicate']['value'];
+                elseif (array_key_exists('shape', $_binding))
+                    $customCfg['custom_parameter_binding'][$_name]['shape'] = $_binding['shape']['value'];
                 else
-                    throw new Exception("No hydra:property nor shacl:sourceShape found for argument " . $name . " of service <" . $serviceUri . ">. Fix the service description graph.");
+                    throw new Exception("No hydra:property nor shacl:sourceShape found for argument " . $_name . " of service <" . $serviceUri . ">. Fix the service description graph.");
+                
+                // --- Variables ?csvAsMulpInvoc may be unbound (optional triple patterns)
+                if (array_key_exists('csvAsMulpInvoc', $_binding)) {
+                    $_csvAsMulpInvoc = $_binding['csvAsMulpInvoc'];
+                    
+                    if (array_key_exists('datatype', $_csvAsMulpInvoc)) {
+                        $_configParamType = $_csvAsMulpInvoc['datatype'];
+                        if ($_configParamType != "http://www.w3.org/2001/XMLSchema#boolean")
+                            throw new Exception("Invalid datatype for sms:csvAsMultipleInvocations: should be xsd:boolean.");
+                    }
+                    if (! array_key_exists('custom_parameter.csv_as_multiple_invocations', $customCfg))
+                        $customCfg['custom_parameter.csv_as_multiple_invocations'] = array();
+                    $customCfg['custom_parameter.csv_as_multiple_invocations'][$_name] = $_csvAsMulpInvoc['value'] == "true";
+                }
             }
         }
-
+        
+        // --- Check and fill-in optional array 'custom_parameter.csv_as_multiple_invocations'
+        
+        if (! array_key_exists('custom_parameter.csv_as_multiple_invocations', $customCfg))
+            // Create it if it does not exist yet
+            $customCfg['custom_parameter.csv_as_multiple_invocations'] = array();
+        
+        foreach (array_values($customCfg['custom_parameter']) as $key)
+            // Make sure all custom arguments are in array 'custom_parameter.csv_as_multiple_invocations' with default value
+            if (! array_key_exists($key, $customCfg['custom_parameter.csv_as_multiple_invocations']))
+                $customCfg['custom_parameter.csv_as_multiple_invocations'][$key] = false; // default value is false
+        
         return $customCfg;
     }
 }
