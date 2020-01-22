@@ -19,7 +19,7 @@ class Configuration
      */
     static public function readGobalConfig()
     {
-        $config = parse_ini_file('config.ini');
+        $config = parse_ini_file('config.ini', false, INI_SCANNER_TYPED);
         if (! $config)
             throw new Exception("Cannot read configuration file config/config.ini.");
         
@@ -68,7 +68,7 @@ class Configuration
             // --- Read the custom service configuration from config.ini file
             // ---------------------------------------------------------------
             
-            $customCfg = parse_ini_file($customCfgFile);
+            $customCfg = parse_ini_file($customCfgFile, false, INI_SCANNER_TYPED);
             if (! $customCfg)
                 throw new Exception("Configuration file " . $customCfgFile . " is invalid.");
             
@@ -161,7 +161,8 @@ class Configuration
                     throw new Exception("No hydra:property nor shacl:sourceShape found for argument " . $name . " of service <" . $serviceUri . ">. Fix the service description graph.");
             }
         }
-        
+
         return $customCfg;
     }
 }
+?>

@@ -138,7 +138,7 @@ class Utils
             }
             
             if (! $cacheHit) {
-                $logger->info("JSON response not found in cache or cache not active.");
+                $logger->info("JSON response not found in cache or cache not active => will execute the Web API query.");
                 
                 // Query the Web API
                 if ($context->hasConfigParam("http_header")) {
@@ -248,7 +248,9 @@ class Utils
             'https' => $streamContextOptions
         ));
         
-        $jsonContent = file_get_contents($url, false, $jsonContext);
+        if ($logger->isHandling(Logger::DEBUG))
+            $logger->debug("Executing the Web API query now...");
+            $jsonContent = file_get_contents($url, false, $jsonContext);
         if ($jsonContent === false) {
             $logger->warning("Cannot load document " . $url);
             $jsonContent = null;
@@ -323,10 +325,7 @@ class Utils
                     $argValue = $_REQUEST[$name];
                 
                 // If multiple comma-separated values, return the separate values
-                if (strstr($argValue, ','))
-                    $result[$name] = explode(',', $argValue);
-                else
-                    $result[$name][] = $argValue;
+                $result[$name] = explode(',', $argValue);
             }
         }
         
@@ -400,11 +399,11 @@ class Utils
     }
 
     /**
-     * Get the Web API arguments passed to the micro-service either as query string arguments
-     * or within the SPARQL graph pattern.
+     * Get the service custom arguments passed to the micro-service either as
+     * query string arguments or within the SPARQL graph pattern.
      *
-     * If the service is invoked with querymod 'ld', then the arguments are expected to be
-     * passed on the query string, not in a SPARQL query (there is no SPARQL query in the
+     * If the service is invoked with query mode 'ld', then the arguments are expected to be
+     * passed on the query string, not in a SPARQL query (since there is no SPARQL query in the
      * 'ld' query mode).
      *
      * If any parameter in not found, the function returns an HTTP error 400 and exits.
@@ -502,6 +501,11 @@ class Utils
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("SPARQL response: " . print_r($jsonResult, true));
         return $jsonResult;
+    }
+
+    static public function print_r($arg)
+    {
+        return str_replace("'", "", var_export($arg, true));
     }
 }
 ?>
