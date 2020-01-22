@@ -89,10 +89,10 @@ try {
     $context->setSparqlQuery($_sparqlQuery);
     
     // ------------------------------------------------------------------------------------
-    // --- Read the service custom configuration (from config.ini or from the Service Description
-    // graph), and init the cache DB connection
+    // --- Read the service custom configuration from config.ini or Service Description graph
     // ------------------------------------------------------------------------------------
     
+    // Read the service's custom config and merge it with the global config
     $context->readCustomConfig();
     
     // Initialize the cache database connection
@@ -108,145 +108,34 @@ try {
     $apiQuery = $context->getConfigParam('api_query');
     
     // Read the values of the service custom arguments either from the HTTP query string or from the SPARQL graph pattern
-    $customArgs = Utils::getServiceCustomArgs();
-    if (sizeof($customArgs) != sizeof($context->getConfigParam('custom_parameter'))) {
+    $serviceArgs = Utils::getServiceCustomArgs();
+    
+    if (sizeof($serviceArgs) != sizeof($context->getConfigParam('custom_parameter'))) {
         // In case one argument is not found in the query, do not query the API and just return an empty response
-        $logger->warn("Not all service arguments were found. Expected: " . print_r($context->getConfigParam('custom_parameter'), TRUE) . "\nbut read: " . print_r($customCfg, TRUE));
+        $logger->warn("Not all service arguments were found. Expected: " . Utils::print_r($context->getConfigParam('custom_parameter')) . "\nbut read: " . Utils::print_r($customCfg));
         $apiQuery = "";
     } else {
-        if (file_exists($context->getServicePath() . '/service.php')) {
+        if (file_exists($context->getServicePath() . '/service.php'))
             // Web API query string will be formatted by the custom service script
             require $context->getServicePath() . '/service.php';
-        } else {
-            foreach ($customArgs as $argName => $argVal)
-                $apiQuery = str_replace('{' . $argName . '}', rawurlencode(implode(",", $argVal)), $apiQuery);
-        }
-    }
-    
-    if ($apiQuery != "") {
-        $logger->notice("Read service custom arguments: " . print_r($customArgs, true));
-        $logger->notice("Web API query string: " . $apiQuery);
-    } else
-        $logger->notice("Web API query was set to empty string. Will return empty response.");
-    
-    // ------------------------------------------------------------------------------------
-    // --- Invoke the Web API and create the response graph
-    // ------------------------------------------------------------------------------------
-    
-    // URIs of the temporary work graphs
-    $apiGraphUri = $context->getConfigParam('root_url') . '/api-graph' . uniqid("-", true);
-    $respGraphUri = $context->getConfigParam('root_url') . '/resp-graph' . uniqid("-", true);
-    
-    // Call the Web API service, apply the JSON-LD profile and translate to NQuads
-    $metro->startTimer(2);
-    $serializedQuads = ($apiQuery == "") ? "" : Utils::translateJsonToNQuads($apiQuery, $context->getServicePath() . '/profile.jsonld');
-    $metro->stopTimer(2);
-    
-    // Insert the triples generated from the Web API response into the temp graph
-    if ($logger->isHandling(Logger::INFO))
-        $logger->info("Creating temporary graph: <" . $apiGraphUri . ">");
-    $_query = "INSERT DATA { GRAPH <" . $apiGraphUri . "> {\n" . $serializedQuads . "\n}}\n";
-    $sparqlClient->update($_query);
-    
-    // --- Create the triples for which this SPARQL service is meant
-    $sparqlConstr = $context->getServicePath() . '/construct.sparql';
-    if (file_exists($sparqlConstr)) {
-        
-        // Prepare the CONSTRUCT query to execute against the temp graph that was just created
-        $logger->notice("Executing SPARQL CONSTRUCT query from file: " . $sparqlConstr);
-        $_query = file_get_contents($sparqlConstr);
-        
-        // Reinject the service arguments into the CONSTRUCT query.
-        // See doc/02-config.md#re-injecting-arguments-in-the-graph-produced-by-the-micro-service
-        $sparqlVal = "";
-        foreach ($customArgs as $argName => $argVal) {
-            // In case there are multiple values, they are injected like "val1", "val2"...
-            foreach ($argVal as $val)
-                if ($sparqlVal == "")
-                    $sparqlVal = '"' . $val . '"';
-                else
-                    $sparqlVal .= ', "' . $val . '"';
-            
-            $_query = str_replace('{' . $argName . '}', $sparqlVal, $_query);
-            $_query = str_replace('{urlencode(' . $argName . ')}', urlencode(str_replace('"', "", $sparqlVal)), $_query);
-        }
-        
-        if ($logger->isHandling(Logger::INFO))
-            $logger->info("CONSTRUCT query:\n" . $_query);
-        $constrResult = $sparqlClient->queryRaw($_query, "text/turtle", $defaultGraphUri = $apiGraphUri);
-        
-        // Create a new temp graph with the result of the CONSTRUCT, using an INSERT DATA query
-        $prefixes = "";
-        $triples = "";
-        foreach (explode("\n", $constrResult->getBody()) as $line)
-            if (stripos($line, '@prefix') === 0 || stripos($line, 'prefix') === 0)
-                $prefixes .= $line . "\n";
-            else
-                $triples .= "    " . $line . "\n";
-        
-        $logger->info("Adding result of the CONSTRUCT query into new temporary graph: <" . $respGraphUri . ">");
-        $_query = $prefixes . "\nINSERT DATA { \n  GRAPH <" . $respGraphUri . "> {\n" . $triples . "\n}}\n";
-        if ($logger->isHandling(Logger::DEBUG))
-            $logger->debug("Creating temporary graph: <" . $respGraphUri . "> with INSERT DATA query:\n" . $_query);
-        $sparqlClient->update($_query);
-    }
-    
-    // ------------------------------------------------------------------------------------
-    // --- Optional: add provenance triples
-    // ------------------------------------------------------------------------------------
-    
-    if ($context->getConfigParam('add_provenance', false)) {
-        
-        // Date time at which the SPARQL micro-service is invoked
-        $now = (new \DateTime('now'));
-        
-        // Date time at which the Web API document was obtained from the cache, if any
-        $cacheDateTime = $context->getCacheHitDateTime();
-        if ($cacheDateTime == null)
-            $cacheDateTime = $now;
-        
-        if ($context->getConfigParam('service_description'))
-            $_query = file_get_contents('resources/add_provenance.sparql');
         else
-            $_query = file_get_contents('resources/add_provenance_simple.sparql');
-        
-        $_query = str_replace('{graphUri}', $respGraphUri, $_query);
-        $_query = str_replace('{serviceUri}', $context->getServiceUri(), $_query);
-        $_query = str_replace('{date_time_sms_invocation}', $now->format('c'), $_query);
-        $_query = str_replace('{date_time_cachehit}', $cacheDateTime->format('c'), $_query);
-        $_query = str_replace('{sms_version}', $context->getConfigParam("version"), $_query);
-        
-        // Add the Web API query string but obfuscate the API key if any
-        if (strpos($apiQuery, "apikey") !== false) {
-            $apiKeyObfuscated = preg_replace('/([\?&])apikey=[^&]*/', '${1}apikey=obfuscated', $apiQuery);
-            $_query = str_replace('{webapi_query_string}', $apiKeyObfuscated, $_query);
-        } else if (strpos($apiQuery, "api_key") !== false) {
-            $apiKeyObfuscated = preg_replace('/([\?&])api_key=[^&]*/', '${1}api_key=obfuscated', $apiQuery);
-            $_query = str_replace('{webapi_query_string}', $apiKeyObfuscated, $_query);
+            foreach ($serviceArgs as $argName => $argVal)
+                $apiQuery = str_replace('{' . $argName . '}', rawurlencode(implode(",", $argVal)), $apiQuery);
+    }
+    
+    if ($logger->isHandling(Logger::NOTICE)) {
+        if ($apiQuery != "") {
+            $logger->notice("Read service custom arguments: " . print_r($serviceArgs, true));
+            $logger->notice("Web API query string: " . $apiQuery);
         } else
-            $_query = str_replace('{webapi_query_string}', $apiQuery, $_query);
-        
-        $logger->info("Adding provenance triples into graph: <" . $respGraphUri . ">");
-        if ($logger->isHandling(Logger::DEBUG))
-            $logger->debug("Adding provenance triples with query:\n" . $_query);
-        $sparqlClient->update($_query);
+            $logger->notice("Web API query was set to empty string. Will return empty response.");
     }
     
     // ------------------------------------------------------------------------------------
-    // --- Optional: calculate the number of triples in the temporary graphs
+    // --- Execute the Web API query and create the response graph including provenance triples
     // ------------------------------------------------------------------------------------
     
-    if ($metro->isHandling(Logger::INFO)) {
-        $nbTriplesQuery = "SELECT (COUNT(*) AS ?count) FROM <" . $apiGraphUri . "> WHERE { ?s ?p ?o }";
-        $result = $sparqlClient->queryRaw($nbTriplesQuery, "application/sparql-results+json");
-        $jsonResult = json_decode($result->getBody(), true);
-        $metro->appendMessage($context->getService(), "No triples generated with JSON-LD profile", $jsonResult['results']['bindings'][0]['count']['value']);
-        
-        $nbTriplesQuery = "SELECT (COUNT(*) AS ?count) FROM <" . $respGraphUri . "> WHERE { ?s ?p ?o }";
-        $result = $sparqlClient->queryRaw($nbTriplesQuery, "application/sparql-results+json");
-        $jsonResult = json_decode($result->getBody(), true);
-        $metro->appendMessage($context->getService(), "No triples generated with CONSTRUCT query", $jsonResult['results']['bindings'][0]['count']['value']);
-    }
+    $respGraphUri = queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery);
     
     // ------------------------------------------------------------------------------------
     // --- Run the client's SPARQL query against the response temporary graph
@@ -271,10 +160,7 @@ try {
         $logger->debug("Sending response body:\n" . $result->getBody());
     print($result->getBody());
     
-    // Drop the temporary graphs
-    $logger->info("Dropping graph: <" . $apiGraphUri . ">");
-    $sparqlClient->update("DROP SILENT GRAPH <" . $apiGraphUri . ">");
-    
+    // Drop the temporary response graph
     $logger->info("Dropping graph: <" . $respGraphUri . ">");
     $sparqlClient->update("DROP SILENT GRAPH <" . $respGraphUri . ">");
     
@@ -283,6 +169,7 @@ try {
     $metro->stopTimer(1);
     $metro->appendTimer($context->getService(), "Total|API", 1, 2);
 } catch (Exception $e) {
+    
     try {
         $logger = Context::getInstance()->getLogger("sparqlms\service");
         $logger->error((string) $e . "\n");
@@ -296,5 +183,148 @@ try {
     http_response_code(500);
     print("Internal error: " . $e->getMessage() . "\n");
     exit(0);
+}
+
+/**
+ * Execute the Web API query string, transform the results into a response graph
+ * that may includes provenance triples.
+ *
+ * @param array $serviceArgs
+ *            associative array of arguments passed to the service
+ * @param string $apiQuery
+ *            the WebAPI query string ready to invoke
+ * @return string URI of the graph where the result of the contruct query is stored
+ *        
+ */
+function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery)
+{
+    $context = Context::getInstance();
+    $logger = $context->getLogger("sparqlms\service");
+    $sparqlClient = $context->getSparqlClient();
+    $metro = Metrology::getInstance();
+    
+    // URI of the graph where to store the result of applying the JSON-LD profile to the JSON response
+    $apiGraphUri = $context->getConfigParam('root_url') . '/api-graph' . uniqid("-", true);
+    
+    // URI of the graph where to store the result of applying the JSON-LD profile to the JSON response
+    $respGraphUri = $context->getConfigParam('root_url') . '/resp-graph' . uniqid("-", true);
+    
+    // --- Call the Web API service, apply the JSON-LD profile and translate to NQuads
+    $metro->startTimer(2);
+    $serializedQuads = ($apiQuery == "") ? "" : Utils::translateJsonToNQuads($apiQuery, $context->getServicePath() . '/profile.jsonld');
+    $metro->stopTimer(2);
+    
+    // --- Insert the triples generated from the Web API response into the temp graph $apiGraphUri
+    if ($logger->isHandling(Logger::INFO))
+        $logger->info("Creating temporary graph: <" . $apiGraphUri . ">");
+    $_query = "INSERT DATA { GRAPH <" . $apiGraphUri . "> {\n" . $serializedQuads . "\n}}\n";
+    $sparqlClient->update($_query);
+    
+    // --- Create the triples for which this SPARQL service is meant with the CONSTRUCT query
+    $_sparqlConstr = $context->getServicePath() . '/construct.sparql';
+    if (file_exists($_sparqlConstr)) {
+        
+        // Prepare the CONSTRUCT query to execute against the temp graph that was just created
+        $logger->notice("Executing SPARQL CONSTRUCT query from file: " . $_sparqlConstr);
+        $_query = file_get_contents($_sparqlConstr);
+        
+        // Reinject the service arguments into the CONSTRUCT query.
+        // See doc/02-config.md#re-injecting-arguments-in-the-graph-produced-by-the-micro-service
+        $_sparqlVal = "";
+        foreach ($serviceArgs as $argName => $argVal) {
+            // In case there are multiple values, they are injected like "val1", "val2"...
+            foreach ($argVal as $val)
+                if ($_sparqlVal == "")
+                    $_sparqlVal = '"' . $val . '"';
+                else
+                    $_sparqlVal .= ', "' . $val . '"';
+            
+            $_query = str_replace('{' . $argName . '}', $_sparqlVal, $_query);
+            $_query = str_replace('{urlencode(' . $argName . ')}', urlencode(str_replace('"', "", $_sparqlVal)), $_query);
+        }
+        
+        // Execute the CONSTRUCT query
+        if ($logger->isHandling(Logger::INFO))
+            $logger->info("CONSTRUCT query:\n" . $_query);
+        $_constrResult = $sparqlClient->queryRaw($_query, "text/turtle", $defaultGraphUri = $apiGraphUri);
+        
+        // Create a new temp graph with the result of the CONSTRUCT, using an INSERT DATA query
+        $prefixes = "";
+        $triples = "";
+        foreach (explode("\n", $_constrResult->getBody()) as $line)
+            if (stripos($line, '@prefix') === 0 || stripos($line, 'prefix') === 0)
+                $prefixes .= $line . "\n";
+            else
+                $triples .= "    " . $line . "\n";
+        
+        $logger->info("Adding result of the CONSTRUCT query into new temporary graph: <" . $respGraphUri . ">");
+        $_query = $prefixes . "\nINSERT DATA { \n  GRAPH <" . $respGraphUri . "> {\n" . $triples . "\n}}\n";
+        if ($logger->isHandling(Logger::DEBUG))
+            $logger->debug("Creating temporary graph: <" . $respGraphUri . "> with INSERT DATA query:\n" . $_query);
+        $sparqlClient->update($_query);
+    }
+    
+    // ------------------------------------------------------------------------------------
+    // --- Optional: add provenance triples
+    // ------------------------------------------------------------------------------------
+    
+    if ($context->getConfigParam('add_provenance', false)) {
+        
+        // Date time at which the SPARQL micro-service is invoked
+        $now = (new \DateTime('now'));
+        
+        // Date time at which the Web API document was obtained from the cache, if any
+        $_cacheDateTime = $context->getCacheHitDateTime();
+        if ($_cacheDateTime == null)
+            $_cacheDateTime = $now;
+        
+        if ($context->getConfigParam('service_description'))
+            $_query = file_get_contents('resources/add_provenance.sparql');
+        else
+            $_query = file_get_contents('resources/add_provenance_simple.sparql');
+        
+        $_query = str_replace('{graphUri}', $respGraphUri, $_query);
+        $_query = str_replace('{serviceUri}', $context->getServiceUri(), $_query);
+        $_query = str_replace('{date_time_sms_invocation}', $now->format('c'), $_query);
+        $_query = str_replace('{date_time_cachehit}', $_cacheDateTime->format('c'), $_query);
+        $_query = str_replace('{sms_version}', $context->getConfigParam("version"), $_query);
+        
+        // Add the Web API query string but obfuscate the API key if any
+        if (strpos($apiQuery, "apikey") !== false) {
+            $apiKeyObfuscated = preg_replace('/([\?&])apikey=[^&]*/', '${1}apikey=obfuscated', $apiQuery);
+            $_query = str_replace('{webapi_query_string}', $apiKeyObfuscated, $_query);
+        } else if (strpos($apiQuery, "api_key") !== false) {
+            $apiKeyObfuscated = preg_replace('/([\?&])api_key=[^&]*/', '${1}api_key=obfuscated', $apiQuery);
+            $_query = str_replace('{webapi_query_string}', $apiKeyObfuscated, $_query);
+        } else
+            $_query = str_replace('{webapi_query_string}', $apiQuery, $_query);
+        
+        $logger->info("Adding provenance triples into graph: <" . $respGraphUri . ">");
+        if ($logger->isHandling(Logger::DEBUG))
+            $logger->debug("Adding provenance triples with query:\n" . $_query);
+        $sparqlClient->update($_query);
+    }
+    
+    // ------------------------------------------------------------------------------------
+    // --- Optional: compute the number of triples in the temporary graphs
+    // ------------------------------------------------------------------------------------
+    
+    if ($metro->isHandling(Logger::INFO)) {
+        $nbTriplesQuery = "SELECT (COUNT(*) AS ?count) FROM <" . $apiGraphUri . "> WHERE { ?s ?p ?o }";
+        $result = $sparqlClient->queryRaw($nbTriplesQuery, "application/sparql-results+json");
+        $jsonResult = json_decode($result->getBody(), true);
+        $metro->appendMessage($context->getService(), "No triples generated with JSON-LD profile", $jsonResult['results']['bindings'][0]['count']['value']);
+        
+        $nbTriplesQuery = "SELECT (COUNT(*) AS ?count) FROM <" . $respGraphUri . "> WHERE { ?s ?p ?o }";
+        $result = $sparqlClient->queryRaw($nbTriplesQuery, "application/sparql-results+json");
+        $jsonResult = json_decode($result->getBody(), true);
+        $metro->appendMessage($context->getService(), "No triples generated with CONSTRUCT query", $jsonResult['results']['bindings'][0]['count']['value']);
+    }
+    
+    // Drop the temporary API response graph
+    $logger->info("Dropping graph: <" . $apiGraphUri . ">");
+    $sparqlClient->update("DROP SILENT GRAPH <" . $apiGraphUri . ">");
+    
+    return $respGraphUri;
 }
 ?>
