@@ -86,4 +86,8 @@
         # Use either hydra:property or shacl:sourceShape
         hydra:property schema:keywords;
         #shacl:sourceShape <ShapesGraph#NamePropertyShape>;
+        
+        # How multiple values of a service custom argument are passed to the Web API:
+        # true = as a comma-separated value, false = value is split and Web API is invoked once for each value. Default: true
+        sms:passMultipleValuesAsCsv "true"^^xsd:boolean;
     ].

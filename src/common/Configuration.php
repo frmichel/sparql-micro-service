@@ -19,7 +19,7 @@ class Configuration
      */
     static public function readGobalConfig()
     {
-        $config = parse_ini_file('config.ini');
+        $config = parse_ini_file('config.ini', false, INI_SCANNER_TYPED);
         if (! $config)
             throw new Exception("Cannot read configuration file config/config.ini.");
         
@@ -68,7 +68,7 @@ class Configuration
             // --- Read the custom service configuration from config.ini file
             // ---------------------------------------------------------------
             
-            $customCfg = parse_ini_file($customCfgFile);
+            $customCfg = parse_ini_file($customCfgFile, false, INI_SCANNER_TYPED);
             if (! $customCfg)
                 throw new Exception("Configuration file " . $customCfgFile . " is invalid.");
             
@@ -104,28 +104,28 @@ class Configuration
             
             // Read cache expiration time: variable ?expiresAfter may be unbound (optional triple pattern)
             if (array_key_exists('expiresAfter', $jsonResult0)) {
-                $configParamVal = $jsonResult0['expiresAfter']['value'];
+                $_configParamVal = $jsonResult0['expiresAfter']['value'];
                 if (array_key_exists('datatype', $jsonResult0['expiresAfter'])) {
-                    $configParamType = $jsonResult0['expiresAfter']['datatype'];
-                    if ($configParamType != "http://www.w3.org/2001/XMLSchema#duration")
+                    $_configParamType = $jsonResult0['expiresAfter']['datatype'];
+                    if ($_configParamType != "http://www.w3.org/2001/XMLSchema#duration")
                         throw new Exception("Invalid datatype for sms:cacheExpiresAfter: should be xsd:duration.");
                     // Remove the starting 'P' and the last character
                     // @todo we assume the last character is 'S' for seconds, but that could be M, H...
                     // see https://www.w3schools.com/XML/schema_dtypes_date.asp
-                    $configParamVal = substr($configParamVal, 1, strlen($configParamVal) - 2);
+                    $_configParamVal = substr($_configParamVal, 1, strlen($_configParamVal) - 2);
                 }
-                $customCfg['cache_expires_after'] = $configParamVal;
+                $customCfg['cache_expires_after'] = $_configParamVal;
             }
             
             // Read the provenance information boolean: may be unbound (optional triple pattern)
             if (array_key_exists('addProvenance', $jsonResult0)) {
-                $configParamVal = $jsonResult0['addProvenance']['value'];
+                $_configParamVal = $jsonResult0['addProvenance']['value'];
                 if (array_key_exists('datatype', $jsonResult0['addProvenance'])) {
-                    $configParamType = $jsonResult0['addProvenance']['datatype'];
-                    if ($configParamType != "http://www.w3.org/2001/XMLSchema#boolean")
+                    $_configParamType = $jsonResult0['addProvenance']['datatype'];
+                    if ($_configParamType != "http://www.w3.org/2001/XMLSchema#boolean")
                         throw new Exception("Invalid datatype for sms:addProvenance: should be xsd:boolean.");
                 }
-                $customCfg['add_provenance'] = $configParamVal == "true";
+                $customCfg['add_provenance'] = $_configParamVal == "true";
             }
             
             // --- Read optional HTTP headers
@@ -134,13 +134,13 @@ class Configuration
             $query = str_replace('{serviceUri}', $serviceUri, $query);
             $jsonResult = Utils::runSparqlSelectQuery($query);
             
-            foreach ($jsonResult as $binding) {
-                $headerName = $binding['headerName']['value'];
-                $headerValue = $binding['headerValue']['value'];
+            foreach ($jsonResult as $_binding) {
+                $headerName = $_binding['headerName']['value'];
+                $headerValue = $_binding['headerValue']['value'];
                 $customCfg['http_header'][$headerName] = $headerValue;
             }
             
-            // --- Read the service input arguments from the Hydra mapping (possibly multiple values for variable arg)
+            // --- Read the service input arguments from the Hydra mapping
             
             $query = file_get_contents('resources/read_custom_config_args.sparql');
             $query = str_replace('{serviceUri}', $serviceUri, $query);
@@ -148,19 +148,46 @@ class Configuration
             if (sizeof($jsonResult) == 0)
                 throw new Exception("No argument mapping found for service <" . $serviceUri . ">.");
             
-            foreach ($jsonResult as $binding) {
-                $name = $binding['name']['value'];
-                $customCfg['custom_parameter'][] = $name;
+            foreach ($jsonResult as $_binding) {
+                $_name = $_binding['name']['value'];
+                $customCfg['custom_parameter'][] = $_name;
                 
-                // Variables ?predicate and ?shape may be unbound (optional triple patterns), but one of them should be provided
-                if (array_key_exists('predicate', $binding))
-                    $customCfg['custom_parameter_binding'][$name]['predicate'] = $binding['predicate']['value'];
-                elseif (array_key_exists('shape', $binding))
-                    $customCfg['custom_parameter_binding'][$name]['shape'] = $binding['shape']['value'];
+                // --- Variables ?predicate and ?shape may be unbound (optional triple patterns), but one of them should be provided
+                if (array_key_exists('predicate', $_binding))
+                    $customCfg['custom_parameter_binding'][$_name]['predicate'] = $_binding['predicate']['value'];
+                elseif (array_key_exists('shape', $_binding))
+                    $customCfg['custom_parameter_binding'][$_name]['shape'] = $_binding['shape']['value'];
                 else
-                    throw new Exception("No hydra:property nor shacl:sourceShape found for argument " . $name . " of service <" . $serviceUri . ">. Fix the service description graph.");
+                    throw new Exception("No hydra:property nor shacl:sourceShape found for argument " . $_name . " of service <" . $serviceUri . ">. Fix the service description graph.");
+                
+                // --- Variables ?passMultipleValuesAsCsv may be unbound (optional triple patterns)
+                if (array_key_exists('passMultipleValuesAsCsv', $_binding)) {
+                    $_passMultipleValuesAsCsv = $_binding['passMultipleValuesAsCsv'];
+                    
+                    if (array_key_exists('datatype', $_passMultipleValuesAsCsv)) {
+                        $_configParamType = $_passMultipleValuesAsCsv['datatype'];
+                        if ($_configParamType != "http://www.w3.org/2001/XMLSchema#boolean")
+                            throw new Exception("Invalid datatype for sms:csvAsMultipleInvocations: should be xsd:boolean.");
+                    }
+                    if (! array_key_exists('custom_parameter.pass_multiple_values_as_csv', $customCfg))
+                        $customCfg['custom_parameter.pass_multiple_values_as_csv'] = array();
+                    $customCfg['custom_parameter.pass_multiple_values_as_csv'][$_name] = $_passMultipleValuesAsCsv['value'] == "true";
+                }
             }
         }
+        
+        // --- Check and fill-in optional array 'custom_parameter.pass_multiple_values_as_csv'
+        
+        if (! array_key_exists('custom_parameter.pass_multiple_values_as_csv', $customCfg))
+            // Create it if it does not exist yet
+            $customCfg['custom_parameter.pass_multiple_values_as_csv'] = array();
+        
+        foreach (array_values($customCfg['custom_parameter']) as $key)
+            // Make sure all custom arguments are in array 'custom_parameter.pass_multiple_values_as_csv' with default value
+            if (! array_key_exists($key, $customCfg['custom_parameter.pass_multiple_values_as_csv']))
+                $customCfg['custom_parameter.pass_multiple_values_as_csv'][$key] = true; // default value is true
+        
         return $customCfg;
     }
 }
+?>

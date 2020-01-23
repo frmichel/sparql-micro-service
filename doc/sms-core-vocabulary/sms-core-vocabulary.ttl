@@ -32,3 +32,9 @@ sms:exampleURI rdfs:subPropertyOf skos:example;
     schema:name "example deferenceable URI";
     schema:description "An example of URI that can be deferenced (resolved to RDF content) using the SPARQL micro-service";
     .
+
+sms:passMultipleValuesAsCsv a owl:DatatypeProperty;
+    schema:name "Strategy for passing service arguments to Web API";
+    schema:description "How an argument of the SPARQL micro-service with a multiple values is passed to the Web API: 'true' means it is passed as a comma-separated value, 'false' means the Web API is invoked once for each value. Default: true";
+    skos:example "true"^^xsd:boolean;
+    .

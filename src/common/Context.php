@@ -151,7 +151,7 @@ class Context
         }
         
         if ($this->logger->isHandling(Logger::INFO))
-            $this->logger->info("Global configuration read from config.ini: " . print_r($this->config, TRUE));
+            $this->logger->info("Global configuration read from config.ini: " . Utils::print_r($this->config));
         
         // --- Set default namespaces. See other existing default namespaces in EasyRdf/Namespace.php
         if (array_key_exists('namespace', $this->config))
@@ -190,7 +190,7 @@ class Context
     {
         $customCfg = Configuration::getCustomConfig($this);
         if ($this->logger->isHandling(Logger::INFO))
-            $this->logger->info("Have read following service custom configuration: " . print_r($customCfg, TRUE));
+            $this->logger->info("Have read following service custom configuration: " . Utils::print_r($customCfg));
         $this->config = array_merge($this->config, $customCfg);
     }
 
