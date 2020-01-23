@@ -387,7 +387,7 @@ class Utils
         // Make sure we have values for all expected arguments
         foreach ($context->getConfigParam('custom_parameter_binding') as $argName => $mapping)
             if (! array_key_exists($argName, $result))
-                self::httpBadRequest('No triple patterns with predicate "' . $mapping['predicate'] . '" (for service argument "' . $argName . '")');
+                self::httpBadRequest('No triple patterns give a value for predicate "' . $mapping['predicate'] . '" (for service argument "' . $argName . '")');
         
         // Drop the temporary SPIN graph
         $logger->info("Dropping graph: <" . $spinGraphUri . ">");
