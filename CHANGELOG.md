@@ -8,7 +8,7 @@
 
 ### Changed
 - Bug fix. Suppot for multiple values of a custom parameter on the HTTP query string (issue [#12](https://github.com/frmichel/sparql-micro-service/issues/12))
-- In [scr/sparqlms/service.php](scr/sparqlms/service.php), when invoking the Web API, the service parameters are encoded with [rawurlencode](https://www.php.net/manual/function.rawurlencode.php) rather then [urlencode](https://www.php.net/manual/function.urlencode.php). The main difference is tu turn space into '%20' rather than '+'.
+- In [scr/sparqlms/service.php](scr/sparqlms/service.php), when invoking the Web API, the service parameters are encoded with [rawurlencode](https://www.php.net/manual/function.rawurlencode.php) rather then [urlencode](https://www.php.net/manual/function.urlencode.php). The main difference is to turn space into '%20' rather than '+'.
  
 
 ## [0.4.2] 2019-11-26
