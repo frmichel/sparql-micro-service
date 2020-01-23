@@ -12,7 +12,7 @@ If you configure SPARQL micro-services using the [Service Description method](02
 ## Pre-requisites
 
 The following packages must be installed before installing the SPARQL micro-services.
-  * PHP 5.3+. Below we assume our current vesrion is 5.6
+  * PHP 5.3+. Below we assume our current version is 5.6
   * Additional PHP packages: `php56w-mbstring` and `php56w-xml`, `php56w-devel`, `php-pear` (PECL)
   * [Composer](https://getcomposer.org/doc/) (PHP dependency management)
   * Make sure the time zone is defined in the php.ini file, for instance:
