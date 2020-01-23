@@ -28,6 +28,11 @@
         <div class="text-muted">Université Côte d’Azur, Inria, CNRS, I3S laboratory (UMR 7271)</div>
     </div>
 
+    <h5 class="mb-0 ">Compatible software version</h5>
+    <div class="card-body pt-0">
+        <a href="https://github.com/frmichel/sparql-micro-service/">SPARQL micro-service</a> v0.4.3 and over
+    </div>
+
     <h5 class="mb-0">This version</h5>
     <div class="card-body pt-0">
         <a href="index-20200122.html">http://ns.inria.fr/sparql-micro-service/index-20200122.html</a>
@@ -50,22 +55,20 @@
     </p>
     
     <p>
-    A SPARQL micro-service is described by means of a SPARQL Service Description <a href="#bib-sparqlsd">[sparqlsd]</a> document that leverages several vocabularies:
-    <ul>
-        <li>Dublin Core Metadata Terms <a href="#bib-dc">[dc]</a>,</li>
-        <li>HTTP Vocabulary in RDF 1.0 <a href="#bib-httpvoc">[httpvoc]</a>,</li>
-        <li>SHACL <a href="#bib-shacl">[shacl]</a>,</li>
-        <li>DCAT <a href="#bib-dcat">[dcat]</a>,</li>
-        <li>VoID <a href="#bib-void">[void]</a>,</li>
-        <li>Hydra <a href="#bib-hydra">[hydra]</a>,</li>
-        <li><a href="https://schema.org">Schema.org</a>.</li>
-    </ul>
-    
-    This provides a rich functional description that allows a software agent to decide whether a micro-service can help in carrying out a certain task.
-    </p>
+    A rich <b>functional description</b> allows a third-party software agent to decide whether a SPARQL micro-service can help in carrying out a certain task.
 
+    The description is based on the SPARQL Service Description recommendation <a href="#bib-sparqlsd">[sparqlsd]</a> and leverages several other vocabularies:
+        Dublin Core Metadata Terms <a href="#bib-dc">[dc]</a>,
+        HTTP Vocabulary in RDF 1.0 <a href="#bib-httpvoc">[httpvoc]</a>,
+        SHACL <a href="#bib-shacl">[shacl]</a>,
+        DCAT <a href="#bib-dcat">[dcat]</a>,
+        VoID <a href="#bib-void">[void]</a>,
+        Hydra <a href="#bib-hydra">[hydra]</a>,
+        <a href="https://schema.org">Schema.org</a>.
+    
     <p>
-    This document defines additional terms needed in the description of SPARQL micro-services, that were not available from other standard or well-adopted vocabularies.
+    Still, additional terms are needed in the description of SPARQL micro-services, that are not available from other standard or well-adopted vocabularies.
+    This document defines these additional terms.
     </p>
 
 
@@ -172,13 +175,13 @@
 
     <dl class="row border border-dark rounded">
       <dt class="col-sm-3">Term Name</dt>
-      <dd class="col-sm-9 font-weight-bold"><a href="http://ns.inria.fr/sparql-micro-service#csvAsMultipleInvocations">sms:csvAsMultipleInvocations</a></dd>
+      <dd class="col-sm-9 font-weight-bold"><a href="http://ns.inria.fr/sparql-micro-service#passMultipleValuesAsCsv">sms:passMultipleValuesAsCsv</a></dd>
 
       <dt class="col-sm-3">Label</dt>
       <dd class="col-sm-9">Strategy for passing service arguments to Web API</dd>
 
       <dt class="col-sm-3">Definition</dt>
-      <dd class="col-sm-9">How an argument of the SPARQL micro-service with a comma-separated value (e.g. "v1, v2") is passed to the Web API: 'false' means it is passed as is, 'true' means the Web API is invoked once for each value (once for "v1", once for "v2"). Default: false</dd>
+      <dd class="col-sm-9">How an argument of the SPARQL micro-service with a multiple values is passed to the Web API: 'true' means it is passed as a comma-separated value, 'false' means the Web API is invoked once for each value. Default: true</dd>
 
       <dt class="col-sm-3 ">Type of Term</dt>
       <dd class="col-sm-9">DataProperty</dd>

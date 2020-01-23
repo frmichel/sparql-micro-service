@@ -524,15 +524,15 @@ class Utils
      * in possibly many arrays being generated for all the combinations of all the values.
      *
      * Wether two values ['v1','v2'] should entail 2 separate arrays or be merged in a CSV value depends
-     * on the service's configuration parameter "custom_parameter.csv_as_multiple_invocations":
-     * if false, the values are passed as csv; if true, the values entail the creation of several arrays.
+     * on the service's configuration parameter "custom_parameter.pass_multiple_values_as_csv":
+     * if true, the values are passed as csv; if false, the values entail the creation of several arrays.
      *
      * @param array $args
      *            associative array of custom arguments passed to the SPARQL micro-service
      *            either using the HTTP parameteter method or through the SPARQL graph pattern.
-     * @return array array of arrays
+     * @return array array of arrays, each one contains a combination of the arguments' values
      * @example If $args = <pre>[p1 => [v1], p2 => [v21, v22]]</pre> and
-     *          array <code>custom_parameter.csv_as_multiple_invocations</code> = <pre>[p1 => false, p2 => true]</pre>
+     *          array <code>custom_parameter.pass_multiple_values_as_csv</code> = <pre>[p1 => true, p2 => false]</pre>
      *          then the result shall be:
      *          <pre>[[p1 => v1, p2 => v21], [p1 => v1, p2 => v22]]</pre>
      */
@@ -540,7 +540,7 @@ class Utils
     {
         global $context;
         $logger = $context->getLogger("Utils");
-        $argsValuePassing = $context->getConfigParam('custom_parameter.csv_as_multiple_invocations');
+        $passMultipleValuesAsCsv = $context->getConfigParam('custom_parameter.pass_multiple_values_as_csv');
         
         $_results = array();
         if (sizeof($args) == 0)
@@ -551,13 +551,13 @@ class Utils
         $argName = key($args);
         $argVals = $args[$argName];
         
-        if ($argsValuePassing[$argName])
+        if ($passMultipleValuesAsCsv[$argName])
+            // Create one new array with the comma-separated list of values
+            $_results[][$argName] = implode(",", $argVals);
+        else
             foreach ($argVals as $singleVal)
                 // Create a new array for each value
                 $_results[][$argName] = $singleVal;
-        else
-            // Create one new array with the comma-separated list of values
-            $_results[][$argName] = implode(",", $argVals);
         
         // Proceed with the remaining elements (starting at the 2nd element)
         if (sizeof($args) == 1)

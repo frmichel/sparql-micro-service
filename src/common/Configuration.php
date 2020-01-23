@@ -160,32 +160,32 @@ class Configuration
                 else
                     throw new Exception("No hydra:property nor shacl:sourceShape found for argument " . $_name . " of service <" . $serviceUri . ">. Fix the service description graph.");
                 
-                // --- Variables ?csvAsMulpInvoc may be unbound (optional triple patterns)
-                if (array_key_exists('csvAsMulpInvoc', $_binding)) {
-                    $_csvAsMulpInvoc = $_binding['csvAsMulpInvoc'];
+                // --- Variables ?passMultipleValuesAsCsv may be unbound (optional triple patterns)
+                if (array_key_exists('passMultipleValuesAsCsv', $_binding)) {
+                    $_passMultipleValuesAsCsv = $_binding['passMultipleValuesAsCsv'];
                     
-                    if (array_key_exists('datatype', $_csvAsMulpInvoc)) {
-                        $_configParamType = $_csvAsMulpInvoc['datatype'];
+                    if (array_key_exists('datatype', $_passMultipleValuesAsCsv)) {
+                        $_configParamType = $_passMultipleValuesAsCsv['datatype'];
                         if ($_configParamType != "http://www.w3.org/2001/XMLSchema#boolean")
                             throw new Exception("Invalid datatype for sms:csvAsMultipleInvocations: should be xsd:boolean.");
                     }
-                    if (! array_key_exists('custom_parameter.csv_as_multiple_invocations', $customCfg))
-                        $customCfg['custom_parameter.csv_as_multiple_invocations'] = array();
-                    $customCfg['custom_parameter.csv_as_multiple_invocations'][$_name] = $_csvAsMulpInvoc['value'] == "true";
+                    if (! array_key_exists('custom_parameter.pass_multiple_values_as_csv', $customCfg))
+                        $customCfg['custom_parameter.pass_multiple_values_as_csv'] = array();
+                    $customCfg['custom_parameter.pass_multiple_values_as_csv'][$_name] = $_passMultipleValuesAsCsv['value'] == "true";
                 }
             }
         }
         
-        // --- Check and fill-in optional array 'custom_parameter.csv_as_multiple_invocations'
+        // --- Check and fill-in optional array 'custom_parameter.pass_multiple_values_as_csv'
         
-        if (! array_key_exists('custom_parameter.csv_as_multiple_invocations', $customCfg))
+        if (! array_key_exists('custom_parameter.pass_multiple_values_as_csv', $customCfg))
             // Create it if it does not exist yet
-            $customCfg['custom_parameter.csv_as_multiple_invocations'] = array();
+            $customCfg['custom_parameter.pass_multiple_values_as_csv'] = array();
         
         foreach (array_values($customCfg['custom_parameter']) as $key)
-            // Make sure all custom arguments are in array 'custom_parameter.csv_as_multiple_invocations' with default value
-            if (! array_key_exists($key, $customCfg['custom_parameter.csv_as_multiple_invocations']))
-                $customCfg['custom_parameter.csv_as_multiple_invocations'][$key] = false; // default value is false
+            // Make sure all custom arguments are in array 'custom_parameter.pass_multiple_values_as_csv' with default value
+            if (! array_key_exists($key, $customCfg['custom_parameter.pass_multiple_values_as_csv']))
+                $customCfg['custom_parameter.pass_multiple_values_as_csv'][$key] = true; // default value is true
         
         return $customCfg;
     }

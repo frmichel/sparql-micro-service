@@ -87,5 +87,5 @@
         hydra:property schema:keywords;
         #shacl:sourceShape <ShapesGraph#NamePropertyShape>;
         
-        sms:csvAsMultipleInvocations "false"^^xsd:boolean;
+        sms:passMultipleValuesAsCsv "true"^^xsd:boolean;
     ].

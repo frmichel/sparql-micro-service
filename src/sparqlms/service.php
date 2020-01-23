@@ -107,7 +107,7 @@ try {
     // Read the values of the service custom arguments either from the HTTP query string or from the SPARQL graph pattern
     $allServiceArgs = Utils::getServiceCustomArgs();
     if ($logger->isHandling(Logger::INFO))
-        $logger->info("Read service custom arguments: " . print_r($allServiceArgs, true));
+        $logger->info("Custom arguments received at service invocation: " . print_r($allServiceArgs, true));
     
     if (sizeof($allServiceArgs) != sizeof($context->getConfigParam('custom_parameter'))) {
         // In case one argument is not found in the query, do not query the API and just return an empty response
@@ -123,8 +123,8 @@ try {
         // in possibly many arrays being generated for all the combinations of all the values.
         //
         // Wether two values ['v1','v2'] should entail 2 separate arrays or be merged in a CSV value depends
-        // on the service's configuration parameter "custom_parameter.csv_as_multiple_invocations":
-        // if false, the values are passed as csv; if true, the values entail the creation of several arrays.
+        // on the service's configuration parameter "custom_parameter.pass_multiple_values_as_csv":
+        // if true, the values are passed as csv; if false, the values entail the creation of several arrays.
         foreach (Utils::unwindArgumentValues($allServiceArgs) as $customArgs) {
             
             // Read the Web API query string template
@@ -139,7 +139,7 @@ try {
             
             if ($logger->isHandling(Logger::NOTICE)) {
                 if ($apiQuery != "") {
-                    $logger->notice("Will query the Web API with service custom arguments: " . print_r($customArgs, true));
+                    $logger->notice("Will query the Web API with arguments: " . print_r($customArgs, true));
                     $logger->notice("Web API query string: " . $apiQuery);
                 } else
                     $logger->notice("Web API query was set to empty string. Will return empty response.");
