@@ -252,27 +252,31 @@ function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery, $respGraphUri)
             $_query = str_replace('{' . $argName . '}', $_sparqlVal, $_query);
             $_query = str_replace('{urlencode(' . $argName . ')}', urlencode(str_replace('"', "", $_sparqlVal)), $_query);
         }
-        
-        // Execute the CONSTRUCT query
-        if ($logger->isHandling(Logger::INFO))
-            $logger->info("CONSTRUCT query:\n" . $_query);
-        $_constrResult = $sparqlClient->queryRaw($_query, "text/turtle", $defaultGraphUri = $apiGraphUri);
-        
-        // Create a new temp graph with the result of the CONSTRUCT, using an INSERT DATA query
-        $prefixes = "";
-        $triples = "";
-        foreach (explode("\n", $_constrResult->getBody()) as $line)
-            if (stripos($line, '@prefix') === 0 || stripos($line, 'prefix') === 0)
-                $prefixes .= $line . "\n";
-            else
-                $triples .= "    " . $line . "\n";
-        
-        $logger->info("Adding result of the CONSTRUCT query into graph: <" . $respGraphUri . ">");
-        $_query = $prefixes . "\nINSERT DATA { \n  GRAPH <" . $respGraphUri . "> {\n" . $triples . "\n}}\n";
-        if ($logger->isHandling(Logger::DEBUG))
-            $logger->debug("Creating temporary graph: <" . $respGraphUri . "> with INSERT DATA query:\n" . $_query);
-        $sparqlClient->update($_query);
+    } else {
+        // No construct.sparql file: run a default query
+        $_query = "CONSTRUCT WHERE { ?s ?p ?o. }";
+        $logger->notice("Executing default SPARQL CONSTRUCT query");
     }
+    
+    // Execute the CONSTRUCT query
+    if ($logger->isHandling(Logger::INFO))
+        $logger->info("CONSTRUCT query:\n" . $_query);
+    $_constrResult = $sparqlClient->queryRaw($_query, "text/turtle", $defaultGraphUri = $apiGraphUri);
+    
+    // Create a new temp graph with the result of the CONSTRUCT, using an INSERT DATA query
+    $prefixes = "";
+    $triples = "";
+    foreach (explode("\n", $_constrResult->getBody()) as $line)
+        if (stripos(trim($line), '@prefix') === 0 || stripos(trim($line), 'prefix') === 0)
+            $prefixes .= $line . "\n";
+        else
+            $triples .= "    " . $line . "\n";
+    
+    $logger->info("Adding result of the CONSTRUCT query into graph: <" . $respGraphUri . ">");
+    $_query = $prefixes . "\nINSERT DATA { \n  GRAPH <" . $respGraphUri . "> {\n" . $triples . "\n}}\n";
+    if ($logger->isHandling(Logger::DEBUG))
+        $logger->debug("Creating temporary graph: <" . $respGraphUri . "> with INSERT DATA query:\n" . $_query);
+    $sparqlClient->update($_query);
     
     // ------------------------------------------------------------------------------------
     // --- Optional: add provenance triples
