@@ -17,12 +17,25 @@ st:sparql-to-spin-server a st:Server ;
 
 # Generation of an HTML document from the micro-serice Service Description graph.
 # Example: http://localhost:8080/service/sms-html-description?param=http://example.org/sparql-ms/flickr/getPhotosByTaxon_sd/
+# 'param' is the URI of a SPARQL micro-serice
 st:sms-html-description a st:Server ;
     st:service "sms-html-description" ;
     st:shareContent st:smsdesc;
     st:workflow [
         a sw:Workflow ;
         sw:body ([ a sw:Transformation ; sw:uri <{INSTALL}/src/sparqlms/resources/sms-html-description/sttl/> ])
+    ].
+
+
+# Generation of an HTML index of the micro-serices
+# Example: http://localhost:8080/service/sms-html-index?param=http://example.org/sparql-ms/
+# 'param' is the root URI of the services to show in the index page
+st:sms-html-index a st:Server ;
+    st:service "sms-html-index" ;
+    st:shareContent st:smsdesc;
+    st:workflow [
+        a sw:Workflow ;
+        sw:body ([ a sw:Transformation ; sw:uri <{INSTALL}/src/sparqlms/resources/sms-html-index/sttl/> ])
     ].
 
 

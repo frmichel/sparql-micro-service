@@ -1,0 +1,12 @@
+# --
+# Service URL: http://localhost:8080/service/sms-html-index?param=http://example.org/
+# The parameter is the root URI. All micro-services whose URI starts with this URL will be listed
+# --
+
+st:sms-html-index a st:Server ;
+    st:service "sms-html-index" ;
+    st:workflow [
+        a sw:Workflow ; 
+        sw:body ([ a sw:Transformation ; sw:uri <sttl/> ])
+    ];
+    .

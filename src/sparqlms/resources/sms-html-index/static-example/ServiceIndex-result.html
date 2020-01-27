@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>SPARQL micro-services documentation</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+  </head>
+  
+  <body>
+
+    <!-- Top navigation bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <span class="mt-1 mb-1 pl-4 navbar-brand">SPARQL micro-service documentation</span>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-link text-white font-weight-light" target="_new" href="https://github.com/frmichel/sparql-micro-service">Code@Github</a>
+          <a class="nav-link text-white font-weight-light" target="_new" href="https://hal.archives-ouvertes.fr/search/index/?q=sparql+micro-service&submit=&sort=submittedDate_tdate+desc">Publications</a>
+          
+          <div class="dropdown">
+              <button class="btn btn-primary font-weight-light dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Demos</button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                <a class="dropdown-item" target="_new" href="http://sms.i3s.unice.fr/demo-sms?param=Delphinapterus+leucas">TDWG 2018 Demo</a>
+                <a class="dropdown-item" target="_new" href="http://sms.i3s.unice.fr/~taxrefweb/taxrefweb/taxon.php?id=60878">TAXREF Web</a>
+                <a class="dropdown-item" target="_new" href="https://github.com/frmichel/taxrefweb">TAXREF Web (Github)</a>
+              </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container"> <!-- main page container -->
+
+        <div class="card my-4 border-secondary">
+          <div class="card-header py-2"><h5><span class="font-weight-light">SPARQL micro-services hosted on this server</span></h5></div>
+          
+          <div class="card-body">
+          
+            <table class="table table-striped table-borderless ">
+              <thead>
+                <tr>
+                  <th scope="col">Service short description</th>
+                  <th scope="col">Data source</th>
+                  <th scope="col">Service URL</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>SPARQL micro-service searching for photos of biological species on Flickr</td>
+                  <td><a href="https://www.flickr.com/services/api/" target="_new">Flickr API</a></td>
+                  <td><a href="https://sparql-micro-services.org/service/flickr/getPhotosByTaxon_sd/" target="_new">https://sparql-micro-services.org/service/flickr/getPhotosByTaxon_sd/</a></td>
+                </tr>
+                <tr>
+                  <td>Retrieve information from GBIF about a taxon using a scientific name</td>
+                  <td><a href="https://www.gbif.org/developer/summary" target="_new">GBIF API</a></td>
+                  <td><a href="
+    https://sparql-micro-services.org/service/gbif/getTaxonByName_sd/" target="_new">
+    https://sparql-micro-services.org/service/gbif/getTaxonByName_sd/</a></td>
+                </tr>
+              </tbody>
+            </table>
+          
+          </div> <!-- card-body -->
+        </div> <!-- card -->
+
+    </div><!-- .container -->
+
+    <nav class="pt-1 pb-3 navbar">
+        <span class="mx-auto"><small>-- Page auto-generated from the micro-services <a href="https://www.w3.org/TR/2013/REC-sparql11-service-description-20130321/" target="_new">SPARQL Service Description</a> -- </small></span>
+    </nav>
+    
+    <!-- Bootstrap core JavaScript ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- jQuery first, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" 
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" 
+        integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    
+    <!-- Dataset markup -->
+    <script type="application/ld+json">
+        {
+          "@context": [
+              "http://schema.org",
+              { 
+                "dcat": "http://www.w3.org/ns/dcat#",
+                "frmt": "http://www.w3.org/ns/formats/"
+              }
+          ],
+          
+          "@type": "Dataset",
+          "identifier": "http://example.org/flickr/getPhotosByTaxon_sd/",
+          "name": "SPARQL service to search for Flickr photos by biological taxon scientific name",
+          "description": "This SPARQL micro-service searches Flickr photos related to a certain taxonomic name. It takes as input a species scientific name (without authority nor date), and relies on the common convention used e.g. in the Encyclopedia of Life group (https://www.flickr.com/groups/806927@N20) and by Biodiversity Heritage Library (https://www.flickr.com/photos/biodivlibrary) where photos are tagged with a taxonomic name formatted as: taxonomy:binomial=<scientific name>.",
+          "url": "http://example.org/flickr/getPhotosByTaxon_sd/",
+          "isBasedOn": {
+            "@type": "CreativeWork", 
+            "@id": "https://www.flickr.com/services/api/",
+            "name": "Flickr Web API"
+          },
+          "citation": "https://www.mdpi.com/2078-2489/9/12/310",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Université Côte d'Azur, CNRS, Inria, I3S",
+            "schema:logo": [
+                "http://univ-cotedazur.fr/fr/university/communication-presse/charte-et-logos/logo/png/uca-logo-large",
+                "https://iww.inria.fr/dircom/logoinria-eng.png",
+                "http://www.cnrs.fr/themes/custom/cnrs/logo.svg"
+            ],
+            "contactPoint":{
+                "@type":"ContactPoint",
+                "contactType": "technical support",
+                "name": "Franck Michel",
+                "email": "franck.michel@cnrs.fr",
+                "url": "http://modalis.i3s.unice.fr/fmichel"
+            }
+          },
+          "keywords": [
+            "lifesciences", "biodiversity", "fauna", "flora", "species", "photography", "media"
+          ],
+          
+          "distribution": {
+            "@type": "DataDownload",
+            "contentUrl": "http://example.org/flickr/getPhotosByTaxon_sd/",
+            "name": "SPARQL endpoint",
+            "description": "SPARQL micro-service endpoint",
+            "encodingFormat": "api/sparql"
+          },
+          
+          "additionalType": [ "dcat:Dataset", "http://ns.inria.fr/sparql-micro-service#Service" ],
+          "dcat:distribution": {
+            "@type": "dcat:Distribution",
+            "name": "SPARQL endpoint",
+            "description": "SPARQL micro-service endpoint",
+            "dact:accessUrl": "http://example.org/flickr/getPhotosByTaxon_sd/",
+            "dcat:mediaType": [ "frmt:SPARQL_Results_XML", "frmt:SPARQL_Results_JSON", 
+              "frmt:SPARQL_Results_CSV", "frmt:SPARQL_Results_TSV",
+              "frmt:RDF_XML", "frmt:Turtle", "frmt:JSON-LD", "frmt:Trig"
+            ],
+            "http://www.w3.org/ns/shacl#shapesGraph": "http://example.org/flickr/getPhotosByTaxon_sd/ShapesGraph"
+          }
+        }    
+    </script>
+  </body>
+</html>
