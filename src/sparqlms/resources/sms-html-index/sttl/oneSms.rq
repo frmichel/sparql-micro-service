@@ -8,15 +8,15 @@
 
 template st:oneSms {
 
-    format { <../tpl2_oneSms.html> ?serviceName ?webApiCode ?service }
+    format { <../tpl2_oneSms.html> ?serviceUri ?serviceName ?webApiCode ?serviceDescription  }
     
 } where {
     # Retrieve the root URL from the query string parameter (e.g. ?param=http://example.org/service)
     BIND(st:get(st:param) as ?rootUrl)
 
-    ?service
+    ?serviceUri
         a sd:Service;
-        schema:name ?serviceName;
+        schema:name ?serviceDescription;
         dct:source ?source.
         
     ?source
@@ -33,8 +33,11 @@ template st:oneSms {
         as ?webApiCode
     )
 
+    # Extract the service short name from the service URL
+    BIND(strafter(str(?serviceUri), str(?rootUrl)) as ?serviceName)
+    
     # Select only services with the given root url
-    FILTER(strstarts(str(?service), str(?rootUrl)))
+    FILTER(strstarts(str(?serviceUri), str(?rootUrl)))
     
 } ORDER BY ?webApiName
 
