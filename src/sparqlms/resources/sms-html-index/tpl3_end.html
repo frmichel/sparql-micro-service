@@ -10,6 +10,37 @@
         <span class="mx-auto"><small>-- Page auto-generated from the SPARQL micro-services' <a href="https://www.w3.org/TR/2013/REC-sparql11-service-description-20130321/" target="_new">Service Description</a> using <a href="http://ns.inria.fr/sparql-template/" target="_new">STTL</a> -- </small></span>
     </nav>
         
+    <script>
+        function filterTable() {
+            var filter, table, trs, tds, td, indexTr, indexTd, showRow, txt;
+
+            filter = document.getElementById("filterInput").value.toUpperCase();
+            table = document.getElementById("serviceIndexTable");
+            trs = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (indexTr = 0; indexTr < trs.length; indexTr++) {
+                tds = trs[indexTr].getElementsByTagName("td");
+                showRow = false;
+                for (indexTd = 0; indexTd < tds.length; indexTd++) {
+                    td = tds[indexTd];
+                    if (td) {
+                        txt = td.textContent || td.innerText;
+                        if (txt.toUpperCase().indexOf(filter) > -1) {
+                            showRow = true;
+                        }
+                    }
+                }
+                
+                if (showRow) {
+                    trs[indexTr].style.display = "";
+                } else {
+                    trs[indexTr].style.display = "none";
+                }
+            }
+        }
+    </script>
+    
     <!-- Bootstrap core JavaScript ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <!-- jQuery first, then Bootstrap JS -->

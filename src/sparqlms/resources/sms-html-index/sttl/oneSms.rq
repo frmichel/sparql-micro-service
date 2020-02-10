@@ -8,8 +8,8 @@
 
 template st:oneSms {
 
-    format { <../tpl2_oneSms.html> ?serviceUri ?serviceName ?webApiCode ?serviceDescription  }
-    
+    format { <../tpl2_oneSms.html> ?serviceUri ?serviceName ?webApiCode ?serviceDescription ?keywords }
+
 } where {
     # Retrieve the root URL from the query string parameter (e.g. ?param=http://example.org/service)
     BIND(st:get(st:param) as ?rootUrl)
@@ -18,15 +18,15 @@ template st:oneSms {
         a sd:Service;
         schema:name ?serviceDescription;
         dct:source ?source.
-        
+
     ?source
         a schema:WebAPI;
         schema:name ?webApiName.
-        
+
     OPTIONAL { ?source schema:url ?webApiUrl }
 
     BIND(
-        if (bound(?webApiUrl), 
+        if (bound(?webApiUrl),
             concat( '<a href="', ?webApiUrl, '" target="_new">', ?webApiName, '</a>'),
             ?webApiName
         )
@@ -35,9 +35,30 @@ template st:oneSms {
 
     # Extract the service short name from the service URL
     BIND(strafter(str(?serviceUri), str(?rootUrl)) as ?serviceName)
-    
+
+    # Get the list of keywords and turn it into a CSV string
+    BIND(sms:listKeywords(?serviceUri) as ?keywords)
+
     # Select only services with the given root url
     FILTER(strstarts(str(?serviceUri), str(?rootUrl)))
-    
+
 } ORDER BY ?webApiName
 
+
+# Get the list of keywords associated to a service and turn it into a CSV string
+function sms:listKeywords(?s) {
+    let (?keywords = select distinct * where { ?s schema:keywords ?k }) {
+        set (?strList = "");
+        for (?mapping in ?keywords) {
+            for ((?var, ?val) in ?mapping) {
+                if (str(?var) = "?k") {
+                    if (?strList = "")
+                        { set (?strList = ?val) }
+                    else
+                        { set (?strList = concat(?strList, ", ", ?val)) }
+                }
+            }
+        };
+        return (?strList)
+    }
+}
