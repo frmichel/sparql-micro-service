@@ -4,7 +4,6 @@ namespace frmichel\sparqlms\common;
 use Monolog\Logger;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
-use EasyRdf_Sparql_Client;
 
 /**
  * Service execution context containing the configuration, logger, cache, SPARQL client
@@ -85,14 +84,14 @@ class Context
     /**
      * SPARQL query submitted to the SPARQL micro-service
      *
-     * @var EasyRdf_Sparql_Client
+     * @var \EasyRdf\Sparql\Client
      */
     private $sparqlQuery = null;
 
     /**
      * Client to the local RDF store and SPARQL endpoint
      *
-     * @var EasyRdf_Sparql_Client
+     * @var \EasyRdf\Sparql\Client
      */
     private $sparqlClient = null;
 
@@ -113,17 +112,17 @@ class Context
     private function __construct($startMessage = null)
     {
         // --- Initialize the logger
-        $this->logHandler = new RotatingFileHandler(__DIR__ . '/../../logs/sms.log', 5, Logger::NOTICE, true, 0666);
+        $this->logHandler = new RotatingFileHandler(__DIR__ . '/../../logs/sms.log', 5, Logger::NOTICE, true);
         $this->logHandler->setFormatter(new LineFormatter("[%datetime%] %level_name% %channel%: %message%\n", null, true));
         $this->logger = $this->getLogger("Context");
         if ($startMessage == null)
             $this->logger->notice("--------- Starting service --------");
         else
             $this->logger->notice($startMessage);
-        
+
         // --- Read the global configuration file and check query parameters
         $this->config = Configuration::readGobalConfig();
-        
+
         // --- Set the log level
         $log_level = $this->getConfigParam("log_level", "NOTICE");
         switch ($log_level) {
@@ -149,20 +148,20 @@ class Context
                 $this->logHandler->setLevel(Logger::ALERT);
                 break;
         }
-        
+
         if ($this->logger->isHandling(Logger::INFO))
             $this->logger->info("Global configuration read from config.ini: " . Utils::print_r($this->config));
-        
-        // --- Set default namespaces. See other existing default namespaces in EasyRdf/Namespace.php
+
+        // --- Set default namespaces. See other existing default namespaces in EasyRdf/RdfNamespace.php
         if (array_key_exists('namespace', $this->config))
             foreach ($this->config['namespace'] as $nsName => $nsVal) {
                 if ($this->logger->isHandling(Logger::DEBUG))
                     $this->logger->debug('Adding namespace: ' . $nsName . " = " . $nsVal);
-                \EasyRdf_Namespace::set($nsName, $nsVal);
+                \EasyRdf\RdfNamespace::set($nsName, $nsVal);
             }
-        
+
         // --- Initialize the SPARQL client to talk to the SPARQL endpoint from the config
-        $this->sparqlClient = new EasyRdf_Sparql_Client($this->getConfigParam('sparql_endpoint'));
+        $this->sparqlClient = new \EasyRdf\Sparql\Client($this->getConfigParam('sparql_endpoint'));
     }
 
     /**
@@ -176,7 +175,7 @@ class Context
     {
         if (is_null(self::$singleton))
             self::$singleton = new Context($startMessage);
-        
+
         return self::$singleton;
     }
 
@@ -220,7 +219,7 @@ class Context
             $newlogger->pushHandler($this->logHandler);
             $this->loggers[$logName] = $newlogger;
         }
-        
+
         return $this->loggers[$logName];
     }
 
@@ -380,7 +379,7 @@ class Context
     /**
      * Return the client to the local RDF store and SPARQL endpoint
      *
-     * @return EasyRdf_Sparql_Client
+     * @return \EasyRdf\Sparql\Client
      */
     public function getSparqlClient()
     {

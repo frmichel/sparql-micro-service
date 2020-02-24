@@ -1,18 +1,16 @@
 {
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/frmichel/JsonLD"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/frmichel/easyrdf"
-        }
-    ],
-    "require": {
-        "ml/json-ld": "dev-master",
-        "easyrdf/easyrdf": "dev-dev-query-raw",
-        "monolog/monolog": "1.*",
-        "mongodb/mongodb": "^1.2"
-        }
+	"repositories" : [{
+			"type" : "vcs",
+			"url" : "https://github.com/frmichel/JsonLD"
+		}, {
+			"type" : "vcs",
+			"url" : "https://github.com/frmichel/easyrdf"
+		}
+	],
+	"require" : {
+		"ml/json-ld" : "dev-master",
+		"easyrdf/easyrdf" : "dev-add_raw_query",
+		"monolog/monolog" : "1.*",
+		"mongodb/mongodb" : "^1.2"
+	}
 }
