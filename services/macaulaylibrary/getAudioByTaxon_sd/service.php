@@ -16,8 +16,8 @@ global $apiQuery;
 global $customArgs;
 global $logger;
 
-// Read the service custom arguments. There should be only one name
-$name = $customArgs['name'][0];
+// Read the service custom argument
+$name = $customArgs['name'];
 
 // Call another API service to get the code associated with the taxon name
 $taxonCode = getTaxonCode($name);
@@ -39,10 +39,10 @@ else
 function getTaxonCode($taxonName)
 {
     global $logger;
-    
+
     $apiQuery = 'https://search.macaulaylibrary.org/api/v1/find/taxon?q=' . urlencode($taxonName);
     $logger->notice("Retrieving taxon code for name '" . $taxonName . "'. Web API request: " . $apiQuery);
-    
+
     $result = file_get_contents($apiQuery);
     if ($result !== FALSE) {
         $json = json_decode($result, true);

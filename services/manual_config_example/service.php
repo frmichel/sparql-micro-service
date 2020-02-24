@@ -17,8 +17,8 @@ global $customArgs;
 global $logger;
 
 // Read the service custom arguments
-$param1 = $customArgs['param1'][0];
-$param2 = $customArgs['param2'][0];
+$param1 = $customArgs['param1'];
+$param2 = $customArgs['param2'];
 
 /*
  * ----------------- Your specific code --------------------
