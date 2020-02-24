@@ -109,14 +109,14 @@ try {
     if ($logger->isHandling(Logger::INFO))
         $logger->info("Custom arguments received at service invocation: " . print_r($allServiceArgs, true));
 
+    // URI of the RDF graph to generate from the Web API answer
+    $respGraphUri = $context->getConfigParam('root_url') . '/resp-graph' . uniqid("-", true);
+
     if (sizeof($allServiceArgs) != sizeof($context->getConfigParam('custom_parameter'))) {
         // In case one argument is not found in the query, do not query the API and just return an empty response
         $logger->warn("Not all service arguments were found. Expected: " . Utils::print_r($context->getConfigParam('custom_parameter')) . "\nbut read: " . Utils::print_r($allServiceArgs));
         $apiQuery = "";
     } else {
-        // URI of the RDF graph to generate from the Web API answer
-        $respGraphUri = $context->getConfigParam('root_url') . '/resp-graph' . uniqid("-", true);
-
         // Unwind the array of arguments:
         // "Unwind" means that when an argument has more than one value, we will generate
         // one array of arguments for each of these values. This is repeated for all arguments, resulting
@@ -156,7 +156,7 @@ try {
 
     $logger->notice('Evaluating client SPARQL query against temporary graph...');
 
-    $result = $sparqlClient->queryRaw($context->getSparqlQuery(), $accept, $defaultGraphUri = $respGraphUri);
+    $result = $sparqlClient->queryRaw($context->getSparqlQuery(), $accept, $respGraphUri);
     if ($logger->isHandling(Logger::INFO))
         foreach ($result->getHeaders() as $header => $headerVal)
             $logger->info('Received response header: ' . $header . ": " . $headerVal);
@@ -261,7 +261,7 @@ function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery, $respGraphUri)
     // Execute the CONSTRUCT query
     if ($logger->isHandling(Logger::INFO))
         $logger->info("CONSTRUCT query:\n" . $_query);
-    $_constrResult = $sparqlClient->queryRaw($_query, "text/turtle", $defaultGraphUri = $apiGraphUri);
+    $_constrResult = $sparqlClient->queryRaw($_query, "text/turtle", $apiGraphUri);
 
     // Create a new temp graph with the result of the CONSTRUCT, using an INSERT DATA query
     $prefixes = "";
@@ -319,6 +319,8 @@ function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery, $respGraphUri)
         $sparqlClient->update($_query);
     }
 
+    Utils::dumpGraph($respGraphUri);
+        
     // ------------------------------------------------------------------------------------
     // --- Optional: compute the number of triples in the temporary graphs
     // ------------------------------------------------------------------------------------

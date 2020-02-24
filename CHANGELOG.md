@@ -1,6 +1,17 @@
 # SPARQL Micro-Service Changelog
 
-## [0.4.3_RC2] 2020-01-27
+## [0.4.3_RC2] 2020-02-24
+
+**Update from 0.4.2**: 
+- rerun composer to update EasyRdf
+- the custom service.php script of SPARQL micro-services should be updated: due to issue [#13](https://github.com/frmichel/sparql-micro-service/issues/13), only one value for each service argument can be recieved. Thus, the service.php script should now obtain arguments with: 
+
+    $param = $customArgs['param'];
+
+instead of:
+
+    $param = $customArgs['param'][0];
+  
 
 ### Added
 - Allow different strategies for passing multiple values to the Web API (issue [#13](https://github.com/frmichel/sparql-micro-service/issues/13))
@@ -10,6 +21,7 @@
 - Bug fix. Suppot for multiple values of a custom parameter on the HTTP query string (issue [#12](https://github.com/frmichel/sparql-micro-service/issues/12))
 - In [scr/sparqlms/service.php](scr/sparqlms/service.php), when invoking the Web API, the service parameters are encoded with [rawurlencode](https://www.php.net/manual/function.rawurlencode.php) rather then [urlencode](https://www.php.net/manual/function.urlencode.php). The main difference is to turn space into '%20' rather than '+'.
 - Bug fix. Allow service without a construct.sparql file. (issue [#14](https://github.com/frmichel/sparql-micro-service/issues/14))
+- Update to EasyRdf v0.10.x (untagged) of 2019-11-27 + refactoring
  
 
 ## [0.4.2] 2019-11-26

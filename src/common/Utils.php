@@ -160,7 +160,7 @@ class Utils
                 }
 
                 // ------ Sanity measures ----
-                
+
                 // Remove unicodecontrol characters (0000 to 001f)
                 $apiResp = preg_replace("/\\\\u000./", "?", $apiResp);
                 $apiResp = preg_replace("/\\\\u001./", "?", $apiResp);
@@ -180,7 +180,7 @@ class Utils
                 $bom = pack('CCC', 0xEF, 0xBB, 0xBF);
                 if (substr($apiResp, 0, 3) == $bom)
                     $apiResp = substr($apiResp, 3);
-                
+
                 // ------ End sanity measures ----
 
                 // Apply JSON-LD profile to the Web API response and transform the JSON-LD to RDF NQuads
@@ -525,6 +525,16 @@ class Utils
     static public function print_r($arg)
     {
         return str_replace("'", "", var_export($arg, true));
+    }
+
+    static public function dumpGraph($graphUri)
+    {
+        global $context;
+        $logger = $context->getLogger("Utils");
+        if ($logger->isHandling(Logger::DEBUG)) {
+            $result = $context->getSparqlClient()->queryRaw("construct where {?s ?p ?o}", "text/turtle", $graphUri);
+            $logger->debug('Graph <' . $graphUri . '>:\n' . $result);
+        }
     }
 
     /**
