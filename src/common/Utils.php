@@ -25,7 +25,7 @@ class Utils
     {
         global $context;
         $logger = $context->getLogger("Utils");
-        
+
         if (array_key_exists('CONTENT_TYPE', $_SERVER)) {
             $contentType = $_SERVER['CONTENT_TYPE'];
             $logger->notice('Query HTTP header "Content-Type": ' . $contentType);
@@ -33,13 +33,13 @@ class Utils
             $logger->notice('Query HTTP header "Content-Type" undefined.');
             $contentType = "";
         }
-        
+
         if (array_key_exists('HTTP_ACCEPT', $_SERVER)) {
             $accept = $_SERVER['HTTP_ACCEPT'];
             $logger->notice('Query HTTP header "Accept": ' . $accept);
         } else
             $logger->warning('Query HTTP header "Accept" undefined. Using: ' . $context->getConfigParam('default_mime_type'));
-        
+
         return array(
             $contentType,
             $accept
@@ -56,7 +56,7 @@ class Utils
     {
         global $context;
         $logger = $context->getLogger("Utils");
-        
+
         header('Access-Control-Allow-Origin: *');
         http_response_code(400); // Bad Request
         $logger->warn($message);
@@ -75,7 +75,7 @@ class Utils
     {
         global $context;
         $logger = $context->getLogger("Utils");
-        
+
         header('Access-Control-Allow-Origin: *');
         http_response_code(405); // Method Not Allowed
         $logger->warn($message);
@@ -96,7 +96,7 @@ class Utils
     {
         global $context;
         $logger = $context->getLogger("Utils");
-        
+
         header('Access-Control-Allow-Origin: *');
         http_response_code(422); // Unprocessable entity
         $logger->warn($message);
@@ -122,7 +122,7 @@ class Utils
         $logger = $context->getLogger("Utils");
         $useCache = $context->useCache();
         $cache = $context->getCache();
-        
+
         $apiResp = null;
         try {
             $cacheHit = false;
@@ -134,10 +134,10 @@ class Utils
                     $logger->info("The JSON response was retrieved from cache.");
                 }
             }
-            
+
             if (! $cacheHit) {
                 $logger->info("JSON response not found in cache or cache not active => will execute the Web API query.");
-                
+
                 // Query the Web API
                 if ($context->hasConfigParam("http_header")) {
                     if ($logger->isHandling(Logger::DEBUG))
@@ -146,19 +146,21 @@ class Utils
                 } else
                     $apiResp = self::loadJsonDocument($jsonUrl);
             }
-            
+
             if ($apiResp == null)
                 throw new Exception("Web API query failed.");
             else {
                 if ($logger->isHandling(Logger::DEBUG))
                     $logger->debug("Web API JSON response: \n" . $apiResp);
-                
+
                 // Store the result into the cache db
                 if ($useCache && ! $cacheHit) {
                     $cache->write($jsonUrl, $apiResp, $context->getService());
                     $logger->info("Stored JSON response into cache.");
                 }
-                // -- Safety measures
+
+                // ------ Sanity measures ----
+                
                 // Remove unicodecontrol characters (0000 to 001f)
                 $apiResp = preg_replace("/\\\\u000./", "?", $apiResp);
                 $apiResp = preg_replace("/\\\\u001./", "?", $apiResp);
@@ -172,7 +174,15 @@ class Utils
                     ""
                 );
                 $apiResp = str_replace($search, $replace, $apiResp);
+
+                // Remove the UTF-8 BOM if present (abnormal presence but some WebAPIs to return it)
+                // http://en.wikipedia.org/wiki/Byte_order_mark#UTF-8
+                $bom = pack('CCC', 0xEF, 0xBB, 0xBF);
+                if (substr($apiResp, 0, 3) == $bom)
+                    $apiResp = substr($apiResp, 3);
                 
+                // ------ End sanity measures ----
+
                 // Apply JSON-LD profile to the Web API response and transform the JSON-LD to RDF NQuads
                 $quads = JsonLD::toRdf($apiResp, array(
                     'expandContext' => $jsonldProfile
@@ -181,7 +191,7 @@ class Utils
                 $serializedQuads = $nquads->serialize($quads);
                 if ($logger->isHandling(Logger::DEBUG))
                     $logger->debug("Web API JSON response translated into NQuads:\n" . $serializedQuads);
-                
+
                 return $serializedQuads;
             }
         } catch (Exception $e) {
@@ -203,7 +213,7 @@ class Utils
     {
         global $context;
         $logger = $context->getLogger("Utils");
-        
+
         // Build the list of HTTP headers
         $headers = array();
         $headers[] = "Accept: application/json; q=0.9, */*; q=0.1";
@@ -212,13 +222,13 @@ class Utils
             foreach ($additionalHeaders as $hName => $hVal)
                 $headers[] = $hName . ": " . $hVal;
         }
-        
+
         // Add the proxy authentication header, if any
         if ($context->hasConfigParam('proxy.user') && $context->hasConfigParam('proxy.password')) {
             $auth = base64_encode($context->getConfigParam('proxy.user') . ':' . $context->getConfigParam('proxy.password'));
             $headers[] = "Proxy-Authorization: Basic $auth";
         }
-        
+
         $streamContextOptions = array(
             'method' => 'GET',
             'header' => $headers,
@@ -229,7 +239,7 @@ class Utils
                 'allow_self_signed' => false
             ]
         );
-        
+
         if ($context->hasConfigParam('proxy.host')) {
             $_proxy = "tcp://" . $context->getConfigParam('proxy.host');
             if ($context->hasConfigParam('proxy.port')) {
@@ -237,15 +247,15 @@ class Utils
             }
             $streamContextOptions['proxy'] = $_proxy;
         }
-        
+
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("Web API query HTTP context: " . print_r($streamContextOptions, TRUE));
-        
+
         $jsonContext = stream_context_create(array(
             'http' => $streamContextOptions,
             'https' => $streamContextOptions
         ));
-        
+
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("Executing the Web API query now...");
         $jsonContent = file_get_contents($url, false, $jsonContext);
@@ -256,14 +266,16 @@ class Utils
             // In case of HTTP 204 No Content, the API may return null although this should
             // not be considered as an error. In that case, return an empty JSON document
             $jsonContent = "{}";
-        
-        $headers = self::parseHttpHeaders($http_response_header);
-        if ($logger->isHandling(Logger::DEBUG)) {
-            $logger->debug("Web API response headers:");
-            foreach ($headers as $k => $v)
-                $logger->debug("   $k: $v");
+
+        if (isset($http_response_header)) {
+            $headers = self::parseHttpHeaders($http_response_header);
+            if ($logger->isHandling(Logger::DEBUG)) {
+                $logger->debug("Web API response headers:");
+                foreach ($headers as $k => $v)
+                    $logger->debug("   $k: $v");
+            }
         }
-        
+
         return $jsonContent;
     }
 
@@ -305,13 +317,13 @@ class Utils
     {
         global $context;
         $logger = $context->getLogger("Utils");
-        
+
         if (array_key_exists('QUERY_STRING', $_SERVER)) {
             if ($logger->isHandling(Logger::DEBUG))
                 $logger->debug('Query string: ' . $_SERVER['QUERY_STRING']);
         } else
             Utils::httpBadRequest("HTTP error, no query string provided.");
-        
+
         $result = array();
         foreach ($args as $name) {
             if (array_key_exists($name, $_REQUEST)) {
@@ -321,12 +333,12 @@ class Utils
                 else
                     // Do NOT escape special chars in case of the 'query' parameter that contains the SPARQL query
                     $argValue = $_REQUEST[$name];
-                
+
                 // If multiple comma-separated values, return the separate values
                 $result[$name] = explode(',', $argValue);
             }
         }
-        
+
         return $result;
     }
 
@@ -352,26 +364,26 @@ class Utils
     {
         global $context;
         $logger = $context->getLogger("Utils");
-        
+
         // --- Convert the SPARQL query to SPIN and load it into a temporary graph
-        
+
         $spinInvocation = $context->getConfigParam('spin_endpoint') . '?arg=' . urlencode($sparqlQuery);
         $spinGraphUri = $context->getConfigParam('root_url') . '/tempgraph-spin' . uniqid("-", true);
-        
+
         $query = 'LOAD <' . $spinInvocation . '> INTO GRAPH <' . $spinGraphUri . '>';
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("SPARQL query converted to SPIN: \n" . file_get_contents($spinInvocation));
         $logger->info('Loading SPIN SPARQL query into temp graph ' . $spinGraphUri);
         $context->getSparqlClient()->update($query);
-        
+
         // --- For each service custom argument, read its value from the SPARQL query.
         // Each argument is provided either with hydra:property or by a property shape denoted by shacl:sourceShape
-        
+
         $query = file_get_contents('resources/read_input_from_gp.sparql');
         $query = str_replace('{SpinQueryGraph}', $spinGraphUri, $query);
         $query = str_replace('{ServiceDescription}', $context->getServiceDescriptionGraphUri(), $query);
         $query = str_replace('{ShapesGraph}', $context->getShapesGraphUri(), $query);
-        
+
         $jsonResult = self::runSparqlSelectQuery($query);
         $result = array();
         // The response consists of mappings for 3 variables: ?argName ?predicate ?argValue
@@ -379,20 +391,20 @@ class Utils
             $argName = $varMapping['argName']['value'];
             $predicate = $varMapping['predicate']['value'];
             $argValue = $varMapping['argValue']['value'];
-            
+
             // Return an array of values of that variable
             $result[$argName][] = $argValue;
         }
-        
+
         // Make sure we have values for all expected arguments
         foreach ($context->getConfigParam('custom_parameter_binding') as $argName => $mapping)
             if (! array_key_exists($argName, $result))
                 self::httpBadRequest('No triple patterns give a value for predicate "' . $mapping['predicate'] . '" (for service argument "' . $argName . '")');
-        
+
         // Drop the temporary SPIN graph
         $logger->info("Dropping graph: <" . $spinGraphUri . ">");
         $context->getSparqlClient()->update("DROP SILENT GRAPH <" . $spinGraphUri . ">");
-        
+
         return $result;
     }
 
@@ -412,7 +424,7 @@ class Utils
     static public function getServiceCustomArgs()
     {
         global $context;
-        
+
         if (! $context->getConfigParam('service_description') || $context->getQueryMode() == 'ld')
             return self::getQueryStringArgs($context->getConfigParam('custom_parameter'));
         else
@@ -443,7 +455,7 @@ class Utils
                         $contentType = $_SERVER['CONTENT_TYPE'];
                     else
                         self::httpBadRequest("SPARQL query with HTTP POST method but no 'Content-Type' header.");
-                    
+
                     switch ($contentType) {
                         case 'application/x-www-form-urlencoded':
                             if (array_key_exists('query', $_POST))
@@ -492,10 +504,10 @@ class Utils
         $logger = $context->getLogger("Utils");
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("Executing SPARQL query:\n" . $query);
-        
+
         $result = $context->getSparqlClient()->queryRaw($query, "application/sparql-results+json");
         $jsonResult = json_decode($result->getBody(), true)['results']['bindings'];
-        
+
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("SPARQL response: " . print_r($jsonResult, true));
         return $jsonResult;
@@ -541,16 +553,16 @@ class Utils
         global $context;
         $logger = $context->getLogger("Utils");
         $passMultipleValuesAsCsv = $context->getConfigParam('custom_parameter.pass_multiple_values_as_csv');
-        
+
         $_results = array();
         if (sizeof($args) == 0)
             return $_results;
-        
+
         // Process the first element of the array
         reset($args); // point to first element
         $argName = key($args);
         $argVals = $args[$argName];
-        
+
         if ($passMultipleValuesAsCsv[$argName])
             // Create one new array with the comma-separated list of values
             $_results[][$argName] = implode(",", $argVals);
@@ -558,17 +570,17 @@ class Utils
             foreach ($argVals as $singleVal)
                 // Create a new array for each value
                 $_results[][$argName] = $singleVal;
-        
+
         // Proceed with the remaining elements (starting at the 2nd element)
         if (sizeof($args) == 1)
             return $_results;
-        
+
         $_subResults = Utils::unwindArgumentValues(array_slice($args, 1));
         $_newResults = array();
         foreach ($_results as $_results1)
             foreach ($_subResults as $_results2)
                 $_newResults[] = array_merge($_results1, $_results2);
-        
+
         return $_newResults;
     }
 }
