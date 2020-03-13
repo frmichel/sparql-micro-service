@@ -113,8 +113,14 @@ class Context
     {
         // --- Initialize the logger
         $this->logHandler = new RotatingFileHandler(__DIR__ . '/../../logs/sms.log', 5, Logger::NOTICE, true);
-        $this->logHandler->setFormatter(new LineFormatter("[%datetime%] %level_name% %channel%: %message%\n", null, true));
+        $this->logHandler->setFormatter(new LineFormatter("%datetime% %extra% %channel% %level_name%: %message%\n", null, true));
+        $this->logHandler->pushProcessor(function ($record) {
+            $sessionId = session_id();
+            $record['extra'][] = substr($sessionId, intval(strlen($sessionId) / 2));
+            return $record;
+        });
         $this->logger = $this->getLogger("Context");
+
         if ($startMessage == null)
             $this->logger->notice("--------- Starting service --------");
         else

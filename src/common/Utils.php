@@ -369,6 +369,8 @@ class Utils
 
         $spinInvocation = $context->getConfigParam('spin_endpoint') . '?arg=' . urlencode($sparqlQuery);
         $spinGraphUri = $context->getConfigParam('root_url') . '/tempgraph-spin' . uniqid("-", true);
+        if ($logger->isHandling(Logger::DEBUG))
+            $logger->debug("SPIN translation invocation: " . $spinInvocation);
 
         $query = 'LOAD <' . $spinInvocation . '> INTO GRAPH <' . $spinGraphUri . '>';
         if ($logger->isHandling(Logger::DEBUG))
@@ -531,10 +533,8 @@ class Utils
     {
         global $context;
         $logger = $context->getLogger("Utils");
-        if ($logger->isHandling(Logger::DEBUG)) {
-            $result = $context->getSparqlClient()->queryRaw("construct where {?s ?p ?o}", "text/turtle", $graphUri);
-            $logger->debug('Graph <' . $graphUri . '>:\n' . $result);
-        }
+        $result = $context->getSparqlClient()->queryRaw("construct where {?s ?p ?o}", "text/turtle", $graphUri);
+        $logger->debug($result);
     }
 
     /**
@@ -561,7 +561,6 @@ class Utils
     static public function unwindArgumentValues($args)
     {
         global $context;
-        $logger = $context->getLogger("Utils");
         $passMultipleValuesAsCsv = $context->getConfigParam('custom_parameter.pass_multiple_values_as_csv');
 
         $_results = array();

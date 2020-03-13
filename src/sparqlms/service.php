@@ -19,6 +19,8 @@ require_once '../common/Metrology.php';
 require_once '../common/Cache.php';
 
 try {
+    session_start();
+    
     // ------------------------------------------------------------------------------------
     // --- Initializations
     // ------------------------------------------------------------------------------------
@@ -29,7 +31,7 @@ try {
 
     // Init the context: read the global config.ini file, init the cache, logger and SPARQL client
     $context = Context::getInstance("--------- Starting SPARQL micro-service --------");
-    $logger = $context->getLogger("sparqlms\service");
+    $logger = $context->getLogger("service");
     $sparqlClient = $context->getSparqlClient();
 
     // ------------------------------------------------------------------------------------
@@ -105,6 +107,8 @@ try {
     // ------------------------------------------------------------------------------------
 
     // Read the values of the service custom arguments either from the HTTP query string or from the SPARQL graph pattern
+    if ($logger->isHandling(Logger::INFO))
+        $logger->info("Reading the service customs arguments...");
     $allServiceArgs = Utils::getServiceCustomArgs();
     if ($logger->isHandling(Logger::INFO))
         $logger->info("Custom arguments received at service invocation: " . print_r($allServiceArgs, true));
@@ -174,8 +178,8 @@ try {
     print($result->getBody());
 
     // Drop the temporary response graph
-    $logger->info("Dropping graph: <" . $respGraphUri . ">");
-    $sparqlClient->update("DROP SILENT GRAPH <" . $respGraphUri . ">");
+    $logger->info("Dropping graph: <{$respGraphUri}>");
+    $sparqlClient->update("DROP SILENT GRAPH <{$respGraphUri}>");
 
     $logger->notice("--------- Done - SPARQL µS execution --------");
 
@@ -184,7 +188,7 @@ try {
 } catch (Exception $e) {
 
     try {
-        $logger = Context::getInstance()->getLogger("sparqlms\service");
+        $logger = Context::getInstance()->getLogger("service");
         $logger->error((string) $e . "\n");
         $logger->notice("Returning HTTP status 500.\n");
         $logger->notice("--------- Done - SPARQL µS execution --------");
@@ -212,7 +216,7 @@ try {
 function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery, $respGraphUri)
 {
     $context = Context::getInstance();
-    $logger = $context->getLogger("sparqlms\service");
+    $logger = $context->getLogger("service");
     $sparqlClient = $context->getSparqlClient();
     $metro = Metrology::getInstance();
 
@@ -226,8 +230,8 @@ function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery, $respGraphUri)
 
     // --- Insert the triples generated from the Web API response into the temp graph $apiGraphUri
     if ($logger->isHandling(Logger::INFO))
-        $logger->info("Creating temporary graph: <" . $apiGraphUri . ">");
-    $_query = "INSERT DATA { GRAPH <" . $apiGraphUri . "> {\n" . $serializedQuads . "\n}}\n";
+        $logger->info("Creating temporary graph: <{$apiGraphUri}>");
+        $_query = "INSERT DATA { GRAPH <{$apiGraphUri}> {\n" . $serializedQuads . "\n}}\n";
     $sparqlClient->update($_query);
 
     // --- Create the triples for which this SPARQL service is meant with the CONSTRUCT query
@@ -272,11 +276,12 @@ function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery, $respGraphUri)
         else
             $triples .= "    " . $line . "\n";
 
-    $logger->info("Adding result of the CONSTRUCT query into graph: <" . $respGraphUri . ">");
-    $_query = $prefixes . "\nINSERT DATA { \n  GRAPH <" . $respGraphUri . "> {\n" . $triples . "\n}}\n";
+    $logger->info("Adding result of the CONSTRUCT query into graph: <{$respGraphUri}>");
+    $_query = $prefixes . "\nINSERT DATA { \n  GRAPH <{$respGraphUri}> {\n $triples \n} }\n";
+
     if ($logger->isHandling(Logger::DEBUG))
-        $logger->debug("Creating temporary graph: <" . $respGraphUri . "> with INSERT DATA query:\n" . $_query);
-    $sparqlClient->update($_query);
+        $logger->debug("Creating temporary graph: <{$respGraphUri}> with INSERT DATA query:\n" . $_query);
+        $sparqlClient->update($_query);
 
     // ------------------------------------------------------------------------------------
     // --- Optional: add provenance triples
@@ -313,32 +318,35 @@ function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery, $respGraphUri)
         } else
             $_query = str_replace('{webapi_query_string}', $apiQuery, $_query);
 
-        $logger->info("Adding provenance triples into graph: <" . $respGraphUri . ">");
+        $logger->info("Adding provenance triples into graph: <{$respGraphUri}>");
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("Adding provenance triples with query:\n" . $_query);
         $sparqlClient->update($_query);
     }
 
-    Utils::dumpGraph($respGraphUri);
-        
+    if ($logger->isHandling(Logger::DEBUG)) {
+        $logger->debug("Dumping final graph <{$respGraphUri}> from triple store:");
+        Utils::dumpGraph($respGraphUri);
+    }
+
     // ------------------------------------------------------------------------------------
     // --- Optional: compute the number of triples in the temporary graphs
     // ------------------------------------------------------------------------------------
 
     if ($metro->isHandling(Logger::INFO)) {
-        $nbTriplesQuery = "SELECT (COUNT(*) AS ?count) FROM <" . $apiGraphUri . "> WHERE { ?s ?p ?o }";
+        $nbTriplesQuery = "SELECT (COUNT(*) AS ?count) FROM <{$apiGraphUri}> WHERE { ?s ?p ?o }";
         $result = $sparqlClient->queryRaw($nbTriplesQuery, "application/sparql-results+json");
         $jsonResult = json_decode($result->getBody(), true);
         $metro->appendMessage($context->getService(), "No triples generated with JSON-LD profile", $jsonResult['results']['bindings'][0]['count']['value']);
 
-        $nbTriplesQuery = "SELECT (COUNT(*) AS ?count) FROM <" . $respGraphUri . "> WHERE { ?s ?p ?o }";
+        $nbTriplesQuery = "SELECT (COUNT(*) AS ?count) FROM <{$respGraphUri}> WHERE { ?s ?p ?o }";
         $result = $sparqlClient->queryRaw($nbTriplesQuery, "application/sparql-results+json");
         $jsonResult = json_decode($result->getBody(), true);
         $metro->appendMessage($context->getService(), "No triples generated with CONSTRUCT query", $jsonResult['results']['bindings'][0]['count']['value']);
     }
 
     // Drop the temporary API response graph
-    $logger->info("Dropping graph: <" . $apiGraphUri . ">");
-    $sparqlClient->update("DROP SILENT GRAPH <" . $apiGraphUri . ">");
+    $logger->info("Dropping graph: <{$apiGraphUri}>");
+    $sparqlClient->update("DROP SILENT GRAPH <{$apiGraphUri}>");
 }
 ?>
