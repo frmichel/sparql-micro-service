@@ -1,6 +1,7 @@
 @prefix sd:      <http://www.w3.org/ns/sparql-service-description#>.
 @prefix httpvoc: <http://www.w3.org/2011/http#>.
 @prefix dct:     <http://purl.org/dc/terms/>.
+@prefix schema:  <http://schema.org/>.
 
 # This query template creates provenance information triples into the result grap.
 # Used when the SPARQL micro-service is configured with a full service description graph.
