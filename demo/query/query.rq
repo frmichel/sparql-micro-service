@@ -59,7 +59,7 @@ CONSTRUCT {
     }
 
     OPTIONAL {
-        SERVICE SILENT <http://sms.i3s.unice.fr/sparql-ms/macaulaylibrary/getAudioByTaxon_sd>
+        SERVICE SILENT <https://sparql-micro-services.org/service/macaulaylibrary/getAudioByTaxon_sd>
         { SELECT * WHERE {
             []  a dwc:Taxon;
                 dwc:scientificName ?taxonName;
@@ -97,7 +97,7 @@ CONSTRUCT {
     }
 
     OPTIONAL {
-        SERVICE SILENT <http://sms.i3s.unice.fr/sparql-ms/eol/getTraitsByTaxon_sd>
+        SERVICE SILENT <https://sparql-micro-services.org/service/eol/getTraitsByTaxon_sd>
         { SELECT * WHERE {
             []  a dwc:Taxon;
                 dwc:scientificName ?taxonName;
@@ -118,13 +118,13 @@ CONSTRUCT {
 
 
 function sms:flickrService(?group_id, ?biname) {
-    IRI(concat("http://sms.i3s.unice.fr/sparql-ms/flickr/getPhotosByGroupByTag?",
+    IRI(concat("https://sparql-micro-services.org/service/flickr/getPhotosByGroupByTag?",
         "group_id=", encode_for_uri(?group_id),
         "&tags=", encode_for_uri(concat("taxonomy:binomial=", ?biname))))
 }
 function sms:musicBrainzService(?name) {
-    IRI(concat("http://sms.i3s.unice.fr/sparql-ms/musicbrainz/getSongByName?name=", encode_for_uri(?name)))
+    IRI(concat("https://sparql-micro-services.org/service/musicbrainz/getSongByName?name=", encode_for_uri(?name)))
 }
 function sms:bhlService(?name) {
-    IRI(concat("http://sms.i3s.unice.fr/sparql-ms/bhl/getArticlesByTaxon?name=", encode_for_uri(?name)))
+    IRI(concat("https://sparql-micro-services.org/service/bhl/getArticlesByTaxon?name=", encode_for_uri(?name)))
 }
