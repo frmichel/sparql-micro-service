@@ -26,6 +26,7 @@ template st:jsonld-markup {
                     schema:keywords ?keyword;
                     schema:isBasedOn ?apiUrl;
                     schema:publisher ?pubUri; 
+                    schema:license <https://creativecommons.org/licenses/by/4.0/>;
                     
                     schema:distribution ?schemaDistribution;
                     schema:additionalType ?dcatDataset, ?smsService;
