@@ -1,6 +1,6 @@
 # SPARQL Micro-Service Changelog
 
-## [0.4.3_RC3] 2020-04-20
+## [0.4.3] 2020-04-20
 
 **Update from 0.4.2**: 
 - rerun composer to update EasyRdf
