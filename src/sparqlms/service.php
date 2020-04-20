@@ -138,8 +138,14 @@ try {
                 // Web API query string will be formatted by the custom service script
                 require $context->getServicePath() . '/service.php';
             else
-                foreach ($customArgs as $argName => $argVal)
-                    $apiQuery = str_replace('{' . $argName . '}', rawurlencode($argVal), $apiQuery);
+                foreach ($customArgs as $argName => $argVal) {
+                    $argVal = rawurlencode($argVal);
+                    // The '.' is normally not url-encoded but at least the Tropicos API fails with that
+                    // http://services.tropicos.org/Name/Search?name={name}&type=exact&apikey=..
+                    // Encoding the dot should not harm though.
+                    $argVal = str_replace('.', '%2E', $argVal);
+                    $apiQuery = str_replace('{' . $argName . '}', $argVal, $apiQuery);
+                }
 
             if ($logger->isHandling(Logger::NOTICE)) {
                 if ($apiQuery != "") {
