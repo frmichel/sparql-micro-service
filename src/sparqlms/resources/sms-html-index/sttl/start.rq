@@ -11,6 +11,6 @@ template st:start {
     # Generate one line for each SPARQL micro-service
     st:call-template(st:oneSms)
 
-    format { <../tpl3_end.html> "" }
+    format { <../tpl3_end.html> st:call-template(st:jsonld-markup) }
 
 } where {}

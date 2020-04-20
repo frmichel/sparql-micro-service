@@ -112,7 +112,7 @@ class Context
     private function __construct($startMessage = null)
     {
         // --- Initialize the logger
-        $this->logHandler = new RotatingFileHandler(__DIR__ . '/../../logs/sms.log', 5, Logger::NOTICE, true);
+        $this->logHandler = new RotatingFileHandler(__DIR__ . '/../../logs/sms.log', 30, Logger::NOTICE, true);
         $this->logHandler->setFormatter(new LineFormatter("%datetime% %extra% %channel% %level_name%: %message%\n", null, true));
         $this->logHandler->pushProcessor(function ($record) {
             $sessionId = session_id();

@@ -1,0 +1,70 @@
+@prefix sd:      <http://www.w3.org/ns/sparql-service-description#>.
+@prefix schema:  <http://schema.org/>.
+@prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
+
+# This template constructs a graph complying with the schema:DataCatalog requirements.
+# Then, it serializes this graph in JSON-LD that can be embedded into the HTML service index page.
+template st:jsonld-markup {
+
+    # JSON-LD transformation
+    st:apply-templates-with-graph(st:jsonld-light, ?graph)
+    
+} WHERE {
+    BIND(
+        let (?g = 
+
+            CONSTRUCT {
+                ?rootUrl
+                    a                   schema:DataCatalog;
+                    schema:identifier   ?rootUrl;
+                    schema:name         ?catalogName;
+                    schema:description  ?catalogName;
+                    schema:publisher    ?pubUri;
+                    schema:license      <https://creativecommons.org/licenses/by/4.0/>;
+                    schema:dataset      ?serviceUri.
+
+                # Catalog publisher information
+                ?pubUri
+                    a                   schema:Organization;
+                    schema:name         "Université Côte d'Azur, CNRS, Inria, I3S";
+                    schema:contactPoint ?pubContactPointUri.
+                    
+                # Catalog publisher contact information
+                ?pubContactPointUri
+                    a                   schema:ContactPoint;
+                    schema:contactType  "technical support";
+                    schema:name         "Franck Michel";
+                    schema:email        "franck.michel@cnrs.fr";
+                    schema:url          <https://w3id.org/people/franckmichel>.
+                    
+                ?serviceUri
+                    a                   schema:Dataset;
+                    schema:name         ?serviceName;
+                    schema:description  ?serviceDescription;
+                    schema:license      <https://creativecommons.org/licenses/by/4.0/>.
+
+            } WHERE {
+            
+                # Retrieve the root URL from the query string parameter (e.g. ?param=http://example.org/service)
+                BIND(st:get(st:param) as ?rootUrl)
+
+                BIND(concat("Catalog of SPARQL micro-services hosted on ", str(?rootUrl)) as ?catalogName)
+                BIND(IRI(concat(?rootUrl, "Publisher")) as ?pubUri)
+                BIND(IRI(concat(?rootUrl, "PublisherContact")) as ?pubContactPointUri)
+
+                # Retrieve services hosted at this url
+                ?serviceUri
+                    a sd:Service;
+                    schema:name ?serviceName.
+
+                # Select only services with the given root url
+                FILTER(strstarts(str(?serviceUri), str(?rootUrl)))
+
+                OPTIONAL { ?serviceUri schema:description ?description }
+                BIND(coalesce(?description, "") as ?serviceDescription)
+            }
+
+            ) { ?g } 
+        as ?graph
+    )
+}

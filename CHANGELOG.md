@@ -1,6 +1,6 @@
 # SPARQL Micro-Service Changelog
 
-## [0.4.3_RC2] 2020-02-24
+## [0.4.3_RC3] 2020-04-20
 
 **Update from 0.4.2**: 
 - rerun composer to update EasyRdf
@@ -15,7 +15,7 @@ instead of:
 
 ### Added
 - Allow different strategies for passing multiple values to the Web API (issue [#13](https://github.com/frmichel/sparql-micro-service/issues/13))
-- STTL transformation to generate the html index of services hosted on a server (/src/sparqlms/resources/sms-html-index)
+- STTL transformation to generate the html index of services hosted on a server (/src/sparqlms/resources/sms-html-index) + generate schema:DataCatalog markup on index page
 
 ### Changed
 - Bug fix. Suppot for multiple values of a custom parameter on the HTTP query string (issue [#12](https://github.com/frmichel/sparql-micro-service/issues/12))
