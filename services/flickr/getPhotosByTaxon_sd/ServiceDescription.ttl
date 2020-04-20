@@ -45,7 +45,7 @@
             schema:contactType "technical support";
             schema:name "Franck Michel";
             schema:email "franck.michel@cnrs.fr";
-            schema:url <http://modalis.i3s.unice.fr/fmichel>;
+            schema:url <https://w3id.org/people/franckmichel>;
         ];
     ];
 
