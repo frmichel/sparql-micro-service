@@ -6,11 +6,11 @@
 - rerun composer to update EasyRdf
 - the custom service.php script of SPARQL micro-services should be updated: due to issue [#13](https://github.com/frmichel/sparql-micro-service/issues/13), only one value for each service argument can be recieved. Thus, the service.php script should now obtain arguments with: 
 
-    $param = $customArgs['param'];
+    ```$param = $customArgs['param'];```
 
 instead of:
 
-    $param = $customArgs['param'][0];
+    ```$param = $customArgs['param'][0];```
   
 
 ### Added

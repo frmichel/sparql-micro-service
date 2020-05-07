@@ -43,7 +43,7 @@ api_query | Mandatory | The template of the Web API query string. It contains pl
 cache_expires_after | Optional | Maximum time (in seconds) to cache responses from the Web API. Default: 2592000 = 30 days
 http_header | Optional | Array of HTTP headers sent along with the Web API query. Default: none
 add_provenance | Optional | Whether to add provenance information as part of the graph that is being produced. Values are true or false. Default: false. More details about produced provenance information can be found [here](../doc/05-prov.md).
-custom_parameter.pass_multiple_values_as_csv | Optional | Define show multiple values of an service argument are passed to the Web API: true = as a comma-separated value, false = value is split and Web API is invoked once for each value. Default: true
+custom_parameter.pass_multiple_values_as_csv | Optional | Define how multiple values of an service argument are passed to the Web API: true = as a comma-separated value, false = value is split and Web API is invoked once for each value. Default: true
 
 Example:
 ```bash
