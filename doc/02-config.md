@@ -38,7 +38,7 @@ The config.ini file provides the following parameters:
 
 Parameter | Mandatory/Optional | Description
 ------------ | ------------- | -------------
-custom_parameter | Mandatory | Array of arguments of the service to be passed as HTTP query string parameters.
+custom_parameter | Mandatory | Array of arguments of the service to be passed as HTTP query string parameters. Has to be set but may be left empty when the service takes no parameter. 
 api_query | Mandatory | The template of the Web API query string. It contains placeholders for the arguments defined in custom_parameter.
 cache_expires_after | Optional | Maximum time (in seconds) to cache responses from the Web API. Default: 2592000 = 30 days
 http_header | Optional | Array of HTTP headers sent along with the Web API query. Default: none

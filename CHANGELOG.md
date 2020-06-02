@@ -1,5 +1,10 @@
 # SPARQL Micro-Service Changelog
 
+## [DEV] 2020-06-02
+
+### Changed
+- Bug fix. Support Web API with no parameter (issue [#15](https://github.com/frmichel/sparql-micro-service/issues/15))
+
 ## [0.4.3] 2020-04-20
 
 **Update from 0.4.2**: 

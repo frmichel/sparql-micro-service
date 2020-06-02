@@ -20,7 +20,7 @@ require_once '../common/Cache.php';
 
 try {
     session_start();
-    
+
     // ------------------------------------------------------------------------------------
     // --- Initializations
     // ------------------------------------------------------------------------------------
@@ -121,43 +121,47 @@ try {
         $logger->warn("Not all service arguments were found. Expected: " . Utils::print_r($context->getConfigParam('custom_parameter')) . "\nbut read: " . Utils::print_r($allServiceArgs));
         $apiQuery = "";
     } else {
-        // Unwind the array of arguments:
-        // "Unwind" means that when an argument has more than one value, we will generate
-        // one array of arguments for each of these values. This is repeated for all arguments, resulting
-        // in possibly many arrays being generated for all the combinations of all the values.
-        //
-        // Wether two values ['v1','v2'] should entail 2 separate arrays or be merged in a CSV value depends
-        // on the service's configuration parameter "custom_parameter.pass_multiple_values_as_csv":
-        // if true, the values are passed as csv; if false, the values entail the creation of several arrays.
-        foreach (Utils::unwindArgumentValues($allServiceArgs) as $customArgs) {
+        if (sizeof($allServiceArgs) == 0)
+            // No argument => execute the Web API query and create the response graph including provenance triples
+            queryWebAPIAndGenerateTriples(array(), $context->getConfigParam('api_query'), $respGraphUri);
+        else
+            // Unwind the array of arguments:
+            // "Unwind" means that when an argument has more than one value, we will generate
+            // one array of arguments for each of these values. This is repeated for all arguments, resulting
+            // in possibly many arrays being generated for all the combinations of all the values.
+            //
+            // Wether two values ['v1','v2'] should entail 2 separate arrays or be merged in a CSV value depends
+            // on the service's configuration parameter "custom_parameter.pass_multiple_values_as_csv":
+            // if true, the values are passed as csv; if false, the values entail the creation of several arrays.
+            foreach (Utils::unwindArgumentValues($allServiceArgs) as $customArgs) {
 
-            // Read the Web API query string template
-            $apiQuery = $context->getConfigParam('api_query');
+                // Read the Web API query string template
+                $apiQuery = $context->getConfigParam('api_query');
 
-            if (file_exists($context->getServicePath() . '/service.php'))
-                // Web API query string will be formatted by the custom service script
-                require $context->getServicePath() . '/service.php';
-            else
-                foreach ($customArgs as $argName => $argVal) {
-                    $argVal = rawurlencode($argVal);
-                    // The '.' is normally not url-encoded but at least the Tropicos API fails with that
-                    // http://services.tropicos.org/Name/Search?name={name}&type=exact&apikey=..
-                    // Encoding the dot should not harm though.
-                    $argVal = str_replace('.', '%2E', $argVal);
-                    $apiQuery = str_replace('{' . $argName . '}', $argVal, $apiQuery);
+                if (file_exists($context->getServicePath() . '/service.php'))
+                    // Web API query string will be formatted by the custom service script
+                    require $context->getServicePath() . '/service.php';
+                else
+                    foreach ($customArgs as $argName => $argVal) {
+                        $argVal = rawurlencode($argVal);
+                        // The '.' is normally not url-encoded but at least the Tropicos API fails with that
+                        // http://services.tropicos.org/Name/Search?name={name}&type=exact&apikey=..
+                        // Encoding the dot should not harm though.
+                        $argVal = str_replace('.', '%2E', $argVal);
+                        $apiQuery = str_replace('{' . $argName . '}', $argVal, $apiQuery);
+                    }
+
+                if ($logger->isHandling(Logger::NOTICE)) {
+                    if ($apiQuery != "") {
+                        $logger->notice("Will query the Web API with arguments: " . print_r($customArgs, true));
+                        $logger->notice("Web API query string: " . $apiQuery);
+                    } else
+                        $logger->notice("Web API query was set to empty string. Will return empty response.");
                 }
 
-            if ($logger->isHandling(Logger::NOTICE)) {
-                if ($apiQuery != "") {
-                    $logger->notice("Will query the Web API with arguments: " . print_r($customArgs, true));
-                    $logger->notice("Web API query string: " . $apiQuery);
-                } else
-                    $logger->notice("Web API query was set to empty string. Will return empty response.");
+                // --- Execute the Web API query and create the response graph including provenance triples
+                queryWebAPIAndGenerateTriples($customArgs, $apiQuery, $respGraphUri);
             }
-
-            // --- Execute the Web API query and create the response graph including provenance triples
-            queryWebAPIAndGenerateTriples($customArgs, $apiQuery, $respGraphUri);
-        }
     }
 
     // ------------------------------------------------------------------------------------
@@ -237,7 +241,7 @@ function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery, $respGraphUri)
     // --- Insert the triples generated from the Web API response into the temp graph $apiGraphUri
     if ($logger->isHandling(Logger::INFO))
         $logger->info("Creating temporary graph: <{$apiGraphUri}>");
-        $_query = "INSERT DATA { GRAPH <{$apiGraphUri}> {\n" . $serializedQuads . "\n}}\n";
+    $_query = "INSERT DATA { GRAPH <{$apiGraphUri}> {\n" . $serializedQuads . "\n}}\n";
     $sparqlClient->update($_query);
 
     // --- Create the triples for which this SPARQL service is meant with the CONSTRUCT query
@@ -287,7 +291,7 @@ function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery, $respGraphUri)
 
     if ($logger->isHandling(Logger::DEBUG))
         $logger->debug("Creating temporary graph: <{$respGraphUri}> with INSERT DATA query:\n" . $_query);
-        $sparqlClient->update($_query);
+    $sparqlClient->update($_query);
 
     // ------------------------------------------------------------------------------------
     // --- Optional: add provenance triples
