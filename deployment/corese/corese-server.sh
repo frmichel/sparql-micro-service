@@ -11,7 +11,7 @@
 
 CORESE=$HOME/Corese
 LOG4J=file://$CORESE/log4j2.xml
-JAR=$CORESE/corese-server-4.1.1-SNAPSHOT-20190408.jar
+JAR=$CORESE/corese-server-4.1.4a.jar
 
 # Root path of the SPARQL micro-service Github repository
 SMSPATH=$HOME/public_html/sparql-ms-live

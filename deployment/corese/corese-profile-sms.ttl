@@ -1,3 +1,6 @@
+# Profile for running Corese.
+# Before running, replace '{INSTALL}' with the actual path where SPARQL micro-services code is installed
+
 # Content available in the default dataset at /sparql
 st:user a st:Server;
     st:shareContent st:smsdesc.
