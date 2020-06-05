@@ -9,7 +9,7 @@
 	],
 	"require" : {
 		"ml/json-ld" : "dev-master",
-		"easyrdf/easyrdf" : "dev-add_raw_query",
+		"easyrdf/easyrdf" : "dev-master",
 		"monolog/monolog" : "1.*",
 		"mongodb/mongodb" : "^1.2"
 	}
