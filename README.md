@@ -6,43 +6,22 @@ Each SPARQL micro-service is a **lightweight, task-specific SPARQL endpoint** th
 
 Optionally, **provenance information** can be generated on the fly and added to the graph being produced at the time a SPARQL micro-service is invoked.
 
-This project is a PHP implementation for JSON-based Web APIs. It comes with several example SPARQL micro-services, allowing for instance to search photos matching some tags on [Flickr](https://www.flickr.com/), or tunes whose titles match a given name in [MusicBrainz encyclopedia](https://musicbrainz.org/).
+This project is a PHP implementation for JSON-based Web APIs. It comes with several example SPARQL micro-services, allowing for instance to search photos matching some tags on [Flickr](https://www.flickr.com/), or tunes whose titles match a given name in [MusicBrainz](https://musicbrainz.org/).
 Other services are designed to query major biodiversity data sources such as the [Global Biodiversity Information Framework (GBIF)](https://www.biodiversitylibrary.org/), the [Biodiversity Heritage Library](https://www.biodiversitylibrary.org/) or the [Encyclopedia of Life traits bank (EoL)](http://eol.org/traitbank).
 See the services available in this in [this repository](services/) as well as the [TaxrefWeb repository](https://github.com/frmichel/taxrefweb/tree/master/sparql-micro-services).
-
-**Each micro-service is further detailed in its own dedicated folder**.
-
-### Cite this work:
-
-Michel F., Faron C., Gargominy O. & Gandon F. (2018). Integration of Web APIs and Linked Data Using SPARQL Micro-Services—Application to Biodiversity Use Cases. *Information 9(12):310*. [DOI](https://dx.doi.org/10.3390/info9120310), [HAL](https://hal.archives-ouvertes.fr/hal-01947589).
-
-
-```bibtex
-@article{michel_sparqlmicroservices_2018,
-  title = {Integration of {{Web APIs}} and {{Linked Data Using SPARQL Micro}}-{{Services}}\textemdash{{Application}} to {{Biodiversity Use Cases}}},
-  volume = {9},
-  copyright = {Licence Creative Commons Attribution 4.0 International (CC-BY)},
-  issn = {2078-2489},
-  language = {en},
-  number = {12},
-  journal = {Information},
-  doi = {10.3390/info9120310},
-  author = {Michel, Franck and Faron, Catherine and Gargominy, Olivier and Gandon, Fabien},
-  month = dec,
-  year = {2018},
-  pages = {310},
-  url = {https://hal.archives-ouvertes.fr/hal-01947589}
-}
-```
+Each micro-service is further detailed in its own dedicated folder.
 
 
 ## Documentation
 
-- [Usage of SPARQL micro-services](/doc/01-usage.md)
-- [Configuration of a SPARQL micro-service](/doc/02-config.md)
-- [Installation, configuration and deployment](/doc/04-install.md)
-- [Dynamic HTML documentation](/doc/03-html-doc.md)
-- [Provenance information](/doc/05-prov.md)
+- [Usage of SPARQL micro-services](doc/01-usage.md)
+- [Configuration of a SPARQL micro-service](doc/02-config.md)
+- [Installation, configuration and deployment](doc/04-install.md)
+- [Docker deployment](deployment/docker/README.md)
+- [Dynamic HTML documentation](doc/03-html-doc.md)
+- [Provenance information](doc/05-prov.md)
+
+
 
 ## Typical use case
 
@@ -96,6 +75,31 @@ CONSTRUCT {
     }
 }
 ```
+
+
+## Cite this work:
+
+Michel F., Faron C., Gargominy O. & Gandon F. (2018). Integration of Web APIs and Linked Data Using SPARQL Micro-Services—Application to Biodiversity Use Cases. *Information 9(12):310*. [DOI](https://dx.doi.org/10.3390/info9120310), [HAL](https://hal.archives-ouvertes.fr/hal-01947589).
+
+
+```bibtex
+@article{michel_sparqlmicroservices_2018,
+  title = {Integration of {{Web APIs}} and {{Linked Data Using SPARQL Micro}}-{{Services}}\textemdash{{Application}} to {{Biodiversity Use Cases}}},
+  volume = {9},
+  copyright = {Licence Creative Commons Attribution 4.0 International (CC-BY)},
+  issn = {2078-2489},
+  language = {en},
+  number = {12},
+  journal = {Information},
+  doi = {10.3390/info9120310},
+  author = {Michel, Franck and Faron, Catherine and Gargominy, Olivier and Gandon, Fabien},
+  month = dec,
+  year = {2018},
+  pages = {310},
+  url = {https://hal.archives-ouvertes.fr/hal-01947589}
+}
+```
+
 
 ## Publications
 

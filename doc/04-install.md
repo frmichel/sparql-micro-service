@@ -62,7 +62,7 @@ services/                     # directory where the services are deployed
         ...
         
 deployment/
-    docker/docker-compose.yml # run SPARQL micro-services with Docker       
+    docker/                   # this folder gives the necessary files to build Corese and your SPARQL micro-serivces as Docker containers
     apache/httpd.cfg          # Apache rewriting rules for HTTP access
     corese/*                  # Corese configuration and running files
     deploy.sh                 # customization of configuration files and SPARQL queries
@@ -139,21 +139,21 @@ Apache rewriting rules are used to route invocations to `service.php` while sett
 #### Rewriting rules for SPARQL querying
 
 If the service custom arguments are passed on the HTTP query string ([config.ini method](02-config.md#configuration-with-file-configini)), the URL pattern is a follows:
-```http://example.org/sparqlms/<Web API>/<service>?param=value```.
+```http://example.org/service/<Web API>/<service>?param=value```.
 
 If they are passed passed within the SPARQL query graph pattern ([Service Description method](02-config.md#configuration-with-a-sparql-service-description-file)), the URL pattern is simply:
-```http://example.org/sparqlms/<Web API>/<service>```.
+```http://example.org/service/<Web API>/<service>```.
 
 The rewriting rule below invokes script  `service.php` with parameter `querymode` set to `sparql` and `service` set to `<Web API>/<service>`.
 The other parameters (`query`, `default-graph-uri`, `named-graph-uri` and the service custom arguments) are passed transparently (flag QSA of the rewriting rule):
 ```
-    RewriteRule "^/sparqlms/([^/?]+)/([^/?]+).*$" http://example.org/~userdir/sparqlms/src/sparqlms/service.php?querymode=sparql&service=$1/$2 [QSA,P,L]
+    RewriteRule "^/service/([^/?]+)/([^/?]+).*$" http://example.org/~userdir/sparqlms/src/sparqlms/service.php?querymode=sparql&service=$1/$2 [QSA,P,L]
 ```
 
 **Example**. The following invocation:
 ```sparql
 SELECT * WHERE {
-  SERVICE <https://example.org/sparqlms/macaulaylibrary/getAudioByTaxon?name=Delphinus+delphis>
+  SERVICE <https://example.org/service/macaulaylibrary/getAudioByTaxon?name=Delphinus+delphis>
   { [] <http://schema.org/contentUrl> ?audioUrl. }
 }
 ```
@@ -199,7 +199,7 @@ Complete examples are given in the first part of the [/deployment/apache/example
 
 ## Customize the SPARQL micro-serivces' URIs
 
-The services provided in folder [/services](../services) are configured as if they were deployed at http://example.org/sparql-ms, and the dereferenceable URIs they generate are in the form http://example.org/ld.
+The services provided in folder [/services](../services) are configured as if they were deployed at http://example.org/service, and the dereferenceable URIs they generate are in the form http://example.org/ld.
 These must be customized before you can use the services, to match the URL at which they are deployed.
 
 Script [/deployment/deploy.sh](../deployment/deploy.sh) does that for you: copy the script to the folder where the services are located (for instance /services), update the variables `SERVER`, `SERVERPATH` and `SMSDIR`, and run the script.
@@ -218,31 +218,6 @@ Depending on the triple store that you are using, you may have to use different 
 As an example, script [corese-server.sh](../deployment/corese/corese-server.sh) prepares a list of those files as well as their named graphs URIs, then it starts up the Corese-KGRAM triple store that immediately loads the files.
 
 
-# Deploy with Docker
-
-You can test SPARQL micro-services using the two [Docker](https://www.docker.com/) images we have built:
-- [frmichel/corese](https://hub.docker.com/r/frmichel/corese/): built upon debian:buster, runs the [Corese-KGRAM](http://wimmics.inria.fr/corese) RDF store and SPARQL endpoint. Corese-KGRAM listens on port 8081.
-- [frmichel/sparql-micro-service](https://hub.docker.com/r/frmichel/sparql-micro-service/): provides the Apache Web server, PHP 5.6, and the SPARQL micro-services described above. Apache listens on port 80, it is exposed as port 80 of the Docker server.
-
-To run these images, simply download the file [docker-compose.yml](../deployment/docker/docker-compose.yml) on a Docker server and run:
-```
-docker-compose up -d
-```
-
-Note that this will also start a standard instance of MongoDB to serve as the cache DB.
-
-### Possible conflict on port 80
-
-This deployment uses ports 80 and 8081 of the Docker host. If there are in conflict with other aplication, change the port mapping in `docker-compose.yml`.
-
-
-### Check application logs
-
-This `docker-compose.yml` will mount the SPARQL micro-service and Corese-KGRAM log directories to the Docker host in directory `./logs`.
-You may have to set rights 777 on this directory for the container to be able to write log files (`chmod 777 logs`).
-
-
-
 # Test the installation
 
 ## Test SPARQL querying
@@ -250,19 +225,19 @@ You may have to set rights 777 on this directory for the container to be able to
 You can test the services using the commands below in a bash.
 
 ```bash
-PATH=http://localhost/sparql-ms
+SERVICEPATH=http://localhost/service
 
 # URL-encoded query: select * where {?s ?p ?o}
 SELECT='select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D'
 
 curl --header "Accept: application/sparql-results+json" \
-  "${PATH}/flickr/getPhotoById?query=${SELECT}&photo_id=31173091246"
+  "${SERVICEPATH}/flickr/getPhotoById?query=${SELECT}&photo_id=31173091246"
 
 curl --header "Accept: application/sparql-results+json" \
-  "${PATH}/macaulaylibrary/getAudioByTaxon?query=${SELECT}&name=Delphinus+delphis"
+  "${SERVICEPATH}/macaulaylibrary/getAudioByTaxon?query=${SELECT}&name=Delphinus+delphis"
 
 curl --header "Accept: application/sparql-results+json" \
-  "${PATH}/musicbrainz/getSongByName?query=${SELECT}&name=Delphinus+delphis"
+  "${SERVICEPATH}/musicbrainz/getSongByName?query=${SELECT}&name=Delphinus+delphis"
 ```
 
 That should return a SPARQL JSON result.
@@ -299,13 +274,12 @@ This should return an RDF description of the photographic resource similar to:
 
 Two services are provided with a service description graph that can be dynamically translated into an HTML documentation. Enter the following URLs in a web browser:
 ```
-http://localhost/sparql-ms/flickr/getPhotosByTaxon_sd/
-http://localhost/sparql-ms/macaulaylibrary/getAudioByTaxon_sd/
+http://localhost/service/flickr/getPhotosByTags_sd/
+http://localhost/service/macaulaylibrary/getAudioByTaxon_sd/
 ```
 
 You can also look up the URIs of the service description and shapes graphs directly, e.g.:
 ```
-http://localhost/sparql-ms/flickr/getPhotosByTaxon_sd/ServiceDescription
-http://localhost/sparql-ms/flickr/getPhotosByTaxon_sd/ShapesGraph
+curl --header "Accept: text/turtle" http://localhost/service/flickr/getPhotosByTags_sd/ServiceDescription
+curl --header "Accept: text/turtle" http://localhost/service/flickr/getPhotosByTags_sd/ShapesGraph
 ```
-
