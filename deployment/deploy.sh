@@ -6,7 +6,10 @@
 #
 # Usage: 
 # Copy this script in the public_html folder where the SPARQL micro-service code is installed
-# (there must be an src subfolder here). CD to public_html and run the script.
+# (there must be an src subfolder here). 
+# Define the variables providing the keys of your APIs and update the code below accordingly.
+# E.g. below these as variable $BHL_API_KEY, $FLICKR_API_KEY and $EOL_API_TOKEN.
+# Then run the script.
 
 # The URL of the server where the services are accessible. Will replace the 'http://example.org'
 SERVER='https://sparql-micro-services.org'
@@ -28,7 +31,7 @@ function substitute() {
 # ================================== Set API keys ==========================
 
 # --- BHL API key ---
-API_KEY='<paste your api key here>'
+API_KEY=$BHL_API_KEY
 for FILE in $(ls $SMSDIR/bhl/*/config.ini 2> /dev/null); do
     replace='<api_key>'
     echo "Changing $replace into $API_KEY in $FILE"
@@ -36,7 +39,7 @@ for FILE in $(ls $SMSDIR/bhl/*/config.ini 2> /dev/null); do
 done
 
 # --- Flickr API key ---
-API_KEY='<paste your api key here>'
+API_KEY=$FLICKR_API_KEY
 for FILE in $(ls $SMSDIR/flickr/*/config.ini 2> /dev/null); do
     replace='<api_key>'
     echo "Changing $replace into $API_KEY in $FILE"
@@ -49,7 +52,7 @@ for FILE in $(ls $SMSDIR/flickr/*/ServiceDescription*.ttl 2> /dev/null); do
 done
 
 # --- EoL API token ---
-API_KEY='<paste your api token here>'
+API_KEY=$EOL_API_TOKEN
 for FILE in $(ls $SMSDIR/eol/*/config.ini 2> /dev/null); do
     replace='<api_personal_token>'
     echo "Changing $replace into $API_KEY in $FILE"
