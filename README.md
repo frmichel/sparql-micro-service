@@ -17,7 +17,7 @@ Each micro-service is further detailed in its own dedicated folder.
 - [Usage of SPARQL micro-services](doc/01-usage.md)
 - [Configuration of a SPARQL micro-service](doc/02-config.md)
 - [Installation, configuration and deployment](doc/04-install.md)
-- [Docker deployment](deployment/docker/README.md)
+- [Docker deployment](deployment/docker/)
 - [Dynamic HTML documentation](doc/03-html-doc.md)
 - [Provenance information](doc/05-prov.md)
 
