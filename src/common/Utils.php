@@ -218,47 +218,15 @@ class Utils
         $headers = array();
         $headers[] = "Accept: application/json; q=0.9, */*; q=0.1";
         $headers[] = "User-Agent: SPARQL-Micro-Service";
-        if ($additionalHeaders != null) {
+        if ($additionalHeaders != null)
             foreach ($additionalHeaders as $hName => $hVal)
                 $headers[] = $hName . ": " . $hVal;
-        }
-
-        // Add the proxy authentication header, if any
-        if ($context->hasConfigParam('proxy.user') && $context->hasConfigParam('proxy.password')) {
-            $auth = base64_encode($context->getConfigParam('proxy.user') . ':' . $context->getConfigParam('proxy.password'));
-            $headers[] = "Proxy-Authorization: Basic $auth";
-        }
-
-        $streamContextOptions = array(
-            'method' => 'GET',
-            'header' => $headers,
-            'timeout' => Processor::REMOTE_TIMEOUT,
-            'ssl' => [
-                'verify_peer' => true,
-                'verify_peer_name' => true,
-                'allow_self_signed' => false
-            ]
-        );
-
-        if ($context->hasConfigParam('proxy.host')) {
-            $_proxy = "tcp://" . $context->getConfigParam('proxy.host');
-            if ($context->hasConfigParam('proxy.port')) {
-                $_proxy .= ':' . $context->getConfigParam('proxy.port');
-            }
-            $streamContextOptions['proxy'] = $_proxy;
-        }
-
         if ($logger->isHandling(Logger::DEBUG))
-            $logger->debug("Web API query HTTP context: " . print_r($streamContextOptions, TRUE));
-
-        $jsonContext = stream_context_create(array(
-            'http' => $streamContextOptions,
-            'https' => $streamContextOptions
-        ));
-
+            $logger->debug("Web API query HTTP headers: " . print_r($headers, TRUE));
         if ($logger->isHandling(Logger::DEBUG))
             $logger->debug("Executing the Web API query now...");
-        $jsonContent = file_get_contents($url, false, $jsonContext);
+
+        $jsonContent = self::file_get_contents_curl($url, $headers);
         if ($jsonContent === false) {
             $logger->warning("Cannot load document " . $url);
             $jsonContent = null;
@@ -591,6 +559,46 @@ class Utils
                 $_newResults[] = array_merge($_results1, $_results2);
 
         return $_newResults;
+    }
+
+    /**
+     * Equivalent of the file_get_contents function but using curl
+     * @param string $url
+     * @param array $additionalHeaders array of header formatted as strings like "Accept: text/html"
+     * @return string
+     */
+    static public function file_get_contents_curl($url, $additionalHeaders = null)
+    {
+        global $context;
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
+        curl_setopt($ch, CURLOPT_HTTPGET, TRUE);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, Processor::REMOTE_TIMEOUT);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+        if ($additionalHeaders != null)
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $additionalHeaders);
+
+        if ($context->hasConfigParam('proxy.host')) {
+            curl_setopt($ch, CURLOPT_PROXY, $context->getConfigParam('proxy.host'));
+            if ($context->hasConfigParam('proxy.port'))
+                curl_setopt($ch, CURLOPT_PROXYPORT, $context->getConfigParam('proxy.port'));
+
+            // Add the proxy authentication
+            if ($context->hasConfigParam('proxy.user') && $context->hasConfigParam('proxy.password')) {
+                curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC);
+                $auth = base64_encode($context->getConfigParam('proxy.user') . ':' . $context->getConfigParam('proxy.password'));
+                curl_setopt($ch, CURLOPT_PROXYUSERPWD, $auth);
+            }
+        }
+
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data;
     }
 }
 ?>

@@ -4,6 +4,8 @@
 
 ### Changed
 - Bug fix. Support Web API with no parameter (issue [#15](https://github.com/frmichel/sparql-micro-service/issues/15))
+- Bug fix. Use curl to query Web APIs to deal certificate validation issues
+
 
 ## [0.4.3] 2020-04-20
 
