@@ -44,8 +44,8 @@ RUN composer install -n -vv
 # --- Customize the deploy file (Web API keys, URL, paths)
 ENV DEPLOY="$INSTALL/deployment/deploy.sh"
 RUN cat $DEPLOY | sed 's|^SERVER=.*|SERVER='http://localhost'|g' > /tmp/deploy && mv /tmp/deploy $DEPLOY
-ENV BHL_API_KEY="e2cd8640-0302-43b8-84ba-af635d572e2c"
-ENV FLICKR_API_KEY="84292db278ee7fe90f930e6a87ae532d"
+ENV BHL_API_KEY="<you API key>"
+ENV FLICKR_API_KEY="<you API key>"
 RUN chmod 755 $DEPLOY && $DEPLOY
 
 # --- Customize the main config.ini (SPARQL endpoint, SPIN-to-SPARQL, cache DB)
