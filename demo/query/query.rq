@@ -109,7 +109,7 @@ CONSTRUCT {
             OPTIONAL { ?measure dwc:measurementUnit ?measurementUnit }
             OPTIONAL { ?measure dwciri:measurementUnit ?measurementUnitUri }
             
-            FILTER (?measurementType  != 'habitat includes' && ! strStarts(?measurementType, "water"))
+            FILTER (!strStarts(?measurementType, "habitat") && ! strStarts(?measurementType, "water"))
             
           } LIMIT 20
         }
