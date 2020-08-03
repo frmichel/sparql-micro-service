@@ -36,13 +36,6 @@ template st:jsonld-markup {
                     schema:name         "Franck Michel";
                     schema:email        "franck.michel@cnrs.fr";
                     schema:url          <https://w3id.org/people/franckmichel>.
-                    
-                ?serviceUri
-                    a                   schema:Dataset;
-                    schema:name         ?serviceName;
-                    schema:description  ?serviceDescription;
-                    schema:license      <https://creativecommons.org/licenses/by/4.0/>.
-
             } WHERE {
             
                 # Retrieve the root URL from the query string parameter (e.g. ?param=http://example.org/service)
@@ -53,15 +46,10 @@ template st:jsonld-markup {
                 BIND(IRI(concat(?rootUrl, "PublisherContact")) as ?pubContactPointUri)
 
                 # Retrieve services hosted at this url
-                ?serviceUri
-                    a sd:Service;
-                    schema:name ?serviceName.
+                ?serviceUri a sd:Service.
 
                 # Select only services with the given root url
                 FILTER(strstarts(str(?serviceUri), str(?rootUrl)))
-
-                OPTIONAL { ?serviceUri schema:description ?description }
-                BIND(coalesce(?description, "") as ?serviceDescription)
             }
 
             ) { ?g } 
