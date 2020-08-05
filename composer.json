@@ -1,16 +1,16 @@
 {
-	"repositories" : [{
-			"type" : "vcs",
-			"url" : "https://github.com/frmichel/JsonLD"
-		}, {
-			"type" : "vcs",
-			"url" : "https://github.com/frmichel/easyrdf"
-		}
-	],
 	"require" : {
-		"ml/json-ld" : "dev-master",
-		"easyrdf/easyrdf" : "dev-master",
+		"ml/json-ld" : "1.2.*",
+		"easyrdf/easyrdf" : "1.0.*",
 		"monolog/monolog" : "1.*",
 		"mongodb/mongodb" : "^1.2"
-	}
+	},
+	"name" : "frmichel/sparqlms",
+	"homepage" : "https://github.com/frmichel/sparql-micro-service",
+	"license" : "Apache License 2.0",
+	"authors" : [{
+			"name" : "Franck Michel"
+		}
+	],
+	"description" : "SPARQL micro-services"
 }

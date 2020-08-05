@@ -12,7 +12,9 @@ use frmichel\sparqlms\common\Context;
 use frmichel\sparqlms\common\Metrology;
 use frmichel\sparqlms\common\Utils;
 use Exception;
+
 require_once '../common/Utils.php';
+require_once '../common/SparqlClient.php';
 require_once '../common/Context.php';
 require_once '../common/Configuration.php';
 require_once '../common/Metrology.php';
