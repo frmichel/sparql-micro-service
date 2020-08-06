@@ -72,7 +72,7 @@ deployment/
 
 Clone the project directory to a directory that is made accessible through HTTP by Apache, typically `/var/www/html/sparqlms` or `~/public_html/sparqlms` in your home directory.
 
-From the project directory, run command `composer install`, this will create a `vendor` directory with the required PHP libraries.
+From the project directory, use composer to [install the dependencies](https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies), this will create a `vendor` directory with the required PHP libraries.
 
 Create directory `logs` with execution and modification rights for all (`chmod 777 logs`), so that Apache can write into it.
 
