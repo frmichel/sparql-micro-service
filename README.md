@@ -2,11 +2,13 @@
 
 The SPARQL Micro-Service architecture [1, 3] is meant to allow the combination of Linked Data with data from Web APIs. It enables **querying non-RDF Web APIs with SPARQL**, and allows **on-the-fly assigning dereferenceable URIs to Web API resources** that do not have a URI in the first place.
 
-Each SPARQL micro-service is a **lightweight, task-specific SPARQL endpoint** that typically provides access to a **small, resource-centric graph**. The graph is delineated by the Web API service being wrapped, the arguments passed to this service, and the types of RDF triples that the SPARQL micro-service is designed to spawn.
+Each SPARQL micro-service is a **lightweight, dedicated SPARQL endpoint** that typically provides access to a small, resource-centric graph. The graph produced can **use any vocabulary or ontology of your choice** and be tuned to meet your requirements. It is delineated by the Web API service being wrapped, the arguments passed to this service, and the types of RDF triples that the SPARQL micro-service is designed to spawn.
 
-Optionally, **provenance information** can be generated on the fly and added to the graph being produced at the time a SPARQL micro-service is invoked.
+This project is a PHP implementation for JSON-based Web APIs. It comes with multiple configuration options to fit most specific APIs (e.g. add specific HTTP headers, configure a cache database) and can generate **provenance information** added to the graph being produced at the time a SPARQL micro-service is invoked.
 
-This project is a PHP implementation for JSON-based Web APIs. It comes with several example SPARQL micro-services, allowing for instance to search photos matching some tags on [Flickr](https://www.flickr.com/), or tunes whose titles match a given name in [MusicBrainz](https://musicbrainz.org/).
+An **HTML documentation and test interface** is generated dynamically from the description of a SPARQL micro-service, that embeds http://schema.org/Dataset annotations to **make your service discoverable** using for instance [Google Dataset Search](https://datasetsearch.research.google.com/search?query=flickr%20sparql&docid=88YllZoR%2BmJMuXMgAAAAAA%3D%3D).
+
+The project comes with several example SPARQL micro-services, allowing for instance to search photos matching some tags on [Flickr](https://www.flickr.com/), or tunes whose titles match a given name in [MusicBrainz](https://musicbrainz.org/).
 Other services are designed to query major biodiversity data sources such as the [Global Biodiversity Information Framework (GBIF)](https://www.biodiversitylibrary.org/), the [Biodiversity Heritage Library](https://www.biodiversitylibrary.org/) or the [Encyclopedia of Life traits bank (EoL)](http://eol.org/traitbank).
 See the services available in this in [this repository](services/) as well as the [TaxrefWeb repository](https://github.com/frmichel/taxrefweb/tree/master/sparql-micro-services).
 Each micro-service is further detailed in its own dedicated folder.
@@ -30,9 +32,9 @@ It first retrieves the URI of the common dolphin species (Delphinus delphis) fro
 
 The SPARQL endpoint as well as the two SPARQL micro-service are invoked within dedicated SERVICE clauses.
 
-The example also illustrates the two methods for passing arguments to a SPARQL micro-service: either on the endpoint URL (arguments ```group_id``` and ```tags``` for service ```flickr/getPhotosByGroupByTag below```), or as RDF terms of regular  triple patterns (predicate ```dwc:scientificName``` for service ```macaulaylibrary/getAudioByTaxon_sd```).
+The example also illustrates the **two methods for passing arguments to a SPARQL micro-service**: either on the endpoint URL (arguments ```group_id``` and ```tags``` for service ```flickr/getPhotosByGroupByTag below```), or as RDF terms of regular  triple patterns (predicate ```dwc:scientificName``` for service ```macaulaylibrary/getAudioByTaxon_sd```).
 
-If any of the Web APIs is not available (due for instance to a network error or internal failure etc.), the micro-service returns an empty result. In thss case, the OPTIONAL clauses make it possible to still get (possibly partial) results.
+If any of the Web APIs is not available (due for instance to a network error or internal failure etc.), the micro-service returns an empty result. In this case, the OPTIONAL clauses make it possible to still get (possibly partial) results.
 
 ```sparql
 prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
@@ -123,4 +125,4 @@ Michel F., Faron-Zucker C. & Gandon F. (2018). Bridging Web APIs and Linked Data
 ### Demo
 
 Michel F., Faron-Zucker C. & Gandon F. (2018). Integration of Biodiversity Linked Data and Web APIs using SPARQL Micro-Services. In *Biodiversity Information Science and Standards 2: e25481 (TDWG 2018)*. Dunedin, New Zealand. Pensoft. [DOI](https://dx.doi.org/10.3897/biss.2.25481), [HAL](https://hal.archives-ouvertes.fr/hal-01856365). 
-Available online: http://sms.i3s.unice.fr/demo-sms?param=Delphinapterus+leucas
+Available online: http://sparql-micro-services.org/demo-sms?param=Delphinapterus%20leucas

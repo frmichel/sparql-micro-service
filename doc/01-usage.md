@@ -49,9 +49,9 @@ The arguments expected by the micro-service (```name``` in this case) are descri
 In the second example above, the values of the input paramter are provided by RDF terms of the SPARQL query graph pattern.
 In some use cases, these values should come from variables evaluated elsewhere in the SPARQL query.
 
-Let us take an example. The query below invokes two SPARQK micro-services:
+Let us take an example. The query below invokes two SPARQL micro-services:
   * the first one, gbif/getTaxonByID_sd, returns the name corresponding to an identifier given by property `dwc:scientificNameID`;
-  * the second one,flickr/getPhotosByTaxon_sd, returns photos matching the name given by property `dwc:scientificName`.
+  * the second one, flickr/getPhotosByTaxon_sd, returns photos matching the name given by property `dwc:scientificName` and that should be provided by the first one.
 
 ```sparql
 # First example. This query fails.
@@ -112,4 +112,4 @@ SELECT ?name ?img  WHERE  {
 Now, we have split ?name into two variables ?name and ?name2. Line `BIND (?name as ?name2)` forces the SPARQL engine to evaluate the first service to get values of variable ?name. Then, it assigns those values to ?name2. 
 This *should* results in the second invocation to be done along with the values, typically provided as an extra VALUES clause.
 
-**Note however that the way the second service is invoked totally depends on the strategy of the SPARQL engine being used/ Hence, the behavior may vary from one engine to the other.**
+**Note however that the way the second service is invoked totally depends on the strategy of the SPARQL engine being used. Hence, the behavior may vary from one engine to the other.**
