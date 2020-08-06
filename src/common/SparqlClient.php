@@ -10,12 +10,25 @@ class SparqlClient extends Client
     /**
      * The query/read address of the SPARQL Endpoint
      */
-    protected $queryUri = null;
+    private $queryUri = null;
+
+    private $httpClient = null;
 
     public function __construct($queryUri, $updateUri = null)
     {
-        $this->queryUri = $queryUri;
         parent::__construct($queryUri, $updateUri);
+
+        // HTTP client configuration with a large timemout value:
+        // default is 10s but some SPARQL may need much more
+        $httpConfig = array(
+            'maxredirects' => 5,
+            'useragent' => 'EasyRdf HTTP Client',
+            'timeout' => 600
+        );
+        $this->httpClient = Http::getDefaultHttpClient();
+        $this->httpClient->setConfig($httpConfig);
+
+        $this->queryUri = $queryUri;
     }
 
     /**
@@ -48,7 +61,7 @@ class SparqlClient extends Client
 
         $encodedQuery = 'query=' . urlencode($processed_query);
 
-        $client = Http::getDefaultHttpClient();
+        $client = $this->httpClient;
         $client->resetParameters();
 
         // Tell the server which response formats we can parse
