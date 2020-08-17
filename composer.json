@@ -15,7 +15,7 @@
 		"SPARQL",
 		"RDF",
 		"semantic web",
-		"linked data"
+		"LOD"
 	],
 	"support" : {
 		"issues" : "https://github.com/frmichel/sparql-micro-service/issues"
