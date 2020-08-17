@@ -1,11 +1,20 @@
-FROM php:5.6-apache
+# https://github.com/docker-library/docs/blob/master/php/README.md#supported-tags-and-respective-dockerfile-links
+# https://github.com/mlocati/docker-php-extension-installer
+
+FROM php:7.4-apache
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
 RUN apt-get update -y
-RUN apt-get install -y git wget zip unzip
+RUN apt-get install -y git wget zip unzip 
 
 # --- Install composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 RUN php composer-setup.php --install-dir=/bin && php -r "unlink('composer-setup.php');"
 RUN mv /bin/composer.phar /bin/composer
+
+# --- Install PHP MongoDB driver
+RUN pecl install mongodb
+RUN docker-php-ext-enable mongodb
 
 
 # ============== Apache/PHP configutation ============
@@ -17,11 +26,7 @@ RUN ln -s /etc/apache2/mods-available/proxy.conf /etc/apache2/mods-enabled/proxy
 RUN ln -s /etc/apache2/mods-available/proxy_http.load /etc/apache2/mods-enabled/proxy_http.load
 
 # --- Timezone not defined in default php.ini. Replacing it
-RUN echo "date.timezone = 'Europe/Paris'" >> /usr/local/etc/php/php.ini
-
-# --- Install PHP MongoDB driver
-COPY install-mongodb.sh .
-RUN chmod 755 install-mongodb.sh && ./install-mongodb.sh
+RUN echo "date.timezone = 'Europe/Paris'" >> "$PHP_INI_DIR/php.ini"
 
 # --- Add rewrite rules for SPARQL micro-services
 COPY sparql-micro-services.conf /etc/apache2/sites-enabled/sparql-micro-services.conf
@@ -35,7 +40,7 @@ WORKDIR "$INSTALL"
 
 # --- Download SPARQL micro-service code
 RUN git clone https://github.com/frmichel/sparql-micro-service.git $INSTALL
-RUN git checkout tags/0.4.3
+RUN git checkout tags/0.5.0
 
 # --- Download the dependencies
 # The github-oauth is necessary to access my own forks of EsayRDF and JsonLD
@@ -63,4 +68,3 @@ RUN mkdir -p $LOGS && chmod 777 $LOGS
 RUN mkdir -p /var/www/html/sparql-ms
 RUN cp -r $INSTALL/src /var/www/html/sparql-ms/src && cp -r $INSTALL/vendor /var/www/html/sparql-ms/vendor
 RUN cp -r $INSTALL/services /var/www/html/sparql-ms/services
-
