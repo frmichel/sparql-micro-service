@@ -24,8 +24,6 @@
 		"php" : ">=7.1.0",
 		"ext-mbstring" : "*",
 		"ext-xml" : "*",
-		"ext-devel" : "*",
-		"ext-pear" : "*",
 		"ml/json-ld" : "1.2.*",
 		"easyrdf/easyrdf" : "1.0.*",
 		"monolog/monolog" : "1.*",
