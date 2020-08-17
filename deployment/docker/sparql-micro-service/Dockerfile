@@ -35,6 +35,7 @@ WORKDIR "$INSTALL"
 
 # --- Download SPARQL micro-service code
 RUN git clone https://github.com/frmichel/sparql-micro-service.git $INSTALL
+RUN git checkout tags/0.4.3
 
 # --- Download the dependencies
 # The github-oauth is necessary to access my own forks of EsayRDF and JsonLD
