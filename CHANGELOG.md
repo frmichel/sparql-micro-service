@@ -1,10 +1,16 @@
 # SPARQL Micro-Service Changelog
 
-## [DEV] 2020-06-02
+## [0.5.0] 2020-08-05
 
 ### Changed
+- Upgrade to PHP 7.1+
+- Upgraded to official JsonLD 1.2.0 (no more need for custom fork)
+- Upgraded to official EasyRdf 1.0.0 (no more need for custom fork)
 - Bug fix. Support Web API with no parameter (issue [#15](https://github.com/frmichel/sparql-micro-service/issues/15))
-- Bug fix. Use curl to query Web APIs to deal certificate validation issues
+- Bug fix. Use curl to query Web APIs to better deal with certificate validation issues
+
+**Upgrading from 0.4.3 needs updaging config.ini files**:
+In PHP 7, comments in .ini files can no longer start with a '#', only with a ';' => update all your config.ini files by replacing '#' with ';' on comment lines
 
 
 ## [0.4.3] 2020-04-20

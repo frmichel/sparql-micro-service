@@ -12,8 +12,8 @@ If you configure SPARQL micro-services using the [Service Description method](02
 ## Pre-requisites
 
 The following packages must be installed before installing the SPARQL micro-services.
-  * PHP 5.3+. Below we assume our current version is 5.6
-  * Additional PHP packages: `php56w-mbstring` and `php56w-xml`, `php56w-devel`, `php-pear` (PECL)
+  * PHP 7.1+
+  * Additional PHP packages: `php-mbstring` and `php-xml`, `php-devel`, `php-pear` (PECL)
   * [Composer](https://getcomposer.org/doc/) (PHP dependency management)
   * Make sure the time zone is defined in the php.ini file, for instance:
 ```ini
@@ -72,7 +72,7 @@ deployment/
 
 Clone the project directory to a directory that is made accessible through HTTP by Apache, typically `/var/www/html/sparqlms` or `~/public_html/sparqlms` in your home directory.
 
-From the project directory, run command `composer install`, this will create a `vendor` directory with the required PHP libraries.
+From the project directory, use composer to [install the dependencies](https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies), this will create a `vendor` directory with the required PHP libraries.
 
 Create directory `logs` with execution and modification rights for all (`chmod 777 logs`), so that Apache can write into it.
 

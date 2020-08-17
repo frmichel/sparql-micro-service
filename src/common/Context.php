@@ -84,14 +84,14 @@ class Context
     /**
      * SPARQL query submitted to the SPARQL micro-service
      *
-     * @var \EasyRdf\Sparql\Client
+     * @var SparqlClient
      */
     private $sparqlQuery = null;
 
     /**
      * Client to the local RDF store and SPARQL endpoint
      *
-     * @var \EasyRdf\Sparql\Client
+     * @var SparqlClient
      */
     private $sparqlClient = null;
 
@@ -167,7 +167,7 @@ class Context
             }
 
         // --- Initialize the SPARQL client to talk to the SPARQL endpoint from the config
-        $this->sparqlClient = new \EasyRdf\Sparql\Client($this->getConfigParam('sparql_endpoint'));
+        $this->sparqlClient = new SparqlClient($this->getConfigParam('sparql_endpoint'));
     }
 
     /**
@@ -385,7 +385,7 @@ class Context
     /**
      * Return the client to the local RDF store and SPARQL endpoint
      *
-     * @return \EasyRdf\Sparql\Client
+     * @return SparqlClient
      */
     public function getSparqlClient()
     {
