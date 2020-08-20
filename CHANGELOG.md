@@ -1,5 +1,10 @@
 # SPARQL Micro-Service Changelog
 
+## [CURRENT] 2020-08-20
+
+### Changed
+- Deal with non existing service: return HTTP 404 for SPARQL invocation, return error web page for service HTML description
+
 ## [0.5.0] 2020-08-05
 
 ### Changed

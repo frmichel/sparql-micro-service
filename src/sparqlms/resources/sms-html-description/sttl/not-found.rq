@@ -1,0 +1,8 @@
+template st:not-found {
+
+    format { <../tpl0_not_found.html> ?service }
+
+} where {
+    # Retrieve the service URI from the URL query string (?param=http://example.org/service)
+    BIND(IRI(st:get(st:param)) as ?service)
+}

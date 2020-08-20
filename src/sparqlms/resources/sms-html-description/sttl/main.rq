@@ -1,0 +1,39 @@
+@prefix schema:  <http://schema.org/>.
+@prefix sd:      <http://www.w3.org/ns/sparql-service-description#>.
+@prefix shacl:   <http://www.w3.org/ns/shacl#>.
+@prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
+
+template st:main {
+
+    format { <../tpl1_start.html> ?name ?boundDescription ?serviceUrl  }
+
+    # Generate one line for each argument of the SPARQL micro-service
+    st:call-template(st:argument)
+
+    format { <../tpl3_end.html> 
+                ?serviceUrl 
+                ?boundShapesGraph 
+                ?boundExampleQuery 
+                st:call-template(st:uri-deref)
+                st:call-template(st:jsonld-markup) 
+    }
+
+} where {
+    # Retrieve the service URI from the URL query string (?param=http://example.org/service)
+    BIND(IRI(st:get(st:param)) as ?service)
+
+    ?service
+        a sd:Service;
+        sd:endpoint ?serviceUrl;
+        schema:name ?name;
+        .
+
+    OPTIONAL { ?service schema:description ?description }
+    BIND(coalesce(?description, "") as ?boundDescription)
+
+    OPTIONAL { ?service sd:defaultDataset [ sd:defaultGraph [ shacl:shapesGraph ?shapesGraph ]] }
+    BIND(coalesce(?shapesGraph, "") as ?boundShapesGraph)
+
+    OPTIONAL { ?service sms:exampleQuery ?exampleQuery }
+    BIND(coalesce(?exampleQuery, "") as ?boundExampleQuery)
+}
