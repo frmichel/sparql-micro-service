@@ -76,11 +76,13 @@ class Configuration
                 throw new Exception("Missing configuration property 'api_query'. Check " . $customCfgFile . ".");
 
             if (! array_key_exists('custom_parameter', $customCfg))
-                $logger->warning("No configuration property 'custom_parameter' in " . $customCfgFile . ".");
+                $logger->info("The service has no argument (no configuration property 'custom_parameter' in " . $customCfgFile . ").");
 
-            if (sizeof($customCfg['custom_parameter']) == 1 && $customCfg['custom_parameter'][0] == "")
+            if (sizeof($customCfg['custom_parameter']) == 1 && $customCfg['custom_parameter'][0] == "") {
                 // A single argument with empty name => no argument at all
                 $customCfg['custom_parameter'] = array();
+                $logger->info("The service has no argument (configuration property 'custom_parameter' is empty).");
+            }
 
             $customCfg['service_description'] = false;
         } else {
@@ -150,7 +152,7 @@ class Configuration
             $query = str_replace('{serviceUri}', $serviceUri, $query);
             $jsonResult = Utils::runSparqlSelectQuery($query);
             if (sizeof($jsonResult) == 0)
-                throw new Exception("No argument mapping found for service <" . $serviceUri . ">.");
+                $logger->info("Service <" . $serviceUri . "> has no argument (no hydra:mapping).");
 
             foreach ($jsonResult as $_binding) {
                 $_name = $_binding['name']['value'];
