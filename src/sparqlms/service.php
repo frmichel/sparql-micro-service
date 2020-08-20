@@ -57,7 +57,8 @@ try {
             $context->setServicePath($_servicePath);
     }
     if ($context->getServicePath() == null)
-        throw new Exception("Directoy not found for service " . $context->getService());
+        Utils::httpNotFound("service " . $context->getService() . " not found.");
+
     if ($logger->isHandling(Logger::INFO))
         $logger->info("Directory where the service is deployed: " . $context->getServicePath());
 
@@ -193,17 +194,15 @@ try {
     $logger->info("Dropping graph: <{$respGraphUri}>");
     $sparqlClient->update("DROP SILENT GRAPH <{$respGraphUri}>");
 
-    $logger->notice("--------- Done - SPARQL ÂµS execution --------");
+    $logger->notice("--------- Done - SPARQL µS execution --------");
 
     $metro->stopTimer(1);
     $metro->appendTimer($context->getService(), "Total|API", 1, 2);
 } catch (Exception $e) {
-
     try {
-        $logger = Context::getInstance()->getLogger("service");
         $logger->error((string) $e . "\n");
         $logger->notice("Returning HTTP status 500.\n");
-        $logger->notice("--------- Done - SPARQL ÂµS execution --------");
+        $logger->notice("--------- Done - SPARQL µS execution --------");
     } catch (Exception $f) {
         print("Could not process the request. Error:\n" . (string) $e . "\n");
         print("Second exception caught:\n" . (string) $f . "\n");

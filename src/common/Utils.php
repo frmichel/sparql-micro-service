@@ -61,7 +61,25 @@ class Utils
         http_response_code(400); // Bad Request
         $logger->warn($message);
         print("Erroneous request: " . $message . "\n");
-        $logger->notice("--------- Done - SPARQL ÂµS execution --------");
+        $logger->notice("--------- Done - SPARQL µS execution --------");
+        exit(0);
+    }
+
+    /**
+     * Return an HTTP staus 404 with an error message and exit the script.
+     *
+     * @param string $message
+     *            error message returned
+     */
+    static public function httpNotFound($message)
+    {
+        global $context;
+        $logger = $context->getLogger("Utils");
+
+        http_response_code(404);
+        $logger->warn($message);
+        print("Cannot process the query: " . $message . "\n");
+        $logger->notice("--------- Done - SPARQL µS execution --------");
         exit(0);
     }
 
@@ -80,7 +98,7 @@ class Utils
         http_response_code(405); // Method Not Allowed
         $logger->warn($message);
         print("Erroneous request: " . $message . "\n");
-        $logger->notice("--------- Done - SPARQL ÂµS execution --------");
+        $logger->notice("--------- Done - SPARQL µS execution --------");
         exit(0);
     }
 
@@ -101,7 +119,7 @@ class Utils
         http_response_code(422); // Unprocessable entity
         $logger->warn($message);
         print("Invalid request: " . $message . "\n");
-        $logger->notice("--------- Done - SPARQL ÂµS execution --------");
+        $logger->notice("--------- Done - SPARQL µS execution --------");
         exit(0);
     }
 
@@ -563,8 +581,10 @@ class Utils
 
     /**
      * Equivalent of the file_get_contents function but using curl
+     *
      * @param string $url
-     * @param array $additionalHeaders array of header formatted as strings like "Accept: text/html"
+     * @param array $additionalHeaders
+     *            array of header formatted as strings like "Accept: text/html"
      * @return string
      */
     static public function file_get_contents_curl($url, $additionalHeaders = null)
