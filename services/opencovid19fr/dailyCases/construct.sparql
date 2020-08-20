@@ -6,7 +6,7 @@
 @prefix covidpr:<http://ns.inria.fr/covid19/property/>.
 
 CONSTRUCT {
-    []
+    ?announcement
         a                           schema:SpecialAnnouncement;
         schema:category             <http://www.wikidata.org/entity/Q81068910>; # Covid19 pandemic
         schema:datePosted           ?dateTyped;
@@ -14,48 +14,49 @@ CONSTRUCT {
         schema:sourceOrganization   ?srcName;
         schema:spatialCoverage      ?location;
         schema:diseaseSpreadStatistics
-            ?casConfirmesBN, ?decesBN, ?decesEphadBN, ?hospitalisesBN, ?reanimationBN, ?guerisBN.
+            ?casesConfirmedBN, ?deathsBN, ?deathsEphadBN, ?casesHospitalizedBN, ?intensiveCaseBN, ?casesRecoveredBN.
         
         ?location
             a                   ?locationType;
             schema:name         ?locationName;
+            rdfs:label          ?locationName;
             schema:identifier   ?2DlocationCode.
 
-        ?casConfirmesBN
+        ?casesConfirmedBN
             a schema:Observation;
             rdfs:label "number of confirmed cases";
             schema:measuredProperty wdt:P1603;
-            schema:measuredValue ?casConfirmes.
+            schema:measuredValue ?casesConfirmed.
         
-        ?decesBN
+        ?deathsBN
             a schema:Observation;
             rdfs:label "number of deaths";
             schema:measuredProperty wdt:P1120;
-            schema:measuredValue ?deces.
+            schema:measuredValue ?deaths.
 
-        ?decesEphadBN
+        ?deathsEphadBN
             a schema:Observation;
             rdfs:label "number of deaths in Ephad";
             schema:measuredProperty covidpr:noDeathsEphad;
-            schema:measuredValue ?decesEphad.
+            schema:measuredValue ?deathsEphad.
 
-        ?hospitalisesBN
+        ?casesHospitalizedBN
             a schema:Observation;
             rdfs:label "number of hospitalized cases";
             schema:measuredProperty wdt:P8049;
-            schema:measuredValue ?hospitalises.
+            schema:measuredValue ?casesHospitalized.
         
-        ?reanimationBN
+        ?intensiveCaseBN
             a schema:Observation;
             rdfs:label "number of cases in intensive care";
             schema:measuredProperty covidpr:noCasesIntensiveCare;
-            schema:measuredValue ?reanimation.
+            schema:measuredValue ?intensiveCase.
         
-        ?guerisBN
+        ?casesRecoveredBN
             a schema:Observation;
             rdfs:label "number of recoveries";
             schema:measuredProperty wdt:P8010;
-            schema:measuredValue ?gueris.
+            schema:measuredValue ?casesRecovered.
 }
 WHERE {
     ?measure 
@@ -68,36 +69,34 @@ WHERE {
     ?src api:nom        ?srcName.
     optional { ?src api:url ?srcUrl }
 
-    optional { ?measure api:casConfirmes    ?casConfirmes }
-    optional { ?measure api:deces           ?deces }
-    optional { ?measure api:decesEhpad      ?decesEphad }
-    optional { ?measure api:hospitalises    ?hospitalises }
-    optional { ?measure api:reanimation     ?reanimation }
-    optional { ?measure api:gueris          ?gueris }
+    optional { ?measure api:casConfirmes    ?casesConfirmed }
+    optional { ?measure api:deces           ?deaths }
+    optional { ?measure api:decesEhpad      ?deathsEphad }
+    optional { ?measure api:hospitalises    ?casesHospitalized }
+    optional { ?measure api:reanimation     ?intensiveCase }
+    optional { ?measure api:gueris          ?casesRecovered }
     
+    # Create IRI for each announcement
+    bind(iri(concat("http://ns.inria.fr/covid19/opencovid19fr/announcement/", ?locationCode, "/", ?date)) as ?announcement)
+
+    # Create IRI for locations (depts, regions, collectivity)
+    bind(IRI(concat("http://ns.inria.fr/covid19/opencovid19fr/location/", ?locationCode)) as ?location)
+
     bind(strdt(?date, xsd:date) as ?dateTyped)
     bind(iri(?srcUrl)           as ?srcUrlIri)
-    
     bind(covid:getLocationType(?locationCode)   as ?locationType)
     bind(covid:getLocationCode(?locationCode)   as ?2DlocationCode)
     
-    # Create IRI for locations (depts, regions, collectivity)
-    bind(IRI(
-        concat("http://ns.inria.fr/covid19/casesFrance/location/", ?locationCode)
-        ) as ?location)
-
     # Create blank nodes only for the stats that we obtained
-    bind(bnode(?casConfirmes) as    ?casConfirmesBN)
-    bind(bnode(?deces) as           ?decesBN)
-    bind(bnode(?decesEphad) as      ?decesEphadBN)
-    bind(bnode(?hospitalises) as    ?hospitalisesBN)
-    bind(bnode(?reanimation) as     ?reanimationBN)
-    bind(bnode(?gueris) as          ?guerisBN)
-    
-    
+    bind(bnode(?casesConfirmed) as      ?casesConfirmedBN)
+    bind(bnode(?deaths) as              ?deathsBN)
+    bind(bnode(?deathsEphad) as         ?deathsEphadBN)
+    bind(bnode(?casesHospitalized) as   ?casesHospitalizedBN)
+    bind(bnode(?intensiveCase) as       ?intensiveCaseBN)
+    bind(bnode(?casesRecovered) as      ?casesRecoveredBN)
 }
 
-
+# Figure out the type of location (state, region, dept, overseas collectivity) from the location code
 function covid:getLocationType(?locCode) {
     if      (?locCode = "FRA")               { return(schema:State) }
     else if (strstarts(?locCode, "REG"))     { return(wd:Q36784) }  # region of France
@@ -106,7 +105,7 @@ function covid:getLocationType(?locCode) {
     else if (strstarts(?locCode, "WORLD"))   { return(wd:Q16502) }  # world
 }
 
-
+# Remove the 4 first chars of the location code to keep only the region/department number: "DEP-75" -> "75"
 function covid:getLocationCode(?locCode) {
     if (regex(?locCode, "^(REG|DEP|COM)")) { return(substr(?locCode, 5)) }
 }

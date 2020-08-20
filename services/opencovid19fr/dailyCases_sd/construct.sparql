@@ -1,0 +1,111 @@
+# Schema.org vocabulary info: https://github.com/schemaorg/schemaorg/issues/2490
+
+@prefix wd:     <http://www.wikidata.org/entity/> .
+@prefix wdt:    <http://www.wikidata.org/prop/direct/> .
+@prefix covid:  <http://ns.inria.fr/covid19/>.
+@prefix covidpr:<http://ns.inria.fr/covid19/property/>.
+
+CONSTRUCT {
+    ?announcement
+        a                           schema:SpecialAnnouncement;
+        schema:category             <http://www.wikidata.org/entity/Q81068910>; # Covid19 pandemic
+        schema:datePosted           ?dateTyped;
+        schema:url                  ?srcUrlIri;
+        schema:sourceOrganization   ?srcName;
+        schema:spatialCoverage      ?location;
+        schema:diseaseSpreadStatistics
+            ?casesConfirmedBN, ?deathsBN, ?deathsEphadBN, ?casesHospitalizedBN, ?intensiveCaseBN, ?casesRecoveredBN.
+        
+        ?location
+            a                   ?locationType;
+            schema:name         ?locationName;
+            rdfs:label          ?locationName;
+            schema:identifier   ?2DlocationCode.
+
+        ?casesConfirmedBN
+            a schema:Observation;
+            rdfs:label "number of confirmed cases";
+            schema:measuredProperty wdt:P1603;
+            schema:measuredValue ?casesConfirmed.
+        
+        ?deathsBN
+            a schema:Observation;
+            rdfs:label "number of deaths";
+            schema:measuredProperty wdt:P1120;
+            schema:measuredValue ?deaths.
+
+        ?deathsEphadBN
+            a schema:Observation;
+            rdfs:label "number of deaths in Ephad";
+            schema:measuredProperty covidpr:noDeathsEphad;
+            schema:measuredValue ?deathsEphad.
+
+        ?casesHospitalizedBN
+            a schema:Observation;
+            rdfs:label "number of hospitalized cases";
+            schema:measuredProperty wdt:P8049;
+            schema:measuredValue ?casesHospitalized.
+        
+        ?intensiveCaseBN
+            a schema:Observation;
+            rdfs:label "number of cases in intensive care";
+            schema:measuredProperty covidpr:noCasesIntensiveCare;
+            schema:measuredValue ?intensiveCase.
+        
+        ?casesRecoveredBN
+            a schema:Observation;
+            rdfs:label "number of recoveries";
+            schema:measuredProperty wdt:P8010;
+            schema:measuredValue ?casesRecovered.
+}
+WHERE {
+    ?measure 
+        api:date        ?date;
+        api:nom         ?locationName;
+        api:code        ?locationCode;
+        api:source      ?src;
+        api:sourceType  ?srcType.
+        
+    ?src api:nom        ?srcName.
+    optional { ?src api:url ?srcUrl }
+
+    optional { ?measure api:casConfirmes    ?casesConfirmed }
+    optional { ?measure api:deces           ?deaths }
+    optional { ?measure api:decesEhpad      ?deathsEphad }
+    optional { ?measure api:hospitalises    ?casesHospitalized }
+    optional { ?measure api:reanimation     ?intensiveCase }
+    optional { ?measure api:gueris          ?casesRecovered }
+    
+    # Create IRI for each announcement
+    bind(iri(concat("http://ns.inria.fr/covid19/opencovid19fr/announcement/", ?locationCode, "/", ?date)) as ?announcement)
+
+    # Create IRI for locations (depts, regions, collectivity)
+    bind(IRI(concat("http://ns.inria.fr/covid19/opencovid19fr/location/", ?locationCode)) as ?location)
+
+    bind(strdt(?date, xsd:date) as ?dateTyped)
+    bind(iri(?srcUrl)           as ?srcUrlIri)
+    bind(covid:getLocationType(?locationCode)   as ?locationType)
+    bind(covid:getLocationCode(?locationCode)   as ?2DlocationCode)
+    
+    # Create blank nodes only for the stats that we obtained
+    bind(bnode(?casesConfirmed) as      ?casesConfirmedBN)
+    bind(bnode(?deaths) as              ?deathsBN)
+    bind(bnode(?deathsEphad) as         ?deathsEphadBN)
+    bind(bnode(?casesHospitalized) as   ?casesHospitalizedBN)
+    bind(bnode(?intensiveCase) as       ?intensiveCaseBN)
+    bind(bnode(?casesRecovered) as      ?casesRecoveredBN)
+}
+
+# Figure out the type of location (state, region, dept, overseas collectivity) from the location code
+function covid:getLocationType(?locCode) {
+    if      (?locCode = "FRA")               { return(schema:State) }
+    else if (strstarts(?locCode, "REG"))     { return(wd:Q36784) }  # region of France
+    else if (strstarts(?locCode, "DEP"))     { return(wd:Q6465) }   # department of France
+    else if (strstarts(?locCode, "COM"))     { return(wd:Q719487) } # overseas collectivity 
+    else if (strstarts(?locCode, "WORLD"))   { return(wd:Q16502) }  # world
+}
+
+# Remove the 4 first chars of the location code to keep only the region/department number: "DEP-75" -> "75"
+function covid:getLocationCode(?locCode) {
+    if (regex(?locCode, "^(REG|DEP|COM)")) { return(substr(?locCode, 5)) }
+}

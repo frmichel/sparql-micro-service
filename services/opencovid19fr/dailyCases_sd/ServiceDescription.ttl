@@ -1,0 +1,86 @@
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#>.
+@prefix sd:      <http://www.w3.org/ns/sparql-service-description#>.
+@prefix frmt:    <http://www.w3.org/ns/formats/>.
+@prefix dct:     <http://purl.org/dc/terms/>.
+@prefix shacl:   <http://www.w3.org/ns/shacl#>.
+@prefix void:    <http://rdfs.org/ns/void#>.
+@prefix hydra:   <http://www.w3.org/ns/hydra/core#>.
+@prefix schema:  <http://schema.org/>.
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#>.
+@prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
+
+@base            <http://example.org/sparql-ms/opencovid19fr/dailyCases_sd/>.
+
+# This file is loaded as graph <ServiceDescription>
+<>
+    a sd:Service, sms:Service;
+    sd:endpoint <>;
+    sd:supportedLanguage sd:SPARQL11Query;
+    sd:feature sd:BasicFederatedQuery, sd:EmptyGraphs;
+    sd:resultFormat frmt:SPARQL_Results_XML, frmt:SPARQL_Results_JSON, frmt:SPARQL_Results_CSV, frmt:SPARQL_Results_TSV,
+                    frmt:RDF_XML, frmt:Turtle, frmt:JSON-LD, frmt:Trig;
+    schema:name "SPARQL micro-service providing data about the evolution of the COVID19 pandemic in France";
+    schema:description '''<p>This SPARQL micro-service provides the daily numbers of COVID19 confirmed cases, hospitalized cases, cases in intensive care, recoveries and deaths, for France and its regions and departments. It carries out the dynamic transformation of the data consolidated and updated daily by the <i><a href="https://opencovid19-fr.github.io/">Data Against COVID19/FR</a></i> project.</p>
+    <p><b>The resulting graph is stored in a public SPARQL endpoint and updated daily</b>. See <a href="https://github.com/frmichel/sparql-micro-service/tree/master/services/opencovid19fr/dailyCases_sd/">more information</a>.</p>
+    <p>Note that as the data grows, the time it takes to complete the data transformation increases, such that the service may take a few minutes to complete.</p>''';
+    
+    sd:defaultDataset [
+        a sd:Dataset, void:Dataset;
+        sd:defaultGraph [ a sd:Graph ];
+        sd:namedGraph   [ a sd:Graph; sd:name <ServiceDescription> ];
+        
+        void:vocabulary <http://schema.org/>, <http://www.w3.org/ns/shacl#>, <http://www.w3.org/ns/hydra/core#>;
+        void:sparqlEndpoint <>;
+    ];
+
+    schema:keywords "covid19", "coronavirus", "figures", "daily", "france";
+    schema:publisher [ a schema:Organization;
+        schema:name "Université Côte d'Azur, CNRS, Inria, I3S";
+        schema:logo
+            "http://univ-cotedazur.fr/fr/university/communication-presse/charte-et-logos/logo/png/uca-logo-large",
+            "https://iww.inria.fr/dircom/logoinria-eng.png",
+            "http://www.cnrs.fr/themes/custom/cnrs/logo.svg";
+        schema:contactPoint [ a schema:ContactPoint;
+            schema:contactType "technical support";
+            schema:name "Franck Michel";
+            schema:email "franck.michel@cnrs.fr";
+            schema:url <https://w3id.org/people/franckmichel>;
+        ];
+    ];
+
+    sms:exampleQuery '''    @prefix schema: <http://schema.org/>.
+    @prefix wd:     <http://www.wikidata.org/entity/>.
+
+    select * where {
+        ?a  a schema:SpecialAnnouncement;
+            schema:datePosted ?date;
+            schema:spatialCoverage [
+                a                    wd:Q6465; # department
+                schema:name          ?locationName;
+                schema:identifier    "75";
+            ];
+            schema:diseaseSpreadStatistics [
+                rdfs:label           ?statLabel;
+                schema:measuredValue ?statVal
+            ].
+    } order by desc(?date) limit 20''';
+
+    # 1 day
+    sms:cacheExpiresAfter "P259200S"^^xsd:duration;
+
+    # Add provenance information to the graph generated at each invocation?
+    sms:addProvenance "true"^^xsd:boolean;
+    
+    dct:source [
+        a schema:WebAPI; schema:name "Data Against COVID-19/FR";
+        schema:url <https://opencovid19-fr.github.io/>;
+        schema:potentialAction <APIService>;
+    ];
+    .
+
+# Web API service being wrapped by this µ-service + parameters binding
+<APIService>
+    a schema:SearchAction;
+    a hydra:IriTemplate;
+    hydra:template "https://raw.githubusercontent.com/opencovid19-fr/data/master/dist/chiffres-cles.json";
+    hydra:mapping [].
