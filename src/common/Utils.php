@@ -61,7 +61,7 @@ class Utils
         http_response_code(400); // Bad Request
         $logger->warn($message);
         print("Erroneous request: " . $message . "\n");
-        $logger->notice("--------- Done - SPARQL µS execution --------");
+        $logger->notice("--------- Done - SPARQL ÂµS execution --------");
         exit(0);
     }
 
@@ -79,7 +79,7 @@ class Utils
         http_response_code(404);
         $logger->warn($message);
         print("Cannot process the query: " . $message . "\n");
-        $logger->notice("--------- Done - SPARQL µS execution --------");
+        $logger->notice("--------- Done - SPARQL ÂµS execution --------");
         exit(0);
     }
 
@@ -98,7 +98,7 @@ class Utils
         http_response_code(405); // Method Not Allowed
         $logger->warn($message);
         print("Erroneous request: " . $message . "\n");
-        $logger->notice("--------- Done - SPARQL µS execution --------");
+        $logger->notice("--------- Done - SPARQL ÂµS execution --------");
         exit(0);
     }
 
@@ -119,7 +119,7 @@ class Utils
         http_response_code(422); // Unprocessable entity
         $logger->warn($message);
         print("Invalid request: " . $message . "\n");
-        $logger->notice("--------- Done - SPARQL µS execution --------");
+        $logger->notice("--------- Done - SPARQL ÂµS execution --------");
         exit(0);
     }
 
