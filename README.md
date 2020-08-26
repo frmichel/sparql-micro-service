@@ -11,11 +11,11 @@ This project is a PHP implementation for JSON-based Web APIs. It comes with mult
 You can check out some services we published at [https://sparql-micro-services.org/](https://sparql-micro-services.org/). 
 An **HTML documentation and test interface** is generated dynamically from the micro-service description, that embeds http://schema.org/Dataset markup data to **make the service discoverable** using for instance [Google Dataset Search](https://datasetsearch.research.google.com/search?query=flickr%20sparql&docid=88YllZoR%2BmJMuXMgAAAAAA%3D%3D).
 
-A **[demo](http://sparql-micro-services.org/demo-sms?param=Delphinapterus+leucas)** showcases the use of SPARQL micro-services to integrate, within a single SPARQL query, biodiversity data from a regular Linked Data source with non-RDF data resources: photos, scientific articles, life traits, audio recordings, all obtained through dedicated Web APIs.
+A **[demo](http://sparql-micro-services.org/demo-sms?param=Delphinapterus+leucas)** showcases the use of SPARQL micro-services to integrate, within a single SPARQL query, biodiversity data from a regular Linked Data source with non-RDF data resources: photos, scientific articles, life traits, audio recordings, all obtained through dedicated Web APIs wrapped in SPARQL micro-services.
 
 This project comes with several example SPARQL micro-services, allowing for instance to search photos matching some tags on [Flickr](https://www.flickr.com/), or tunes whose titles match a given name in [MusicBrainz](https://musicbrainz.org/).
 Other services are designed to query major biodiversity data sources such as the [GBIF](https://www.biodiversitylibrary.org/), [BHL](https://www.biodiversitylibrary.org/) or [EoL](http://eol.org/traitbank).
-See the services available in this in [this repository](services/) as well as the [TaxrefWeb repository](https://github.com/frmichel/taxrefweb/tree/master/sparql-micro-services).
+See the services available in this in [this repository](services/) as well as the [TaxrefWeb](https://github.com/frmichel/taxrefweb/tree/master/sparql-micro-services) application repository.
 
 
 
