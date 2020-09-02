@@ -20,7 +20,7 @@
     sd:feature sd:BasicFederatedQuery, sd:EmptyGraphs;
     sd:resultFormat frmt:SPARQL_Results_XML, frmt:SPARQL_Results_JSON, frmt:SPARQL_Results_CSV, frmt:SPARQL_Results_TSV,
                     frmt:RDF_XML, frmt:Turtle, frmt:JSON-LD, frmt:Trig;
-    schema:name "SPARQL micro-service searching for life traits of biological species given by their scientific name";
+    schema:name "Retrieve life traits of biological species given by their scientific name";
     schema:description '''This service searches the <a href="http://eol.org/traitbank">Encyclopedia of Life traits bank</a> for data related to a given taxon name. It uses the EoL trait bank v3 API that provides a <a href="https://neo4j.com/docs/cypher-manual/current/">Neo4J Cypher</a> interface.''';
 
     sd:defaultDataset [

@@ -19,7 +19,7 @@
     sd:feature sd:BasicFederatedQuery, sd:EmptyGraphs;
     sd:resultFormat frmt:SPARQL_Results_XML, frmt:SPARQL_Results_JSON, frmt:SPARQL_Results_CSV, frmt:SPARQL_Results_TSV,
                     frmt:RDF_XML, frmt:Turtle, frmt:JSON-LD, frmt:Trig;
-    schema:name "SPARQL micro-service searching for photos on Flickr, that match all of the given tags";
+    schema:name "Search photos that match all of the given tags on Flickr";
     schema:description '''This SPARQL micro-service searches photos on <a href="https://flickr.com" target="_new">Flickr</a>, that match all of the given tags. A maximum of 100 photos are returned.''';
     
     sd:defaultDataset [
