@@ -22,7 +22,7 @@ st:demosmsWorkflow a sw:Workflow ;
         [ a sw:Transformation ; sw:uri <sttl/> ]
     ).
 
-# loading data from a file
+# loading data from a file (for test purposes only)
 st:demosmsContent a sw:Workflow ;
     sw:body (
         [ a sw:Load ; sw:path <static-example/data.ttl>  ; sw:name st:data1 ]    

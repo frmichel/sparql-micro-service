@@ -3,10 +3,10 @@ prefix dwciri:  <http://rs.tdwg.org/dwc/iri/>
 
 template st:traits {
     format { <../tpl_traits.html>
-        group { format { <../tpl_trait.html> 
-                            ?measurementType 
+        group distinct { format { <../tpl_trait.html> 
+                            ?measurementType
                             ?measurementValue
-                            ?unit 
+                            ?unit
                             ?unitUri }
         }
     }

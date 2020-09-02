@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>SPARQL Micro-services demo</title>
+    <title>SPARQL Micro-Services Demo</title>
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
@@ -13,17 +13,35 @@
     <script type="text/javascript" src="/~fmichel/demo-sms/highslide/highslide-with-gallery.js"></script>
     <link rel="stylesheet" type="text/css" href="/~fmichel/demo-sms/highslide/highslide.css" />
 
+    <!-- Leaflet lib for GBIF occurrences on OpenStreetMap -->
+    <link rel="stylesheet" crossorigin="" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="/>
+    <style type="text/css">
+        #mapid { height: 350px; }
+    </style>
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" crossorigin=""
+        integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==">
+    </script>
+
   </head>
   <body>
 
     <div class="container">
 
         <div class="jumbotron py-4">
-          <h2 class="display-4"><center>SPARQL Micro-Services Demo Page</center></h2>
-          <p class="lead">This page demonstrates the use of SPARQL micro-services <a href="https://hal.archives-ouvertes.fr/hal-01722792" target="hal">[1]</a><a href="https://hal.archives-ouvertes.fr/hal-02060966" target="hal">[2]</a> to integrate, within a single SPARQL query, data from the TAXREF-LD Linked Data taxonomic register <a href="https://hal.archives-ouvertes.fr/hal-01617708" target="hal">[3]</a> with photos from <a href="https://www.flickr.com/groups/encyclopedia_of_life/pool/" target="flickr">Flickr</a>, articles from the <a href="https://www.biodiversitylibrary.org/" target="bhl">Biodiversity Heritage Library</a>, traits from the <a href="http://eol.org/traitbank" target="eol">Encyclopedia of Life</a> trait bank, audio recordings from the <a href="http://macaulaylibrary.org/" target="mac">Macaulay Library</a>, and music tunes from <a href="http://musicbrainz.org/" target="mzb">MusicBrainz</a>.
-          The SPARQL results are transformed into HTML using the SPARQL Template Transformation Language <a href="https://hal.inria.fr/hal-01150623/" target="hal">[4]</a>.
-          </p>
+          <h2 class="display-3"><center>SPARQL Micro-Services Demo</center></h2>
+          <h3 class="display-4"><center>Biodiversity Data Integration</center></h3>
+            <p class="lead">This page demonstrates the use of <a href="https://github.com/frmichel/sparql-micro-service" target="_sms">SPARQL micro-services</a> <a href="https://hal.archives-ouvertes.fr/hal-01722792" target="hal">[1]</a><a href="https://hal.archives-ouvertes.fr/hal-02060966" target="hal">[2]</a> to integrate, within a single SPARQL query,
+              <ul  class="lead">
+                 <li>taxonomic information from the TAXREF-LD Linked Data taxonomic register <a href="https://hal.archives-ouvertes.fr/hal-01617708" target="hal">[3]</a>,</li>
+                 <li>occurrences from the <a href="https://www.gbif.org/" target="flickr">Global Biodiversity Information Framework (GBIF)</a>,</li>
+                 <li>photos from <a href="https://www.flickr.com/" target="flickr">Flickr</a>,</li>
+                 <li>articles from the <a href="https://www.biodiversitylibrary.org/" target="bhl">Biodiversity Heritage Library</a>,</li>
+                 <li>traits from the <a href="http://eol.org/traitbank" target="eol">Encyclopedia of Life</a> trait bank, and </li>
+                 <li>audio recordings from the <a href="http://macaulaylibrary.org/" target="mac">Macaulay Library</a>.
+             </ul></p>
+           <p class="lead">The SPARQL results are transformed into HTML using the SPARQL Template Transformation Language <a href="https://hal.inria.fr/hal-01150623/" target="hal">[4]</a>.</p>
         </div>
 
-        <!-- h2/i: ?taxon rdfs:label ?label -->
-        <center><h2>Data gathered about: <i><a href="%2$s" target="taxref">%1$s</a></i></h2></center>
+        <!-- ?taxon rdfs:label ?label -->
+        <center><h3>Data gathered for <i><a href="%2$s" target="taxref">%1$s</a></i></h3></center>

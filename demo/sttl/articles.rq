@@ -8,7 +8,6 @@ template st:articles {
     ?taxon a owl:Class.
 
     ?article a schema:ScholarlyArticle;
-        schema:about ?taxon;
         schema:author ?articleAuthorName;
         schema:mainEntityOfPage ?articlePage;
         schema:thumbnailUrl ?articleThumbnailUrl;

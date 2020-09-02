@@ -1,8 +1,18 @@
+prefix schema:	<http://schema.org/> .
+
 template st:start {
-
-    st:call-template(st:main)
+    format { <../tpl_start.html> ?taxonName str(?taxon) }
     
-}
-where {
-
+    st:call-template(st:occurrences)
+    st:call-template(st:imgs)
+    st:call-template(st:traits)
+    st:call-template(st:articles)
+    st:call-template(st:audios)
+    st:call-template(st:others)
+    
+    format { <../tpl_end.html> }
+} where {
+    ?taxon
+        a owl:Class;
+        rdfs:label ?taxonName.
 }

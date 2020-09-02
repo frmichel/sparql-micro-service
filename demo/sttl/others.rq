@@ -1,13 +1,18 @@
 prefix schema:	<http://schema.org/> .
 
 template st:others {
-    format { <../tpl_others.html> ?taxon
-        group { format { <../tpl_other.html> st:call-template(st:literalOrLink, ?p) st:call-template(st:literalOrLink, ?o) } }
+    format { <../tpl_others.html>
+        group {
+            format { <../tpl_other.html>
+                st:call-template(st:literalOrLink, ?taxon)
+                st:call-template(st:literalOrLink, ?p) 
+                st:call-template(st:literalOrLink, ?o)
+            }
+        }
     }
 } where {
     ?taxon
         a owl:Class;
         ?p ?o.
-        
-    FILTER ! isBlank(?o)
+    FILTER (! isBlank(?o))
 }

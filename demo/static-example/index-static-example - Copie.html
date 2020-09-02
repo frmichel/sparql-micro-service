@@ -57,7 +57,7 @@
 
             function initMap() {
                 // Create the map, insert it into the div with id "mapid"
-                mymap = L.map('mapid').setView([startLat, startLon], 3);
+                mymap = L.map('mapid').setView([startLat, startLon], 2);
                 // Init the OpenStreetMap view
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '© <a href="//osm.org/copyright">OpenStreetMap</a>/ODbL',
@@ -85,6 +85,9 @@
         <!-- FLICKR -->
         <!-- ------------------------------------------------ -->
 
+        <div class="card-deck my-4">
+
+            <div class="col-sm-4">
             <div class="card border-secondary mx-0 my-4">
               <div class="card-header"><big>Images from <a href="https://www.flickr.com/groups/encyclopedia_of_life/pool/" target="flickr">Flickr EoL group</a></big></div>
               <div class="card-body py-4">
@@ -156,6 +159,7 @@
                 </div> <!-- highslide-gallery -->
               </div> <!-- card body -->
             </div> <!-- card -->
+            </div>
             
 
             <!-- ------------------------------------------------ -->
@@ -200,6 +204,7 @@
               </div> <!-- card-body -->
             </div> <!-- card -->
         
+        </div> <!-- card deck -->
 
         <!-- ------------------------------------------------ -->
         <!-- BHL -->

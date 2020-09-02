@@ -1,42 +1,59 @@
-prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
-prefix schema: <http://schema.org/>
-prefix taxrefprop: <http://taxref.mnhn.fr/lod/property/>
-prefix taxrefrk: <http://taxref.mnhn.fr/lod/taxrank/>
-prefix dwc: <http://rs.tdwg.org/dwc/terms/>
-prefix dwciri: <http://rs.tdwg.org/dwc/iri/>
-prefix dct: <http://purl.org/dc/terms/>
-prefix sms: <http://sms.i3s.unice.fr/schema/>
+prefix dct:         <http://purl.org/dc/terms/>
+PREFIX dsw:         <http://purl.org/dsw/>.
+prefix dwc:         <http://rs.tdwg.org/dwc/terms/>
+prefix dwciri:      <http://rs.tdwg.org/dwc/iri/>
+prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#>
+prefix schema:      <http://schema.org/>
+prefix sms:         <http://sms.i3s.unice.fr/schema/>
+prefix taxrefprop:  <http://taxref.mnhn.fr/lod/property/>
+prefix taxrefrk:    <http://taxref.mnhn.fr/lod/taxrank/>
 
 CONSTRUCT {
     ?taxon a owl:Class;
         rdfs:label ?taxonName;              # TAXREF-LD
+        taxrefprop:occurrence ?occurrence;  # GBIF
         schema:image ?photo;                # Flickr
         schema:audio ?audio;                # Macauley Lib
-        schema:subjectOf ?mbzPage;          # Musicbrainz
         schema:subjectOf ?article;          # BHL
-        dct:relation ?measure.              # EoL
+        dct:relation ?measure;              # EoL
+        .
+
+    # Very simple/flat representation of an occurrence as a location
+    ?occurrence                             # GBIF
+        dct:created             ?occDate;
+        dwc:acceptedName        ?occAcceptedName;
+        dwc:recordedBy          ?occRightsHolder;
+        dwc:country             ?occCountry;
+        dwc:countryCode         ?occCountryCode;
+        dwc:decimalLongitude    ?occDecimalLongitude;
+        dwc:decimalLatitude     ?occDecimalLatitude.
 
     ?photo                                  # Flickr
-        schema:contentUrl ?img; schema:thumbnailUrl ?imgThumbnail; schema:author ?imgAuthor.
-    ?imgAuthor schema:name ?imgAuthorName; schema:url ?imgAuthorUrl.
-
-    ?audio                                  # Macauley Lib
-        schema:contentUrl ?audioUrl; schema:thumbnailUrl ?audioThumbnail;
-        schema:mainEntityOfPage ?audioPage; schema:author ?audioAuthor; schema:description ?audioDesc.
-
-    ?article a schema:ScholarlyArticle;     # BHL
-        schema:about ?taxon;
-        schema:author ?articleAuthorName;
-        schema:mainEntityOfPage ?articlePage;
-        schema:thumbnailUrl ?articleThumbnailUrl;
-        schema:description ?articleCitation.
+        schema:contentUrl       ?img;
+        schema:thumbnailUrl     ?imgThumbnail;
+        schema:author           ?imgAuthor.
+    ?imgAuthor
+        schema:name             ?imgAuthorName;
+        schema:url              ?imgAuthorUrl.
 
     ?measure a dwc:MeasurementOrFact;       # EoL
-        dwc:measurementType ?measurementType;
-        dwc:measurementUnit ?measurementUnit;
-        dwciri:measurementUnit ?measurementUnitUri;
-        dwc:measurementValue ?measurementValue;
-    .
+        dwc:measurementType     ?measurementType;
+        dwc:measurementUnit     ?measurementUnit;
+        dwciri:measurementUnit  ?measurementUnitUri;
+        dwc:measurementValue    ?measurementValue.
+
+    ?article a schema:ScholarlyArticle;     # BHL
+        schema:author           ?articleAuthorName;
+        schema:mainEntityOfPage ?articlePage;
+        schema:thumbnailUrl     ?articleThumbnailUrl;
+        schema:description      ?articleCitation.
+
+    ?audio                                  # Macauley Lib
+        schema:contentUrl       ?audioUrl;
+        schema:thumbnailUrl     ?audioThumbnail;
+        schema:mainEntityOfPage ?audioPage;
+        schema:author           ?audioAuthor;
+        schema:description      ?audioDesc.
 
 } WHERE {
     # First, retrieve the taxon name from the URL query string (?param=taxon+name)
@@ -46,36 +63,65 @@ CONSTRUCT {
     SERVICE <http://taxref.mnhn.fr/sparql> {
         ?taxon a owl:Class;
             rdfs:label ?taxonName.
-        FILTER (STRENDS(STR(?taxon), "/10.0"))
+        FILTER (STRENDS(STR(?taxon), "/13.0"))
     }
 
-    BIND(sms:flickrService("806927@N20", ?taxonName) as ?flickr)
     OPTIONAL {
-        SERVICE SILENT ?flickr
+        SERVICE SILENT <https://sparql-micro-services.org/service/gbif/getOccurrencesByName_sd>
         { SELECT * WHERE {
-            ?photo schema:contentUrl ?img; schema:thumbnailUrl ?imgThumbnail; schema:author ?imgAuthor.
-            ?imgAuthor schema:name ?imgAuthorName; schema:url ?imgAuthorUrl.
+            []  a dwc:Taxon;
+                schema:name                     ?taxonName;     # input parameter
+                dwc:acceptedName                ?occAcceptedName.
+
+            ?occurrence a  dwc:Occurrence;
+                dsw:atEvent [
+                    a dwc:Event;
+                    dwc:recordedBy          ?occRightsHolder;
+                    dwc:eventDate           ?occDate;
+                    dsw:locatedAt [
+                       dwc:country          ?occCountry;
+                       dwc:countryCode      ?occCountryCode;
+                       dwc:decimalLongitude ?occDecimalLongitude;
+                       dwc:decimalLatitude  ?occDecimalLatitude;
+                    ];
+                ].
+          } limit 30
+        }
+    }
+
+    OPTIONAL {
+        SERVICE SILENT <https://sparql-micro-services.org/service/flickr/getPhotosByTaxon_sd>
+        { SELECT * WHERE {
+            []  a dwc:Taxon;
+                dwc:scientificName      ?taxonName;     # input parameter
+                schema:image            ?photo.
+            ?photo
+                schema:contentUrl       ?img;
+                schema:thumbnailUrl     ?imgThumbnail;
+                schema:author           ?imgAuthor.
+            ?imgAuthor
+                schema:name             ?imgAuthorName;
+                schema:url              ?imgAuthorUrl.
         } LIMIT 10 }
     }
 
     OPTIONAL {
-        SERVICE SILENT <https://sparql-micro-services.org/service/macaulaylibrary/getAudioByTaxon_sd>
+        SERVICE SILENT <https://sparql-micro-services.org/service/eol/getTraitsByTaxon_sd>
         { SELECT * WHERE {
             []  a dwc:Taxon;
-                dwc:scientificName ?taxonName;
-                schema:audio ?audio.
-                
-            ?audio
-                schema:contentUrl ?audioUrl; schema:thumbnailUrl ?audioThumbnail;
-                schema:mainEntityOfPage ?audioPage; schema:author ?audioAuthor; schema:description ?audioDesc.
-          } limit 6
-        }
-    }
+                dwc:scientificName      ?taxonName;     # input parameter
+                dct:relation            ?measure.
 
-    BIND(sms:musicBrainzService(?taxonName) as ?musicbrainz)
-    OPTIONAL {
-        SERVICE SILENT ?musicbrainz
-        { [] schema:sameAs ?mbzPage; schema:name ?mbzTitle. }
+            ?measure a dwc:MeasurementOrFact;
+                dwc:measurementType     ?measurementType;
+                dwc:measurementValue    ?measurementValue.
+            OPTIONAL { ?measure dwc:measurementUnit ?measurementUnit }
+            OPTIONAL { ?measure dwciri:measurementUnit ?measurementUnitUri }
+
+            FILTER (!strStarts(?measurementType, "harvested") && !strStarts(?measurementType, "habitat") && ! strStarts(?measurementType, "water"))
+
+          } LIMIT 20
+        }
     }
 
     BIND(sms:bhlService(?taxonName) as ?bhl)
@@ -83,13 +129,13 @@ CONSTRUCT {
         SERVICE SILENT ?bhl
         { SELECT * WHERE {
             ?article
-                schema:name ?articleTitle;
-                schema:thumbnailUrl ?articleThumbnailUrl;
-                schema:author ?articleAuthorName;
+                schema:name             ?articleTitle;
+                schema:thumbnailUrl     ?articleThumbnailUrl;
+                schema:author           ?articleAuthorName;
                 schema:mainEntityOfPage ?articlePage;
                 schema:isPartOf [
-                    schema:name ?articleContainerTitle;
-                    schema:datePublished ?articleDate;
+                   schema:name          ?articleContainerTitle;
+                   schema:datePublished ?articleDate;
                 ].
           } LIMIT 6
         }
@@ -97,34 +143,20 @@ CONSTRUCT {
     }
 
     OPTIONAL {
-        SERVICE SILENT <https://sparql-micro-services.org/service/eol/getTraitsByTaxon_sd>
+        SERVICE SILENT <https://sparql-micro-services.org/service/macaulaylibrary/getAudioByTaxon_sd>
         { SELECT * WHERE {
             []  a dwc:Taxon;
-                dwc:scientificName ?taxonName;
-                dct:relation ?measure.
+                dwc:scientificName      ?taxonName;     # input parameter
+                schema:audio            ?audio.
 
-            ?measure a dwc:MeasurementOrFact;
-                dwc:measurementType ?measurementType;
-                dwc:measurementValue ?measurementValue.
-            OPTIONAL { ?measure dwc:measurementUnit ?measurementUnit }
-            OPTIONAL { ?measure dwciri:measurementUnit ?measurementUnitUri }
-            
-            FILTER (!strStarts(?measurementType, "habitat") && ! strStarts(?measurementType, "water"))
-            
-          } LIMIT 20
+            ?audio
+                schema:contentUrl ?audioUrl; schema:thumbnailUrl ?audioThumbnail;
+                schema:mainEntityOfPage ?audioPage; schema:author ?audioAuthor; schema:description ?audioDesc.
+          } limit 6
         }
     }
 }
 
-
-function sms:flickrService(?group_id, ?biname) {
-    IRI(concat("https://sparql-micro-services.org/service/flickr/getPhotosByGroupByTag?",
-        "group_id=", encode_for_uri(?group_id),
-        "&tags=", encode_for_uri(concat("taxonomy:binomial=", ?biname))))
-}
-function sms:musicBrainzService(?name) {
-    IRI(concat("https://sparql-micro-services.org/service/musicbrainz/getSongByName?name=", encode_for_uri(?name)))
-}
 function sms:bhlService(?name) {
     IRI(concat("https://sparql-micro-services.org/service/bhl/getArticlesByTaxon?name=", encode_for_uri(?name)))
 }

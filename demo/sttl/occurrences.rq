@@ -1,0 +1,22 @@
+prefix dct:     <http://purl.org/dc/terms/> .
+prefix dwc:     <http://rs.tdwg.org/dwc/terms/> .
+prefix schema:	<http://schema.org/> .
+
+template st:occurrences {
+    format { <../tpl_map.html>
+        group_concat(
+            concat("{ \"lat\": ", ?occDecimalLatitude, ", \"lon\": ", ?occDecimalLongitude,
+                      ", \"comment\": \"", ?occAcceptedName, ", ", ?occDate, ", ", ?occCountry, ", by ", ?occRightsHolder, "\" },"
+            ),
+            ",\n")
+    }
+} where {
+    ?occurrence
+        dct:created             ?occDate;
+        dwc:acceptedName        ?occAcceptedName;
+        dwc:recordedBy          ?occRightsHolder;
+        dwc:country             ?occCountry;
+        dwc:countryCode         ?occCountryCode;
+        dwc:decimalLongitude    ?occDecimalLongitude;
+        dwc:decimalLatitude     ?occDecimalLatitude.
+}
