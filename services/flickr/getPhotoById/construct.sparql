@@ -11,8 +11,11 @@ CONSTRUCT {
         schema:keyword          ?tag;
         schema:description      ?description;
 
-        schema:author           [ schema:identifier ?owner; schema:name ?ownerName; schema:url ?ownerUrl ];
-        .
+        schema:author           ?ownerUrl.
+
+    ?ownerUrl
+            a schema:Person;
+            schema:identifier ?owner; schema:name ?ownerName; schema:url ?ownerUrl.
 }
 WHERE {
     ?photo 

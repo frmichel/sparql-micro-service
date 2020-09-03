@@ -12,11 +12,11 @@ CONSTRUCT {
         schema:fileFormat       "image/jpeg";
         schema:dateCreated      ?dateTaken;
 
-        schema:author [ 
+        schema:author           ?ownerUrl.
+
+    ?ownerUrl
             a schema:Person;
-            schema:name ?ownerName; schema:identifier ?owner; schema:url ?ownerUrl
-        ];
-        .
+            schema:identifier ?owner; schema:name ?ownerName; schema:url ?ownerUrl.
 }
 WHERE {
     ?photo 
