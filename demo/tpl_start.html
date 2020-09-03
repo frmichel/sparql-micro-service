@@ -31,7 +31,7 @@
         <div class="jumbotron py-4">
           <h2 class="display-3"><center>SPARQL Micro-Services Demo</center></h2>
           <h3 class="display-4"><center>Biodiversity Data Integration</center></h3>
-            <p class="lead">This page demonstrates the use of <a href="https://github.com/frmichel/sparql-micro-service" target="_sms">SPARQL micro-services</a> <a href="https://hal.archives-ouvertes.fr/hal-01722792" target="hal">[1]</a><a href="https://hal.archives-ouvertes.fr/hal-02060966" target="hal">[2]</a> to integrate, within a single SPARQL query,
+            <p class="lead">This page demonstrates the use of <a href="https://github.com/frmichel/sparql-micro-service" target="_sms">SPARQL micro-services</a> <a href="https://hal.archives-ouvertes.fr/hal-01722792" target="hal">[1]</a><a href="https://hal.archives-ouvertes.fr/hal-02060966" target="hal">[2]</a> to integrate, within a single SPARQL query, information about a taxon from multiple biodiversity sources:
               <ul  class="lead">
                  <li>taxonomic information from the TAXREF-LD Linked Data taxonomic register <a href="https://hal.archives-ouvertes.fr/hal-01617708" target="hal">[3]</a>,</li>
                  <li>occurrences from the <a href="https://www.gbif.org/" target="flickr">Global Biodiversity Information Framework (GBIF)</a>,</li>
@@ -40,7 +40,9 @@
                  <li>traits from the <a href="http://eol.org/traitbank" target="eol">Encyclopedia of Life</a> trait bank, and </li>
                  <li>audio recordings from the <a href="http://macaulaylibrary.org/" target="mac">Macaulay Library</a>.
              </ul></p>
-           <p class="lead">The SPARQL results are transformed into HTML using the SPARQL Template Transformation Language <a href="https://hal.inria.fr/hal-01150623/" target="hal">[4]</a>.</p>
+           <p>To test with another taxon, simply enter the taxon name (without authority) as parameter <i>param</i> in the page URL. The taxon must be present in <a href="https://inpn.mnhn.fr/programme/referentiel-taxonomique-taxref?lg=en" target="taxref">TAXREF</a>, hence it must have  been inventoried in French territories. For instance enter <i>Delphinus delphis</i> or <i>Aegolius acadicus</i> (loading the page may take a few seconds).</p>
+           <p>The SPARQL results are transformed into HTML using the SPARQL Template Transformation Language <a href="https://hal.inria.fr/hal-01150623/" target="hal">[4]</a>.
+           The code of this demo is available at <a href="https://github.com/frmichel/sparql-micro-service/tree/master/demo" target="gh_demo">https://github.com/frmichel/sparql-micro-service/tree/master/demo</a>.</p>
         </div>
 
         <!-- ?taxon rdfs:label ?label -->

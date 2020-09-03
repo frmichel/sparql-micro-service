@@ -1,7 +1,8 @@
-prefix schema:	<http://schema.org/> .
+prefix dwc:         <http://rs.tdwg.org/dwc/terms/>
+prefix schema:	    <http://schema.org/> .
 
 template st:start {
-    format { <../tpl_start.html> ?taxonName str(?taxon) }
+    format { <../tpl_start.html> ?scientificName str(?taxon) }
     
     st:call-template(st:occurrences)
     st:call-template(st:imgs)
@@ -14,5 +15,6 @@ template st:start {
 } where {
     ?taxon
         a owl:Class;
-        rdfs:label ?taxonName.
+        rdfs:label ?taxonName;
+        dwc:scientificName ?scientificName.
 }

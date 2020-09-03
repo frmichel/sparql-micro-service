@@ -10,7 +10,8 @@ prefix taxrefrk:    <http://taxref.mnhn.fr/lod/taxrank/>
 
 CONSTRUCT {
     ?taxon a owl:Class;
-        rdfs:label ?taxonName;              # TAXREF-LD
+        rdfs:label ?taxonName;
+        dwc:scientificName ?scientificName; # TAXREF-LD
         taxrefprop:occurrence ?occurrence;  # GBIF
         schema:image ?photo;                # Flickr
         schema:audio ?audio;                # Macauley Lib
@@ -62,7 +63,8 @@ CONSTRUCT {
 
     SERVICE <http://taxref.mnhn.fr/sparql> {
         ?taxon a owl:Class;
-            rdfs:label ?taxonName.
+            rdfs:label ?taxonName;
+            taxrefprop:hasReferenceName [ rdfs:label ?scientificName ].
         FILTER (STRENDS(STR(?taxon), "/13.0"))
     }
 
