@@ -1,9 +1,12 @@
 # SPARQL Micro-Service Changelog
 
-## [CURRENT] 2020-08-20
+## [0.5.1] 2020-09-04
 
 ### Changed
 - Deal with non existing service: return HTTP 404 for SPARQL invocation, return error web page for service HTML description
+- add service for GBIF occurrences and update demo
+- Bug fix: allow empty hydra:mapping section in service description for services withouth any parameter
+
 
 ## [0.5.0] 2020-08-05
 
