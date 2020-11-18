@@ -60,15 +60,33 @@ CONSTRUCT {
     # First, retrieve the taxon name from the URL query string (?param=taxon+name)
     BIND(st:get(st:param) as ?param)
     BIND(if (bound(?param) && ?param != "", ?param, "") as ?taxonName)
+    BIND(sms:bhlService(?taxonName) as ?bhl)
 
-    SERVICE <http://taxref.mnhn.fr/sparql> {
-        ?taxon a owl:Class;
-            rdfs:label ?taxonName;
-            taxrefprop:hasReferenceName [ rdfs:label ?scientificName ].
-        FILTER (STRENDS(STR(?taxon), "/13.0"))
+    # -- How we force the evaluation strategy --
+    # We want variables ?taxonName and ?bhl to be "passed" to the BGPs of the union below, e.g. as FILTER() or 
+    # VALUES() clauses. But SPARQL does not impose anything, this is left to the engine's strategy.
+    # A heuristic of Corese is to pass a variable ?x as a VALUES() clause to the BGPs only if ?x is
+    # in-scope (https://www.w3.org/TR/sparql11-query/#variableScope) in all BGPs of the union.
+    # To force that, we have to define the variable "fakely"
+    # as unbound wherever it is not used in any triple of a BGP.
+    # This is achieved with clauses "values ?x {UNDEF}" either for ?taxonName or for ?bhl.
+
+    # This part is mandatory, it gets the scientific name from TAXREF-LD
+    {
+        values ?bhl {UNDEF}
+        SERVICE <http://taxref.mnhn.fr/sparql> {
+            SELECT DISTINCT * WHERE {
+                ?taxon a owl:Class;
+                    rdfs:label ?taxonName;
+                    taxrefprop:hasReferenceName [ rdfs:label ?scientificName ].
+                FILTER (STRENDS(STR(?taxon), "/13.0"))
+            }
+        }
     }
 
-    OPTIONAL {
+    # The rest of the query is a "big union" of the results from all SPARQL micro-services
+    {
+        VALUES ?bhl {UNDEF}
         SERVICE SILENT <https://sparql-micro-services.org/service/gbif/getOccurrencesByName_sd>
         { SELECT * WHERE {
             []  a dwc:Taxon;
@@ -87,11 +105,12 @@ CONSTRUCT {
                        dwc:decimalLatitude  ?occDecimalLatitude;
                     ];
                 ].
-          } limit 30
+          } limit 100
         }
     }
 
-    OPTIONAL {
+    UNION {
+        VALUES ?bhl {UNDEF}
         SERVICE SILENT <https://sparql-micro-services.org/service/flickr/getPhotosByTaxon_sd>
         { SELECT * WHERE {
             []  a dwc:Taxon;
@@ -104,10 +123,11 @@ CONSTRUCT {
             ?imgAuthor
                 schema:name             ?imgAuthorName;
                 schema:url              ?imgAuthorUrl.
-        } LIMIT 10 }
+        } LIMIT 20 }
     }
 
-    OPTIONAL {
+    UNION {
+        VALUES ?bhl {UNDEF}
         SERVICE SILENT <https://sparql-micro-services.org/service/eol/getTraitsByTaxon_sd>
         { SELECT * WHERE {
             []  a dwc:Taxon;
@@ -126,8 +146,8 @@ CONSTRUCT {
         }
     }
 
-    BIND(sms:bhlService(?taxonName) as ?bhl)
-    OPTIONAL {
+    UNION {
+        values ?taxonName {UNDEF}
         SERVICE SILENT ?bhl
         { SELECT * WHERE {
             ?article
@@ -139,12 +159,13 @@ CONSTRUCT {
                    schema:name          ?articleContainerTitle;
                    schema:datePublished ?articleDate;
                 ].
-          } LIMIT 6
+          } LIMIT 9
         }
         BIND( CONCAT(?articleTitle, ". ", ?articleContainerTitle, " (", ?articleDate, ").") AS ?articleCitation )
     }
 
-    OPTIONAL {
+    UNION {
+        VALUES ?bhl {UNDEF}
         SERVICE SILENT <https://sparql-micro-services.org/service/macaulaylibrary/getAudioByTaxon_sd>
         { SELECT * WHERE {
             []  a dwc:Taxon;
