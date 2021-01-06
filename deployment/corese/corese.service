@@ -1,0 +1,12 @@
+[Unit]
+Description=Corese-KGRAM Server
+After=network.target
+
+[Service]
+Type=forking
+User=fmichel
+ExecStart=/home/fmichel/Corese/corese-server.sh
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
