@@ -13,7 +13,7 @@
 
 # This file is loaded as graph <ServiceDescription>
 <>
-    a sd:Service;
+    a sd:Service, sms:Service;
     sd:endpoint <>;
     sd:supportedLanguage sd:SPARQL11Query;
     sd:feature sd:BasicFederatedQuery, sd:EmptyGraphs;
@@ -36,6 +36,33 @@
         schema:keywords "audio"@en, "media"@en, "biodiversity"@en;
     ];
 
+    schema:keywords "biodiversity", "lifesciences", "fauna", "bird", "amphibian", "mammal", "species", "audio", "sound", "animal call", "recording";
+    schema:citation <https://www.mdpi.com/2078-2489/9/12/310>;
+    schema:publisher [ a schema:Organization;
+        schema:name "Université Côte d'Azur, CNRS, Inria, I3S";
+        schema:logo
+            "http://univ-cotedazur.fr/fr/university/communication-presse/charte-et-logos/logo/png/uca-logo-large",
+            "https://iww.inria.fr/dircom/logoinria-eng.png",
+            "http://www.cnrs.fr/themes/custom/cnrs/logo.svg";
+        schema:contactPoint [ a schema:ContactPoint;
+            schema:contactType "technical support";
+            schema:name "Franck Michel";
+            schema:email "franck.michel@cnrs.fr";
+            schema:url <https://w3id.org/people/franckmichel>;
+        ];
+    ];
+
+    sms:exampleQuery '''
+        prefix schema: <http://schema.org/>
+        prefix dwc: <http://rs.tdwg.org/dwc/terms/>
+
+        SELECT ?taxonCode WHERE {
+
+            []  a dwc:Taxon;
+                dwc:scientificName "Delphinus delphis";
+                schema:identifier ?taxonCode.
+        }''';
+        
     dct:source [
         a schema:WebAPI; schema:name "Macaulay Library Web API";
         schema:url <https://www.macaulaylibrary.org/>;

@@ -34,7 +34,36 @@
         foaf:topic <http://dbpedia.org/page/Audio_signal>, <https://www.wikidata.org/entity/Q47041>; # Biodiversity
         schema:keywords "audio"@en, "media"@en, "biodiversity"@en;
     ];
+    
+    schema:keywords "biodiversity", "lifesciences", "fauna", "bird", "amphibian", "mammal", "species", "audio", "sound", "animal call", "recording";
+    schema:citation <https://www.mdpi.com/2078-2489/9/12/310>;
+    schema:publisher [ a schema:Organization;
+        schema:name "Université Côte d'Azur, CNRS, Inria, I3S";
+        schema:logo
+            "http://univ-cotedazur.fr/fr/university/communication-presse/charte-et-logos/logo/png/uca-logo-large",
+            "https://iww.inria.fr/dircom/logoinria-eng.png",
+            "http://www.cnrs.fr/themes/custom/cnrs/logo.svg";
+        schema:contactPoint [ a schema:ContactPoint;
+            schema:contactType "technical support";
+            schema:name "Franck Michel";
+            schema:email "franck.michel@cnrs.fr";
+            schema:url <https://w3id.org/people/franckmichel>;
+        ];
+    ];
 
+    sms:exampleQuery '''
+        prefix schema: <http://schema.org/>
+        SELECT ?audio ?audioFile ?description WHERE {
+
+            ?taxon a dwc:Taxon;
+                schema:identifier "t-11034463";
+                schema:audio ?audio.
+
+            ?audio a schema:AudioObject;
+                schema:contentUrl ?audioFile;
+                schema:description ?description.
+        }''';
+        
     dct:source [
         a schema:WebAPI; schema:name "Macaulay Library Web API";
         schema:url <https://www.macaulaylibrary.org/>;

@@ -34,10 +34,11 @@ prefix schema: <http://schema.org/>
 SELECT ?audio ?audioFile ?description WHERE {
 
     ?taxon a dwc:Taxon;
-        schema:identifier "123456";
+        schema:identifier "t-11034463";
         schema:audio ?audio.
 
     ?audio a schema:AudioObject;
         schema:contentUrl ?audioFile;
         schema:description ?description.
+}
 ```
