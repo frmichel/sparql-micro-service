@@ -3,7 +3,6 @@ namespace frmichel\sparqlms\common;
 
 use ML\JsonLD\JsonLD;
 use ML\JsonLD\NQuads;
-use ML\JsonLD\Processor;
 use Monolog\Logger;
 use Exception;
 
@@ -207,6 +206,8 @@ class Utils
                 ));
                 $nquads = new NQuads();
                 $serializedQuads = $nquads->serialize($quads);
+                if ($logger->isHandling(Logger::INFO))
+                    $logger->info("Web API JSON response translated into " . substr_count($serializedQuads, "\n") . " triples.");
                 if ($logger->isHandling(Logger::DEBUG))
                     $logger->debug("Web API JSON response translated into NQuads:\n" . $serializedQuads);
 
@@ -367,6 +368,8 @@ class Utils
         // --- For each service custom argument, read its value from the SPARQL query.
         // Each argument is provided either with hydra:property or by a property shape denoted by shacl:sourceShape
 
+        if ($logger->isHandling(Logger::INFO))
+            $logger->info('Reading values of custom arguments from the query graph pattern...');
         $query = file_get_contents('resources/read_input_from_gp.sparql');
         $query = str_replace('{SpinQueryGraph}', $spinGraphUri, $query);
         $query = str_replace('{ServiceDescription}', $context->getServiceDescriptionGraphUri(), $query);
@@ -383,14 +386,17 @@ class Utils
             // Return an array of values of that variable
             $result[$argName][] = $argValue;
         }
-
+        if ($logger->isHandling(Logger::INFO))
+            $logger->info("Values of custom arguments read from the query graph pattern:\n" . Utils::print_r($result));
+            
         // Make sure we have values for all expected arguments
         foreach ($context->getConfigParam('custom_parameter_binding') as $argName => $mapping)
             if (! array_key_exists($argName, $result))
                 self::httpBadRequest('No triple patterns give a value for predicate "' . $mapping['predicate'] . '" (for service argument "' . $argName . '")');
 
         // Drop the temporary SPIN graph
-        $logger->info("Dropping graph: <" . $spinGraphUri . ">");
+        if ($logger->isHandling(Logger::INFO))
+            $logger->info("Dropping graph: <" . $spinGraphUri . ">");
         $context->getSparqlClient()->update("DROP SILENT GRAPH <" . $spinGraphUri . ">");
 
         return $result;
@@ -596,7 +602,7 @@ class Utils
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
         curl_setopt($ch, CURLOPT_HTTPGET, TRUE);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, Processor::REMOTE_TIMEOUT);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 300);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);

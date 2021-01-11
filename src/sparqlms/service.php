@@ -12,7 +12,6 @@ use frmichel\sparqlms\common\Context;
 use frmichel\sparqlms\common\Metrology;
 use frmichel\sparqlms\common\Utils;
 use Exception;
-
 require_once '../common/Utils.php';
 require_once '../common/SparqlClient.php';
 require_once '../common/Context.php';
@@ -124,10 +123,15 @@ try {
         $logger->warn("Not all service arguments were found. Expected: " . Utils::print_r($context->getConfigParam('custom_parameter')) . "\nbut read: " . Utils::print_r($allServiceArgs));
         $apiQuery = "";
     } else {
-        if (sizeof($allServiceArgs) == 0)
+        // Read the Web API query string template
+        $apiQuery = $context->getConfigParam('api_query');
+
+        if (sizeof($allServiceArgs) == 0) {
             // No argument => execute the Web API query and create the response graph including provenance triples
-            queryWebAPIAndGenerateTriples(array(), $context->getConfigParam('api_query'), $respGraphUri);
-        else
+            if ($logger->isHandling(Logger::NOTICE))
+                $logger->notice("Web API query string: " . $apiQuery);
+            queryWebAPIAndGenerateTriples(array(), $apiQuery, $respGraphUri);
+        } else
             // Unwind the array of arguments:
             // "Unwind" means that when an argument has more than one value, we will generate
             // one array of arguments for each of these values. This is repeated for all arguments, resulting
@@ -137,9 +141,6 @@ try {
             // on the service's configuration parameter "custom_parameter.pass_multiple_values_as_csv":
             // if true, the values are passed as csv; if false, the values entail the creation of several arrays.
             foreach (Utils::unwindArgumentValues($allServiceArgs) as $customArgs) {
-
-                // Read the Web API query string template
-                $apiQuery = $context->getConfigParam('api_query');
 
                 if (file_exists($context->getServicePath() . '/service.php'))
                     // Web API query string will be formatted by the custom service script

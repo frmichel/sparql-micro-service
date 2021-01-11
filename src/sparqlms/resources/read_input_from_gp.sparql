@@ -11,63 +11,76 @@
 @prefix schema: <http://schema.org/>.
 @prefix sms:    <http://ns.inria.fr/sparql-micro-service#>.
 
+# <{ServiceDescription}> : Service Description graph
+# <{SpinQueryGraph}>     : SPARQL query in SPIN
+# <{ShapesGraph}>        : Optional shapes graph
+
 SELECT DISTINCT ?argName ?predicate ?argValue 
-FROM <{ServiceDescription}>     # Service Description graph
-FROM <{SpinQueryGraph}>         # SPARQL query in SPIN
-FROM <{ShapesGraph}>            # Optional shapes graph
 WHERE {
 
     # Get the list of service custom arguments from the service description, 
     # and their bindings to predicates of the SPARQL graph pattern.
     # Bindings can be given either with hydra:property or in a property shape of the shapes graph.
     {
-        # - Service Description - Predicate given directly with hydra:property
-        [] a sd:Service; dct:source [ schema:potentialAction [ hydra:mapping [
-            hydra:variable ?argName;
-            hydra:property ?predicate;
-        ]]].
+        GRAPH <{ServiceDescription}> {
+            # - Service Description - Predicate given directly with hydra:property
+            [] a sd:Service; dct:source [ schema:potentialAction [ hydra:mapping [
+                hydra:variable ?argName;
+                hydra:property ?predicate;
+            ]]].
+        }
 
-        # - SPIN quey - Get the object of the predicates obtained in ?predicate
-        [] sp:predicate ?predicate; sp:object ?obj.
+        GRAPH <{SpinQueryGraph}> {
+            # - SPIN quey - Get the object of the predicates obtained in ?predicate
+            [] sp:predicate ?predicate; sp:object ?obj.
+        }
     }
     UNION
     {
-        # - Service Description - Predicate is given through a property shape with shacl:sourceShape
-        [] a sd:Service; dct:source [ schema:potentialAction [ hydra:mapping [
-            hydra:variable ?argName;
-            shacl:sourceShape ?propShape;
-        ]]].
+        GRAPH <{ServiceDescription}> {
+            # - Service Description - Predicate is given through a property shape with shacl:sourceShape
+            [] a sd:Service; dct:source [ schema:potentialAction [ hydra:mapping [
+                hydra:variable ?argName;
+                shacl:sourceShape ?propShape;
+            ]]].
+        }
 
-        # - Shapes Graph - Predicate is given through a property shape with shacl:sourceShape
-        ?nodeShape a shacl:NodeShape; shacl:property ?propShape.
-        ?propShape a shacl:PropertyShape; shacl:path ?predicate.
-        OPTIONAL { ?nodeShape shacl:property [ shacl:path rdf:type; shacl:hasValue ?class ] }
+        GRAPH <{SpinQueryGraph}> {
+            # - Shapes Graph - Predicate is given through a property shape with shacl:sourceShape
+            ?nodeShape a shacl:NodeShape; shacl:property ?propShape.
+            ?propShape a shacl:PropertyShape; shacl:path ?predicate.
+            OPTIONAL { ?nodeShape shacl:property [ shacl:path rdf:type; shacl:hasValue ?class ] }
+        }
 
-        # - SPIN quey - Get the object of the predicates obtained using ?propShape
-        [] sp:subject ?subject; sp:predicate ?predicate; sp:object ?obj.
-        OPTIONAL { [] sp:subject ?subject; sp:predicate rdf:type; sp:object ?class. }
+        GRAPH <{SpinQueryGraph}> {
+            # - SPIN quey - Get the object of the predicates obtained using ?propShape
+            [] sp:subject ?subject; sp:predicate ?predicate; sp:object ?obj.
+            OPTIONAL { [] sp:subject ?subject; sp:predicate rdf:type; sp:object ?class. }
+        }
     }
     
-    # If ?obj is not a static literal/IRI, it may still be provided by VALUES clauses
-    # e.g.: VALUES (... ?obj ...) { (... value1 ...) (... value2 ...)}
-    OPTIONAL {
-        [] a sp:Values; sp:variables ?vars; sp:values ?vals.
+    GRAPH <{SpinQueryGraph}> {
+        # If ?obj is not a static literal/IRI, it may still be provided by VALUES clauses
+        # e.g.: VALUES (... ?obj ...) { (... value1 ...) (... value2 ...)}
+        OPTIONAL {
+            [] a sp:Values; sp:variables ?vars; sp:values ?vals.
+            
+            # ?obj must be bound to call sms:index. So select only variables of the query.
+            ?vars rdf:rest*/rdf:first ?obj.
+
+            # Take the nth value of each group of values, 
+            # where n is the index of ?obj in the list of variables
+            BIND(sms:values( sms:listOfLists(?vals), sms:index(sms:list(?vars), ?obj)) as ?values)
+            VALUES ?value { unnest(?values) }
+        }
         
-        # ?obj must be bound to call sms:index. So select only variables of the query.
-        ?vars rdf:rest*/rdf:first ?obj.
-
-        # Take the nth value of each group of values, 
-        # where n is the index of ?obj in the list of variables
-        BIND(sms:values( sms:listOfLists(?vals), sms:index(sms:list(?vars), ?obj)) as ?values)
-        VALUES ?value { unnest(?values) }
+        # If ?obj is not a static literal/IRI nor provided by VALUES clauses, it may be provided by a FILTER
+        # e.g.: FILTER (?obj = "value")
+        OPTIONAL {
+            [] a sp:Filter; sp:expression/(sp:arg1|sp:arg2)* [ a sp:eq; sp:arg1 ?arg1; sp:arg2 ?arg2 ].
+        }
     }
-    
-    # If ?obj is not a static literal/IRI nor provided by VALUES clauses, it may be provided by a FILTER
-    # e.g.: FILTER (?obj = "value")
-    OPTIONAL {
-        [] a sp:Filter; sp:expression/(sp:arg1|sp:arg2)* [ a sp:eq; sp:arg1 ?arg1; sp:arg2 ?arg2 ].
-    }
-    
+        
     BIND ( 
         # Either the object term is a static literal/IRI and we take it directly,
         # or it is a variable and there is a VALUES or FILTER clause that gives values for that variable
@@ -82,8 +95,9 @@ WHERE {
     )
     FILTER (?argValue != "__no_value__")
 }
-       
-        
+
+# ----------------------------------------------------------------------
+
 # Find index of an element in a list
 # @param ?list : a list of elements
 # @param ?elem: the element to look for in ?list
