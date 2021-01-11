@@ -8,7 +8,7 @@
 
 template st:argument {
 
-    format { <../tpl2_argument.html> ?paramDescription ?paramRequiredStr ?paramPath ?paramExample }
+    format { <http://localhost/sttl/sms-html-description/tpl2_argument.html> ?paramDescription ?paramRequiredStr ?paramPath ?paramExample }
     
 } where {
     # Retrieve the service URI from the URL query string (?param=http://example.org/service)

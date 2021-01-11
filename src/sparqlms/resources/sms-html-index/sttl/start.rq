@@ -6,11 +6,11 @@
 
 template st:start {
 
-    format { <../tpl1_start.html> "" }
+    format { <http://localhost/sttl/sms-html-index/tpl1_start.html> "" }
 
     # Generate one line for each SPARQL micro-service
     st:call-template(st:oneSms)
 
-    format { <../tpl3_end.html> st:call-template(st:jsonld-markup) }
+    format { <http://localhost/sttl/sms-html-index/tpl3_end.html> st:call-template(st:jsonld-markup) }
 
 } where {}

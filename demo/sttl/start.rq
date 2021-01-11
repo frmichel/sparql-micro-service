@@ -2,7 +2,7 @@ prefix dwc:         <http://rs.tdwg.org/dwc/terms/>
 prefix schema:	    <http://schema.org/> .
 
 template st:start {
-    format { <../tpl_start.html> ?scientificName str(?taxon) }
+    format { <http://localhost/sttl/demo/tpl_start.html> ?scientificName str(?taxon) }
     
     st:call-template(st:occurrences)
     st:call-template(st:imgs)
@@ -11,7 +11,7 @@ template st:start {
     st:call-template(st:audios)
     st:call-template(st:others)
     
-    format { <../tpl_end.html> }
+    format { <http://localhost/sttl/demo/tpl_end.html> }
 } where {
     ?taxon
         a owl:Class;

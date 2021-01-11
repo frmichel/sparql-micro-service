@@ -3,7 +3,7 @@ prefix dwc:     <http://rs.tdwg.org/dwc/terms/> .
 prefix schema:	<http://schema.org/> .
 
 template st:occurrences {
-    format { <../tpl_map.html>
+    format { <http://localhost/sttl/demo/tpl_map.html>
         group_concat(
             concat("{ \"lat\": ", ?occDecimalLatitude, ", \"lon\": ", ?occDecimalLongitude,
                       ", \"comment\": \"", ?occAcceptedName, ", ", ?occDate, ", ", ?occCountry, ", by ", ?occRightsHolder, "\" },"

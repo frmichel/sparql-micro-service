@@ -1,8 +1,8 @@
 prefix schema:	<http://schema.org/> .
 
 template st:imgs {
-    format { <../tpl_imgs.html>
-        group { format { <../tpl_img_gallery.html> ?imgUrl ?imgThumbnail ?imgAuthorName } }
+    format { <http://localhost/sttl/demo/tpl_imgs.html>
+        group { format { <http://localhost/sttl/demo/tpl_img_gallery.html> ?imgUrl ?imgThumbnail ?imgAuthorName } }
     }
 } where {
     ?taxon a owl:Class;

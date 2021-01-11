@@ -1,8 +1,8 @@
 prefix schema:	<http://schema.org/> .
 
 template st:audios {
-    format { <../tpl_audios.html>
-        group { format { <../tpl_audio.html> ?audioPage ?audioThumbnail ?audioUrl ?audioDesc } }
+    format { <http://localhost/sttl/demo/tpl_audios.html>
+        group { format { <http://localhost/sttl/demo/tpl_audio.html> ?audioPage ?audioThumbnail ?audioUrl ?audioDesc } }
     }
 } where {
     ?taxon a owl:Class;

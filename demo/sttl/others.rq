@@ -1,9 +1,9 @@
 prefix schema:	<http://schema.org/> .
 
 template st:others {
-    format { <../tpl_others.html>
+    format { <http://localhost/sttl/demo/tpl_others.html>
         group {
-            format { <../tpl_other.html>
+            format { <http://localhost/sttl/demo/tpl_other.html>
                 st:call-template(st:literalOrLink, ?taxon)
                 st:call-template(st:literalOrLink, ?p) 
                 st:call-template(st:literalOrLink, ?o)

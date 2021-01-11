@@ -1,8 +1,8 @@
 prefix schema:	<http://schema.org/> .
 
 template st:articles {
-    format { <../tpl_articles.html>
-        group { format { <../tpl_article.html> ?articlePage ?articleThumbnailUrl ?articleAuthorName ?articleCitation } }
+    format { <http://localhost/sttl/demo/tpl_articles.html>
+        group { format { <http://localhost/sttl/demo/tpl_article.html> ?articlePage ?articleThumbnailUrl ?articleAuthorName ?articleCitation } }
     }
 } where {
     ?taxon a owl:Class.

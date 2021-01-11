@@ -3,9 +3,10 @@ all existing ServiceDescription.ttl and ShapesGraph.ttl into named graphs.
 
 ### How to use
 
-Edit file `corese-profile-sms.ttl` and replace '{INSTALL}' with the actual path where the SPARQL micro-services code is installed.
+Edit script `corese-server.sh` and customize variable 'CORESE' and 'SMSPATH' if needed.
 
-Edit file `corese-server.sh` and customize variable 'CORESE' if needed.
+Script `corese-server.sh` edits `corese-profile-sms.ttl` and replaces '{INSTALL}' with the actual path where the SPARQL micro-services code is installed.
+
 
 Then, run:
 ```bash

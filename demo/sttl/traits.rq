@@ -2,8 +2,8 @@ prefix dwc:     <http://rs.tdwg.org/dwc/terms/>
 prefix dwciri:  <http://rs.tdwg.org/dwc/iri/>
 
 template st:traits {
-    format { <../tpl_traits.html>
-        group distinct { format { <../tpl_trait.html> 
+    format { <http://localhost/sttl/demo/tpl_traits.html>
+        group distinct { format { <http://localhost/sttl/demo/tpl_trait.html> 
                             ?measurementType
                             ?measurementValue
                             ?unit

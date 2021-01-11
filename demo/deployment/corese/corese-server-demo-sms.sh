@@ -5,7 +5,7 @@
 
 CORESE=$HOME/Corese
 LOG4J=file://$CORESE/log4j2-demosms.xml
-JAR=$CORESE/corese-server-4.1.4d.jar
+JAR=$CORESE/corese-server-4.1.6d.jar
 
 PROFILE=file://$HOME/public_html/demo-sms/profile.ttl
 

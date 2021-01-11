@@ -5,12 +5,12 @@
 
 template st:main {
 
-    format { <../tpl1_start.html> ?name ?boundDescription ?serviceUrl  }
+    format { <http://localhost/sttl/sms-html-description/tpl1_start.html> ?name ?boundDescription ?serviceUrl  }
 
     # Generate one line for each argument of the SPARQL micro-service
     st:call-template(st:argument)
 
-    format { <../tpl3_end.html> 
+    format { <http://localhost/sttl/sms-html-description/tpl3_end.html> 
                 ?serviceUrl 
                 ?boundShapesGraph 
                 ?boundExampleQuery 

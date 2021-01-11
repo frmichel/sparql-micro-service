@@ -5,7 +5,7 @@
 # an sms:exampleURI property.
 template st:uri-deref {
 
-    format { <../tpl4_uri_deref.html> ?exampleURI }
+    format { <http://localhost/sttl/sms-html-description/tpl4_uri_deref.html> ?exampleURI }
     
 } where {
     # Retrieve the service URI from the URL query string (?param=http://example.org/service)

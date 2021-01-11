@@ -2,16 +2,18 @@
 # This script starts Corese with a server profile that will load
 # all existing files ServiceDescription.ttl and ShapesGraph.ttl into named graphs.
 #
+# Customize variable CORESE and SMSPATH and lines starting with "genMultipleLoad" before running.
+#
 # The graph URIs are based on the server hostname and path to access SPARQL microservices.
 #
 # To test the result, run the command below to display all loaded named graphs:
-# SPARQL query: select distinct ?g where { graph ?g { ?s ?p ?o } }
-# $ curl --header "Accept: application/sparql-results+json" \
-#      "http://localhost:8081/sparql?query=select%20distinct%20%3Fg%0Awhere%20%7B%20graph%20%3Fg%20%7B%20%3Fs%20%3Fp%20%3Fo%20%7D%20%7D"
+# SPARQL query Q below is the url-encoded for: "select distinct ?g where { graph ?g { ?s ?p ?o } }"
+# $ Q='elect%20distinct%20%3Fg%0Awhere%20%7B%20graph%20%3Fg%20%7B%20%3Fs%20%3Fp%20%3Fo%20%7D%20%7D'
+# $ curl --header "Accept: application/sparql-results+json" "http://localhost:8081/sparql?query=$Q"
 
 CORESE=$HOME/Corese
 LOG4J=file://$CORESE/log4j2.xml
-JAR=$CORESE/corese-server-4.1.4d.jar
+JAR=$CORESE/corese-server-4.1.6d.jar
 
 # Root path of the SPARQL micro-service Github repository
 SMSPATH=$HOME/public_html/sparql-ms-live

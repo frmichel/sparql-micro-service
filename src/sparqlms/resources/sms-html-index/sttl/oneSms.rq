@@ -8,7 +8,7 @@
 
 template st:oneSms {
 
-    format { <../tpl2_oneSms.html> ?serviceUri ?serviceName ?webApiCode ?serviceDescription ?keywords }
+    format { <http://localhost/sttl/sms-html-index/tpl2_oneSms.html> ?serviceUri ?serviceName ?webApiCode ?serviceDescription ?keywords }
 
 } where {
     # Retrieve the root URL from the query string parameter (e.g. ?param=http://example.org/service)
