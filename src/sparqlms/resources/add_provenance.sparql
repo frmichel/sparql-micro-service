@@ -50,6 +50,3 @@ WHERE {
     OPTIONAL { ?webApi schema:name ?webApiName. }
     OPTIONAL { ?webApi schema:url  ?webApiUrl. }
 }
-
-
-

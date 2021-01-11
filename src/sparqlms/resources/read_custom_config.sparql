@@ -17,3 +17,4 @@ SELECT ?apiQuery ?expiresAfter ?addProvenance WHERE {
 
    OPTIONAL { <{serviceUri}> sms:addProvenance ?addProvenance. }
 }
+

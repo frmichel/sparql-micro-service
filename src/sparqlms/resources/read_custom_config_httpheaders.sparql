@@ -18,3 +18,4 @@ SELECT ?headerName ?headerValue WHERE {
         httpvoc:fieldName  ?headerName;
         httpvoc:fieldValue ?headerValue.
 }
+

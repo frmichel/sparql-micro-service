@@ -17,3 +17,4 @@ SELECT ?name ?predicate ?shape ?passMultipleValuesAsCsv WHERE {
 
     OPTIONAL { ?mapping sms:passMultipleValuesAsCsv ?passMultipleValuesAsCsv. }
 }
+
