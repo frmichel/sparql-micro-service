@@ -15,6 +15,9 @@ The following packages must be installed before installing the SPARQL micro-serv
   * PHP 7.1+
   * Additional PHP packages: `php-mbstring` and `php-xml`, `php-devel`, `php-pear` (PECL)
   * [Composer](https://getcomposer.org/doc/) (PHP dependency management)
+  * [Corese-KGRAM](https://project.inria.fr/corese/download/) v4.1.6d+ and suitable Java 10+ Runtime Environment 
+
+#### PHP fine-tuning
   * Make sure the time zone is defined in the php.ini file, for instance:
 ```ini
   [Date]
@@ -23,7 +26,17 @@ The following packages must be installed before installing the SPARQL micro-serv
   date.timezone = 'Europe/Paris'
 ```
   * To use MongoDB as a cache, install the [MongoDB PHP driver](https://secure.php.net/manual/en/mongodb.installation.manual.php) and add the following line to php.ini:`extension=mongodb.so`
-  * [Corese-KGRAM](https://project.inria.fr/corese/download/) v4.1.1+ and suitable Java Runtime Environment
+  * If some SPARQL micro-services require a long time to complete, you may need to increase the default tiemout, for instance:
+```ini
+  [PHP]
+  max_execution_time = 300
+  max_input_time = 300
+```
+  * If some SPARQL micro-services produce large outputs, you may need to increase the default max memory, for instance:
+```ini
+  [PHP]
+  memory_limit = 2048M
+```
 
   
 ## Folders structure
