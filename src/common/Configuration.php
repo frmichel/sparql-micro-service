@@ -188,10 +188,11 @@ class Configuration
             // Create it if it does not exist yet
             $customCfg['custom_parameter.pass_multiple_values_as_csv'] = array();
 
-        foreach (array_values($customCfg['custom_parameter']) as $key)
-            // Make sure all custom arguments are in array 'custom_parameter.pass_multiple_values_as_csv' with default value
-            if (! array_key_exists($key, $customCfg['custom_parameter.pass_multiple_values_as_csv']))
-                $customCfg['custom_parameter.pass_multiple_values_as_csv'][$key] = true; // default value is true
+        if (array_key_exists('custom_parameter', $customCfg))
+            foreach (array_values($customCfg['custom_parameter']) as $key)
+                // Make sure all custom arguments are in array 'custom_parameter.pass_multiple_values_as_csv' with default value
+                if (! array_key_exists($key, $customCfg['custom_parameter.pass_multiple_values_as_csv']))
+                    $customCfg['custom_parameter.pass_multiple_values_as_csv'][$key] = true; // default value is true
 
         return $customCfg;
     }

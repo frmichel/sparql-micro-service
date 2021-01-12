@@ -380,7 +380,7 @@ class Utils
         // The response consists of mappings for 3 variables: ?argName ?predicate ?argValue
         foreach ($jsonResult as $varMapping) {
             $argName = $varMapping['argName']['value'];
-            $predicate = $varMapping['predicate']['value'];
+            // $predicate = $varMapping['predicate']['value'];
             $argValue = $varMapping['argValue']['value'];
 
             // Return an array of values of that variable
@@ -388,11 +388,12 @@ class Utils
         }
         if ($logger->isHandling(Logger::INFO))
             $logger->info("Values of custom arguments read from the query graph pattern:\n" . Utils::print_r($result));
-            
+
         // Make sure we have values for all expected arguments
-        foreach ($context->getConfigParam('custom_parameter_binding') as $argName => $mapping)
-            if (! array_key_exists($argName, $result))
-                self::httpBadRequest('No triple patterns give a value for predicate "' . $mapping['predicate'] . '" (for service argument "' . $argName . '")');
+        if ($context->getConfigParam('custom_parameter_binding') != null)
+            foreach ($context->getConfigParam('custom_parameter_binding') as $argName => $mapping)
+                if (! array_key_exists($argName, $result))
+                    self::httpBadRequest('No triple patterns give a value for predicate "' . $mapping['predicate'] . '" (for service argument "' . $argName . '")');
 
         // Drop the temporary SPIN graph
         if ($logger->isHandling(Logger::INFO))

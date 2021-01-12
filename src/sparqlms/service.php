@@ -118,7 +118,7 @@ try {
     // URI of the RDF graph to generate from the Web API answer
     $respGraphUri = $context->getConfigParam('root_url') . '/resp-graph' . uniqid("-", true);
 
-    if (sizeof($allServiceArgs) != sizeof($context->getConfigParam('custom_parameter'))) {
+    if (($context->getConfigParam('custom_parameter') != null) && sizeof($allServiceArgs) != sizeof($context->getConfigParam('custom_parameter'))) {
         // In case one argument is not found in the query, do not query the API and just return an empty response
         $logger->warn("Not all service arguments were found. Expected: " . Utils::print_r($context->getConfigParam('custom_parameter')) . "\nbut read: " . Utils::print_r($allServiceArgs));
         $apiQuery = "";
