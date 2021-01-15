@@ -30,3 +30,4 @@ st:demosmsContent a sw:Workflow ;
 
 # List URLs where STTL is allowed to access to get html templates
 st:access st:namespace <http://localhost/sttl>.
+st:access st:namespace <https://sparql-micro-services.org>.

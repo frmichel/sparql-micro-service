@@ -12,6 +12,8 @@ CONSTRUCT {
         schema:fileFormat       "image/jpeg";
         schema:dateCreated      ?dateTaken;
 
+        schema:author           ?ownerUrl.
+
     ?ownerUrl
             a schema:Person;
             schema:identifier ?owner; schema:name ?ownerName; schema:url ?ownerUrl.

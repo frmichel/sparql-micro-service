@@ -1,21 +1,17 @@
 # Installation, configuration and deployment
 
-To deploy and run this project, you will need an Apache Web server and a write-enabled SPARQL endpoint (in our case, we used the [Corese-KGRAM](https://project.inria.fr/corese/) lightweight in-memory triple-store), and optionally a MongoDB instance to serve as the cache database (can be deactivated in [/src/sparqlms/config.ini](../src/sparqlms/config.ini)).
-
-If you configure SPARQL micro-services using the [config.ini method](02-config.md#configuration-with-file-configini) configuration method, this is all you need.
-
-If you configure SPARQL micro-services using the [Service Description method](02-config.md#configuration-with-a-sparql-service-description-file), you also need a Corese-KGRAM service to execute the components that rely on the [STTL](http://ns.inria.fr/sparql-template/) and [LDScript](http://ns.inria.fr/sparql-extension/) features (see folder [/deployment/corese](../deployment/corese)):
-  * An STTL transformation service able to transform a SPARQL query into a [SPIN](http://spinrdf.org/sp.html) representation (see property `spin_endpoint` in [/src/sparqlms/config.ini](../src/sparqlms/config.ini)) is required when [passing arguments within the SPARQL query graph pattern](01-usage.md#passing-arguments-within-the-sparql-query-graph-pattern)
-  * An STTL transformation service transforms micro-services Service Descriptions graphs into HTML pages with embedded JSON-LD (see [/src/sparqlms/resources/sms-html-description](../src/sparqlms/resources/sms-html-description)).
-
-
 ## Pre-requisites
 
-The following packages must be installed before installing the SPARQL micro-services.
+To install and run this project, you will need the following components to be installed first:
+
+  * a web server of your choice: we use Apache, thus configuration examples are given for Apache. You may use another server although you shall translate the confifugration appropriately.
   * PHP 7.1+
   * Additional PHP packages: `php-mbstring` and `php-xml`, `php-devel`, `php-pear` (PECL)
   * [Composer](https://getcomposer.org/doc/) (PHP dependency management)
-  * [Corese-KGRAM](https://project.inria.fr/corese/download/) v4.1.6d+ and suitable Java 10+ Runtime Environment 
+  * [Corese-KGRAM](https://project.inria.fr/corese/download/) in-memory triple-store and SPARQL endpoint. It is used to store create temporary graphs and evaluate SPARQL queries. Specific features of Corese ([STTL](http://ns.inria.fr/sparql-template/) and [LDScript](http://ns.inria.fr/sparql-extension/)) are also used for the genration of Web pages ([service index and documentation](03-html-doc.md)) and the translation of SPARQL queries into SPIN.
+  * [Java Runtime Environment 10+](https://www.java.com/fr/download/)
+  * a [MongoDB database](https://www.mongodb.com/c) (optional), to serve as the cache database (can be deactivated in [/src/sparqlms/config.ini](../src/sparqlms/config.ini)).
+
 
 #### PHP fine-tuning
   * Make sure the time zone is defined in the php.ini file, for instance:
@@ -25,7 +21,7 @@ The following packages must be installed before installing the SPARQL micro-serv
   ; http://php.net/date.timezone
   date.timezone = 'Europe/Paris'
 ```
-  * To use MongoDB as a cache, install the [MongoDB PHP driver](https://secure.php.net/manual/en/mongodb.installation.manual.php) and add the following line to php.ini:`extension=mongodb.so`
+  * To use MongoDB as a cache (optional), install the [MongoDB PHP driver](https://secure.php.net/manual/en/mongodb.installation.manual.php) and add the following line to php.ini:`extension=mongodb.so`
   * If some SPARQL micro-services require a long time to complete, you may need to increase the default tiemout, for instance:
 ```ini
   [PHP]
@@ -76,9 +72,9 @@ services/                     # directory where the services are deployed
         
 deployment/
     docker/                   # this folder gives the necessary files to build Corese and your SPARQL micro-serivces as Docker containers
-    apache/httpd.cfg          # Apache rewriting rules for HTTP access
-    corese/*                  # Corese configuration and running files
-    deploy.sh                 # customization of configuration files and SPARQL queries
+    apache/                   # Apache rewriting rules for HTTP access
+    corese/                   # Corese configuration and running files
+    deploy.sh                 # customization of services' configuration files and SPARQL queries
 ```
 
 ## Installation procedure
@@ -114,10 +110,19 @@ spin_endpoint   = http://localhost:8081/service/sparql-to-spin
 services_paths[] = ../../services
 services_paths[] = /home/user/services
 ```
+- The MongoDB cache is activated by default. If you don't want to use it, turn it off:
+```
+use_cache = false
+```
 
-Update and run the [/deployment/deploy.sh](../deployment/deploy.sh) script to customize the services' configuration files. 
-This will replace the `http://example.org` hostname from ServiceDescription files  with the URL of your own server, 
-and replace the API_KEY placeholders with your own private API keys.
+
+## Customize the SPARQL micro-serivces' configuration
+
+The services provided in folder [/services](../services) are configured as if they were deployed at http://example.org/service, and the dereferenceable URIs they generate are in the form http://example.org/ld. These must be customized before you can use the services, to match the URL at which they are deployed.
+
+Also, services requiring an API KEY need to be updated with your own private API keys.
+
+Script [/deployment/deploy.sh](../deployment/deploy.sh) does that for you: copy the script to the folder where the services are located (for instance /services), update the variables `SERVER`, `SERVERPATH`, `SMSDIR` and `API_KEY`, and run the script.
 
 
 ### Change the log level
@@ -129,6 +134,25 @@ The application writes log traces in files named like `logs/sms-<date>.log`. The
 ```
 
 Log levels are described in [Monolog documentation](https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#log-levels).
+
+
+### Corese-KGRAM security configuration
+
+Starting version 4.1.6, Corese-KGRAM implements some security measures that require defining explicitely the HTTP domains where Corese-KGRAM is allowed to look for remote ressources. 
+This applies to SPARQL federated queries (clause SERVICE <...>), but also to STTL transformation files (that can no longer be accessed directly from the local file system).
+
+To allow those case:
+  * in the [Corese profile](../deployment/corese/corese-profile-sms.ttl), complete the list of URLs of all the domains that SERVICE clauses are allowed to reach:
+```
+  st:access st:namespace
+    <http://localhost/sttl>,
+    <https://sparql-micro-services.org>,
+    <http://sms.i3s.unice.fr/sparql-ms>.
+```
+  * In the Apache configuration, create aliases to expose the STTL folders through http://localhost/sttl/. File [/deployment/apache/sms-alias-sttl.conf](../deployment/apache/sms-alias-sttl.conf) provides an example Apache configuration to do that.
+
+
+Note: You may deactivate those security constraints by using the "-su" option of Corese. But this opens a potential security leak, e.g. a SPARQL query submitted to a SPARQL micro-serivce may execute SERVICE clauses against any endpoint.
 
 
 ### URL rewriting rules
@@ -143,7 +167,7 @@ Parameter | Description
 service | the name of SPARQL micro-service being invoked, formatted as `<Web API>/<service>`
 querymode | either `sparql` for regular SPARQL invocation or `ld` when the service is invoked to dereference a URI
 root_url | URL at which the SPARQL micro-service is deployed (optional). If provided, this parameter overrides the `root_url` parameter in the [main config.ini](../src/sparqlms/config.ini) file.
-query, default-graph-uri, named-graph-uri | the regular SPARQL parameters described in the [SPARQL Protocol](https://www.w3.org/TR/2013/REC-sparql11-protocol-20130321/). When the service is invoked for URI dereferencing, these parameters are ignored.
+query, default-graph-uri, named-graph-uri | the regular SPARQL parameters described in the [SPARQL Protocol](https://www.w3.org/TR/2013/REC-sparql11-protocol-20130321/) (since a SPARQL micro-service is first of all a SPARQL endpoint). When the service is invoked for URI dereferencing (querymode=ld), these parameters are ignored.
 *service custom arguments* | any other arguments of the SPARQL micro-service in case they are passed as query string parameters
 
 Apache rewriting rules are used to route invocations to `service.php` while setting the `querymode`, `service` and `root_url` parameters appropriately. Other parameters (`query`, `default-graph-uri`, `named-graph-uri` and the service custom arguments) that are passed by the client invoking the service are transmitted transparantly to `service.php`.
@@ -210,25 +234,24 @@ Additional rewrinting rules must be set to allow dereferencing the ServiceDescri
 Complete examples are given in the first part of the [/deployment/apache/example.org.conf](../deployment/apache/example.org.conf).
 
 
-## Customize the SPARQL micro-serivces' URIs
+# Start the services
 
-The services provided in folder [/services](../services) are configured as if they were deployed at http://example.org/service, and the dereferenceable URIs they generate are in the form http://example.org/ld.
-These must be customized before you can use the services, to match the URL at which they are deployed.
-
-Script [/deployment/deploy.sh](../deployment/deploy.sh) does that for you: copy the script to the folder where the services are located (for instance /services), update the variables `SERVER`, `SERVERPATH` and `SMSDIR`, and run the script.
-
-Note that you can also use it to replace the Web APIs' keys with your own personal keys.
+If some SPARQL micro-serivces are [configured with a Service Description file](02-config.md#configuration-with-a-sparql-service-description-file), then files ServiceDescription.ttl, ServiceDescriptionPrivate.ttl and ShapesGraph.ttl of each SPARQL micro-service must be loaded as named graphs when Corese-KGRAM starts.
+Script [corese-server.sh](../deployment/corese/corese-server.sh) prepares a list of those files as well as their named graphs URIs, then it starts up Corese-KGRAM that immediately loads the files.
 
 
-## Initialize the RDF triple store and start the SPARQL endpoint
+Update this script as needed and run it:
 
-The write-enabled SPARQL endpoint given by property `sparql_endpoint` (see the [section above](#customize-the-properties-in-file-srcsparqlmsconfigini)) is necessary for two tasks:
-  - At each invocation of a SPARQL micro-service, the result of transforming the Web API response into RDF is loaded as a temporary named graph and the user's SPARQL query is executed against this named graph.
-  - It also hosts the named graphs corresponding to the ServiceDescription.ttl, ServiceDescriptionPrivate.ttl and ShapesGraph.ttl files of each SPARQL micro-service (if any).
+`./corese-server.sh`
 
-Hence, you should make sure to **load these files as named graphs into your triple store**.
-Depending on the triple store that you are using, you may have to use different methods.
-As an example, script [corese-server.sh](../deployment/corese/corese-server.sh) prepares a list of those files as well as their named graphs URIs, then it starts up the Corese-KGRAM triple store that immediately loads the files.
+If you are using MongoDB as a cache database, make sure it is running:
+
+`sudo systemctl status mongod`
+
+FInally, restart the Apache server to take into account any configuration changes:
+
+`sudo systemctl status httpd`
+
 
 
 # Test the installation

@@ -53,5 +53,8 @@ st:sparql-compose a st:Server ;
         sw:body ([ a sw:Transformation ; sw:uri <{INSTALL}/src/sparqlcompose/resources/sttl/> ])
     ].
 
-# List URLs where STTL is allowed to access to get html templates
-st:access st:namespace <http://localhost/sttl>.
+# List URLs where STTL is allowed to access to get html templates, and 
+st:access st:namespace
+    <http://localhost/sttl>,
+    <https://sparql-micro-services.org>,
+    <http://sms.i3s.unice.fr/sparql-ms>.
