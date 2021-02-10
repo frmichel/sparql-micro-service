@@ -79,9 +79,14 @@ deployment/
 
 ## Installation procedure
 
-Clone the project directory to a directory that is made accessible through HTTP by Apache, typically `/var/www/html/sparqlms` or `~/public_html/sparqlms` in your home directory.
+Clone this Github repository to a directory that is made accessible through HTTP by Apache, typically `/var/www/html/sparqlms` or `~/public_html/sparqlms` in your home directory.
 
-From the project directory, use composer to [install the dependencies](https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies), this will create a `vendor` directory with the required PHP libraries.
+CD to sparqlms directory.
+
+Use composer to [install the dependencies](https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies), this will create a `vendor` directory with the required PHP libraries:
+```
+composer install
+```
 
 Create directory `logs` with execution and modification rights for all (`chmod 777 logs`), so that Apache can write into it.
 
@@ -149,7 +154,7 @@ To allow those case:
     <https://sparql-micro-services.org>,
     <http://sms.i3s.unice.fr/sparql-ms>.
 ```
-  * In the Apache configuration, create aliases to expose the STTL folders through http://localhost/sttl/. File [/deployment/apache/sms-alias-sttl.conf](../deployment/apache/sms-alias-sttl.conf) provides an example Apache configuration to do that.
+  * In the Apache configuration, create aliases to expose the STTL folders through http://localhost/sttl/. File [/deployment/apache/example.org.conf](../deployment/apache/example.org.conf) provides an example Apache configuration to do that.
 
 
 Note: You may deactivate those security constraints by using the "-su" option of Corese. But this opens a potential security leak, e.g. a SPARQL query submitted to a SPARQL micro-serivce may execute SERVICE clauses against any endpoint.

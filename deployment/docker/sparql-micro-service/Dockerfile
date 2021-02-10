@@ -40,11 +40,9 @@ WORKDIR "$INSTALL"
 
 # --- Download SPARQL micro-service code
 RUN git clone https://github.com/frmichel/sparql-micro-service.git $INSTALL
-RUN git checkout tags/0.5.0
+RUN git checkout tags/0.5.1
 
 # --- Download the dependencies
-# The github-oauth is necessary to access my own forks of EsayRDF and JsonLD
-RUN composer config -g github-oauth.github.com <enter your token here>
 RUN composer install -n -vv
 
 # --- Customize the deploy file (Web API keys, URL, paths)

@@ -13,6 +13,7 @@ ENV INSTALL="/sparql-micro-service"
 RUN mkdir $INSTALL
 WORKDIR "$INSTALL"
 RUN git clone https://github.com/frmichel/sparql-micro-service.git $INSTALL
+RUN git checkout tags/0.5.1
 
 # --- Customize the deploy file (Web API keys, URL, paths)
 ENV DEPLOY="$INSTALL/deployment/deploy.sh"

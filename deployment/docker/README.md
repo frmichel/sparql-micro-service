@@ -2,8 +2,12 @@
 
 ## Test our example Docker images
 
-You can test SPARQL micro-services provided in the project using the several Docker images we have built and published:
-simply download the file [docker-compose.yml](docker-compose.yml) on a Docker server and run:
+You can test SPARQL micro-services provided in the project using the several Docker images we have built and published on Docker hub:
+[frmichel/sparql-micro-service](https://hub.docker.com/r/frmichel/sparql-micro-service/),
+[frmichel/corese](https://hub.docker.com/r/frmichel/corese/),
+[frmichel/corese-sd](https://hub.docker.com/r/frmichel/corese-sd/).
+
+Simply download the file [docker-compose.yml](docker-compose.yml) on a Docker server and run:
 ```
 docker-compose up -d
 ```
@@ -24,26 +28,13 @@ You may have to set rights 777 on this directory for the container to be able to
 
 It is possible to deploy your own SPARQL micro-services as [Docker](https://www.docker.com/) containers.
 As an example, this directory provides the Docker files to build the following images: 
-- directory [sparql-micro-service](sparql-micro-service) shows how to build the main image consisting of an Apache Web server with PHP 5.6, configured to serve the SPARQL micro-services. Apache listens on port 80.
-- directories [corese-sd](corese-sd) and [corese](corese) provide two ways of building an image with the [Corese-KGRAM](http://wimmics.inria.fr/corese) RDF store and SPARQL endpoint. Corese-KGRAM listens on port 8081.
+- directory [sparql-micro-service](sparql-micro-service) shows how to build the main image consisting of an Apache Web server with PHP, configured to serve the SPARQL micro-services. Apache listens on port 80.
+- directories [corese-sd](corese-sd) and [corese](corese) provide two ways of building an image of the [Corese-KGRAM](http://wimmics.inria.fr/corese) RDF store and SPARQL endpoint, depending on the way you configure your SPARQL micro-services: in case your SPARQL micro-services are configured [with a config.ini file](../../doc/02-config.md#configuration-with-file-configini), then image [corese](corese) is just fine. If at least one of your SPARQL micro-services is configured using [service descriptions](../../doc/02-config.md#configuration-with-a-sparql-service-description-file), then it is necessary to pre-load their description graphs into Corese. This is exemplified in the second image: [corese-sd](corese-sd).
 
-To build the SPARQL micro-service image, **you will need a Github token** to be able to access forked repositories of some php libraries. Contact me to to get a token, and update the following line in [sparql-micro-service/Dockerfile](sparql-micro-service/Dockerfile):
-```
-RUN composer config -g github-oauth.github.com <enter your token here>
-```
-
-Then, run the following command on a Docker server:
+On a Docker server, edit file `docker-compose-build.yml` to switch to the Corese image that you need (pre-configured with corese-sd), and run the following command:
 ```
 docker-compose -f docker-compose-build.yml up -d
 ```
-
-Note that these images are published on Docker hub: 
-[frmichel/sparql-micro-service](https://hub.docker.com/r/frmichel/sparql-micro-service/),
-[frmichel/corese](https://hub.docker.com/r/frmichel/corese/),
-[frmichel/corese-sd](https://hub.docker.com/r/frmichel/corese-sd/).
-
-Corese comes in two flavors depending on the way you configure your SPARQL micro-services: in case your SPARQL micro-services are configured [with a config.ini file](../../doc/02-config.md#configuration-with-file-configini), then image `frmichel/corese` is just fine.
-If your SPARQL micro-services are configured using [service descriptions](../../doc/02-config.md#configuration-with-a-sparql-service-description-file), then it is necessary to pre-load their description graphs into Corese. This is exemplified in the second image: `frmichel/corese-sd`.
 
 
 # Test the installation
@@ -65,7 +56,7 @@ curl --header "Accept: application/sparql-results+json" \
   "${SERVICEPATH}/macaulaylibrary/getAudioByTaxon?query=${SELECT}&name=Delphinus+delphis"
 
 curl --header "Accept: application/sparql-results+json" \
-  "${SERVICEPATH}/musicbrainz/getSongByName?query=${SELECT}&name=Delphinus+delphis"
+  "${SERVICEPATH}/musicbrainz/getSongByName?query=${SELECT}&name=Love"
 ```
 
 That should return a SPARQL JSON result.
