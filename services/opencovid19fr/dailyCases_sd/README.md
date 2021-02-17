@@ -28,6 +28,9 @@ where {
 } order by desc(?date)
 ```
 
+For a visual exploration, check the [Jupiter Notebook](jupyter_notebok_example.ipynb) we provide.
+
+
 ### RDF Data Modeling
 
 The RDF representation is based on the [Schema.org extention](http://blog.schema.org/2020/03/schema-for-coronavirus-special.html) defined recently for the case of the COVID-19 pandemic.
