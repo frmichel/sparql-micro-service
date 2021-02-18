@@ -65,6 +65,7 @@ echo "Corese profile:"
 cat $PROFILE
 
 #--- Start Corese with the profile
+# Note: option -re = re-entrant mode to allow for a SPARQL µs to call another one
 cd $CORESE
 java \
     -Dfile.encoding="UTF-8" \
@@ -72,4 +73,5 @@ java \
     -jar $JAR \
     -lp \
     -pp file://$PROFILE -p 8081 \
-    -re &
+    -re \
+    &
