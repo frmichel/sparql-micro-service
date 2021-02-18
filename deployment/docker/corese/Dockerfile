@@ -10,7 +10,7 @@ ENV INSTALL="/sparql-micro-service"
 RUN mkdir $INSTALL
 WORKDIR "$INSTALL"
 RUN git clone https://github.com/frmichel/sparql-micro-service.git $INSTALL
-RUN git checkout tags/0.5.1
+RUN git checkout tags/0.5.2
 
 
 # --- Download and install Corese
@@ -19,7 +19,7 @@ ENV CORESE="/usr/local/corese"
 RUN mkdir -p $CORESE
 WORKDIR "$CORESE"
 
-RUN wget http://wimmics.inria.fr/doc/tutorial/corese-server-4.1.4a.jar
+RUN wget http://files.inria.fr/corese/distrib/corese-server-4.1.6d.jar
 RUN cp  $INSTALL/deployment/corese/log4j2.xml $CORESE
 RUN cat $INSTALL/deployment/corese/corese-profile-sms.ttl | sed "s|{INSTALL}|$INSTALL|g" > $CORESE/corese-profile-sms.ttl
 

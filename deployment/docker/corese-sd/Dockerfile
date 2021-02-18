@@ -13,13 +13,13 @@ ENV INSTALL="/sparql-micro-service"
 RUN mkdir $INSTALL
 WORKDIR "$INSTALL"
 RUN git clone https://github.com/frmichel/sparql-micro-service.git $INSTALL
-RUN git checkout tags/0.5.1
+RUN git checkout tags/0.5.2
 
 # --- Customize the deploy file (Web API keys, URL, paths)
 ENV DEPLOY="$INSTALL/deployment/deploy.sh"
 RUN cat $DEPLOY | sed 's|^SERVER=.*|SERVER='http://localhost'|g' > /tmp/deploy && mv /tmp/deploy $DEPLOY
-ENV BHL_API_KEY="e2cd8640-0302-43b8-84ba-af635d572e2c"
-ENV FLICKR_API_KEY="84292db278ee7fe90f930e6a87ae532d"
+ENV BHL_API_KEY="<you API key>"
+ENV FLICKR_API_KEY="<you API key>"
 RUN chmod 755 $DEPLOY && $DEPLOY
 
 
@@ -31,7 +31,7 @@ ENV CORESE="/usr/local/corese"
 RUN mkdir -p $CORESE
 WORKDIR "$CORESE"
 
-RUN wget http://wimmics.inria.fr/doc/tutorial/corese-server-4.1.4a.jar
+RUN wget http://files.inria.fr/corese/distrib/corese-server-4.1.6d.jar
 RUN cp  $INSTALL/deployment/corese/log4j2.xml $CORESE
 RUN cat $INSTALL/deployment/corese/corese-profile-sms.ttl | sed "s|{INSTALL}|$INSTALL|g" > $CORESE/corese-profile-sms.ttl
 

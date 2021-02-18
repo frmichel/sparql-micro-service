@@ -40,9 +40,9 @@ WORKDIR "$INSTALL"
 
 # --- Download SPARQL micro-service code
 RUN git clone https://github.com/frmichel/sparql-micro-service.git $INSTALL
-RUN git checkout tags/0.5.1
+RUN git checkout tags/0.5.2
 
-# --- Download the dependencies
+# --- Install the php dependencies
 RUN composer install -n -vv
 
 # --- Customize the deploy file (Web API keys, URL, paths)
