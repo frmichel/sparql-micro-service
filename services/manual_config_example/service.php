@@ -6,10 +6,10 @@ namespace frmichel\sparqlms;
  *
  * It receives 3 global variables:
  * - $apiQuery contains the Web API query template. The script must set the parameters to
- * produce the ready-to-run query string.
+ *   produce the ready-to-run query string.
  * - $customArgs is the set of custom arguments that have been passed to the service.
- * It is associative array where the key is the argument name, 
- * and the value is an array of values for that argument
+ *   It is an associative array where the key is the argument name, 
+ *   and the value is an array of values for that argument
  * - $logger is provided as a convenience in case the script wants to log any information.
  */
 global $apiQuery;

@@ -1,0 +1,17 @@
+@prefix schema: <http://schema.org/>
+CONSTRUCT {
+
+  []
+     a schema:MusicAlbum;
+     schema:name ?title;
+     schema:mainEntityOfPage ?link;
+     schema:byArtist ?artistName;
+     schema:image ?image.
+
+} WHERE {
+
+   [] api:title ?title;
+     api:link   ?link;
+     api:cover  ?image;
+     api:artist [ api:name ?artistName ].
+}

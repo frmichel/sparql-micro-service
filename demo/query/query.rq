@@ -64,12 +64,12 @@ CONSTRUCT {
 
     # -- How we force the evaluation strategy --
     # We want variables ?taxonName and ?bhl to be "passed" to the BGPs of the union below, e.g. as FILTER() or 
-    # VALUES() clauses. But SPARQL does not impose anything, this is left to the engine's strategy.
+    # VALUES() clauses. But SPARQL does not impose anything about the evaluation order of the service clauses,
+    # this is left to the engine's strategy.
     # A heuristic of Corese is to pass a variable ?x as a VALUES() clause to the BGPs only if ?x is
     # in-scope (https://www.w3.org/TR/sparql11-query/#variableScope) in all BGPs of the union.
-    # To force that, we have to define the variable "fakely"
-    # as unbound wherever it is not used in any triple of a BGP.
-    # This is achieved with clauses "values ?x {UNDEF}" either for ?taxonName or for ?bhl.
+    # To force that, we have to define the variable "fakely" as unbound wherever it is not used in any
+    # triple of a BGP. This is achieved with clauses "values ?x {UNDEF}" either for ?taxonName or for ?bhl.
 
     # This part is mandatory, it gets the scientific name from TAXREF-LD
     {

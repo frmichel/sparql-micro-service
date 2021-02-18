@@ -1,0 +1,8 @@
+{
+  "@context": {
+    "@vocab": "http://ns.inria.fr/sparql-micro-service/api#",
+    
+    "cover": { "@type": "@id" },
+    "link":  { "@type": "@id" }
+  }
+}
