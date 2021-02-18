@@ -31,8 +31,13 @@ RUN cp $INSTALL/deployment/corese/corese-server.sh $CORESESH
 RUN cat $CORESESH | sed "s|^CORESE.*|CORESE=$CORESE|g" > /tmp/corese && mv /tmp/corese $CORESESH
 RUN cat $CORESESH | sed "s|^SMSPATH.*|SMSPATH=$INSTALL|g" > /tmp/corese && mv /tmp/corese $CORESESH
 RUN cat $CORESESH | sed "s|^java.*|$JAVA_HOME/bin/java \\\|g" > /tmp/corese && mv /tmp/corese $CORESESH
+
+# Remove final '&' to have the script not exit
+RUN cat $CORESESH | sed "s|^[[:blank:]]*&||g" > /tmp/corese && mv /tmp/corese $CORESESH
+
 # Remove loading of any service description
 RUN cat $CORESESH | sed "s|^genMultipleLoad.*||g" > /tmp/corese && mv /tmp/corese $CORESESH
+
 
 RUN chmod 755 $CORESESH
 RUN cat $CORESESH

@@ -6,6 +6,8 @@
 #
 # The graph URIs are based on the server hostname and path to access SPARQL microservices.
 #
+# Warning: changing this file may cause the deployment/corese*/Dockerfile to no longer work properly
+#
 # To test the result, run the command below to display all loaded named graphs:
 # SPARQL query Q below is the url-encoded for: "select distinct ?g where { graph ?g { ?s ?p ?o } }"
 # $ Q='elect%20distinct%20%3Fg%0Awhere%20%7B%20graph%20%3Fg%20%7B%20%3Fs%20%3Fp%20%3Fo%20%7D%20%7D'
