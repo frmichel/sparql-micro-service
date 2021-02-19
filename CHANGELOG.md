@@ -1,10 +1,11 @@
 # SPARQL Micro-Service Changelog
 
-## [CURRENT] 2021-01-12
+## [0.5.2] 2021-02-19
 
 ### Changed
 - Upgrade to Corese 4.1.6d to fix some concurrency issues. Requires updates in STTL files and some SPARQL queries involving multiple named graphs
 - Add details in configuration of Apache/php
+- Update Docker images and Dockerfile's
 
 
 ## [0.5.1] 2020-09-04
