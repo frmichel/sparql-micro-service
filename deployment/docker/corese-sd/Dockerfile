@@ -1,7 +1,7 @@
 FROM openjdk:11.0.7-jdk-buster
 
 RUN apt-get update -y 
-RUN apt-get install -y git wget
+RUN apt-get install -y git wget apache2
 
 # Corese needs to load the service description and shapes graphs at startup.
 # Hence, we have to checkout the project and customize it as in the sparql-micro-service build.
@@ -21,6 +21,11 @@ RUN cat $DEPLOY | sed 's|^SERVER=.*|SERVER='http://localhost'|g' > /tmp/deploy &
 ENV BHL_API_KEY="<you API key>"
 ENV FLICKR_API_KEY="<you API key>"
 RUN chmod 755 $DEPLOY && $DEPLOY
+
+
+# ============== Configure Apache to servce STTL files on localhost ============
+# This is necessary with Corese v4.1.6+ as accessing html/sttl files from local file system is no longer permitted
+COPY sparql-micro-services.conf /etc/apache2/conf-enabled/sparql-micro-services.conf
 
 
 # ============== Configure and run Corese ============
@@ -54,6 +59,7 @@ RUN cat $CORESESH | sed "s|^genMultipleLoad.*|genMultipleLoad \"http://localhost
 RUN chmod 755 $CORESESH
 RUN cat $CORESESH
 
-# --- Run Corese
+# --- Run Apache and Corese
 WORKDIR $CORESE
-CMD $CORESESH
+RUN echo "/usr/sbin/apachectl start" > run.sh && echo "$CORESESH" >> run.sh && chmod 755 run.sh
+CMD $CORESE/run.sh

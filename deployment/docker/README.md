@@ -29,9 +29,11 @@ You may have to set rights 777 on this directory for the container to be able to
 It is possible to deploy your own SPARQL micro-services as [Docker](https://www.docker.com/) containers.
 As an example, this directory provides the Docker files to build the following images: 
 - directory [sparql-micro-service](sparql-micro-service) shows how to build the main image consisting of an Apache Web server with PHP, configured to serve the SPARQL micro-services. Apache listens on port 80.
-- directories [corese-sd](corese-sd) and [corese](corese) provide two ways of building an image of the [Corese-KGRAM](http://wimmics.inria.fr/corese) RDF store and SPARQL endpoint, depending on the way you configure your SPARQL micro-services: in case your SPARQL micro-services are configured [with a config.ini file](../../doc/02-config.md#configuration-with-file-configini), then image [corese](corese) is just fine. If at least one of your SPARQL micro-services is configured using [service descriptions](../../doc/02-config.md#configuration-with-a-sparql-service-description-file), then it is necessary to pre-load their description graphs into Corese. This is exemplified in the second image: [corese-sd](corese-sd).
+- directories [corese-sd](corese-sd) and [corese](corese) provide two ways of building an image of the [Corese-KGRAM](http://wimmics.inria.fr/corese) RDF store and SPARQL endpoint, depending on the way you configure your SPARQL micro-services: 
+    - In case your SPARQL micro-services are configured [with a config.ini file](../../doc/02-config.md#configuration-with-file-configini), then image [corese](corese) is just fine. 
+    - If at least one of your SPARQL micro-services is configured using [service descriptions](../../doc/02-config.md#configuration-with-a-sparql-service-description-file), then it is necessary to pre-load their description graphs into Corese. This is exemplified in the second image: [corese-sd](corese-sd).
 
-On a Docker server, edit file `docker-compose-build.yml` to switch to the Corese image that you need (pre-configured with corese-sd), and run the following command:
+On a Docker server, edit file `docker-compose-build.yml` to switch to the Corese image that you need (it is pre-configured for corese-sd), and run the following command:
 ```
 docker-compose -f docker-compose-build.yml up -d
 ```
