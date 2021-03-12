@@ -143,7 +143,7 @@ Log levels are described in [Monolog documentation](https://github.com/Seldaek/m
 
 ### Corese-KGRAM security configuration
 
-Starting version 4.1.6, Corese-KGRAM implements some security measures that require defining explicitely the HTTP domains where Corese-KGRAM is allowed to look for remote ressources. 
+Starting version 4.1.6, Corese-KGRAM implements some [security measures](https://files.inria.fr/corese/doc/level.html) that require defining explicitely the HTTP domains where Corese-KGRAM is allowed to look for remote ressources. 
 This applies to SPARQL federated queries (clause SERVICE <...>), but also to STTL transformation files (that can no longer be accessed directly from the local file system).
 
 To allow those case:

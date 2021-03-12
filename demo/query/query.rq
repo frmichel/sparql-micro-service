@@ -78,8 +78,8 @@ CONSTRUCT {
             SELECT DISTINCT * WHERE {
                 ?taxon a owl:Class;
                     rdfs:label ?taxonName;
-                    taxrefprop:hasReferenceName [ rdfs:label ?scientificName ].
-                FILTER (STRENDS(STR(?taxon), "/13.0"))
+                    taxrefprop:hasReferenceName [ rdfs:label ?scientificName ];
+                    rdfs:isDefinyBy <http://taxref.mnhn.fr/lod/taxref-ld/13.0>.
             }
         }
     }
