@@ -1,6 +1,6 @@
 {
   "@context": {
     "@base": "http://ns.inria.fr/sparql-micro-service/item/",
-    "@vocab": "http://ns.inria.fr/sparql-micro-service/api#",
+    "@vocab": "http://ns.inria.fr/sparql-micro-service/api#"
   }
 }
