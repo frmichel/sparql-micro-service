@@ -1,13 +1,14 @@
 version: '3'
 services:
   corese:
-    image: frmichel/corese-sd
+    image: frmichel/corese
     networks:
       - sms-net
     ports:
       - "8081:8081"
     volumes:
       - "./logs:/usr/local/corese/log"
+      - "./services:/services"
   mongo:
     image: mongo:3.6-jessie
     networks:
@@ -20,8 +21,7 @@ services:
       - "80:80"
     volumes:
       - "./logs:/var/www/html/sparql-ms/logs"
+      - "./services:/services"
 networks:
   sms-net:
     driver: bridge
-
-

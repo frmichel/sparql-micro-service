@@ -32,7 +32,7 @@ RUN echo "date.timezone = 'Europe/Paris'" >> "$PHP_INI_DIR/php.ini"
 COPY sparql-micro-services.conf /etc/apache2/sites-enabled/sparql-micro-services.conf
 
 
-# ============== SPARQL micro-services install and config ============
+# ============== Install and config SPARQL micro-services code ============
 
 ENV INSTALL="/sparql-micro-service"
 RUN mkdir $INSTALL
@@ -45,18 +45,15 @@ RUN git checkout tags/0.5.2
 # --- Install the php dependencies
 RUN composer install -n -vv
 
-# --- Customize the deploy file (Web API keys, URL, paths)
-ENV DEPLOY="$INSTALL/deployment/deploy.sh"
-RUN cat $DEPLOY | sed 's|^SERVER=.*|SERVER='http://localhost'|g' > /tmp/deploy && mv /tmp/deploy $DEPLOY
-ENV BHL_API_KEY="<you API key>"
-ENV FLICKR_API_KEY="<you API key>"
-RUN chmod 755 $DEPLOY && $DEPLOY
-
 # --- Customize the main config.ini (SPARQL endpoint, SPIN-to-SPARQL, cache DB)
 ENV CONFIG="$INSTALL/src/sparqlms/config.ini"
 RUN cat $CONFIG | sed 's|^sparql_endpoint.*|sparql_endpoint = http://corese:8081/sparql|g' > /tmp/cfg && mv /tmp/cfg $CONFIG
 RUN cat $CONFIG | sed 's|^spin_endpoint.*|spin_endpoint = http://corese:8081/service/sparql-to-spin|g' > /tmp/cfg && mv /tmp/cfg $CONFIG
 RUN cat $CONFIG | sed 's|^cache_endpoint.*|cache_endpoint = mongodb://mongo:27017|g' > /tmp/cfg && mv /tmp/cfg $CONFIG
+
+# Remove existing paths to services and add only a directory for custom services (to be mounted outside of the container)
+RUN cat $CONFIG | sed 's|^services_paths.*||g' > /tmp/cfg && mv /tmp/cfg $CONFIG
+RUN echo "services_paths[] = /services" >> $CONFIG
 
 # --- Set logs directory 
 ENV LOGS="/var/www/html/sparql-ms/logs"
@@ -66,3 +63,4 @@ RUN mkdir -p $LOGS && chmod 777 $LOGS
 RUN mkdir -p /var/www/html/sparql-ms
 RUN cp -r $INSTALL/src /var/www/html/sparql-ms/src && cp -r $INSTALL/vendor /var/www/html/sparql-ms/vendor
 RUN cp -r $INSTALL/services /var/www/html/sparql-ms/services
+RUN mkdir -p /services && chmod 777 /services

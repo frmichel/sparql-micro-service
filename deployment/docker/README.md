@@ -1,22 +1,60 @@
-# Deploy SPARQL micro-services with Docker
+# Prototype and deploy your SPARQL micro-services with Docker
 
-## Test our example Docker images
+You can prototype and deploy SPARQL micro-services using the Docker images we have built and published on Docker hub.
 
-You can test SPARQL micro-services provided in the project using the several Docker images we have built and published on Docker hub:
-[frmichel/sparql-micro-service](https://hub.docker.com/r/frmichel/sparql-micro-service/),
-[frmichel/corese](https://hub.docker.com/r/frmichel/corese/),
-[frmichel/corese-sd](https://hub.docker.com/r/frmichel/corese-sd/).
+  - [frmichel/sparql-micro-service](https://hub.docker.com/r/frmichel/sparql-micro-service/) contains the core code to run SPARQL-micro-services, running on an Apache Web server with PHP, configured to serve the SPARQL micro-services. Apache listens on port 80.
 
-Simply download the file [docker-compose.yml](docker-compose.yml) on a Docker server and run:
+  - [frmichel/corese](https://hub.docker.com/r/frmichel/corese/) contains the [Corese-KGRAM](http://wimmics.inria.fr/corese) RDF store and SPARQL endpoint. It is used to execute SPARQL queries and generate the HTML documentation of the service described with a [service descriptions](../../doc/02-config.md#configuration-with-a-sparql-service-description-file) file (does not apply to services configured [with a config.ini file](../../doc/02-config.md#configuration-with-file-configini)).
+
+Both images requires micro-services to be installed in the `services` directory created in the folder where you run docker-compose.
+
+
+## Run the Docker containers
+
+To start running SPARQL micro-services, simply download the file [docker-compose.yml](docker-compose.yml) on a Docker server and run:
+
 ```
 docker-compose up -d
 ```
 
-Wait a few seconds for Corese to initialize properly, then you can test the deployment as exemplified hereafter.
+Wait a few seconds for Corese to initialize properly. 
+
+### Test your own SPARQL micro-services
+
+All micro-services must be installed in the `services` directory created in the folder where you have run docker-compose.
+
+As an example, copy services [deezer/findAlbums](../../services/deezer/findAlbums) and [musicbrainz/getSongByName](../../services/musicbrainz/getSongByName) into directory `services`, and give them full read access rights so that the Docker container can read them (**this is important**).
+
+Assuming variable $SMS_INSTAL gives the directory where you checked out the Github repository:
+
+```bash
+cp -r $SMS_INSTAL/services/deezer/findAlbums services
+cp -r $SMS_INSTAL/services/musicbrainz/getSongByName services
+chmod -R 755 services/*
+```
+
+Then, you can test the services using the commands below in a bash.
+
+```bash
+# URL-encoded query: select * where {?s ?p ?o}
+SELECT='select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D'
+
+# URL-encoded query: construct where {?s ?p ?o}
+CONSTRUCT=construct%20WHERE%20%7B%20%3Fs%20%3Fp%20%3Fo%20%7D%20
+
+curl --header "Accept: application/sparql-results+json" \
+  "http://localhost/service/deezer/findAlbums?query=${SELECT}&keyword=eminem"
+
+curl --header "Accept: text/turtle" \
+  "http://localhost/service/deezer/findAlbums?query=${SELECT}&keyword=eminem"
+
+curl --header "Accept: application/sparql-results+json" \
+  "http://localhost/service/musicbrainz/getSongByName?query=${SELECT}&name=Love"
+```
 
 ### Possible conflict on port 80
 
-This deployment uses ports 80 and 8081 of the Docker host. If there are in conflict with other aplications, change the port mapping in `docker-compose.yml`.
+This deployment uses ports 80 and 8081 of the Docker host. If they are in conflict with other aplications, change the port mapping in `docker-compose.yml`.
 
 ### Check application logs
 
@@ -24,48 +62,19 @@ This `docker-compose.yml` will mount the SPARQL micro-service and Corese-KGRAM l
 You may have to set rights 777 on this directory for the container to be able to write log files (`chmod 777 logs`).
 
 
-## Build your own SPARQL micro-services Docker images
-
-It is possible to deploy your own SPARQL micro-services as [Docker](https://www.docker.com/) containers.
-As an example, this directory provides the Docker files to build the following images: 
-- directory [sparql-micro-service](sparql-micro-service) shows how to build the main image consisting of an Apache Web server with PHP, configured to serve the SPARQL micro-services. Apache listens on port 80.
-- directories [corese-sd](corese-sd) and [corese](corese) provide two ways of building an image of the [Corese-KGRAM](http://wimmics.inria.fr/corese) RDF store and SPARQL endpoint, depending on the way you configure your SPARQL micro-services: 
-    - In case your SPARQL micro-services are configured [with a config.ini file](../../doc/02-config.md#configuration-with-file-configini), then image [corese](corese) is just fine. 
-    - If at least one of your SPARQL micro-services is configured using [service descriptions](../../doc/02-config.md#configuration-with-a-sparql-service-description-file), then it is necessary to pre-load their description graphs into Corese. This is exemplified in the second image: [corese-sd](corese-sd).
-
-On a Docker server, edit file `docker-compose-build.yml` to switch to the Corese image that you need (it is pre-configured for corese-sd), and run the following command:
-```
-docker-compose -f docker-compose-build.yml up -d
-```
-
-
-# Test the installation
-
-## Test SPARQL querying
-
-You can test the services using the commands below in a bash.
-
-```bash
-SERVICEPATH=http://localhost/service
-
-# URL-encoded query: select * where {?s ?p ?o}
-SELECT='select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D'
-
-curl --header "Accept: application/sparql-results+json" \
-  "${SERVICEPATH}/flickr/getPhotoById?query=${SELECT}&photo_id=31173091246"
-
-curl --header "Accept: application/sparql-results+json" \
-  "${SERVICEPATH}/macaulaylibrary/getAudioByTaxon?query=${SELECT}&name=Delphinus+delphis"
-
-curl --header "Accept: application/sparql-results+json" \
-  "${SERVICEPATH}/musicbrainz/getSongByName?query=${SELECT}&name=Love"
-```
-
-That should return a SPARQL JSON result.
-
 ## Test URI dereferencing
 
-Enter this URL in your browser: http://localhost/ld/flickr/photo/31173091246 or the following command in a bash:
+The Docker image is also configured to support URI dereferencing for some of the SPARQL micro-services that we provide. You can test this with Flickr:
+
+```bash
+cp -r $SMS_INSTAL/services/flickr services
+chmod -R 755 services/*
+```
+
+Configure your own Flckr API key in the `flickr/getPhotoById/config.ini` (replace the string `<api_key>`).
+
+
+The, enter this URL in your browser: http://localhost/ld/flickr/photo/31173091246 or the following command in a bash:
 
 ```bash
 curl --header "Accept: text/turtle" http://localhost/ld/flickr/photo/31173091246
@@ -91,16 +100,19 @@ This should return an RDF description of the photographic resource similar to:
     schema:image        <https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_z.jpg> .
 ```
 
-## Test the HTML documentation generation
+## Services configured with ServiceDescription graph
 
-Two services are provided with a service description graph that can be dynamically translated into an HTML documentation. Enter the following URLs in a web browser:
+The Docker images also support micro-services configured with a [service description](../../doc/02-config.md#configuration-with-a-sparql-service-description-file).
+
+Simply copy the services in the `services` directory, and restart the Corese Docker container as it loads the servide descriptions at start-up.
+
+You can then test the HTML documentation generation by entering the following URL in a web browser:
 ```
-http://localhost/service/flickr/getPhotosByTags_sd/
-http://localhost/service/macaulaylibrary/getAudioByTaxon_sd/
+http://localhost/service/<your_api>/<you_service>
 ```
 
 You can also look up the URIs of the service description and shapes graphs directly, e.g.:
 ```
-curl --header "Accept: text/turtle" http://localhost/service/flickr/getPhotosByTags_sd/ServiceDescription
-curl --header "Accept: text/turtle" http://localhost/service/flickr/getPhotosByTags_sd/ShapesGraph
+curl --header "Accept: text/turtle" http://localhost/service/<your_api>/<you_service>/ServiceDescription
+curl --header "Accept: text/turtle" http://localhost/service/<your_api>/<you_service>/ShapesGraph
 ```
