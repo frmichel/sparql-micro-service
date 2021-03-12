@@ -45,7 +45,7 @@ WHERE {
             ]]].
         }
 
-        GRAPH <{SpinQueryGraph}> {
+        GRAPH <{ShapesGraph}> {
             # - Shapes Graph - Predicate is given through a property shape with shacl:sourceShape
             ?nodeShape a shacl:NodeShape; shacl:property ?propShape.
             ?propShape a shacl:PropertyShape; shacl:path ?predicate.
