@@ -25,7 +25,7 @@ All micro-services must be installed in the `services` directory created in the 
 
 As an example, copy services [deezer/findAlbums](../../services/deezer/findAlbums) and [musicbrainz/getSongByName](../../services/musicbrainz/getSongByName) into directory `services`, and give them full read access rights so that the Docker container can read them (**this is important**).
 
-Assuming variable $SMS_INSTAL gives the directory where you checked out the Github repository:
+Assuming variable `$SMS_INSTAL` gives the directory where you checked out the Github repository:
 
 ```bash
 cp -r $SMS_INSTAL/services/deezer/findAlbums services
@@ -71,10 +71,9 @@ cp -r $SMS_INSTAL/services/flickr services
 chmod -R 755 services/*
 ```
 
-Configure your own Flckr API key in the `flickr/getPhotoById/config.ini` (replace the string `<api_key>`).
+In the `flickr/getPhotoById/config.ini` file, replace the string `<api_key>` with your personal Flckr API key.
 
-
-The, enter this URL in your browser: http://localhost/ld/flickr/photo/31173091246 or the following command in a bash:
+Then, enter this URL in your browser: http://localhost/ld/flickr/photo/31173091246 or the following command in a bash:
 
 ```bash
 curl --header "Accept: text/turtle" http://localhost/ld/flickr/photo/31173091246
@@ -104,7 +103,7 @@ This should return an RDF description of the photographic resource similar to:
 
 The Docker images also support micro-services configured with a [service description](../../doc/02-config.md#configuration-with-a-sparql-service-description-file).
 
-Simply copy the services in the `services` directory, and restart the Corese Docker container as it loads the servide descriptions at start-up.
+Simply copy the micro-services in the `services` directory as show above, and restart the Corese Docker container as the service descriptions are loaded when Corese starts up.
 
 You can then test the HTML documentation generation by entering the following URL in a web browser:
 ```
