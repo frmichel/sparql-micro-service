@@ -7,7 +7,7 @@ RUN apt-get install -y git wget apache2
 # These are given in directory /services that has to be mounted on the Docker server side.
 
 # ============== Get the SPARQL micro-services project ============
-# This is to get Corese log4l config, prfile and start script.
+# This is to get Corese log4l config, profile and start script.
 
 # --- Download SPARQL micro-service code
 ENV INSTALL="/sparql-micro-service"
