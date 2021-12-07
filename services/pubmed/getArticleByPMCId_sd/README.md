@@ -9,14 +9,16 @@ If no DOI is available, the IRI is PubMed's web page URL prefixed with `https://
 Authors are represented in two ways: as separate triples with `dct:creator`, or as an ordered list with `bibo:authorList`.
 
 **Parameters**:
-- `fabio:hasPubMedCentralId`: PubMedCentral identifier starting with `PMC`.
+- `fabio:hasPubMedCentralId`: Pubmed Central identifier starting with `PMC`.
 
 
 ## Usage example (SPARQL)
 ```sparql
 prefix bibo:   <http://purl.org/ontology/bibo/> .
 SELECT * WHERE {
-    ?article fabio:hasPubMedCentralId "PMC5241551"; ?p ?o.
+    ?article 
+        fabio:hasPubMedCentralId "PMC5241551";
+        ?p ?o.
 }
 ```
 
@@ -41,10 +43,11 @@ SELECT * WHERE {
     bibo:volume                 "12";
     bibo:numPages               "31-38";
     
-    schema:url                  <https://pubmed.ncbi.nlm.nih.gov/27607596>;
-
     bibo:doi                    "10.1097/COH.0000000000000326";
     bibo:pmid                   "27607596";
     fabio:hasPubMedId           "27607596";
     fabio:hasPubMedCentralId    "PMC5241551";
+
+    schema:url                  <https://pubmed.ncbi.nlm.nih.gov/27607596>;
+    .
 ```

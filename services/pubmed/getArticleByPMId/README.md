@@ -1,7 +1,7 @@
 # Service pubmed/getArticleByPMId
 
 This service retrieves an aticle from [PubMed](https://pubmed.ncbi.nlm.nih.gov/) using [PMC Entrez APIs](https://www.ncbi.nlm.nih.gov/pmc/tools/developers/), and generates an RDF representation thereof. 
-The article is identified by its PubMed identifier (PMID) provided using property `bibo:pmid`.
+The article is identified by its PubMed identifier (PMID).
 
 The graph produced relies mainly on the [Bibiographic Ontology](https://github.com/structureddynamics/Bibliographic-Ontology-BIBO) (BIBO) and [FRBR-aligned Bibliographic Ontology](https://sparontologies.github.io/fabio/current/fabio.html) (FaBiO).
 An article IRI is preferably based on its DOI, if any, prefixed with `http://doi.org/`.
@@ -9,16 +9,14 @@ If no DOI is available, the IRI is PubMed's web page URL prefixed with `https://
 Authors are represented in two ways: as separate triples with `dct:creator`, and as an ordered list with `bibo:authorList`.
 
 **Parameters**:
-- `bibo:pmid`: Pubmed identifier
+- `pmId`: Pubmed identifier
 
 
 ## Usage example (SPARQL)
 ```sparql
-prefix bibo:   <http://purl.org/ontology/bibo/>
 SELECT * WHERE {
-    ?article 
-        bibo:pmid "27607596";
-        ?p ?o.
+  SERVICE <https://sparql-micro-services.org/service/pubmed/getArticleByPMId/?pmId=27607596>
+  { ?s ?p ?o. }
 }
 ```
 
@@ -42,16 +40,13 @@ SELECT * WHERE {
     fabio:journal               "Current opinion in HIV and AIDS";
     bibo:issue                  "1";
     bibo:volume                 "12";
-    bibo:chapter                "1";
     bibo:numPages               "31-38";
-    dct:publisher               "Example publisher;
     
+    schema:url                  <https://pubmed.ncbi.nlm.nih.gov/27607596>;
+
     bibo:doi                    "10.1097/COH.0000000000000326";
     bibo:issn                   "1746-630X".
     bibo:pmid                   "27607596";
     fabio:hasPubMedId           "27607596";
     fabio:hasPubMedCentralId    "PMC5241551";
-    
-    schema:url                  <https://pubmed.ncbi.nlm.nih.gov/27607596>;
-    .
 ```
