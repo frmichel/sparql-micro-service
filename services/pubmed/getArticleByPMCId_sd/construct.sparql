@@ -1,0 +1,66 @@
+prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#>.
+prefix owl:    <http://www.w3.org/2002/07/owl#>.
+prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+prefix bibo:   <http://purl.org/ontology/bibo/> .
+prefix dce:    <http://purl.org/dc/elements/1.1/>.
+prefix dct:    <http://purl.org/dc/terms/>.
+prefix fabio:  <http://purl.org/spar/fabio/>.
+prefix frbr:   <http://purl.org/vocab/frbr/core#>.
+prefix schema: <http://schema.org/>.
+
+CONSTRUCT {
+    ?articleUri
+        a schema:ScholarlyArticle, bibo:AcademicArticle, fabio:ResearchPaper ;
+        dct:title                   ?title;
+        dct:creator                 ?authorName;
+        schema:authorList           ?firstAuthor;
+        dct:source                  ?journal;
+        fabio:journal               ?journal;
+        dct:issued                  ?issueDate;
+        
+        bibo:issue                  ?issue;
+        bibo:volume                 ?volume;
+        bibo:numPages               ?pages;
+
+        bibo:doi                    ?doi;
+        bibo:pmid                   ?pmId;
+        fabio:hasPubMedCentralId    ?pmcId;
+        fabio:hasPubMedId           ?pmId;
+
+        schema:url                  ?url;
+    .
+
+    ?author rdf:first ?authorName; rdf:rest ?rest.    
+}
+WHERE {
+    ?article
+        api:title ?title.
+    
+    optional { ?article api:authors ?firstAuthor. }
+    optional { ?author rdf:first [ api:name ?authorName ]; rdf:rest ?rest. }
+
+    optional { ?article api:articleids [ api:idtype "doi";   api:value ?doi ].  filter (?doi != "") }
+    optional { ?article api:articleids [ api:idtype "pmid";  api:value ?pmId ]. filter (?pmId != "") }
+    optional { ?article api:articleids [ api:idtype "pmcid"; api:value ?pmcId ]. filter (?pmcId != "") }
+
+    optional { ?article api:volume          ?volume. filter (?volume != "") }
+    optional { ?article api:issue           ?issue. filter (?issue != "") }
+    optional { ?article api:pages           ?pages. filter (?pages != "") }
+
+    optional { ?article api:source          ?shortJournalName. filter (?shortJournalName != "") }
+    optional { ?article api:fulljournalname ?fullJournalName.  filter (?fullJournalName != "") }
+    bind(coalesce(?fullJournalName, ?shortJournalName) as ?journal)
+
+    optional { ?article api:sortdate        ?sortDate. }
+    optional { ?article api:pubdate         ?pubdate. }
+    optional { ?article api:printpubdate    ?printdate. }
+    bind(coalesce(?pubdate, ?sortDate, ?printdate) as ?issueDate)
+
+    bind(coalesce(
+        iri(concat("http://doi.org/", ?doi)), 
+        iri(concat("https://pubmed.ncbi.nlm.nih.gov/", ?pmId)
+    )) as ?articleUri)
+
+    bind(iri(concat("https://pubmed.ncbi.nlm.nih.gov/", ?pmId)) as ?url)    
+}
