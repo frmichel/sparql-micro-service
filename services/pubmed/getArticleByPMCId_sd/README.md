@@ -1,7 +1,7 @@
 # Service pubmed/getArticleByPMCId
 
-This service retrieves an aticle from [PubMed](https://pubmed.ncbi.nlm.nih.gov/) using [PMC Entrez APIs](https://www.ncbi.nlm.nih.gov/pmc/tools/developers/), and generates an RDF representation thereof. 
-The article is identified by its Pubmed Central ID (PMCID)  starting with `PMC`, provided using property `fabio:hasPubMedCentralId`.
+This service retrieves an aticle from [PubMed Central](https://www.ncbi.nlm.nih.gov/pmc/) using [PMC Entrez APIs](https://www.ncbi.nlm.nih.gov/pmc/tools/developers/), and generates an RDF representation thereof. 
+The article is identified by its PubMed Central ID (PMCID)  starting with `PMC`, provided using property `fabio:hasPubMedCentralId`.
 
 The graph produced relies mainly on the [Bibiographic Ontology](https://github.com/structureddynamics/Bibliographic-Ontology-BIBO) (BIBO) and [FRBR-aligned Bibliographic Ontology](https://sparontologies.github.io/fabio/current/fabio.html) (FaBiO).
 An article IRI is preferably based on the article's DOI, if any, prefixed with `http://doi.org/`.
@@ -9,7 +9,7 @@ If no DOI is available, the IRI is PubMed's web page URL prefixed with `https://
 Authors are represented in two ways: as separate triples with `dct:creator`, or as an ordered list with `bibo:authorList`.
 
 **Parameters**:
-- `fabio:hasPubMedCentralId`: Pubmed Central identifier starting with `PMC`.
+- `fabio:hasPubMedCentralId`: PubMed Central identifier starting with `PMC`.
 
 
 ## Usage example (SPARQL)

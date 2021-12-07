@@ -1,6 +1,6 @@
 # Service pubmed/getArticleByPMId
 
-This service retrieves an aticle from [PubMed](https://pubmed.ncbi.nlm.nih.gov/) using [PMC Entrez APIs](https://www.ncbi.nlm.nih.gov/pmc/tools/developers/), and generates an RDF representation thereof. 
+This service retrieves an aticle from [PubMed Central](https://www.ncbi.nlm.nih.gov/pmc/) using [PMC Entrez APIs](https://www.ncbi.nlm.nih.gov/pmc/tools/developers/), and generates an RDF representation thereof. 
 The article is identified by its PubMed identifier (PMID).
 
 The graph produced relies mainly on the [Bibiographic Ontology](https://github.com/structureddynamics/Bibliographic-Ontology-BIBO) (BIBO) and [FRBR-aligned Bibliographic Ontology](https://sparontologies.github.io/fabio/current/fabio.html) (FaBiO).
@@ -9,7 +9,7 @@ If no DOI is available, the IRI is PubMed's web page URL prefixed with `https://
 Authors are represented in two ways: as separate triples with `dct:creator`, and as an ordered list with `bibo:authorList`.
 
 **Parameters**:
-- `pmId`: Pubmed identifier
+- `pmId`: PubMed identifier
 
 
 ## Usage example (SPARQL)

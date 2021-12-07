@@ -10,8 +10,9 @@
 @prefix dwc:    <http://rs.tdwg.org/dwc/terms/>.
 @prefix sms:    <http://ns.inria.fr/sparql-micro-service#>.
 @prefix bibo:   <http://purl.org/ontology/bibo/>.
+@prefix fabio:  <http://purl.org/spar/fabio/>.
 
-@base            <https://sparql-micro-services.org/service/pubmed/getArticleByPMId_sd/>.
+@base           <https://sparql-micro-services.org/service/pubmed/getArticleByPMId_sd/>.
 
 # This file is loaded as graph <ServiceDescription>
 <>
@@ -23,7 +24,7 @@
                     frmt:RDF_XML, frmt:Turtle, frmt:JSON-LD, frmt:Trig;
     schema:name "Retrieve metadata from PubMed about an article given its Pubmed ID";
     schema:description '''
-        <p>This service retrieves an article from <a href="https://pubmed.ncbi.nlm.nih.gov/" target="_new">PubMed</a> using <a href="https://www.ncbi.nlm.nih.gov/pmc/tools/developers/" target="_new">Pubmed Central APIs</a>, and generates an RDF representation thereof. 
+        <p>This service retrieves an article from <a href="https://www.ncbi.nlm.nih.gov/pmc/" target="_new">PubMed Central</a> using <a href="https://www.ncbi.nlm.nih.gov/pmc/tools/developers/" target="_new">PubMed Central APIs</a>, and generates an RDF representation thereof. 
         The article is identified by its PubMed identifier (PMID) provided using property <code>bibo:pmid</code>.</p>
         <p>The graph produced relies mainly on the <a href="https://github.com/structureddynamics/Bibliographic-Ontology-BIBO" target="_new">Bibiographic Ontology</a> (BIBO) and <a href="https://sparontologies.github.io/fabio/current/fabio.html" target="_new">FRBR-aligned Bibliographic Ontology</a> (FaBiO). 
         An article IRI is preferably based on its DOI, if any, prefixed with <code>http://doi.org/</code>.
@@ -59,7 +60,7 @@ SELECT * WHERE {
     sms:addProvenance "false"^^xsd:boolean;
 
     dct:source [
-        a schema:WebAPI; schema:name "Pubmed Central API";
+        a schema:WebAPI; schema:name "PubMed Central API";
         schema:url <https://www.ncbi.nlm.nih.gov/pmc/tools/developers/>;
         schema:potentialAction <APIService>;
     ].
@@ -72,7 +73,7 @@ SELECT * WHERE {
     hydra:template "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id={pmId}&retmode=json&tool=sparql-micro-service&email=franck.michel@inria.fr";
     hydra:mapping [
         hydra:variable "pmId";
-        schema:description "Pubmed identifier.";
+        schema:description "PubMed identifier.";
         hydra:required "true"^^xsd:boolean;
         hydra:property bibo:pmid;
         skos:example "22368089";
