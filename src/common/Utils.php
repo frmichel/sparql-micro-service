@@ -130,7 +130,7 @@ class Utils
      *            the URL of the JSON document to tranform
      * @param null|string|object|array $jsonldProfile
      *            the JSON-LD profile (context)
-     * @return string NQuadsd serialized as a string
+     * @return string NQuads serialized as a string
      * @throws Exception in case an error occurs
      */
     static public function translateJsonToNQuads($jsonUrl, $jsonldProfile)

@@ -41,36 +41,6 @@ curl --header "Accept: application/sparql-results+json" \
   "http://localhost/service/musicbrainz/getSongByName?query=${SELECT}&name=Love"
 ```
 
-#### Test URI dereferencing
-
-The Docker image is also configured to support URI dereferencing using the servide `flickr/getPhotoById`:
-
-Enter this URL in your browser: http://localhost/ld/flickr/photo/31173091246 or the following command in a bash:
-
-```bash
-curl --header "Accept: text/turtle" http://localhost/ld/flickr/photo/31173091246
-```
-
-This should return an RDF description of the photographic resource similar to:
-
-```turtle
-@prefix schema: <http://schema.org/> .
-@prefix cos: <http://www.inria.fr/acacia/corese#> .
-@prefix dce: <http://purl.org/dc/elements/1.1/> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
-@prefix ma: <http://www.w3.org/ns/ma-ont#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-
-<http://localhost/ld/flickr/photo/31173091516>
-    rdf:type            schema:Photograph ;
-    dce:title           "Delphinus delphis 1 (13-7-16 San Diego)" ;
-    schema:author       <https://flickr.com/photos/10770266@N04> ;
-    schema:subjectOf    <https://www.flickr.com/photos/10770266@N04/31173091516/> ;
-    schema:thumbnailUrl <https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_q.jpg> ;
-    schema:image        <https://farm6.staticflickr.com/5567/31173091516_f1c09fa5d5_z.jpg> .
-```
-
 
 #### Possible conflict on port 80
 
@@ -92,6 +62,7 @@ Just remember to always give all files full read access rights so that the Docke
 ```bash
 chmod -R 755 services/*
 ```
+
 
 ## Accessing HTML desciption, services description and shapes graph
 

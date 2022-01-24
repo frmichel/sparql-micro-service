@@ -10,3 +10,4 @@ composer.lock
 .metadata
 .recommenders
 composer.phar
+.ipynb*

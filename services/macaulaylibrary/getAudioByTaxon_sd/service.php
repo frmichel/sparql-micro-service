@@ -40,7 +40,7 @@ function getTaxonCode($taxonName)
 {
     global $logger;
 
-    $apiQuery = 'https://search.macaulaylibrary.org/api/v1/find/taxon?q=' . urlencode($taxonName);
+    $apiQuery = 'https://taxonomy.api.macaulaylibrary.org/v1/taxonomy?key=PUB4334626458&q=' . urlencode($taxonName);
     $logger->notice("Retrieving taxon code for name '" . $taxonName . "'. Web API request: " . $apiQuery);
 
     $result = file_get_contents($apiQuery);

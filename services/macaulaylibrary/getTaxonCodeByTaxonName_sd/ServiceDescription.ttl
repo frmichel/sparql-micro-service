@@ -82,7 +82,7 @@
     schema:documentation "The taxon code name must be provided by property schema:identifier in the SPARQL graph pattern.";
 
     a hydra:IriTemplate;
-    hydra:template "https://search.macaulaylibrary.org/api/v1/find/taxon?q={name}";
+    hydra:template "https://taxonomy.api.macaulaylibrary.org/v1/taxonomy?key=PUB4334626458&q={name}";
     hydra:mapping [
         hydra:variable "name";
         schema:description "The taxon scientific name without authorship nor date information";
