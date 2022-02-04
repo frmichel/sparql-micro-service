@@ -41,14 +41,17 @@ curl --header "Accept: application/sparql-results+json" \
   "http://localhost/service/musicbrainz/getSongByName?query=${SELECT}&name=Love"
 ```
 
+This `docker-compose.yml` will mount the SPARQL micro-service and Corese-KGRAM log directories to the Docker host in directory `logs`.
 
-#### Possible conflict on port 80
+
+### Common errors
+
+#### Conflict on port 80
 
 This deployment uses ports 80 and 8081 of the Docker host. If they are in conflict with other aplications, change the port mapping in `docker-compose.yml`.
 
-#### Check application logs
+#### logs directory not writable
 
-This `docker-compose.yml` will mount the SPARQL micro-service and Corese-KGRAM log directories to the Docker host in directory `logs`.
 You may have to set rights 777 on this directory for the container to be able to write log files (`chmod 777 logs`).
 
 
