@@ -1,0 +1,42 @@
+# Profile for running Corese.
+
+# Content available in the default dataset at /sparql
+st:user a st:Server;
+    st:shareContent st:smsdesc.
+
+# SPARQL-to-SPIN rewriter. Used to transform the SPARQL query to SPIN
+# in order to extract the service input arguments from the graph pattern
+st:sparql-to-spin-server a st:Server ;
+    st:workflow st:sparql-to-spin-server ;
+    st:service "sparql-to-spin" ;
+    st:shareContent st:smsdesc;
+    sw:body (
+        [ a sw:Dataset ; sw:mode sw:new ]
+        [ a sw:Load    ; sw:mode sw:spin ]
+        [ a sw:Transformation ; sw:uri st:turtle ]
+    ).
+
+
+# Generation of an HTML document from the micro-serice Service Description graph.
+# Example: http://localhost:8080/service/sms-html-description?param=http://example.org/sparql-ms/flickr/getPhotosByTaxon_sd/
+# 'param' is the URI of a SPARQL micro-serice
+st:sms-html-description a st:Server ;
+    st:service "sms-html-description" ;
+    st:shareContent st:smsdesc;
+    st:workflow [
+        a sw:Workflow ;
+        sw:body ([ a sw:Transformation ; sw:uri </sparql-micro-service/src/sparqlms/resources/sms-html-description/sttl/> ])
+    ].
+
+
+# Generation of an HTML index of the micro-serices
+# Example: http://localhost:8080/service/sms-html-index?param=http://example.org/sparql-ms/
+# 'param' is the root URI of the services to show in the index page
+st:sms-html-index a st:Server ;
+    st:service "sms-html-index" ;
+    st:shareContent st:smsdesc;
+    st:workflow [
+        a sw:Workflow ;
+        sw:body ([ a sw:Transformation ; sw:uri </sparql-micro-service/src/sparqlms/resources/sms-html-index/sttl/> ])
+    ].
+

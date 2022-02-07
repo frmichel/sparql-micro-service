@@ -1,7 +1,7 @@
 version: '3'
 services:
   corese:
-    image: frmichel/corese
+    image: frmichel/corese4sms
     networks:
       - sms-net
     volumes:

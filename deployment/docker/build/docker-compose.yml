@@ -1,8 +1,11 @@
 version: '3'
 services:
   corese:
-    image: frmichel/corese
-    build: ./corese
+    image: frmichel/corese4sms
+    build:
+      context: ./corese4sms
+      args:
+        - CORESEJAR=corese-server-4.3.0.jar
     networks:
       - sms-net
     volumes:
@@ -25,5 +28,3 @@ services:
 networks:
   sms-net:
     driver: bridge
-
-
