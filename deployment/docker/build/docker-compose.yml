@@ -1,23 +1,29 @@
-version: '3'
+version: '3.2'
 services:
   corese:
     image: frmichel/corese4sms
     build:
       context: ./corese4sms
       args:
-        - CORESEJAR=corese-server-4.3.0.jar
+        - CORESEJAR=corese-server-4.3.1.jar
+        - SMS_VERSION=0.5.2
     networks:
       - sms-net
     volumes:
       - "./logs:/usr/local/corese/log"
       - "./services:/services"
+    ports:
+      - "8081:8081"
   mongo:
-    image: mongo:3.6-jessie
+    image: mongo:3.7
     networks:
       - sms-net
   sparql-micro-service:
     image: frmichel/sparql-micro-service
-    build: ./sparql-micro-service
+    build: 
+      context: ./sparql-micro-service
+      args:
+        - SMS_VERSION=0.5.2
     networks:
       - sms-net
     ports:
@@ -25,6 +31,9 @@ services:
     volumes:
       - "./logs:/var/www/html/sparql-ms/logs"
       - "./services:/services"
+      - type: bind
+        source: ./config/sparql-micro-service.ini
+        target: /var/www/html/sparql-ms/src/sparqlms/config.ini
 networks:
   sms-net:
     driver: bridge
