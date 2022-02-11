@@ -1,5 +1,14 @@
 # SPARQL Micro-Service Changelog
 
+## [0.5.3] 2022-02-11
+
+### Changed
+- Upgrade to Corese 4.3.1
+- Update Docker build procedure 
+- Publish Docker images frmichel/corese4sms:v4.3.1 and frmichel/sparql-micro-service:v0.5.3
+- Update services for the Macaulay library (new API contract)
+
+
 ## [0.5.2] 2021-02-19
 
 ### Changed

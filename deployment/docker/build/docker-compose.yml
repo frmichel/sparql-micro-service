@@ -6,14 +6,12 @@ services:
       context: ./corese4sms
       args:
         - CORESEJAR=corese-server-4.3.1.jar
-        - SMS_VERSION=0.5.2
+        - SMS_VERSION=0.5.3
     networks:
       - sms-net
     volumes:
       - "./logs:/usr/local/corese/log"
       - "./services:/services"
-    ports:
-      - "8081:8081"
   mongo:
     image: mongo:3.7
     networks:
@@ -23,7 +21,7 @@ services:
     build: 
       context: ./sparql-micro-service
       args:
-        - SMS_VERSION=0.5.2
+        - SMS_VERSION=0.5.3
     networks:
       - sms-net
     ports:

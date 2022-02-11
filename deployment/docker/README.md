@@ -1,10 +1,10 @@
-# Prototype and deploy your SPARQL micro-services with Docker
+# Deploy your SPARQL micro-services with Docker
 
 You can prototype and deploy SPARQL micro-services using the Docker images we have built and published on Docker hub.
 
   - [frmichel/sparql-micro-service](https://hub.docker.com/r/frmichel/sparql-micro-service/) contains the core code to run SPARQL-micro-services, running on an Apache Web server with PHP. Apache listens on port 80.
 
-  - [frmichel/corese](https://hub.docker.com/r/frmichel/corese/) contains the [Corese-KGRAM](http://wimmics.inria.fr/corese) RDF store and SPARQL endpoint. It is used to execute SPARQL queries and generate the HTML documentation of the services described with a [service descriptions](../../doc/02-config.md#configuration-with-a-sparql-service-description-file) file (not necessary for services configured [with a config.ini file](../../doc/02-config.md#configuration-with-file-configini)).
+  - [frmichel/corese4sms](https://hub.docker.com/r/frmichel/corese4sms/) contains the [Corese-KGRAM](http://wimmics.inria.fr/corese) RDF store and SPARQL endpoint. It is used to execute SPARQL queries and generate the HTML documentation of the services described with a [service descriptions](../../doc/02-config.md#configuration-with-a-sparql-service-description-file) file (not necessary for services configured [with a config.ini file](../../doc/02-config.md#configuration-with-file-configini)).
 
 To run SPARQL micro-services, simply place them in the `services` directory in the folder where you run docker-compose.
 
@@ -43,7 +43,7 @@ curl --header "Accept: application/sparql-results+json" \
   "http://localhost/service/musicbrainz/getSongByName?query=${SELECT}&name=Love"
 ```
 
-The Docker image is also configured to support URI dereferencing using the servide `flickr/getPhotoById`:
+The `frmichel/sparql-micro-service` Docker image is also configured to support [URI dereferencing](../../doc/04-install.md#rewriting-rules-for-uri-dereferencing) using the service `flickr/getPhotoById`:
 
 Enter this URL in your browser: http://localhost/ld/flickr/photo/31173091246 or the following command in a bash:
 
@@ -60,18 +60,21 @@ Corese-KGRAM log is named ```kgram-server.log```, while SPARQL micro-service log
 
 ### Changing Configuration
 
-The main SPARQL micro-service configuration file is editable at ```config/sparql-micro-service.ini```. In particular you can change the log level.
+The main SPARQL micro-service configuration file is editable at ```config/sparql-micro-service.ini```. In particular you can use it to change the log level.
 
 For changes to be taken into account, restart the SPARQL-micro-service Docker container.
+```bash
+docker-compose restart sparql-micro-service
+```
 
 
-### Common issues
+## Common issues
 
-#### Conflict on port 80
+### Conflict on port 80
 
 This deployment uses ports 80 of the Docker host. If it is in conflict with another application, change the port mapping in `docker-compose.yml`.
 
-#### Logs directory not writable
+### Logs directory not writable
 
 The containers need to write in directory ```logs```. This will fail if you do not set rights 777 (`chmod 777 logs`), and the SPARQL-micro-service console shall show an error like this:
 
@@ -83,15 +86,15 @@ The containers need to write in directory ```logs```. This will fail if you do n
 You can write and deploy you own SPARQL micro-services by simply dropping them in the `services` directory, in the folder where you have run docker-compose.
 Just mimmic what already exists in the example services.
 
-Just remember to always give all files full read access rights so that the Docker container can read them:
+Just remember to always give all diretories and files full read access rights so that the Docker container can read them:
 
 ```bash
 chmod -R 755 services/*
 ```
 
-If your services are configured with a config.ini file, this is all you have to do.
+If your services are configured with a [config.ini file](../../doc/02-config.md#configuration-with-file-configini), this is all you have to do.
 
-Conversely, if your services are configured with a [service description](../../doc/02-config.md#configuration-with-a-sparql-service-description-file) file, then you need to restart the Corese-KGRAM container as these files are loaded when Corese starts up.
+Conversely, if your services are configured with a [service description](../../doc/02-config.md#configuration-with-a-sparql-service-description-file) file (and optional shape file), then you need to restart the Corese-KGRAM container as these files are loaded when Corese starts up.
 
 ```bash
 docker-compose restart corese
@@ -100,11 +103,11 @@ docker-compose restart corese
 ## Accessing HTML desciption, services description and shapes graph
 
 The Docker images also support micro-services configured with a [service description](../../doc/02-config.md#configuration-with-a-sparql-service-description-file) file.
-In the example services, this is the case of `flickr/getPhotosByTag_sd`. You can then test the HTML documentation generation by entering the following URL in your web browser: http://localhost/service/flickr/getPhotosByTag_sd/
 
+Accessing http://localhost/service/ will display the auto-generated services index page.
 Note that the first time it is accessed, the page will take a few seconds to load as Corese performs some lazy initialization.
 
-Also, accessing http://localhost/service/ will show the auto-generated services index page.
+In the example services, this will show `flickr/getPhotosByTag_sd`. You can test the HTML documentation generation by entering the following URL in your web browser: http://localhost/service/flickr/getPhotosByTag_sd/
 
 You can also look up the URIs of the service description and shapes graphs directly, using your web browser or curl e.g.:
 ```

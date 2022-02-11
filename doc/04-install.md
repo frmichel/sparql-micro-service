@@ -71,7 +71,7 @@ services/                     # directory where the services are deployed
         ...
         
 deployment/
-    docker/                   # this folder gives the necessary files to build Corese and your SPARQL micro-serivces as Docker containers
+    docker/                   # this folder gives the necessary files to build Corese and your SPARQL micro-services as Docker containers
     apache/                   # Apache rewriting rules for HTTP access
     corese/                   # Corese configuration and running files
     deploy.sh                 # customization of services' configuration files and SPARQL queries
@@ -121,7 +121,7 @@ use_cache = false
 ```
 
 
-## Customize the SPARQL micro-serivces' configuration
+## Customize the SPARQL micro-services' configuration
 
 The services provided in folder [/services](../services) are configured as if they were deployed at http://example.org/service, and the dereferenceable URIs they generate are in the form http://example.org/ld. These must be customized before you can use the services, to match the URL at which they are deployed.
 
@@ -241,7 +241,7 @@ Complete examples are given in the first part of the [/deployment/apache/example
 
 # Start the services
 
-If some SPARQL micro-serivces are [configured with a Service Description file](02-config.md#configuration-with-a-sparql-service-description-file), then files ServiceDescription.ttl, ServiceDescriptionPrivate.ttl and ShapesGraph.ttl of each SPARQL micro-service must be loaded as named graphs when Corese-KGRAM starts.
+If some SPARQL micro-services are [configured with a Service Description file](02-config.md#configuration-with-a-sparql-service-description-file), then files ServiceDescription.ttl, ServiceDescriptionPrivate.ttl and ShapesGraph.ttl of each SPARQL micro-service must be loaded as named graphs when Corese-KGRAM starts.
 Script [corese-server.sh](../deployment/corese/corese-server.sh) prepares a list of those files as well as their named graphs URIs, then it starts up Corese-KGRAM that immediately loads the files.
 
 
