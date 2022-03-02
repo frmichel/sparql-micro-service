@@ -1,0 +1,42 @@
+{
+    "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+    "@type": "SoftwareSourceCode",
+    "license": "https://spdx.org/licenses/Apache-2.0",
+    "codeRepository": "https://github.com/frmichel/sparql-micro-service.git",
+    "dateCreated": "2022-02-11",
+    "datePublished": "2018-06-19",
+    "dateModified": "2022-02-11",
+    "issueTracker": "https://github.com/frmichel/sparql-micro-service/issues",
+    "name": "SPARQL micro-service",
+    "version": "0.5.3",
+    "identifier": "10.5281/zenodo.5898725",
+    "description": "The SPARQL Micro-Service architecture [is meant to allow the combination of Linked Data with data from Web APIs. It enables querying non-RDF Web APIs with SPARQL, and allows on-the-fly assigning dereferenceable URIs to Web API resources that do not have a URI in the first place. This project is a PHP implementation for JSON-based Web APIs. It comes with multiple configuration options to fit most specific APIs (e.g. add specific HTTP headers, configure a cache database) and can generate provenance information added to the graph being produced at the time a SPARQL micro-service is invoked.",
+    "developmentStatus": "active",
+    "referencePublication": "https://hal.archives-ouvertes.fr/hal-02060966",
+    "keywords": [
+        "web API",
+        "SPARQL",
+        "RDF",
+        "mapping",
+        "mediator"
+    ],
+    "programmingLanguage": [
+        "PHP"
+    ],
+    "softwareRequirements": [
+        "https://github.com/frmichel/sparql-micro-service/blob/master/composer.json"
+    ],
+    "author": [
+        {
+            "@type": "Person",
+            "@id": "https://orcid.org/0000-0001-9064-0463",
+            "givenName": "Franck",
+            "familyName": "Michel",
+            "email": "franck.michel@inria.fr",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "University Côte d'Azur, CNRS, Inria"
+            }
+        }
+    ]
+}
