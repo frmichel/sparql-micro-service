@@ -20,7 +20,7 @@ chmod -R 755 config
 chmod -R 777 logs
 ```
 
-Then, download file [docker-compose.yml](docker-compose.yml) and run:
+Then, download file [docker-compose.yml](docker-compose.yml) to the directory where you unzipped environment.zip (together with directories services, config and logs), and run:
 
 ```
 docker-compose up -d
