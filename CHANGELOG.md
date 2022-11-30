@@ -1,5 +1,12 @@
 # SPARQL Micro-Service Changelog
 
+## [0.5.4] 2022-11-30
+
+### Changed
+- Fix issue #20: charset was not supported in content type HTTP header
+- Minor changes in the Pubmed services
+
+
 ## [0.5.3] 2022-02-11
 
 ### Changed
