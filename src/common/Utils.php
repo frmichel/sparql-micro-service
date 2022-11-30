@@ -451,19 +451,17 @@ class Utils
                     else
                         self::httpBadRequest("SPARQL query with HTTP POST method but no 'Content-Type' header.");
 
-                    switch ($contentType) {
-                        case 'application/x-www-form-urlencoded':
-                            if (array_key_exists('query', $_POST))
-                                $sparqlQuery = $_POST['query'];
+                    if (str_contains($contentType, 'application/x-www-form-urlencoded')) {
+                        if (array_key_exists('query', $_POST))
+                            $sparqlQuery = $_POST['query'];
                             else
                                 self::httpBadRequest("SPARQL query with HTTP POST method and Content-Type' application/x-www-form-urlencoded' but no 'query' argument.");
-                            break;
-                        case 'application/sparql-query':
-                            $sparqlQuery = file_get_contents('php://input');
-                            break;
-                        default:
-                            self::httpBadRequest("SPARQL query with HTTP POST method but unexpected 'Content-Type': " . $contentType);
-                    }
+                                break;
+                    } else if (str_contains($contentType, 'application/sparql-query')) {
+                        $sparqlQuery = file_get_contents('php://input');
+                        break;
+                    } else
+                        self::httpBadRequest("SPARQL query with HTTP POST method but unexpected 'Content-Type': " . $contentType);
                     break;
                 }
             default:
