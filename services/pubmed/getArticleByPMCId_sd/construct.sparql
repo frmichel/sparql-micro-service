@@ -57,8 +57,11 @@ WHERE {
     optional { ?article api:printpubdate    ?printdate. }
     bind(coalesce(?pubdate, ?sortDate, ?printdate) as ?issueDate)
 
+    bind(replace(?doi, "<", "%3C") as ?doi_esc)
+    bind(replace(?doi_esc, ">", "%3E") as ?doi_esc2)
+
     bind(coalesce(
-        iri(concat("http://doi.org/", ?doi)), 
+        iri(concat("http://doi.org/", ?doi_esc2)), 
         iri(concat("https://pubmed.ncbi.nlm.nih.gov/", ?pmId)
     )) as ?articleUri)
 

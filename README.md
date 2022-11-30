@@ -37,7 +37,7 @@ It first retrieves the URI of the common dolphin species (Delphinus delphis) fro
 
 The SPARQL endpoint as well as the two SPARQL micro-services are invoked within dedicated SERVICE clauses.
 
-The example also illustrates the **two methods for passing arguments to a SPARQL micro-service**: either as RDF terms of regular  triple patterns (predicate ```dwc:scientificName``` for service ```macaulaylibrary/getAudioByTaxon_sd```), or on the endpoint URL (arguments ```group_id``` and ```tags``` for service ```flickr/getPhotosByGroupByTag below```), or
+The example also illustrates the **two methods for passing arguments to a SPARQL micro-service**: either as RDF terms of regular  triple patterns (predicate ```dwc:scientificName``` for service ```macaulaylibrary/getAudioByTaxon_sd```), or on the endpoint URL (arguments ```group_id``` and ```tags``` for service ```flickr/getPhotosByGroupByTag```):
 
 ```sparql
 prefix dwc:    <http://rs.tdwg.org/dwc/terms/>
