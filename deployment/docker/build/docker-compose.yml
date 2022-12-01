@@ -6,7 +6,7 @@ services:
       context: ./corese4sms
       args:
         - CORESEJAR=corese-server-4.3.1.jar
-        - SMS_VERSION=0.5.3
+        - SMS_VERSION=0.5.4
     networks:
       - sms-net
     volumes:
@@ -21,7 +21,7 @@ services:
     build: 
       context: ./sparql-micro-service
       args:
-        - SMS_VERSION=0.5.3
+        - SMS_VERSION=0.5.4
     networks:
       - sms-net
     ports:

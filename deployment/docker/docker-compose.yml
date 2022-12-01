@@ -12,7 +12,7 @@ services:
     networks:
       - sms-net
   sparql-micro-service:
-    image: frmichel/sparql-micro-service:v0.5.3
+    image: frmichel/sparql-micro-service:v0.5.4
     networks:
       - sms-net
     ports:
