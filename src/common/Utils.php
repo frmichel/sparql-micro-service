@@ -451,13 +451,13 @@ class Utils
                     else
                         self::httpBadRequest("SPARQL query with HTTP POST method but no 'Content-Type' header.");
 
-                    if (str_contains($contentType, 'application/x-www-form-urlencoded')) {
+                    if (strpos($contentType, 'application/x-www-form-urlencoded') !== false) {
                         if (array_key_exists('query', $_POST))
                             $sparqlQuery = $_POST['query'];
                             else
                                 self::httpBadRequest("SPARQL query with HTTP POST method and Content-Type' application/x-www-form-urlencoded' but no 'query' argument.");
                                 break;
-                    } else if (str_contains($contentType, 'application/sparql-query')) {
+                    } else if (strpos($contentType, 'application/sparql-query')  !== false) {
                         $sparqlQuery = file_get_contents('php://input');
                         break;
                     } else

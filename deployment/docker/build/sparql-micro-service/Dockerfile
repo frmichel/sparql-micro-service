@@ -53,3 +53,6 @@ RUN mkdir -p $LOGS && chmod 777 $LOGS
 RUN mkdir -p /var/www/html/sparql-ms
 RUN cp -r $INSTALL/src /var/www/html/sparql-ms/src && cp -r $INSTALL/vendor /var/www/html/sparql-ms/vendor
 RUN mkdir -p /services && chmod 777 /services
+
+# Fix a pb with some MacOS platforms
+RUN echo 'Mutex posixsem' >> /etc/apache2/apache2.conf
