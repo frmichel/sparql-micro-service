@@ -1,0 +1,25 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: SPARQL Micro-Services
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Franck
+    family-names: Michel
+    email: franck.michel@inria.fr
+    affiliation: 'Univ. Côte d''Azur, CNRS, Inria'
+    orcid: 'https://orcid.org/0000-0001-9064-0463'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.7447608
+    description: Zenodo Download
+  - type: swh
+    value: 'swh:1:snp:61a34b77685c19d7208e66a7ab8b6993d0dda195'
+repository-code: 'https://github.com/frmichel/sparql-micro-service'
+license: Apache-2.0
+version: 0.5.4
+date-released: '2202-12-16'
