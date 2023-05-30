@@ -15,8 +15,10 @@ authors:
     orcid: 'https://orcid.org/0000-0001-9064-0463'
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.7756248
+    value: 10.5281/zenodo.7985938
     description: Zenodo Download
+  - type: swh
+    value: 'swh:1:dir:57e30a86e0bc0cce4e17b74ecde0940321654c29'
 repository-code: 'https://github.com/frmichel/sparql-micro-service'
 license: Apache-2.0
 version: 0.5.5
