@@ -8,7 +8,6 @@
     "dateModified": "2023-05-21",
     "issueTracker": "https://github.com/frmichel/sparql-micro-service/issues",
     "name": "SPARQL micro-service",
-    "identifier": "swh:1:dir:57e30a86e0bc0cce4e17b74ecde0940321654c29"
     "version": "0.5.5",
     "description": "The SPARQL Micro-Service architecture [is meant to allow the combination of Linked Data with data from Web APIs. It enables querying non-RDF Web APIs with SPARQL, and allows on-the-fly assigning dereferenceable URIs to Web API resources that do not have a URI in the first place. This project is a PHP implementation for JSON-based Web APIs. It comes with multiple configuration options to fit most specific APIs (e.g. add specific HTTP headers, configure a cache database) and can generate provenance information added to the graph being produced at the time a SPARQL micro-service is invoked.",
     "developmentStatus": "active",
