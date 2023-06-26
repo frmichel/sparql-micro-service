@@ -6,6 +6,13 @@ Each SPARQL micro-service is a **lightweight, dedicated SPARQL endpoint** that t
 
 This project is a PHP implementation for JSON-based Web APIs. It comes with multiple configuration options to fit most specific APIs (e.g. add specific HTTP headers, configure a cache database) and can generate **provenance information** added to the graph being produced at the time a SPARQL micro-service is invoked.
 
+
+## Quick start guide
+
+These [slides](doc/quick-start-guide.pdf) describe the main concepts behind SPARQL micro-services, and then guide you through a guide to **quickly write and setup your first SPARQL micro-service**.
+
+
+
 ## Examples and Demo
 
 You can check out some services we published at [https://sparql-micro-services.org/](https://sparql-micro-services.org/). 
