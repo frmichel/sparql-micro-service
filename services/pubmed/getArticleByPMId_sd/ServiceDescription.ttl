@@ -22,10 +22,10 @@
     sd:feature sd:BasicFederatedQuery, sd:EmptyGraphs;
     sd:resultFormat frmt:SPARQL_Results_XML, frmt:SPARQL_Results_JSON, frmt:SPARQL_Results_CSV, frmt:SPARQL_Results_TSV,
                     frmt:RDF_XML, frmt:Turtle, frmt:JSON-LD, frmt:Trig;
-    schema:name "Retrieve metadata from PubMed about an article given its Pubmed ID";
+    schema:name "Retrieve artibles from PubMed using their PubMed ID";
     schema:description '''
-        <p>This service retrieves an article from <a href="https://www.ncbi.nlm.nih.gov/pmc/" target="_new">PubMed Central</a> using <a href="https://www.ncbi.nlm.nih.gov/pmc/tools/developers/" target="_new">PubMed Central APIs</a>, and generates an RDF representation thereof. 
-        The article is identified by its PubMed identifier (PMID) provided using property <code>bibo:pmid</code>.</p>
+        <p>This service retrieves articles from <a href="https://www.ncbi.nlm.nih.gov/" target="_new">PubMed</a> using <a href="https://www.ncbi.nlm.nih.gov/books/NBK25501/" target="_new">NCBI Entrez APIs</a>, and generates an RDF representation thereof. 
+        Article are identified by their PubMed identifier (PMID) provided using property <code>bibo:pmid</code>.</p>
         <p>The graph produced relies mainly on the <a href="https://github.com/structureddynamics/Bibliographic-Ontology-BIBO" target="_new">Bibiographic Ontology</a> (BIBO) and <a href="https://sparontologies.github.io/fabio/current/fabio.html" target="_new">FRBR-aligned Bibliographic Ontology</a> (FaBiO). 
         An article IRI is preferably based on its DOI, if any, prefixed with <code>http://doi.org/</code>.
         If no DOI is available, the IRI is PubMed's web page URL prefixed with <code>https://pubmed.ncbi.nlm.nih.gov/</code>.
@@ -49,10 +49,13 @@
         <https://ror.org/02feahw73>, <https://team.inria.fr/wimmics/>;
 
     sms:exampleQuery '''prefix bibo:   <http://purl.org/ontology/bibo/>
+prefix bibo:   <http://purl.org/ontology/bibo/>
 SELECT * WHERE {
-    ?article bibo:pmid "27607596"; ?p ?o.
+    ?a1 bibo:pmid "27607596".
+    ?a2 bibo:pmid "27607597".
+    ?s ?p ?o.
 }''';
-
+    
     # 432000s = 5 days, 2592000s = 30 days
     sms:cacheExpiresAfter "P2592000S"^^xsd:duration;
 
@@ -70,7 +73,7 @@ SELECT * WHERE {
 <APIService>
     a schema:SearchAction;
     a hydra:IriTemplate;
-    hydra:template "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id={pmId}&retmode=json&tool=sparql-micro-service&email=franck.michel@inria.fr";
+    hydra:template "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id={pmId}&retmode=json";
     hydra:mapping [
         hydra:variable "pmId";
         schema:description "PubMed identifier.";

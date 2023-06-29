@@ -14,11 +14,10 @@ namespace frmichel\sparqlms;
  */
 global $apiQuery;
 global $customArgs;
-global $logger;
 
 // Read the service custom arguments and remove the "PMC" header
 $pmcId = $customArgs['pmcId'];
-$pmcIdNumeric = substr($pmcId, 3);
+$pmcIdNumeric = str_replace("PMC", "", $pmcId);
 
 // Format the Web API query URL
 $apiQuery = str_replace('{pmcId}', urlencode($pmcIdNumeric), $apiQuery);

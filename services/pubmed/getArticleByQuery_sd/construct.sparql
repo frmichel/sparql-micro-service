@@ -36,6 +36,8 @@ CONSTRUCT {
     .
     
     ?author rdf:first ?authorName; rdf:rest ?rest.
+    
+    api:search schema:query {terms}.
 }
 WHERE {
     ?article

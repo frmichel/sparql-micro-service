@@ -13,14 +13,14 @@ CONSTRUCT {
     ?articleUri
         a schema:ScholarlyArticle, bibo:AcademicArticle, fabio:ResearchPaper ;
         dct:title                   ?title;
-        dct:creator                 ?authorName;
-        schema:authorList           ?firstAuthor;
+        dct:creator                 ?indivAuthorName;
+        schema:authorList           ?authorHead;
         dct:source                  ?journal;
         fabio:journal               ?journal;
         dct:issued                  ?issueDate;
         
-        bibo:issue                  ?issue;
         bibo:volume                 ?volume;
+        bibo:issue                  ?issue;
         bibo:numPages               ?pages;
 
         bibo:doi                    ?doi;
@@ -37,8 +37,9 @@ WHERE {
     ?article
         api:title ?title.
     
-    optional { ?article api:authors ?firstAuthor. }
-    optional { ?author rdf:first [ api:name ?authorName ]; rdf:rest ?rest. }
+    ?article api:authors ?authorHead.
+    ?authorHead rdf:rest*/rdf:first [ api:name ?indivAuthorName ].
+    ?author rdf:first [ api:name ?authorName ]; rdf:rest ?rest.
 
     optional { ?article api:articleids [ api:idtype "doi";   api:value ?doi ].  filter (?doi != "") }
     optional { ?article api:articleids [ api:idtype "pmid";  api:value ?pmId ]. filter (?pmId != "") }

@@ -1,6 +1,6 @@
 # Service pubmed/getArticleByPMId
 
-This service retrieves an aticle from [PubMed Central](https://www.ncbi.nlm.nih.gov/pmc/) using [PMC Entrez APIs](https://www.ncbi.nlm.nih.gov/pmc/tools/developers/), and generates an RDF representation thereof. 
+This service retrieves an aticle from [PubMed](https://www.ncbi.nlm.nih.gov/pmc/) using [Entrez APIs](https://www.ncbi.nlm.nih.gov/pmc/tools/developers/), and generates an RDF representation thereof. 
 The article is identified by its PubMed identifier (PMID) provided using property `bibo:pmid`.
 
 The graph produced relies mainly on the [Bibiographic Ontology](https://github.com/structureddynamics/Bibliographic-Ontology-BIBO) (BIBO) and [FRBR-aligned Bibliographic Ontology](https://sparontologies.github.io/fabio/current/fabio.html) (FaBiO).
@@ -55,3 +55,15 @@ SELECT * WHERE {
     schema:url                  <https://pubmed.ncbi.nlm.nih.gov/27607596>;
     .
 ```
+
+Note that multiple ids can be queried at the same time using the following example query below:
+```
+prefix bibo:   <http://purl.org/ontology/bibo/>
+construct { ?article ?p ?o.}
+WHERE {
+    ?article ?p ?o.
+    optional { ?article bibo:pmid "27607596". }
+    optional { ?article bibo:pmid "19008416". }
+}```
+
+They will entail a single call to the API.

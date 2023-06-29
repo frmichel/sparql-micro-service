@@ -1,0 +1,41 @@
+"query": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&term=%22biomarkers%22[All%20Fields%22]%20OR%20%22biomarkers%22[Mesh%20Terms]&tool=sparql-micro-service&email=franck.michel@inria.fr"
+
+{
+  "header": {
+    "type": "esearch",
+    "version": "0.3"
+  },
+  "esearchresult": {
+    "count": "1046994",
+    "retmax": "20",
+    "retstart": "0",
+    "idlist": [
+      "37377073",
+      "37377003",
+      "37376974",
+      "37376918",
+      "37376802",
+      "37376787",
+      "37376742",
+      "37376716",
+      "37376673",
+      "37376663",
+      "37376607",
+      "37376576",
+      "37376451",
+      "37376409",
+      "37376162",
+      "37376083",
+      "37376078",
+      "37376074",
+      "37375942",
+      "37375854"
+    ],
+    "translationset": [],
+    "querytranslation": "\"biomarkers\"[All Fields] OR \"biomarkers\"[MeSH Terms]",
+    "errorlist": {
+      "phrasesnotfound": [],
+      "fieldsnotfound": []
+    }
+  }
+}

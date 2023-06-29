@@ -12,7 +12,7 @@
 @prefix bibo:   <http://purl.org/ontology/bibo/>.
 @prefix fabio:  <http://purl.org/spar/fabio/>.
 
-@base           <https://sparql-micro-services.org/service/pubmed/getArticleByPMCId_sd/>.
+@base           <https://sparql-micro-services.org/service/pubmed/getArticleByQuery_sd/>.
 
 # This file is loaded as graph <ServiceDescription>
 <>
@@ -22,15 +22,16 @@
     sd:feature sd:BasicFederatedQuery, sd:EmptyGraphs;
     sd:resultFormat frmt:SPARQL_Results_XML, frmt:SPARQL_Results_JSON, frmt:SPARQL_Results_CSV, frmt:SPARQL_Results_TSV,
                     frmt:RDF_XML, frmt:Turtle, frmt:JSON-LD, frmt:Trig;
-    schema:name "Retrieve articles from PubMed Central using their PMCID";
+    schema:name "Retrieve articles from PubMed given a Pubmed query";
     schema:description '''
-        <p>This service retrieves articles from <a href="https://www.ncbi.nlm.nih.gov/pmc/" target="_new">PubMed Central</a> using <a href="https://www.ncbi.nlm.nih.gov/books/NBK25501/" target="_new">NCBI Entrez APIs</a>, and generates an RDF representation thereof. 
-        The articles are identified by their Pubmed Central ID (PMCID) starting with "PMC", provided using property <code>fabio:hasPubMedCentralId</code>.</p>
-        <p>The graph produced relies mainly on the <a href="https://github.com/structureddynamics/Bibliographic-Ontology-BIBO" target="_new">Bibiographic Ontology</a> (BIBO) and <a href="https://sparontologies.github.io/fabio/current/fabio.html" target="_new">FRBR-aligned Bibliographic Ontology</a> (FaBiO).
+        <p>This service retrieves articles from <a href="https://www.ncbi.nlm.nih.gov/" target="_new">PubMed</a> using <a href="https://www.ncbi.nlm.nih.gov/books/NBK25501/" target="_new">NCBI Entrez APIs</a>, and generates an RDF representation thereof. 
+        The query string complies with the syntax of the <a href="https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.ESearch" target="_new">Esearch</a> service and can consist of a sheer list of keywords or a more complex query with types and logical connectors. See the API documentation. 
+        The Pubmed query string is provided using property <code>schema:query</code>.</p>
+        <p>The graph produced contains a maximum of 20 articles. It relies mainly on the <a href="https://github.com/structureddynamics/Bibliographic-Ontology-BIBO" target="_new">Bibiographic Ontology</a> (BIBO) and <a href="https://sparontologies.github.io/fabio/current/fabio.html" target="_new">FRBR-aligned Bibliographic Ontology</a> (FaBiO). 
         An article IRI is preferably based on its DOI, if any, prefixed with <code>http://doi.org/</code>.
         If no DOI is available, the IRI is PubMed's web page URL prefixed with <code>https://pubmed.ncbi.nlm.nih.gov/</code>.
         Authors are represented as separate triples with <code>dct:creator</code>, as well as an ordered list with <code>bibo:authorList</code>.</p>
-        <p>See <a href="https://github.com/frmichel/sparql-micro-service/tree/master/services/pubmed/getArticleByPMCId_sd">modeling details</a>.</p>
+        <p>See <a href="https://github.com/frmichel/sparql-micro-service/tree/master/services/pubmed/getArticleByQuery_sd">modeling details</a>.</p>
         ''';
 
     sd:defaultDataset [
@@ -48,11 +49,10 @@
     schema:publisher    <https://ror.org/0496p8026>, <https://ror.org/02kvxyf05>, 
         <https://ror.org/02feahw73>, <https://team.inria.fr/wimmics/>;
 
-    sms:exampleQuery '''prefix fabio:   <http://purl.org/spar/fabio/>
-SELECT * WHERE {
-    ?a1 fabio:hasPubMedCentralId "PMC5241551".
-    ?a2 fabio:hasPubMedCentralId "PMC7175982".
-    ?s ?p ?o.
+    sms:exampleQuery '''prefix schema:   <http://schema.org/>
+SELECT ?article ?p ?o WHERE {
+    ?search schema:query "'biomarkers'[MeSH Terms] OR 'biomarkers'[All Fields]".
+    ?article ?p ?o.
 }''';
 
     # 432000s = 5 days, 2592000s = 30 days
@@ -71,15 +71,20 @@ SELECT * WHERE {
 # Web API service being wrapped by this µ-service + parameters binding
 <APIService>
     a schema:SearchAction;
+    schema:description '''This search action is only about retrieving the metadata of articles
+        based on their Pubmed ids. The separate service.php file first invokes the Esearch service 
+        with the query tersm (schema:query), retrieves the ids of articles maching th query, 
+        and then run this query to get the metadata.''';
     a hydra:IriTemplate;
-    hydra:template "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pmc&id={pmcId}&retmode=json";
+    hydra:template "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id={pmId}&retmode=json";
     hydra:mapping [
-        hydra:variable "pmcId";
-        schema:description "PubMed Central identifier.";
+        hydra:variable "terms";
+        schema:description "PubMed query string.";
         hydra:required "true"^^xsd:boolean;
-        hydra:property fabio:hasPubMedCentralId;
-        skos:example "PMC5241551";
+        hydra:property schema:query;
+        skos:example '"biomarkers"[MeSH Terms] OR "biomarkers"[All Fields]';
     ].
+
 
 <https://ror.org/0496p8026> 
     a schema:Organization; schema:name "University Côte d'Azur";
