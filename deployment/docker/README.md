@@ -15,6 +15,7 @@ To start running SPARQL micro-services, download file [environment.zip](environm
 
 ```bash
 unzip environment.zip
+chmod -R 755 apache
 chmod -R 755 services
 chmod -R 755 config
 chmod -R 777 logs
@@ -66,6 +67,12 @@ For changes to be taken into account, restart the SPARQL-micro-service Docker co
 ```bash
 docker-compose restart sparql-micro-service
 ```
+
+### Using Apache to serve any other files
+
+You may want to use the Apache server that runs the SPARQL micro-services to serve other files.
+
+To do so, simply drop them in the `apache` directory, they will be accessible from the root at http://localhost/.
 
 
 ## Common issues
