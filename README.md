@@ -9,7 +9,9 @@ This project is a PHP implementation for JSON-based Web APIs. It comes with mult
 
 ## Quick start guide
 
-These [slides](doc/quick-start-guide.pdf) describe the main concepts behind SPARQL micro-services, and then guide you through a guide to **quickly write and setup your first SPARQL micro-service**.
+The most straightforward way to run SPARQL micro-services is using the [Docker deployment](deployment/docker/) option.
+
+Then, these [slides](doc/quick-start-guide.pdf) describe the main concepts behind SPARQL micro-services, and then provide a guide to **quickly write and setup your first SPARQL micro-service**.
 
 
 
@@ -21,19 +23,20 @@ An **HTML documentation and test interface** is generated dynamically from the m
 A **[demo](http://sparql-micro-services.org/demo-sms?param=Delphinapterus+leucas)** showcases the use of SPARQL micro-services to integrate, within a single SPARQL query, biodiversity data from a regular Linked Data source with non-RDF data resources: photos, scientific articles, life traits, audio recordings, all obtained through dedicated Web APIs wrapped in SPARQL micro-services.
 
 This project comes with several example SPARQL micro-services, allowing for instance to search photos matching some tags on [Flickr](https://www.flickr.com/), or tunes whose titles match a given name in [MusicBrainz](https://musicbrainz.org/).
-Other services are designed to query major biodiversity data sources such as the [GBIF](https://www.biodiversitylibrary.org/), [BHL](https://www.biodiversitylibrary.org/) or [EoL](http://eol.org/traitbank).
-See the services available in this in [this repository](services/) as well as the [TaxrefWeb](https://github.com/frmichel/taxrefweb/tree/master/sparql-micro-services) application repository.
+
+We also provide other services to query major biodiversity data sources such as the [GBIF](https://www.biodiversitylibrary.org/), [BHL](https://www.biodiversitylibrary.org/) or [EoL](http://eol.org/traitbank).
+These are available in the [TaxrefWeb](https://github.com/frmichel/taxrefweb/tree/master/sparql-micro-services) repository.
 
 
 
 ## Documentation
 
-- [Usage of SPARQL micro-services](doc/01-usage.md)
-- [Configuration of a SPARQL micro-service](doc/02-config.md)
-- [Installation, configuration and deployment](doc/04-install.md)
-- [Docker deployment](deployment/docker/)
+- [Using SPARQL micro-services](doc/01-usage.md)
+- [Writing a SPARQL micro-service](doc/02-config.md)
+- [Docker-based deployment ](deployment/docker/)
+- [Manual installation](doc/04-install.md)
 - [Dynamic HTML documentation](doc/03-html-doc.md)
-- [Provenance information](doc/05-prov.md)
+- [Adding provenance information](doc/05-prov.md)
 
 
 
