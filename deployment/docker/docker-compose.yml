@@ -19,7 +19,6 @@ services:
       - "80:80"
     volumes:
       - "./logs:/var/www/html/sparql-ms/logs"
-      - "./apache:/var/www/html"
       - "./services:/services"
       - type: bind
         source: ./config/sparql-micro-service.ini

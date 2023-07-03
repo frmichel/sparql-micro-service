@@ -61,13 +61,13 @@ class Cache
     private function __construct($context)
     {
         $this->logger = $context->getLogger("Cache");
-        
+
         if ($context->hasConfigParam('cache_endpoint'))
             $this->cacheEndpoint = $context->getConfigParam('cache_endpoint');
-        
+
         if ($context->hasConfigParam('cache_db_name'))
             $this->cacheDbName = $context->getConfigParam('cache_db_name');
-        
+
         // Create the database client and default collection: 'cache'
         $client = new \MongoDB\Client($this->cacheEndpoint);
         $this->cacheDb = $client->selectCollection($this->cacheDbName, 'cache');
@@ -83,12 +83,109 @@ class Cache
     {
         if (is_null(self::$singleton))
             self::$singleton = new Cache($context);
-        
+
         return self::$singleton;
     }
 
     /**
-     * Write a document (query response) to the cache db along with the query and the date it was obtained.
+     * Generic function to write a document (payload) to the cache db with $id as an index and an expiration date
+     *
+     * The JSON documents stored looks like this:
+     * {
+     * "hash" : "cb10dc6d18ad7fb3160bef79699f1ef704e29bcf13aafa75cfa25cb951ce89ec",
+     * "service" : "gbif/getOccurrencesByName_sd",
+     * "fetch_date" : "2023-06-12 00:08:35",
+     * "expires_at" : "2023-07-11 00:08:35",
+     * "payload" : "..."
+     * }
+     *
+     * @param string $id
+     *            index of the document, wil be hashed
+     * @param string $document
+     *            the payload to be stored in the db
+     * @param string $expiresAfter
+     *            duration (in seconds) after which the document expires
+     */
+    public function write($id, $document, $expiresAfter = null)
+    {
+        try {
+            $now = (new \DateTime('now'));
+
+            if ($expiresAfter == null) {
+                $cacheExpiresAt = "";
+            } else {
+                $cacheExpiresAt = $now->add(new \DateInterval('PT' . $expiresAfter . 'S'));
+                if ($this->logger->isHandling(Logger::DEBUG))
+                    $this->logger->debug("Cached document expires at: " . $cacheExpiresAt->format('Y-m-d H:i:s'));
+            }
+
+            $this->cacheDb->insertOne([
+                'hash' => hash("sha256", $id),
+                'fetch_date' => $now->format('Y-m-d H:i:s'),
+                'expires_at' => $cacheExpiresAt->format('Y-m-d H:i:s'),
+                'payload' => $document
+            ]);
+        } catch (Exception $e) {
+            $this->logger->warning("Cannot write to cache db: " . (string) $e);
+        }
+    }
+
+    /**
+     * Retrieve a document written with read() from the cache db and return it.
+     *
+     * If it is found and the expiration date is passed, the document is deleted from the cache db, and null is returned.
+     *
+     * @param string $query
+     *            the Web API query. Its hash is used as a key
+     * @return string the cached document if found, null otherwise.
+     */
+    public function read($id)
+    {
+        $hash = hash("sha256", $id);
+        $found = $this->cacheDb->findOne([
+            'hash' => $hash
+        ]);
+        
+        if ($found != null) {
+
+            // No expiration date: return the payload
+            if ($found['expires_at'] == "") {
+                return $found['payload'];
+            }
+
+            // Otherwise, check the expiration date
+            $cacheExpiresAt = new \DateTime($found['expires_at']);
+            if ($this->logger->isHandling(Logger::DEBUG))
+                $this->logger->debug("Cached document expires at: " . $cacheExpiresAt->format('Y-m-d H:i:s'));
+
+            if ($cacheExpiresAt >= (new \DateTime('now'))) {
+                // If the expiration date is not passed, the document can be returned as is
+                return $found['payload'];
+            } else {
+                // If the expiration date is passed, remove the document from the cache and return null = no cache hit
+                if ($this->logger->isHandling(Logger::INFO))
+                    $this->logger->info("Cached document found but has expired, removing it.");
+                $this->cacheDb->deleteOne([
+                    'hash' => $hash
+                ]);
+                return null;
+            }
+        } else
+            return null;
+    }
+
+    /**
+     * Write a document (response from a query to an API) to the cache db along with the query and the date it was obtained,
+     * and optionally the serice name.
+     *
+     * The JSON documents stored looks like this:
+     * {
+     * "hash" : "cb10dc6d18ad7fb3160bef79699f1ef704e29bcf13aafa75cfa25cb951ce89ec",
+     * "service" : "gbif/getOccurrencesByName_sd",
+     * "fetch_date" : "2023-06-12 00:08:35",
+     * "query" : "http://api.gbif.org/v1/occurrence/search?q=Delphinapterus%20leucas&limit=5000",
+     * "payload" : "..."
+     * }
      *
      * @param string $query
      *            the Web API query. Its hash is used as a key
@@ -97,7 +194,7 @@ class Cache
      * @param string $service
      *            the Web API service name
      */
-    public function write($query, $resp, $service = null)
+    public function writeApiResponse($query, $resp, $service = null)
     {
         try {
             $now = (new \DateTime('now'));
@@ -114,7 +211,7 @@ class Cache
     }
 
     /**
-     * Try to get a document from the cache db and return it.
+     * Retrieve a document written with writeApiResponse() from the cache db and return it.
      *
      * If it is found and the expiration date is passed, the document is deleted from the cache db.
      *
@@ -122,30 +219,28 @@ class Cache
      *            the Web API query. Its hash is used as a key
      * @return string the cached document if found, null otherwise.
      */
-    public function read($query)
+    public function readApiResponse($query)
     {
         $hash = hash("sha256", $query);
         $found = $this->cacheDb->findOne([
             'hash' => $hash
         ]);
         if ($found != null) {
-            
+
             // Create the date interval corresponding to the cache expiration duration
             $context = Context::getInstance();
-            $cacheExpirationInterval = new \DateInterval('PT' . $context->getConfigParam('cache_expires_after', self::CACHE_EXP_SEC) . 'S');
-            $cacheExpiresAt = new \DateTime($found['fetch_date']);
-            $cacheExpiresAt->add($cacheExpirationInterval);
-            
+            $fetchDate = new \DateTime($found['fetch_date']);
+            $cacheExpiresAt = $fetchDate->add(new \DateInterval('PT' . $context->getConfigParam('cache_expires_after', self::CACHE_EXP_SEC) . 'S'));
+
             if ($this->logger->isHandling(Logger::DEBUG))
                 $this->logger->debug("Cached document expires at: " . $cacheExpiresAt->format('Y-m-d H:i:s'));
-            
+
             if ($cacheExpiresAt >= (new \DateTime('now'))) {
                 // If the expiration date is not passed, the document can be returned as is
-                
+
                 // Save the date and time at which the document was fetched (for provenance needs)
-                $cacheFetchedAt = new \DateTime($found['fetch_date']);
-                $context->setCacheHitDateTime($cacheFetchedAt);
-                
+                $context->setCacheHitDateTime($fetchDate);
+
                 return $found['payload'];
             } else {
                 // If the expiration date is passed, remove the document from the cache and return null = no cache hit

@@ -145,7 +145,7 @@ class Utils
             $cacheHit = false;
             if ($useCache) {
                 // Check if response is already in cache db
-                $apiResp = $cache->read($jsonUrl);
+                $apiResp = $cache->readApiResponse($jsonUrl);
                 if ($apiResp != null) {
                     $cacheHit = true;
                     $logger->info("The JSON response was retrieved from cache.");
@@ -172,7 +172,7 @@ class Utils
 
                 // Store the result into the cache db
                 if ($useCache && ! $cacheHit) {
-                    $cache->write($jsonUrl, $apiResp, $context->getService());
+                    $cache->writeApiResponse($jsonUrl, $apiResp, $context->getService());
                     $logger->info("Stored JSON response into cache.");
                 }
 
