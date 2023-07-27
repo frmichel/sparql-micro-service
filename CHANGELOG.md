@@ -1,5 +1,13 @@
 # SPARQL Micro-Service Changelog
 
+## [0.5.6] 2023-07-27
+
+### Changed
+- Support for token-based Authentication, exemplified in service mirri/getSchemas
+- Add cache services
+- Add shared folder html in Docker deployment
+
+
 ## [0.5.4] 2022-11-30
 
 ### Changed
