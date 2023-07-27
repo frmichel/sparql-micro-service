@@ -15,10 +15,10 @@ To start running SPARQL micro-services, download file [environment.zip](environm
 
 ```bash
 unzip environment.zip
-chmod -R 755 apache
 chmod -R 755 services
 chmod -R 755 config
 chmod -R 777 logs
+chmod -R 755 html
 ```
 
 Then, download file [docker-compose.yml](docker-compose.yml) to the directory where you unzipped environment.zip (together with directories services, config and logs), and run:
@@ -72,7 +72,7 @@ docker-compose restart sparql-micro-service
 
 You may want to use the Apache server that runs the SPARQL micro-services to serve other files.
 
-To do so, simply drop them in the `apache` directory, they will be accessible from the root at http://localhost/.
+To do so, simply drop them in the `html` directory, they will be accessible from http://localhost/html/.
 
 
 ## Common issues

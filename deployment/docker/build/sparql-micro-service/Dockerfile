@@ -46,12 +46,12 @@ RUN git checkout --quiet tags/$SMS_VERSION
 RUN composer install -n -vv
 
 # --- Set logs directory 
-ENV LOGS="/var/www/html/sparql-ms/logs"
+ENV LOGS="/var/www/sparql-ms/logs"
 RUN mkdir -p $LOGS && chmod 777 $LOGS
 
 # --- Deploy the code
-RUN mkdir -p /var/www/html/sparql-ms
-RUN cp -r $INSTALL/src /var/www/html/sparql-ms/src && cp -r $INSTALL/vendor /var/www/html/sparql-ms/vendor
+RUN mkdir -p /var/www/sparql-ms
+RUN cp -r $INSTALL/src /var/www/sparql-ms/src && cp -r $INSTALL/vendor /var/www/sparql-ms/vendor
 RUN mkdir -p /services && chmod 777 /services
 
 # Fix a pb with some MacOS platforms

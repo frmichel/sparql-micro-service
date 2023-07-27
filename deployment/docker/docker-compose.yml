@@ -1,5 +1,6 @@
 version: '3.2'
 services:
+
   corese:
     image: frmichel/corese4sms:v4.3.1
     networks:
@@ -7,22 +8,26 @@ services:
     volumes:
       - "./logs:/usr/local/corese/log"
       - "./services:/services"
+
   mongo:
     image: mongo:3.7
     networks:
       - sms-net
+
   sparql-micro-service:
-    image: frmichel/sparql-micro-service:v0.5.4
+    image: frmichel/sparql-micro-service:v0.5.6
     networks:
       - sms-net
     ports:
       - "80:80"
     volumes:
-      - "./logs:/var/www/html/sparql-ms/logs"
+      - "./logs:/var/www/sparql-ms/logs"
       - "./services:/services"
+      - "./html:/var/www/html"
       - type: bind
         source: ./config/sparql-micro-service.ini
-        target: /var/www/html/sparql-ms/src/sparqlms/config.ini
+        target: /var/www/sparql-ms/src/sparqlms/config.ini
+
 networks:
   sms-net:
     driver: bridge
