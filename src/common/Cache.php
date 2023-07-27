@@ -92,19 +92,20 @@ class Cache
      *
      * The JSON documents stored looks like this:
      * {
-     * "hash" : "cb10dc6d18ad7fb3160bef79699f1ef704e29bcf13aafa75cfa25cb951ce89ec",
-     * "service" : "gbif/getOccurrencesByName_sd",
-     * "fetch_date" : "2023-06-12 00:08:35",
-     * "expires_at" : "2023-07-11 00:08:35",
-     * "payload" : "..."
+     *   "hash" : "cb10dc6d18ad7fb3160bef79699f1ef704e29bcf13aafa75cfa25cb951ce89ec",
+     *   "fetch_date" : "2023-06-12 00:08:35",
+     *   "expires_at" : "2023-07-11 00:08:35",
+     *   "payload" : "..."
      * }
+     * 
+     * "expires_at" is set only if a value is provided for parameter $expiresAfter. Otherwise it is empty.
      *
      * @param string $id
      *            index of the document, wil be hashed
      * @param string $document
      *            the payload to be stored in the db
      * @param string $expiresAfter
-     *            duration (in seconds) after which the document expires
+     *            duration (in seconds) after which the document expires. null means no expiration.
      */
     public function write($id, $document, $expiresAfter = null)
     {
@@ -131,7 +132,7 @@ class Cache
     }
 
     /**
-     * Retrieve a document written with read() from the cache db and return it.
+     * Retrieve a document written with write() from the cache db and return it.
      *
      * If it is found and the expiration date is passed, the document is deleted from the cache db, and null is returned.
      *
@@ -175,16 +176,16 @@ class Cache
     }
 
     /**
-     * Write a document (response from a query to an API) to the cache db along with the query and the date it was obtained,
+     * Write a response from a query to an API into the cache db along with the query and the date it was obtained,
      * and optionally the serice name.
      *
      * The JSON documents stored looks like this:
      * {
-     * "hash" : "cb10dc6d18ad7fb3160bef79699f1ef704e29bcf13aafa75cfa25cb951ce89ec",
-     * "service" : "gbif/getOccurrencesByName_sd",
-     * "fetch_date" : "2023-06-12 00:08:35",
-     * "query" : "http://api.gbif.org/v1/occurrence/search?q=Delphinapterus%20leucas&limit=5000",
-     * "payload" : "..."
+     *   "hash" : "cb10dc6d18ad7fb3160bef79699f1ef704e29bcf13aafa75cfa25cb951ce89ec",
+     *   "service" : "gbif/getOccurrencesByName_sd",
+     *   "fetch_date" : "2023-06-12 00:08:35",
+     *   "query" : "http://api.gbif.org/v1/occurrence/search?q=Delphinapterus%20leucas&limit=5000",
+     *   "payload" : "..."
      * }
      *
      * @param string $query

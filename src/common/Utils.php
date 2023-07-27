@@ -123,6 +123,25 @@ class Utils
     }
 
     /**
+     * Return an HTTP staus 500 with an error message and exit the script.
+     *
+     * @param string $message
+     *            error message returned
+     */
+    static public function httpServerError($message)
+    {
+        global $context;
+        $logger = $context->getLogger("Utils");
+        
+        header('Access-Control-Allow-Origin: *');
+        http_response_code(500); // Server Error
+        $logger->warn($message);
+        print("Internal error: " . $message . "\n");
+        $logger->notice("--------- Done - SPARQL µS execution --------");
+        exit(0);
+    }
+    
+    /**
      * Read a JSON content, apply a JSON-LD profile and
      * translate the result into NQuads
      *
@@ -192,7 +211,7 @@ class Utils
                 );
                 $apiResp = str_replace($search, $replace, $apiResp);
 
-                // Remove the UTF-8 BOM if present (abnormal presence but some WebAPIs to return it)
+                // Remove the UTF-8 BOM if present (abnormal presence but some WebAPIs do return it)
                 // http://en.wikipedia.org/wiki/Byte_order_mark#UTF-8
                 $bom = pack('CCC', 0xEF, 0xBB, 0xBF);
                 if (substr($apiResp, 0, 3) == $bom)
@@ -454,10 +473,10 @@ class Utils
                     if (strpos($contentType, 'application/x-www-form-urlencoded') !== false) {
                         if (array_key_exists('query', $_POST))
                             $sparqlQuery = $_POST['query'];
-                            else
-                                self::httpBadRequest("SPARQL query with HTTP POST method and Content-Type' application/x-www-form-urlencoded' but no 'query' argument.");
-                                break;
-                    } else if (strpos($contentType, 'application/sparql-query')  !== false) {
+                        else
+                            self::httpBadRequest("SPARQL query with HTTP POST method and Content-Type' application/x-www-form-urlencoded' but no 'query' argument.");
+                        break;
+                    } else if (strpos($contentType, 'application/sparql-query') !== false) {
                         $sparqlQuery = file_get_contents('php://input');
                         break;
                     } else
@@ -605,6 +624,51 @@ class Utils
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+        if ($additionalHeaders != null)
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $additionalHeaders);
+
+        if ($context->hasConfigParam('proxy.host')) {
+            curl_setopt($ch, CURLOPT_PROXY, $context->getConfigParam('proxy.host'));
+            if ($context->hasConfigParam('proxy.port'))
+                curl_setopt($ch, CURLOPT_PROXYPORT, $context->getConfigParam('proxy.port'));
+
+            // Add the proxy authentication
+            if ($context->hasConfigParam('proxy.user') && $context->hasConfigParam('proxy.password')) {
+                curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC);
+                $auth = base64_encode($context->getConfigParam('proxy.user') . ':' . $context->getConfigParam('proxy.password'));
+                curl_setopt($ch, CURLOPT_PROXYUSERPWD, $auth);
+            }
+        }
+
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data;
+    }
+
+    /**
+     * Equivalent of the file_get_contents function but using curl
+     *
+     * @param string $url
+     * @param string $post
+     *            the content to pass in the body of the request
+     * @param array $additionalHeaders
+     *            array of header formatted as strings like "Accept: text/html"
+     * @return string
+     */
+    static public function file_post_contents_curl($url, $post = null, $additionalHeaders = null)
+    {
+        global $context;
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
+        curl_setopt($ch, CURLOPT_POST, TRUE);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 300);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
         if ($additionalHeaders != null)
             curl_setopt($ch, CURLOPT_HTTPHEADER, $additionalHeaders);
 

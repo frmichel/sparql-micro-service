@@ -127,6 +127,10 @@ try {
         $apiQuery = $context->getConfigParam('api_query');
 
         if (sizeof($allServiceArgs) == 0) {
+            // Is there additional work to be be done by the custom service script?
+            if (file_exists($context->getServicePath() . '/service.php'))
+                require $context->getServicePath() . '/service.php';
+                
             // No argument => execute the Web API query and create the response graph including provenance triples
             if ($logger->isHandling(Logger::NOTICE))
                 $logger->notice("Web API query string: " . $apiQuery);
@@ -195,7 +199,7 @@ try {
     $logger->info("Dropping graph: <{$respGraphUri}>");
     $sparqlClient->update("DROP SILENT GRAPH <{$respGraphUri}>");
 
-    $logger->notice("--------- Done - SPARQL µS execution --------");
+    $logger->notice("--------- Done - SPARQL ÂµS execution --------");
 
     $metro->stopTimer(1);
     $metro->appendTimer($context->getService(), "Total|API", 1, 2);
@@ -203,7 +207,7 @@ try {
     try {
         $logger->error((string) $e . "\n");
         $logger->notice("Returning HTTP status 500.\n");
-        $logger->notice("--------- Done - SPARQL µS execution --------");
+        $logger->notice("--------- Done - SPARQL ÂµS execution --------");
     } catch (Exception $f) {
         print("Could not process the request. Error:\n" . (string) $e . "\n");
         print("Second exception caught:\n" . (string) $f . "\n");
