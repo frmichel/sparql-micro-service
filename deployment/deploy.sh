@@ -5,19 +5,19 @@
 # by replacing the "example.org" hostname and "<api_key>" values commited on the public repo.
 #
 # Usage: 
-# Copy this script in the public_html folder where the SPARQL micro-service code is installed
+# Copy this script in the folder where the SPARQL micro-services are installed
 # (there must be an src subfolder here). 
 # Define the variables providing the keys of your APIs and update the code below accordingly.
-# E.g. below these as variable $BHL_API_KEY, $FLICKR_API_KEY and $EOL_API_TOKEN.
+# E.g. below these as variables $BHL_API_KEY, $FLICKR_API_KEY and $EOL_API_TOKEN.
 # Then run the script.
 
-# The URL of the server where the services are accessible. Will replace the 'http://example.org'
+# The URL of the server where the services are accessible. Will replace the 'http://example.org' if any.
 SERVER='https://sparql-micro-services.org'
 
 # Path to append to the server URL
 SERVERPATH=service
 
-# Relative directory where to search for SPARQL microservices,
+# Relative directory where to search for SPARQL micro-services,
 # starting from the directory where this script is launched
 SMSDIR=services
 

@@ -209,7 +209,7 @@ http://example.org/~userdir/sparqlms/src/sparqlms/service.php?querymode=sparql&s
 
 Here we describe the example of the Flickr Web API.
 
-Services `flickr/getPhotosByGroupByTag` and `flickr/getPhotosByTaxon_sd` generate RDF triples with photo URIs formatted as follows:
+Service `flickr/getPhotosByTaxon_sd` generates RDF triples with photo URIs formatted as follows:
 `http://example.org/ld/flickr/photo/<identifier>`, where `<identifier>` is the Flickr internal identifier.
 
 To produce a graph in response to the lookup of such a URI, service `flickr/getPhotoById` is used. The rewriting rule below invokes script  `service.php` with parameter `querymode` set to `ld` and `service` set to `flickr/getPhotoById`:
@@ -275,9 +275,6 @@ curl --header "Accept: application/sparql-results+json" \
   "${SERVICEPATH}/flickr/getPhotoById?query=${SELECT}&photo_id=31173091246"
 
 curl --header "Accept: application/sparql-results+json" \
-  "${SERVICEPATH}/macaulaylibrary/getAudioByTaxon?query=${SELECT}&name=Delphinus+delphis"
-
-curl --header "Accept: application/sparql-results+json" \
   "${SERVICEPATH}/musicbrainz/getSongByName?query=${SELECT}&name=Delphinus+delphis"
 ```
 
@@ -316,7 +313,6 @@ This should return an RDF description of the photographic resource similar to:
 Two services are provided with a service description graph that can be dynamically translated into an HTML documentation. Enter the following URLs in a web browser:
 ```
 http://localhost/service/flickr/getPhotosByTags_sd/
-http://localhost/service/macaulaylibrary/getAudioByTaxon_sd/
 ```
 
 You can also look up the URIs of the service description and shapes graphs directly, e.g.:

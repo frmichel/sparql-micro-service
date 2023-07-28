@@ -29,8 +29,10 @@ Then, these [slides](doc/quick-start-guide.pdf) describe the main concepts behin
 
 ## Examples and Demo
 
-You can check out some services we published at [https://sparql-micro-services.org/](https://sparql-micro-services.org/). 
-An **HTML documentation and test interface** is [generated dynamically](doc/03-html-doc.md) from the micro-service description, that embeds Schema.org markup to **make the services discoverable** using for instance [Google Dataset Search](https://datasetsearch.research.google.com/search?query=flickr%20sparql&docid=88YllZoR%2BmJMuXMgAAAAAA%3D%3D).
+You can check out some services we published at [https://sparql-micro-services.org/](https://sparql-micro-services.org/). The source of these services is provided in a separate Github repository: 
+[sparql-micro-services.org/](https://github.com/frmichel/sparql-micro-service.org)
+
+The **HTML documentation and test interface** is [generated dynamically](doc/03-html-doc.md) from the micro-service descriptions, that embeds Schema.org markup to **make the services discoverable** using for instance [Google Dataset Search](https://datasetsearch.research.google.com/search?query=flickr%20sparql&docid=88YllZoR%2BmJMuXMgAAAAAA%3D%3D).
 
 A **[demo](http://sparql-micro-services.org/demo-sms?param=Delphinapterus+leucas)** showcases the use of SPARQL micro-services to integrate, within a single SPARQL query, biodiversity data from a regular Linked Data source with non-RDF data resources: photos, scientific articles, life traits, audio recordings, all obtained through dedicated Web APIs wrapped in SPARQL micro-services.
 

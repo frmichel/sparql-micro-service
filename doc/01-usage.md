@@ -43,7 +43,7 @@ SERVICE <https://sparql-micro-services.org/service/pubmed/getArticleByPMId_sd/>
 }
 ```
 
-The argument expected by the micro-service is described in the service description (file [pubmed/getArticleByPMId_sd/ServiceDescription.ttl](../services/pubmed/getArticleByPMId_sd/ServiceDescription.ttl)).
+The argument expected by the micro-service is described in the service description (file [pubmed/getArticleByPMId_sd/ServiceDescription.ttl](https://github.com/frmichel/sparql-micro-service.org/blob/main/pubmed/getArticleByPMId_sd/ServiceDescription.ttl)).
 
 
 # Forcing the order of evaluating multiple SPARQL micro-services
