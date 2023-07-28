@@ -2,11 +2,19 @@
 
 ## [0.5.6] 2023-07-27
 
-### Changed
-- Support for OAuth2-based authentication, exemplified in services/advanced_examples/oauth2
+### Added
+- Support for OAuth2-based authentication, exemplified in [services/advanced_examples/oauth2](services/advanced_examples/oauth2)
 - Add cache services
 - Add shared folder html in Docker deployment
+
+### Changed
 - Documentation improvements
+
+
+## [0.5.5] 2023-05-30
+
+### Added
+Files AUTHORS, CITATION.cff and codemeta.json to submit the project to Software Heritage and then import it into HAL.
 
 
 ## [0.5.4] 2022-11-30
