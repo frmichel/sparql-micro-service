@@ -85,7 +85,7 @@ This deployment uses ports 80 of the Docker host. If it is in conflict with anot
 
 The containers need to write in directory ```logs```. This will fail if you do not set rights 777 (`chmod 777 logs`), and the SPARQL-micro-service console shall show an error like this:
 
-```PHP Notice:  Undefined variable: logger in /var/www/html/sparql-ms/src/sparqlms/service.php on line 204```
+```PHP Notice:  Undefined variable: logger in /var/www/sparql-ms/src/sparqlms/service.php on line 204```
 
 
 ## Test your own SPARQL micro-services

@@ -10,38 +10,40 @@ The method to use depends on how the SPARQL micro-service is described (see the 
 
 ### Passing arguments on the HTTP query string
 
-The query below exemplifies the first flavour. It retrieves information related to the common dolphin species (*Delphinus delphis*) from the Macaulay Library. The taxon name is passed as a parameter on the HTTP query string of the SPARQL micro-service URL, ```?name=Delphinus+delphis```:
+The query below exemplifies the first flavour. It retrieves information about Eminem's albums from Deezer. The artist's name is passed as a parameter on the HTTP query string of the SPARQL micro-service URL, ```?name=eminem```:
 
 ```sparql
-SERVICE <https://example.org/macaulaylibrary/getAudioByTaxon?name=Delphinus+delphis>
+prefix schema: <http://schema.org>.
+SERVICE <https://example.org/deezer/findAlbums?name=eminem>
 {
-  SELECT ?audioUrl WHERE {
-    [] schema:contentUrl ?audioUrl.
+  SELECT * WHERE {
+    [] schema:MusicAlbum;
+       schema:name ?name.
   }
 }
 ```
 
-The arguments expected by the micro-service (```name``` in this case) are listed in the service's config.ini file, in this example [macaulaylibrary/getAudioByTaxon/config.ini](../services/macaulaylibrary/getAudioByTaxon/config.ini).
+The argument expected by the micro-service (```name```) is given in the service's config.ini file, in this example [deezer/findAlbums/config.ini](../services/deezer/findAlbums/config.ini).
 
 
 ### Passing arguments within the SPARQL query graph pattern
 
-The query below exemplifies the second flavour. It is equivalent to the one above but the taxon name is provided as part of the graph pattern with predicate ```dwc:scientificName```:
+The query below exemplifies the second flavour. 
+It retrieves articles from PubMed using by their PubMed identifier (PMID) provided using property bibo:pmid.
 
 ```sparql
-SERVICE <https://example.org/macaulaylibrary/getAudioByTaxon_sd>
+prefix bibo:   <http://purl.org/ontology/bibo/>.
+prefix dct:    <http://purl.org/dc/terms/>.
+SERVICE <https://sparql-micro-services.org/service/pubmed/getArticleByPMId_sd/>
 {
-  SELECT ?audioUrl WHERE {
-    [] a dwc:Taxon;
-       dwc:scientificName   "Delphinus delphis";
-       schema:audio [
-         schema:contentUrl  ?audioUrl;
-       ].
+  SELECT * WHERE {
+      ?a1 bibo:pmid "27607596".
+      ?s dct:creator ?author.
   }
 }
 ```
 
-The arguments expected by the micro-service (```name``` in this case) are described in the service description (file [macaulaylibrary/getAudioByTaxon_sd/ServiceDescription.ttl](../services/macaulaylibrary/getAudioByTaxon_sd/ServiceDescription.ttl)) either using the [Hydra](https://www.hydra-cg.com/spec/latest/core/) vocabulary or by pointing to a property shape within the [shapes graph](../services/macaulaylibrary/getAudioByTaxon_sd/ShapesGraph.ttl) that describes the type of graph that this micro-service can spawn (See the [SHACL](https://www.w3.org/TR/shacl/) recommendation).
+The argument expected by the micro-service is described in the service description (file [pubmed/getArticleByPMId_sd/ServiceDescription.ttl](../services/pubmed/getArticleByPMId_sd/ServiceDescription.ttl)).
 
 
 # Forcing the order of evaluating multiple SPARQL micro-services
@@ -51,10 +53,14 @@ In some use cases, these values should come from variables evaluated elsewhere i
 
 Let us take an example. The query below invokes two SPARQL micro-services:
   * the first one, gbif/getTaxonByID_sd, returns the name corresponding to an identifier given by property `dwc:scientificNameID`;
-  * the second one, flickr/getPhotosByTaxon_sd, returns photos matching the name given by property `dwc:scientificName` and that should be provided by the first one.
+  * the second one, flickr/getPhotosByTaxon_sd, returns photos matching the name given by property `dwc:scientificName` and that should be provided by the first micro-service.
+
+Here, gbif/getTaxonByID_sd needs to be invoked first, so that the values it returns be used to invoke flickr/getPhotosByTaxon_sd.
+
+Such that the query below might fail:
 
 ```sparql
-# First example. This query fails.
+# First example. This query may fail.
 prefix schema: <http://schema.org/>
 prefix dwc: <http://rs.tdwg.org/dwc/terms/>
 
@@ -78,9 +84,9 @@ SELECT ?name ?img  WHERE  {
 }
 ```
 
-Hence, the second one cannot be invoked straight away. It needs values retrieved from the first service. But we cannot know in advance the strategy that the SPARQL engine that evaluates this query will use. It may well invoke the second service first, which would fail since the input parameter is not provided.
+The second micro-service cannot be invoked straight away. It needs values retrieved from the first micro-service. But we cannot know in advance the strategy that the SPARQL engine that evaluates this query will use. It may well invoke the second service first, which would fail since the input parameter is not provided.
 
-To workaround this issue, we must instruct the SPARQL engine to evaluate the first service, and then inject the values of variable ?name into the second service. This can be achieved simply as demonstrated below:
+As a workaround to this issue, we must instruct the SPARQL engine to evaluate the first service, and then "inject" the values of variable ?name into the second service. This can be achieved simply as demonstrated below:
 
 ```sparql
 prefix schema: <http://schema.org/>
@@ -110,6 +116,6 @@ SELECT ?name ?img  WHERE  {
 ```
 
 Now, we have split ?name into two variables ?name and ?name2. Line `BIND (?name as ?name2)` forces the SPARQL engine to evaluate the first service to get values of variable ?name. Then, it assigns those values to ?name2. 
-This *should* results in the second invocation to be done along with the values, typically provided as an extra VALUES clause.
+This *should* result in the second invocation to be done along with the values, typically provided as an extra VALUES clause.
 
 **Note however that the way the second service is invoked totally depends on the strategy of the SPARQL engine being used. Hence, the behavior may vary from one engine to the other.**

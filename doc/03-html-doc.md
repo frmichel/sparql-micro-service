@@ -16,13 +16,11 @@ In a web browser, look up URL their URLs can be looked https://sparql-micro-serv
 
 Using content negotiation, the URLs of these service can be looked up in a web browser, generating their HTML documentation and JSON-LD markup on-the-fly.
 
-For instances, services [flickr/getPhotosByTaxon_sd](../services/flickr/getPhotosByTaxon_sd) and [macaulaylibrary/getAudioByTaxon_sd](../services/macaulaylibrary/getAudioByTaxon_sd) are deployed on this server. Click on these URLs to get the Web page:
+For instances, service [flickr/getPhotosByTaxon_sd](../services/flickr/getPhotosByTaxon_sd) is deployed on this server. Click on these URLs to get the Web page:
 https://sparql-micro-services.org/service/flickr/getPhotosByTaxon_sd/ and 
-https://sparql-micro-services.org/service/macaulaylibrary/getAudioByTaxon_sd/.
 
 
 Furthermore, the same URLs can dereference to the SPARQL Service Description graphs:
 ```
 curl --header "accept: text/turtle" https://sparql-micro-services.org/service/flickr/getPhotosByTaxon_sd/
-curl --header "accept: text/turtle" https://sparql-micro-services.org/service/macaulaylibrary/getAudioByTaxon_sd/
 ```

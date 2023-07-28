@@ -31,7 +31,8 @@ In this configuration method, the micro-service folder is organized as follows:
     config.ini        # micro-service configuration
     profile.jsonld    # JSON-LD profile to translate the JSON response into JSON-LD
     construct.sparql  # optional SPARQL CONSTRUCT query to create triples that JSON-LD cannot create
-    service.php       # optional script to perform specific actions (see 'services/manual_config_example')
+    service.php       # optional script to perform specific actions 
+                      # (see 'services/advanced_examples/manual_config_example')
 ```
 
 The config.ini file provides the following parameters:
@@ -65,41 +66,43 @@ In this configuration method, the micro-service folder is organized as follows:
     ShapesGraph.ttl         # optional SHACL description of the graphs produced by the service
     profile.jsonld          # JSON-LD profile to translate the JSON response into JSON-LD
     construct.sparql        # optional SPARQL CONSTRUCT query to create triples that JSON-LD cannot create
-    service.php             # optional script to perform specific actions (see 'services/manual_config_example')
+    service.php             # optional script to perform specific actions (see 'services/advanced_examples/manual_config_example')
 ```
 ### Service Description Graph
 
 The micro-service description is provided by an RDF graph following the [SPARQL Service Description](https://www.w3.org/TR/2013/REC-sparql11-service-description-20130321/) recommendation (SD).
-See provided examples for more details (conventionally named with extension '_sd'), e.g. [flickr/getPhotosByTags_sd](../services/flickr/getPhotosByTags_sd/ServiceDescription.ttl) or [macaulaylibrary/getAudioByTaxonCode_sd](../services/macaulaylibrary/getAudioByTaxonCode_sd/ServiceDescription.ttl).
+See provided examples for more details (conventionally named with extension '_sd'), e.g. [flickr/getPhotosByTags_sd](../services/flickr/getPhotosByTags_sd/ServiceDescription.ttl).
 
 The SD graph in file `ServiceDescription.ttl` is described in article [4](../README.md#Publications).
 In a nutshell, it describes a ressource that is an instance of `sd:Service` and `sms:Service` (namespace `sms` stands for `http://ns.inria.fr/sparql-micro-service#`) whose data source (`dct:source`) is a Web API (`schema:WebAPI`) that has a search action (`schema:potentialAction`).
 In turn, the search action defines the arguments expected by the service and how they are passed on the Web API query string.
 
-**Example**. The example below is a subset of the [macaulaylibrary/getAudioByTaxonCode_sd](../services/macaulaylibrary/getAudioByTaxonCode_sd/ServiceDescription.ttl) description graph.
+**Example**. The example below is a the description graph of [flickr/getPhotosByTags_sd](../services/flickr/getPhotosByTags_sd/).
+
 ```sparql
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#>.
 @prefix sd:      <http://www.w3.org/ns/sparql-service-description#>.
 @prefix frmt:    <http://www.w3.org/ns/formats/>.
 @prefix dct:     <http://purl.org/dc/terms/>.
-@prefix httpvoc: <http://www.w3.org/2011/http#>.
 @prefix shacl:   <http://www.w3.org/ns/shacl#>.
 @prefix void:    <http://rdfs.org/ns/void#>.
 @prefix hydra:   <http://www.w3.org/ns/hydra/core#>.
 @prefix schema:  <http://schema.org/>.
 @prefix skos:    <http://www.w3.org/2004/02/skos/core#>.
-@prefix dwc:     <http://rs.tdwg.org/dwc/terms/>.
 @prefix sms:     <http://ns.inria.fr/sparql-micro-service#>.
 
-@base <http://example.org/macaulaylibrary/getAudioByTaxon_sd/>.
+@base            <http://example.org/sparql-ms/flickr/getPhotosByTags_sd/>.
+
+# This file is loaded as graph <ServiceDescription>
 <>
     a sd:Service, sms:Service;
     sd:endpoint <>;
     sd:supportedLanguage sd:SPARQL11Query;
     sd:feature sd:BasicFederatedQuery, sd:EmptyGraphs;
-    sd:resultFormat frmt:SPARQL_Results_JSON,  frmt:Turtle, frmt:JSON-LD, frmt:Trig;
-    schema:name "Service name...";
-    schema:description '''This SPARQL micro-service...''';
+    sd:resultFormat frmt:SPARQL_Results_XML, frmt:SPARQL_Results_JSON, frmt:SPARQL_Results_CSV, frmt:SPARQL_Results_TSV,
+                    frmt:RDF_XML, frmt:Turtle, frmt:JSON-LD, frmt:Trig;
+    schema:name "Search photos that match all of the given tags on Flickr";
+    schema:description '''This SPARQL micro-service searches photos on <a href="https://flickr.com" target="_new">Flickr</a>, that match all of the given tags. A maximum of 100 photos are returned.''';
     
     sd:defaultDataset [
         a sd:Dataset, void:Dataset;
@@ -107,61 +110,71 @@ In turn, the search action defines the arguments expected by the service and how
         sd:namedGraph   [ a sd:Graph; sd:name <ServiceDescription> ];
         sd:namedGraph   [ a sd:Graph; sd:name <ShapesGraph> ];
         
-        void:vocabulary
-            <http://schema.org/>,
-            <http://rs.tdwg.org/dwc/terms/>,
-            <http://www.w3.org/ns/shacl#>,
-            <http://www.w3.org/ns/hydra/core#>;
+        void:vocabulary <http://schema.org/>, <http://www.w3.org/ns/shacl#>, <http://www.w3.org/ns/hydra/core#>;
         void:sparqlEndpoint <>;
     ];
 
-    sms:exampleQuery '''
-        prefix schema: <http://schema.org/>
-        prefix dwc: <http://rs.tdwg.org/dwc/terms/>
+    schema:keywords "photography", "flickr", "photo", "picture", "snapshot";
+    schema:publisher [ a schema:Organization;
+        schema:name "Université Côte d'Azur, CNRS, Inria, I3S";
+        schema:logo
+            "http://univ-cotedazur.fr/fr/university/communication-presse/charte-et-logos/logo/png/uca-logo-large",
+            "https://iww.inria.fr/dircom/logoinria-eng.png",
+            "http://www.cnrs.fr/themes/custom/cnrs/logo.svg";
+        schema:contactPoint [ a schema:ContactPoint;
+            schema:contactType "technical support";
+            schema:name "Franck Michel";
+            schema:email "franck.michel@cnrs.fr";
+            schema:url <https://w3id.org/people/franckmichel>;
+        ];
+    ];
 
-        SELECT ?audio ?audioFile ?description WHERE {
-            ?taxon a dwc:Taxon;
-                dwc:scientificName "Delphinus delphis";
-                schema:audio [ schema:contentUrl ?audioFile ].
-        }''';
-    
-    sms:cacheExpiresAfter "P2592000S"^^xsd:duration;
+    sms:exampleQuery '''
+    prefix schema: <http://schema.org/>
+
+    SELECT ?photo ?title ?img WHERE {
+
+        ?photo a                schema:Photograph;
+            schema:keywords     "brooklyn", "bicycle";
+            schema:name         ?title;
+            schema:contentUrl   ?img.
+    }
+        ''';
+
+    # 432000s = 5 days
+    sms:cacheExpiresAfter "P432000S"^^xsd:duration;
 
     # Add provenance information to the graph generated at each invocation?
     sms:addProvenance "false"^^xsd:boolean;
-
+    
     dct:source [
-        a schema:WebAPI;
-        schema:name "Macaulay Library Web API";
-        schema:url <https://www.macaulaylibrary.org/>;
-        
-        # Description of the Web API invocation
-        schema:potentialAction [
-            a schema:SearchAction, hydra:IriTemplate;
-            hydra:template "https://search.macaulaylibrary.org/catalog.json?action=new_search&searchField=animals&sort=upload_date_desc&mediaType=a&taxonCode={identifier}";
+        a schema:WebAPI; schema:name "Flickr API";
+        schema:url <https://www.flickr.com/services/api/>;
+        schema:potentialAction <APIService>;
+    ];
+    .
 
-            # Description of each argument
-            hydra:mapping [
-                hydra:variable "identifier";
-                schema:description "The Macaulay's taxon code";
-                hydra:required "true"^^xsd:boolean;
-                hydra:property schema:identifier;
-                
-                # If multiple values, they should be passed as a CSV value to the Web API
-                sms:passMultipleValuesAsCsv "true"^^xsd:boolean;
-            ];
-            
-            # Other HTTP headers to send when incoking the Web API
-            a httpvoc:Request;
-            httpvoc:headers (
-                [ a                  httpvoc:RequestHeader;
-                  httpvoc:fieldName  "Authorization";
-                  httpvoc:hdrName    <http://www.w3.org/2011/http-headers#authorization>;
-                  httpvoc:fieldValue "JWT <api_personal_token>";
-                ]
-            ).
-        ];
+# Web API service being wrapped by this µ-service + parameters binding
+<APIService>
+    a schema:SearchAction;
+    schema:documentation "Each tag is provided as a value of property schema:keyowrds in the SPARQL graph pattern.";
+    a hydra:IriTemplate;
+    hydra:template "https://api.flickr.com/services/rest/?method=flickr.photos.search&format=json&nojsoncallback=1&api_key=<api_key>&tag_mode=all&sort=relevance&privacry_filter=1&extras=date_upload%2Cdate_taken%2Cowner_name%2Ctags&per_page=100&tags={tags}".
+    hydra:mapping [
+        hydra:variable "tags";
+        schema:description "Tags that retrieved photos must be associated with.";
+        hydra:required "true"^^xsd:boolean;
+        skos:example "bicycle";
+        
+        # Use either hydra:property or shacl:sourceShape
+        hydra:property schema:keywords;
+        #shacl:sourceShape <ShapesGraph#NamePropertyShape>;
+        
+        # How multiple values of a service custom argument are passed to the Web API:
+        # true = as a comma-separated value, false = value is split and Web API is invoked once for each value. Default: true
+        sms:passMultipleValuesAsCsv "true"^^xsd:boolean;
     ].
+
 ```
 
 The service configuration parameters are expressed in the SD graph as follows:
@@ -184,11 +197,12 @@ HTTP headers | Optional | Property of the the Web API's potential action. An `ht
 Since the service description graph is public (it can be queried and dereferenced), it is not suitable to keep sensitive information such as an API private key or security token.
 Therefore, a companion file `ServiceDescriptionPrivate.ttl` may be defined, loaded into as separate named graph that is not made public.
 Both `ServiceDescription.ttl` and `ServiceDescriptionPrivate.ttl` do state facts about the same service, so that triples can be asserted in one or the other. The service will always work the same, only the public description will vary.
-
 An example is provided in service [flickr/getPhotosByTags_sd](../services/flickr/getPhotosByTags_sd).
 
 ### Shapes graph
 The service description graph can optionally be accompanied by a [SHACL](https://www.w3.org/TR/2017/REC-shacl-20170720/) shapes graph that specifies the type of graph that the SPARQL micro-service is designed to produce.
+An example is provided in service [flickr/getPhotosByTags_sd](../services/flickr/getPhotosByTags_sd).
+
 
 ## Re-injecting arguments in the graph produced by the micro-service
 

@@ -1,94 +1,52 @@
 # SPARQL Micro-Services
 
-The SPARQL Micro-Service architecture [1, 3] is meant to allow the combination of Linked Data with data from Web APIs. It enables **querying non-RDF Web APIs with SPARQL**, and allows **on-the-fly assigning dereferenceable URIs to Web API resources** that do not have a URI in the first place.
+The SPARQL Micro-Service architecture [1, 3] enables **querying Web APIs with SPARQL**, as well as **assigning dereferenceable URIs to Web API resources** that do not have a URI in the first place.
 
-Each SPARQL micro-service is a **lightweight, dedicated SPARQL endpoint** that typically provides access to a small, resource-centric graph. The graph produced can **use any vocabulary or ontology of your choice** and be tuned to meet your requirements. It is delineated by the Web API service being wrapped, the arguments passed to this service, and the types of RDF triples that the SPARQL micro-service is designed to spawn.
+Each SPARQL micro-service is a **lightweight SPARQL endpoint** that typically provides access to a small, resource-centric graph. It takes arguments that depend on the Web API, query the Web API, and build a graph that uses **any vocabulary or ontology of your choice**.
 
-This project is a PHP implementation for JSON-based Web APIs. It comes with multiple configuration options to fit most specific APIs (e.g. add specific HTTP headers, configure a cache database) and can generate **provenance information** added to the graph being produced at the time a SPARQL micro-service is invoked.
+ #### Configuration options to fit most specific APIs:
+- Add any **HTTP headers** to the Web API query;
+- Support for APIs with **OAuth2 authentication** (see [example](services/advanced_examples/oauth2));
+- Native support for **JSON-based** Web APIs. XML-based Web APIs are supported with an additional component (see [example](services/advanced_examples/xml_api));
+
+#### Implementation features:
+- Easy **Docker-based deployment**;
+- **Simple**: a micro-service consists of a configuration file, a JSON-LD profile and a SPARQL query
+- **Dynamic**: simply drop off your files and your service is ready to go.
+- **Cache database** with configurable expiration time, to improve performance;
+- **Provenance information** about the API invokation (time, parameterr etc.);
+- Web API invokation with **HTTP GET method**, POST is not supported.
+- Dynamic generation of an HTML documentation and test interface
 
 
 ## Quick start guide
 
 The most straightforward way to run SPARQL micro-services is using the [Docker deployment](deployment/docker/) option.
 
-Then, these [slides](doc/quick-start-guide.pdf) describe the main concepts behind SPARQL micro-services, and then provide a guide to **quickly write and setup your first SPARQL micro-service**.
+Then, these [slides](doc/quick-start-guide.pdf) describe the main concepts behind SPARQL micro-services and provide a guide to **quickly write and setup your first SPARQL micro-service**.
 
 
 
 ## Examples and Demo
 
 You can check out some services we published at [https://sparql-micro-services.org/](https://sparql-micro-services.org/). 
-An **HTML documentation and test interface** is generated dynamically from the micro-service description, that embeds http://schema.org/Dataset markup data to **make the service discoverable** using for instance [Google Dataset Search](https://datasetsearch.research.google.com/search?query=flickr%20sparql&docid=88YllZoR%2BmJMuXMgAAAAAA%3D%3D).
+An **HTML documentation and test interface** is [generated dynamically](doc/03-html-doc.md) from the micro-service description, that embeds Schema.org markup to **make the services discoverable** using for instance [Google Dataset Search](https://datasetsearch.research.google.com/search?query=flickr%20sparql&docid=88YllZoR%2BmJMuXMgAAAAAA%3D%3D).
 
 A **[demo](http://sparql-micro-services.org/demo-sms?param=Delphinapterus+leucas)** showcases the use of SPARQL micro-services to integrate, within a single SPARQL query, biodiversity data from a regular Linked Data source with non-RDF data resources: photos, scientific articles, life traits, audio recordings, all obtained through dedicated Web APIs wrapped in SPARQL micro-services.
 
-This project comes with several example SPARQL micro-services, allowing for instance to search photos matching some tags on [Flickr](https://www.flickr.com/), or tunes whose titles match a given name in [MusicBrainz](https://musicbrainz.org/).
+This project comes with [several example](services/advanced_examples/) SPARQL micro-services, allowing for instance to search photos matching some tags on [Flickr](https://www.flickr.com/), or tunes whose titles match a given name in [MusicBrainz](https://musicbrainz.org/).
 
-We also provide other services to query major biodiversity data sources such as the [GBIF](https://www.biodiversitylibrary.org/), [BHL](https://www.biodiversitylibrary.org/) or [EoL](http://eol.org/traitbank).
-These are available in the [TaxrefWeb](https://github.com/frmichel/taxrefweb/tree/master/sparql-micro-services) repository.
-
+Also, in the [TaxrefWeb](https://github.com/frmichel/taxrefweb/tree/master/sparql-micro-services) repository we provide services to query major biodiversity data sources such as the [GBIF](https://www.biodiversitylibrary.org/), [BHL](https://www.biodiversitylibrary.org/) or [EoL](http://eol.org/traitbank).
 
 
 ## Documentation
 
-- [Using SPARQL micro-services](doc/01-usage.md)
-- [Writing a SPARQL micro-service](doc/02-config.md)
-- [Docker-based deployment ](deployment/docker/)
-- [Manual installation](doc/04-install.md)
+- [How to use SPARQL micro-services](doc/01-usage.md)
+- [Configuring a SPARQL micro-service](doc/02-config.md)
+- [Docker-based deployment](deployment/docker/)
+- [Complete non-Docker installation procedure](doc/04-install.md) (for more advanced deployments)
 - [Dynamic HTML documentation](doc/03-html-doc.md)
 - [Adding provenance information](doc/05-prov.md)
-
-
-
-## Typical use case
-
-The query below illustates a common usage of SPARQL micro-serivces that builds a mashup of Linked Data and data from Web APIs.
-It first retrieves the URI of the common dolphin species (Delphinus delphis) from TAXREF-LD, a biodiversity RDF dataset [2]. Then, it enriches this description with information from two Web APIs: photos from Flickr and audio recordings from the Macaulay Library.
-
-The SPARQL endpoint as well as the two SPARQL micro-services are invoked within dedicated SERVICE clauses.
-
-The example also illustrates the **two methods for passing arguments to a SPARQL micro-service**: either as RDF terms of regular  triple patterns (predicate ```dwc:scientificName``` for service ```macaulaylibrary/getAudioByTaxon_sd```), or on the endpoint URL (arguments ```group_id``` and ```tags``` for service ```flickr/getPhotosByGroupByTag```):
-
-```sparql
-prefix dwc:    <http://rs.tdwg.org/dwc/terms/>
-prefix owl:    <http://www.w3.org/2002/07/owl#>
-prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
-prefix schema: <http://schema.org/>
-
-CONSTRUCT {
-
-    ?species
-      schema:subjectOf ?photo; schema:image ?img; schema:thumbnailUrl ?thumbnail;
-      schema:contentUrl ?audioUrl.
-      
-} WHERE {
-
-    # Query a regular SPARQL endpoint of the LOD cloud
-    SERVICE <http://taxref.mnhn.fr/sparql> {
-      ?species 
-        a                       owl:Class;
-        rdfs:label              "Delphinus delphis". 
-    }
-
-    # SPARQL micro-serivce retrieving audio recordings
-    # (Arguments passed as query graph pattern)
-    SERVICE <https://example.org/sparqlms/macaulaylibrary/getAudioByTaxon_sd> {
-        ?taxon
-          dwc:scientificName    "Delphinus delphis";    # input argument
-          schema:audio [ 
-            schema:contentUrl   ?audioUrl               # expected output
-          ]. 
-    }
-    
-    # SPARQL micro-serivce retrieving photos from a Flickr group
-    # (Arguments passed as in the endpoint URL)
-    SERVICE <https://example.org/sparqlms/flickr/getPhotosByGroupByTag?group_id=806927@N20&tags=taxonomy:binomial=Delphinus+delphis> {
-        ?photo 
-          schema:image          ?img;
-          schema:thumbnailUrl   ?thumbnail.
-    }
-}
-```
 
 
 ## Cite this work:
@@ -119,7 +77,7 @@ Michel F., Faron C., Gargominy O. & Gandon F. (2018). Integration of Web APIs an
 
 ### Journal
 
-[3] Michel F., Zucker C., Gargominy O. & Gandon F. (2018). Integration of Web APIs and Linked Data Using SPARQL Micro-Services—Application to Biodiversity Use Cases. *Information 9(12):310*. [DOI](https://dx.doi.org/10.3390/info9120310), [HAL](https://hal.archives-ouvertes.fr/hal-01947589).
+[3] Michel F., Faron C., Gargominy O. & Gandon F. (2018). Integration of Web APIs and Linked Data Using SPARQL Micro-Services—Application to Biodiversity Use Cases. *Information 9(12):310*. [DOI](https://dx.doi.org/10.3390/info9120310), [HAL](https://hal.archives-ouvertes.fr/hal-01947589).
 
 ### Conference
 

@@ -3,9 +3,10 @@
 ## [0.5.6] 2023-07-27
 
 ### Changed
-- Support for token-based Authentication, exemplified in service mirri/getSchemas
+- Support for OAuth2-based authentication, exemplified in services/advanced_examples/oauth2
 - Add cache services
 - Add shared folder html in Docker deployment
+- Documentation improvements
 
 
 ## [0.5.4] 2022-11-30

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NewDataSet>
+  <IndexFungorum>
+    <NAME_x0020_OF_x0020_FUNGUS>Hypocrea citrina var. fungicola</NAME_x0020_OF_x0020_FUNGUS>
+    <AUTHORS>P. Karst.</AUTHORS>
+    <SPECIFIC_x0020_EPITHET>citrina</SPECIFIC_x0020_EPITHET>
+    <INFRASPECIFIC_x0020_RANK>var.</INFRASPECIFIC_x0020_RANK>
+    <INFRASPECIFIC_x0020_EPITHET>fungicola</INFRASPECIFIC_x0020_EPITHET>
+    <VOLUME>23</VOLUME>
+    <PAGE>204</PAGE>
+    <YEAR_x0020_OF_x0020_PUBLICATION>1873</YEAR_x0020_OF_x0020_PUBLICATION>
+    <CORRECTION>http://biodiversitylibrary.org/page/2963810</CORRECTION>
+    <LITERATURE_x0020_LINK>2892</LITERATURE_x0020_LINK>
+    <RECORD_x0020_NUMBER>451112</RECORD_x0020_NUMBER>
+    <BASIONYM_x0020_RECORD_x0020_NUMBER>451112</BASIONYM_x0020_RECORD_x0020_NUMBER>
+    <PROTONYM_x0020_RECORD_x0020_NUMBER>451112</PROTONYM_x0020_RECORD_x0020_NUMBER>
+    <NAME_x0020_OF_x0020_FUNGUS_x0020_FUNDIC_x0020_RECORD_x0020_NUMBER>2432</NAME_x0020_OF_x0020_FUNGUS_x0020_FUNDIC_x0020_RECORD_x0020_NUMBER>
+    <CURRENT_x0020_NAME>Protocrea fungicola</CURRENT_x0020_NAME>
+    <CURRENT_x0020_NAME_x0020_RECORD_x0020_NUMBER>450303</CURRENT_x0020_NAME_x0020_RECORD_x0020_NUMBER>
+    <CURRENT_x0020_NAME_x0020_FUNDIC_x0020_RECORD_x0020_NUMBER>4383</CURRENT_x0020_NAME_x0020_FUNDIC_x0020_RECORD_x0020_NUMBER>
+    <GSD_x0020_FLAG>GSD14</GSD_x0020_FLAG>
+    <SQLTimeStamp>AAAAAAhfDBo=</SQLTimeStamp>
+    <UpdatedBy>sa</UpdatedBy>
+    <AddedBy>CABI_UK\kirk</AddedBy>
+    <UpdatedDate>2016-02-23T14:54:49.157+00:00</UpdatedDate>
+    <AddedDate>2000-08-09T12:30:00+01:00</AddedDate>
+    <UUID>63f5d862-76f4-4ee9-812e-14b37785424c</UUID>
+    <pubLink>2892</pubLink>
+    <pubType>S</pubType>
+    <pubOriginalTitle>Bidrag, till Kännedom om Finlands Natur och Folk</pubOriginalTitle>
+    <pubOtherTitle />
+    <pubEdition />
+    <pubISBN />
+    <pubISSN />
+    <pubTransSupTitle />
+    <pubTransOther />
+    <pubPublishers />
+    <pubEditors />
+    <pubNotes />
+    <pubAcceptedTitle>Bidrag, till Kännedom af Finlands Natur och Folk</pubAcceptedTitle>
+    <pubIMIAbbr>Bidr. Känn. Finl. Nat. Folk</pubIMIAbbr>
+    <pubIMIAbbrSts>OK</pubIMIAbbrSts>
+    <pubAddBy />
+    <pubUpdateBy />
+    <pubUpdateDate>2000-03-21T00:00:00+00:00</pubUpdateDate>
+    <Genus_x0020_name>Hypocrea</Genus_x0020_name>
+    <Family_x0020_name>Hypocreaceae</Family_x0020_name>
+    <Order_x0020_name>Hypocreales</Order_x0020_name>
+    <Subclass_x0020_name>Hypocreomycetidae</Subclass_x0020_name>
+    <Class_x0020_name>Sordariomycetes</Class_x0020_name>
+    <Subphylum_x0020_name>Pezizomycotina</Subphylum_x0020_name>
+    <Phylum_x0020_name>Ascomycota</Phylum_x0020_name>
+    <Kingdom_x0020_name>Fungi</Kingdom_x0020_name>
+    <Authors1>Fr.</Authors1>
+    <Volume1>1</Volume1>
+    <Page1>104</Page1>
+    <Year_x0020_of_x0020_Publication1>1825</Year_x0020_of_x0020_Publication1>
+    <Day_x0020__x0026__x0020_Month_x0020_of_x0020_Publication>Dec (?)</Day_x0020__x0026__x0020_Month_x0020_of_x0020_Publication>
+    <Literature_x0020_Link1>1568</Literature_x0020_Link1>
+    <ING_x0020_NCU_x0020_Record_x0020_Number>2845600</ING_x0020_NCU_x0020_Record_x0020_Number>
+    <Fundic_x0020_Record_x0020_Number>2432</Fundic_x0020_Record_x0020_Number>
+    <ING-NCU_x0020_Flag>X</ING-NCU_x0020_Flag>
+    <Current_x0020_Use>X</Current_x0020_Use>
+    <IsUnique>y</IsUnique>
+    <FUNINDEX_x0020_Record_x0020_Number_x0020_of_x0020_type_x0020_species>162646</FUNINDEX_x0020_Record_x0020_Number_x0020_of_x0020_type_x0020_species>
+    <UpdatedBy1>EGHAM_SQL\KIRK</UpdatedBy1>
+    <UpdatedDate1>2002-12-19T13:45:57+00:00</UpdatedDate1>
+    <timestamp>AAAAAAhmqvI=</timestamp>
+  </IndexFungorum>
+</NewDataSet>
