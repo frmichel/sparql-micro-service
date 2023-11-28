@@ -6,12 +6,12 @@ You can prototype and deploy SPARQL micro-services using the Docker images we ha
 
   - [frmichel/corese4sms](https://hub.docker.com/r/frmichel/corese4sms/) contains the [Corese-KGRAM](http://wimmics.inria.fr/corese) RDF store and SPARQL endpoint. It is used to execute SPARQL queries and generate the HTML documentation of the services described with a [service descriptions](../../doc/02-config.md#configuration-with-a-sparql-service-description-file) file (not necessary for services configured [with a config.ini file](../../doc/02-config.md#configuration-with-file-configini)).
 
-To run SPARQL micro-services, simply place them in the `services` directory in the folder where you run docker-compose.
+To run SPARQL micro-services, simply place them in the `services` directory in the folder where you run `docker-compose`.
 
 
 ## Run Docker with our example SPARQL micro-services
 
-To start running SPARQL micro-services, download file [environment.zip](environment.zip). Unzip it to the directory from where you will run docker-compose, and set file access rights as demonstrated below so that the Docker container can read/write the necessary files and folders.
+To start running SPARQL micro-services, download file [environment.zip](environment.zip). Unzip it to the directory from where you will run `docker-compose`, and set file access rights as demonstrated below so that the Docker container can read/write the necessary files and folders.
 
 ```bash
 unzip environment.zip
@@ -21,30 +21,38 @@ chmod -R 777 logs
 chmod -R 755 html
 ```
 
-Then, download file [docker-compose.yml](docker-compose.yml) to the directory where you unzipped environment.zip (together with directories services, config and logs), and run:
+Then, download file [docker-compose.yml](docker-compose.yml) to the directory where you unzipped `environment.zip` (together with directories services, config, logs and html), and run:
 
 ```
 docker-compose up -d
 ```
 
-Wait a few seconds for Corese to initialize properly. 
-Then, you can test the services using the commands below in a bash.
+Wait a few seconds for Corese to initialize properly, then you can test the services.
+The endpoint URLs of SPARQL micro-services are in the form of:
+
+```http://localhost/service/<api>/<service>```
+
+where `<api>/<service>` reflects the structure of the `services` directory.
+
+To test the services simply with curl, use the commands below in a bash:
 
 ```bash
 # URL-encoded query: construct where {?s ?p ?o}
 CONSTRUCT=construct%20WHERE%20%7B%20%3Fs%20%3Fp%20%3Fo%20%7D%20
 
+# Parameter "keyword" is expected by the SPARQL micro-service, whereas "query" is imposed by the SPARQL protocol
 curl --header "Accept: text/turtle" \
-  "http://localhost/service/deezer/findAlbums?query=${CONSTRUCT}&keyword=eminem"
+  "http://localhost/service/deezer/findAlbums?keyword=eminem&query=${CONSTRUCT}"
 
 # URL-encoded query: select * where {?s ?p ?o}
 SELECT='select%20*%20where%20%7B%3Fs%20%3Fp%20%3Fo%7D'
 
+# Parameter "name" is expected by the SPARQL micro-service, whereas "query" is imposed by the SPARQL protocol
 curl --header "Accept: application/sparql-results+json" \
-  "http://localhost/service/musicbrainz/getSongByName?query=${SELECT}&name=Love"
+  "http://localhost/service/musicbrainz/getSongByName?name=Love&query=${SELECT}"
 ```
 
-The `frmichel/sparql-micro-service` Docker image is also configured to support [URI dereferencing](../../doc/04-install.md#rewriting-rules-for-uri-dereferencing) using the service `flickr/getPhotoById`:
+The `frmichel/sparql-micro-service` Docker image is also configured to support [URI dereferencing](../../doc/04-install.md#rewriting-rules-for-uri-dereferencing). This is exemplified by the service `flickr/getPhotoById`:
 
 Enter this URL in your browser: http://localhost/ld/flickr/photo/31173091246 or the following command in a bash:
 
@@ -63,10 +71,6 @@ Corese-KGRAM log is named ```kgram-server.log```, while SPARQL micro-service log
 
 The main SPARQL micro-service configuration file is editable at ```config/sparql-micro-service.ini```. In particular you can use it to change the log level.
 
-For changes to be taken into account, restart the SPARQL-micro-service Docker container.
-```bash
-docker-compose restart sparql-micro-service
-```
 
 ### Using Apache to serve any other files
 
@@ -90,7 +94,7 @@ The containers need to write in directory ```logs```. This will fail if you do n
 
 ## Test your own SPARQL micro-services
 
-You can write and deploy you own SPARQL micro-services by simply dropping them in the `services` directory, in the folder where you have run docker-compose.
+You can write and deploy you own SPARQL micro-services by simply dropping them in the `services` directory, in the folder where you have run `docker-compose`.
 Just mimmic what already exists in the example services.
 
 Just remember to always give all diretories and files full read access rights so that the Docker container can read them:
