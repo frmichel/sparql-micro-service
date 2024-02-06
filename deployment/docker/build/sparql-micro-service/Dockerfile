@@ -17,7 +17,7 @@ RUN pecl install mongodb
 RUN docker-php-ext-enable mongodb
 
 
-# ============== Apache/PHP configutation ============
+# ============== httpd/PHP configutation ============
 
 # Enable rewrite and proxy modules in Apache
 RUN ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load
@@ -25,11 +25,14 @@ RUN ln -s /etc/apache2/mods-available/proxy.load /etc/apache2/mods-enabled/proxy
 RUN ln -s /etc/apache2/mods-available/proxy.conf /etc/apache2/mods-enabled/proxy.conf
 RUN ln -s /etc/apache2/mods-available/proxy_http.load /etc/apache2/mods-enabled/proxy_http.load
 
-# --- Timezone not defined in default php.ini. Replacing it
-RUN echo "date.timezone = 'Europe/Paris'" >> "$PHP_INI_DIR/php.ini"
-
 # --- Add rewrite rules for SPARQL micro-services
 COPY apache.conf /etc/apache2/sites-enabled/apache-sparql-micro-services.conf
+
+# --- Increase httpd capacity
+COPY mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf
+
+# --- Timezone not defined in default php.ini. Replacing it
+RUN echo "date.timezone = 'Europe/Paris'" >> "$PHP_INI_DIR/php.ini"
 
 
 # ============== SPARQL micro-services install and config ============
