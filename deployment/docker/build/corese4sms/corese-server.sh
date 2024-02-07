@@ -64,6 +64,7 @@ cat $PROFILE
 
 #--- Start Corese with the profile
 # Note: option -re = re-entrant mode to allow for a SPARQL µs to call another one
+#       option -su = allows access fo file system as well as any endpoint in a SERVICE clause
 cd $CORESE
 $JAVA_HOME/bin/java \
     -Dfile.encoding="UTF-8" \
@@ -71,5 +72,4 @@ $JAVA_HOME/bin/java \
     -jar $JAR \
     -lp \
     -pp file://$PROFILE -p 8081 \
-    -re -su
-
+    -su -re

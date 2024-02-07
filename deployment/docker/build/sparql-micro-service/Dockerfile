@@ -1,4 +1,4 @@
-FROM php:7.4-apache
+FROM php:8.3-apache
 ARG SMS_VERSION
 ENV SMS_VERSION=$SMS_VERSION
 
@@ -25,13 +25,20 @@ RUN ln -s /etc/apache2/mods-available/proxy.load /etc/apache2/mods-enabled/proxy
 RUN ln -s /etc/apache2/mods-available/proxy.conf /etc/apache2/mods-enabled/proxy.conf
 RUN ln -s /etc/apache2/mods-available/proxy_http.load /etc/apache2/mods-enabled/proxy_http.load
 
-# --- Add rewrite rules for SPARQL micro-services
-COPY apache.conf /etc/apache2/sites-enabled/apache-sparql-micro-services.conf
+# Fix Apache warning "Could not reliably determine the server's fully qualified domain name"
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-# --- Increase httpd capacity
+# Fix a pb with some MacOS platforms
+RUN echo 'Mutex posixsem' >> /etc/apache2/apache2.conf
+
+# Increase httpd capacity
 COPY mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf
 
-# --- Timezone not defined in default php.ini. Replacing it
+# Add rewrite rules for SPARQL micro-services
+RUN  rm -rf      /etc/apache2/sites-enabled/000-default.conf
+COPY apache.conf /etc/apache2/sites-enabled/apache-sparql-micro-services.conf
+
+# Timezone not defined in default php.ini. Replacing it
 RUN echo "date.timezone = 'Europe/Paris'" >> "$PHP_INI_DIR/php.ini"
 
 
@@ -56,6 +63,3 @@ RUN mkdir -p $LOGS && chmod 777 $LOGS
 RUN mkdir -p /var/www/sparql-ms
 RUN cp -r $INSTALL/src /var/www/sparql-ms/src && cp -r $INSTALL/vendor /var/www/sparql-ms/vendor
 RUN mkdir -p /services && chmod 777 /services
-
-# Fix a pb with some MacOS platforms
-RUN echo 'Mutex posixsem' >> /etc/apache2/apache2.conf

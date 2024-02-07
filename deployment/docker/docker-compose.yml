@@ -3,7 +3,7 @@ services:
 
   corese:
     container_name: corese4sms
-    image: frmichel/corese4sms:v4.3.1
+    image: frmichel/corese4sms:v4.4.1
     networks:
       - sms-net
     volumes:
@@ -18,7 +18,7 @@ services:
 
   sparql-micro-service:
     container_name: sparql-micro-service
-    image: frmichel/sparql-micro-service:v0.5.6
+    image: frmichel/sparql-micro-service:v0.5.7
     networks:
       - sms-net
     ports:

@@ -8,7 +8,7 @@ RUN apt-get update -y
 RUN apt-get install -y git wget apache2
 
 # ============== Get the SPARQL micro-services project ============
-# This is needed to get sttl files (generation of service web pages) served by Apache
+# This is needed to get Corese sttl files (generation service web pages) served by Apache
 
 ENV INSTALL="/sparql-micro-service"
 RUN mkdir $INSTALL
@@ -35,7 +35,7 @@ ENV CORESESH=$CORESE/corese-server.sh
 COPY corese-server.sh $CORESESH
 RUN chmod 755 $CORESESH
 
-RUN wget http://files.inria.fr/corese/distrib/$CORESEJAR
+RUN wget https://files.inria.fr/corese/distrib/$CORESEJAR
 
 RUN mkdir -p /services
 

@@ -79,7 +79,7 @@ You may want to use the Apache server that runs the SPARQL micro-services to ser
 To do so, simply drop them in the `html` directory, they will be accessible from http://localhost/html/.
 
 
-## Common issues
+## Troublshooting
 
 ### Conflict on port 80
 
@@ -90,6 +90,25 @@ This deployment uses ports 80 of the Docker host. If it is in conflict with anot
 The containers need to write in directory ```logs```. This will fail if you do not set rights 777 (`chmod 777 logs`), and the SPARQL-micro-service console shall show an error like this:
 
 ```PHP Notice:  Undefined variable: logger in /var/www/sparql-ms/src/sparqlms/service.php on line 204```
+
+### MongoDB 5.0 requires a CPU with AVX support
+
+Recommended MongoDB is 4.4.6. However if you with to use MOngoDB 5.0 and run Docker on a virtual machine with a Windows host, you may run into the problem of MongODB not starting due to the following error:
+```
+Virtualbox WARNING: MongoDB 5.0  requires a CPU with AVX support, and your current system does not appear to have that!
+```
+
+To fix this, either return to MongoDB 4.4.6 which is the last version not requiring AVX support, or turn Hyper-V off following |this guide](https://forums.virtualbox.org/viewtopic.php?f=25&t=99390).
+**Caution**: that may prevent WSL from working!
+
+In short, open a Command Prompt window As Administrator, then run:
+
+```
+bcdedit /set hypervisorlaunchtype off
+DISM /Online /Disable-Feature:Microsoft-Hyper-V
+```
+And reboot the Windows machine.
+
 
 
 ## Test your own SPARQL micro-services

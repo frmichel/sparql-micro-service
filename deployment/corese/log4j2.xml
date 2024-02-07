@@ -11,13 +11,15 @@
       <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %C{2}.%M:%L %x - %m%n"/>
     </Console>
 
-    <RollingFile name="FILE" fileName="log/kgram_server.log" filePattern="log/kgram_server.log.%d{yyyy-MM-dd-HH:mm:ss}-%i.gz">
-      <PatternLayout>
-        <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %C{2}.%M:%L %x - %m%n</Pattern>
-      </PatternLayout>
+    <RollingFile name="FILE" 
+        fileName="log/kgram_server.log"
+        filePattern="log/kgram_server.log.%d{yyyy-MM-dd-HH:mm:ss}-%i.gz">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %C{2}.%M:%L %x - %m%n" />
       <Policies>
         <SizeBasedTriggeringPolicy size="20 MB"/>
       </Policies>
+      <!-- Here, we are limiting the number of log files to keep to 20. -->
+      <DefaultRolloverStrategy max="20" />
     </RollingFile>
 
   </Appenders>
