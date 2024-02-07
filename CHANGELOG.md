@@ -7,9 +7,9 @@
 - Upgrade to MongoDB 4.4.6
 - Upgrade to Corese 4.4.1
 - Fixed Apache issue occuring under highload by adding custom prefork configuration (docker/build/sparql-micro-service/mpm_prefork.conf)
-- Fixed named resolution issue at Apache startup (docker/build/sparql-micro-service/Dockerfile)
+- Fixed name resolution issue at Apache startup (docker/build/sparql-micro-service/Dockerfile)
 - Misc. documentation improvements
-- Moved some services to reposirory https://github.com/frmichel/sparql-micro-services.org
+- Moved some services to repository https://github.com/frmichel/sparql-micro-services.org
 
 ## [0.5.6] 2023-07-27
 
