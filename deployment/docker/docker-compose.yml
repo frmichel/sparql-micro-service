@@ -2,6 +2,7 @@ version: '3.2'
 services:
 
   corese:
+    container_name: corese4sms
     image: frmichel/corese4sms:v4.3.1
     networks:
       - sms-net
@@ -10,11 +11,13 @@ services:
       - "./services:/services"
 
   mongo:
-    image: mongo:3.7
+    container_name: mongodb
+    image: mongo:4.4.6
     networks:
       - sms-net
 
   sparql-micro-service:
+    container_name: sparql-micro-service
     image: frmichel/sparql-micro-service:v0.5.6
     networks:
       - sms-net
