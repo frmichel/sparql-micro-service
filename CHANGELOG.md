@@ -1,5 +1,16 @@
 # SPARQL Micro-Service Changelog
 
+## [0.5.7] 2024-02-07
+
+### Changed
+- Upgrade to php 8.3
+- Upgrade to MongoDB 4.4.6
+- Upgrade to Corese 4.4.1
+- Fixed Apache issue occuring under highload by adding custom prefork configuration (docker/build/sparql-micro-service/mpm_prefork.conf)
+- Fixed named resolution issue at Apache startup (docker/build/sparql-micro-service/Dockerfile)
+- Misc. documentation improvements
+- Moved some services to reposirory https://github.com/frmichel/sparql-micro-services.org
+
 ## [0.5.6] 2023-07-27
 
 ### Added
