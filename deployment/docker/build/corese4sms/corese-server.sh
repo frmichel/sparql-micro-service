@@ -14,6 +14,8 @@ env
 # Following env. variables must be set by Dockerfile: CORESE=path, $CORESEJAR=name of the jar without path
 LOG4J=file://$CORESE/log4j2.xml
 JAR=$CORESE/$CORESEJAR
+PROPERTIES=$CORESE/config/corese-properties.properties
+
 
 # Root path of the SPARQL micro-service Github repository
 SMSPATH=/sparql-micro-service
@@ -62,6 +64,17 @@ cat $CORESE/corese-profile-sms.ttl | sed "s|{INSTALL}|$SMSPATH|g" >> $PROFILE
 echo "=========== Corese profile:"
 cat $PROFILE
 
+
+# Check existing properties file or create a new one
+if [ -f "$PROPERTIES" ]; then
+    echo "Using user-defined properties file."
+else
+    echo "Creating new properties file $PROPERTIES."
+    mkdir -p $CORESE/config
+    cp $CORESE/corese-default-properties.properties $PROPERTIES
+fi
+
+
 #--- Start Corese with the profile
 # Note: option -re = re-entrant mode to allow for a SPARQL µs to call another one
 #       option -su = allows access fo file system as well as any endpoint in a SERVICE clause
@@ -72,4 +85,5 @@ $JAVA_HOME/bin/java \
     -jar $JAR \
     -lp \
     -pp file://$PROFILE -p 8081 \
+    -init $PROPERTIES \
     -su -re

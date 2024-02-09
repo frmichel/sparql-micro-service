@@ -9,6 +9,7 @@ services:
     volumes:
       - "./logs:/usr/local/corese/log"
       - "./services:/services"
+      - "./config:/usr/local/corese/config"
 
   mongo:
     container_name: mongodb

@@ -21,6 +21,7 @@ st:sparql-to-spin-server a st:Server ;
 # Generation of an HTML document from the micro-serice Service Description graph.
 # Example: http://localhost:8080/service/sms-html-description?param=http://example.org/sparql-ms/flickr/getPhotosByTaxon_sd/
 # 'param' is the URI of a SPARQL micro-serice
+# sw:uri gives the local file system path where the STTL .rq files are accessed, starting with default start.rq
 st:sms-html-description a st:Server ;
     st:service "sms-html-description" ;
     st:shareContent st:smsdesc;
@@ -33,6 +34,7 @@ st:sms-html-description a st:Server ;
 # Generation of an HTML index of the micro-serices
 # Example: http://localhost:8080/service/sms-html-index?param=http://example.org/sparql-ms/
 # 'param' is the root URI of the services to show in the index page
+# sw:uri gives the local file system path where the STTL .rq files are accessed, starting with default start.rq
 st:sms-html-index a st:Server ;
     st:service "sms-html-index" ;
     st:shareContent st:smsdesc;
