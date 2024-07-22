@@ -127,7 +127,7 @@ try {
         $apiQuery = $context->getConfigParam('api_query');
 
         if (sizeof($allServiceArgs) == 0) {
-            // Is there additional work to be be done by the custom service script?
+            // Is there additional work to be done by the custom service script?
             if (file_exists($context->getServicePath() . '/service.php'))
                 require $context->getServicePath() . '/service.php';
                 
@@ -247,41 +247,41 @@ function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery, $respGraphUri)
     // --- Insert the triples generated from the Web API response into the temp graph $apiGraphUri
     if ($logger->isHandling(Logger::INFO))
         $logger->info("Creating temporary graph: <{$apiGraphUri}>");
-    $_query = "INSERT DATA { GRAPH <{$apiGraphUri}> {\n" . $serializedQuads . "\n}}\n";
-    $sparqlClient->update($_query);
+    $_sparqlConstrQuery = "INSERT DATA { GRAPH <{$apiGraphUri}> {\n" . $serializedQuads . "\n}}\n";
+    $sparqlClient->update($_sparqlConstrQuery);
 
-    // --- Create the triples for which this SPARQL service is meant with the CONSTRUCT query
-    $_sparqlConstr = $context->getServicePath() . '/construct.sparql';
-    if (file_exists($_sparqlConstr)) {
+    // --- Create the triples for which this SPARQL service is meant
+    $_sparqlConstrFile = $context->getServicePath() . '/construct.sparql';
+    if (file_exists($_sparqlConstrFile)) {
 
         // Prepare the CONSTRUCT query to execute against the temp graph that was just created
-        $logger->notice("Executing SPARQL CONSTRUCT query from file: " . $_sparqlConstr);
-        $_query = file_get_contents($_sparqlConstr);
+        $logger->notice("Executing SPARQL CONSTRUCT query from file: " . $_sparqlConstrFile);
+        $_sparqlConstrQuery = file_get_contents($_sparqlConstrFile);
 
         // Reinject the service arguments into the CONSTRUCT query.
         // See doc/02-config.md#re-injecting-arguments-in-the-graph-produced-by-the-micro-service
-        $_sparqlVal = "";
         foreach ($serviceArgs as $argName => $argVal) {
-            // In case there are multiple comma-separated values "val1,val2", they are injected like "val1", "val2"...
+            // In case there are multiple comma-separated values "val1,val2", they are injected like multiple triples with: "val1", "val2"...
+            $_sparqlVal = "";
             foreach (explode(',', $argVal) as $val)
                 if ($_sparqlVal == "")
                     $_sparqlVal = '"' . $val . '"';
                 else
                     $_sparqlVal .= ', "' . $val . '"';
 
-            $_query = str_replace('{' . $argName . '}', $_sparqlVal, $_query);
-            $_query = str_replace('{urlencode(' . $argName . ')}', urlencode(str_replace('"', "", $_sparqlVal)), $_query);
+            $_sparqlConstrQuery = str_replace('{' . $argName . '}', $_sparqlVal, $_sparqlConstrQuery);
+            $_sparqlConstrQuery = str_replace('{urlencode(' . $argName . ')}', urlencode(str_replace('"', "", $_sparqlVal)), $_sparqlConstrQuery);
         }
     } else {
         // No construct.sparql file: run a default query
-        $_query = "CONSTRUCT WHERE { ?s ?p ?o. }";
+        $_sparqlConstrQuery = "CONSTRUCT WHERE { ?s ?p ?o. }";
         $logger->notice("Executing default SPARQL CONSTRUCT query");
     }
 
     // Execute the CONSTRUCT query
     if ($logger->isHandling(Logger::INFO))
-        $logger->info("CONSTRUCT query:\n" . $_query);
-    $_constrResult = $sparqlClient->queryRaw($_query, "text/turtle", $apiGraphUri);
+        $logger->info("CONSTRUCT query:\n" . $_sparqlConstrQuery);
+    $_constrResult = $sparqlClient->queryRaw($_sparqlConstrQuery, "text/turtle", $apiGraphUri);
 
     // Create a new temp graph with the result of the CONSTRUCT, using an INSERT DATA query
     $prefixes = "";
@@ -293,11 +293,11 @@ function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery, $respGraphUri)
             $triples .= "    " . $line . "\n";
 
     $logger->info("Adding result of the CONSTRUCT query into graph: <{$respGraphUri}>");
-    $_query = $prefixes . "\nINSERT DATA { \n  GRAPH <{$respGraphUri}> {\n $triples \n} }\n";
+    $_sparqlConstrQuery = $prefixes . "\nINSERT DATA { \n  GRAPH <{$respGraphUri}> {\n $triples \n} }\n";
 
     if ($logger->isHandling(Logger::DEBUG))
-        $logger->debug("Creating temporary graph: <{$respGraphUri}> with INSERT DATA query:\n" . $_query);
-    $sparqlClient->update($_query);
+        $logger->debug("Creating temporary graph: <{$respGraphUri}> with INSERT DATA query:\n" . $_sparqlConstrQuery);
+    $sparqlClient->update($_sparqlConstrQuery);
 
     // ------------------------------------------------------------------------------------
     // --- Optional: add provenance triples
@@ -314,30 +314,30 @@ function queryWebAPIAndGenerateTriples($serviceArgs, $apiQuery, $respGraphUri)
             $_cacheDateTime = $now;
 
         if ($context->getConfigParam('service_description'))
-            $_query = file_get_contents('resources/add_provenance.sparql');
+            $_sparqlConstrQuery = file_get_contents('resources/add_provenance.sparql');
         else
-            $_query = file_get_contents('resources/add_provenance_simple.sparql');
+            $_sparqlConstrQuery = file_get_contents('resources/add_provenance_simple.sparql');
 
-        $_query = str_replace('{graphUri}', $respGraphUri, $_query);
-        $_query = str_replace('{serviceUri}', $context->getServiceUri(), $_query);
-        $_query = str_replace('{date_time_sms_invocation}', $now->format('c'), $_query);
-        $_query = str_replace('{date_time_cachehit}', $_cacheDateTime->format('c'), $_query);
-        $_query = str_replace('{sms_version}', $context->getConfigParam("version"), $_query);
+        $_sparqlConstrQuery = str_replace('{graphUri}', $respGraphUri, $_sparqlConstrQuery);
+        $_sparqlConstrQuery = str_replace('{serviceUri}', $context->getServiceUri(), $_sparqlConstrQuery);
+        $_sparqlConstrQuery = str_replace('{date_time_sms_invocation}', $now->format('c'), $_sparqlConstrQuery);
+        $_sparqlConstrQuery = str_replace('{date_time_cachehit}', $_cacheDateTime->format('c'), $_sparqlConstrQuery);
+        $_sparqlConstrQuery = str_replace('{sms_version}', $context->getConfigParam("version"), $_sparqlConstrQuery);
 
         // Add the Web API query string but obfuscate the API key if any
         if (strpos($apiQuery, "apikey") !== false) {
             $apiKeyObfuscated = preg_replace('/([\?&])apikey=[^&]*/', '${1}apikey=obfuscated', $apiQuery);
-            $_query = str_replace('{webapi_query_string}', $apiKeyObfuscated, $_query);
+            $_sparqlConstrQuery = str_replace('{webapi_query_string}', $apiKeyObfuscated, $_sparqlConstrQuery);
         } else if (strpos($apiQuery, "api_key") !== false) {
             $apiKeyObfuscated = preg_replace('/([\?&])api_key=[^&]*/', '${1}api_key=obfuscated', $apiQuery);
-            $_query = str_replace('{webapi_query_string}', $apiKeyObfuscated, $_query);
+            $_sparqlConstrQuery = str_replace('{webapi_query_string}', $apiKeyObfuscated, $_sparqlConstrQuery);
         } else
-            $_query = str_replace('{webapi_query_string}', $apiQuery, $_query);
+            $_sparqlConstrQuery = str_replace('{webapi_query_string}', $apiQuery, $_sparqlConstrQuery);
 
         $logger->info("Adding provenance triples into graph: <{$respGraphUri}>");
         if ($logger->isHandling(Logger::DEBUG))
-            $logger->debug("Adding provenance triples with query:\n" . $_query);
-        $sparqlClient->update($_query);
+            $logger->debug("Adding provenance triples with query:\n" . $_sparqlConstrQuery);
+        $sparqlClient->update($_sparqlConstrQuery);
     }
 
     if ($logger->isHandling(Logger::DEBUG)) {

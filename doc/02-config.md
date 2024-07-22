@@ -209,17 +209,17 @@ An example is provided in service [flickr/getPhotosByTags_sd](../services/flickr
 In certain situations, it may be necessary to re-inject the service arguments into the graph being produced by the service, so that this graph matches the query graph pattern.
 This is even mandatory when passing the arguments in client's SPARQL query.
 
-**Example**. In the SPARQL graph pattern below, assume that "sunset" is the value of the `tag` argument that the service expects.
+**Example**. Consider a service whose arguments are passed in the the SPARQL query. The service expects a argument `tag` provided with predicate `schema:keywords`. In the SPARQL graph pattern below, "sunset" is the value of the `tag` argument.
 ```sparql
 ?photo
-  a schema:Photograph;
+  rdf:type schema:Photograph;
   schema:keywords "sunset".
   schema:url ?url.
 ```
 
-To match this query, the service must not only generate triples with the `schema:url` predicate, but also the triple with the keyword "sunset". This is achieved using a _placeholder_ in the `construct.sparql` file.
+To match this query, the service must not only generate triples with the `rdf:type` and `schema:url` predicates, but also the triple with the keyword "sunset" that was used to pass the argument. This is achieved using a _placeholder_ in the `construct.sparql` file.
 
-In the example below, the `tag` argument (whose value is "sunset" in the query) is re-injected in the graph using placeholder `{tag}`:
+In the example below, the `tag` argument (whose value is "sunset" in the query) is 're-injected' in the graph using placeholder `{tag}`:
  
 ```sparql
 CONSTRUCT {
