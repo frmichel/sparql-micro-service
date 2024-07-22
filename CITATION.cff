@@ -15,5 +15,5 @@ authors:
     orcid: 'https://orcid.org/0000-0001-9064-0463'
 repository-code: 'https://github.com/frmichel/sparql-micro-service'
 license: Apache-2.0
-version: 0.5.7
-date-released: '2024-02-07'
+version: 0.5.8
+date-released: '2024-07-22'

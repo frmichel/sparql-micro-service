@@ -19,7 +19,7 @@ services:
 
   sparql-micro-service:
     container_name: sparql-micro-service
-    image: frmichel/sparql-micro-service:v0.5.7
+    image: frmichel/sparql-micro-service:v0.5.8
     networks:
       - sms-net
     ports:

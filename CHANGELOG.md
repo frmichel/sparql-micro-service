@@ -1,5 +1,11 @@
 # SPARQL Micro-Service Changelog
 
+## [0.5.8] 2024-07-22
+
+### Changed
+- Fixed issue #22 "Error in re-injecting parameters in the graph"
+
+
 ## [0.5.7] 2024-02-07
 
 ### Changed
