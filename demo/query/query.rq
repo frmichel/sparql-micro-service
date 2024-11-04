@@ -14,9 +14,7 @@ CONSTRUCT {
         dwc:scientificName ?scientificName; # TAXREF-LD
         taxrefprop:occurrence ?occurrence;  # GBIF
         schema:image ?photo;                # Flickr
-        schema:audio ?audio;                # Macauley Lib
         schema:subjectOf ?article;          # BHL
-        dct:relation ?measure;              # EoL
         .
 
     # Very simple/flat representation of an occurrence as a location
@@ -37,24 +35,11 @@ CONSTRUCT {
         schema:name             ?imgAuthorName;
         schema:url              ?imgAuthorUrl.
 
-    ?measure a dwc:MeasurementOrFact;       # EoL
-        dwc:measurementType     ?measurementType;
-        dwc:measurementUnit     ?measurementUnit;
-        dwciri:measurementUnit  ?measurementUnitUri;
-        dwc:measurementValue    ?measurementValue.
-
     ?article a schema:ScholarlyArticle;     # BHL
         schema:author           ?articleAuthorName;
         schema:mainEntityOfPage ?articlePage;
         schema:thumbnailUrl     ?articleThumbnailUrl;
         schema:description      ?articleCitation.
-
-    ?audio                                  # Macauley Lib
-        schema:contentUrl       ?audioUrl;
-        schema:thumbnailUrl     ?audioThumbnail;
-        schema:mainEntityOfPage ?audioPage;
-        schema:author           ?audioAuthor;
-        schema:description      ?audioDesc.
 
 } WHERE {
     # First, retrieve the taxon name from the URL query string (?param=taxon+name)
@@ -74,12 +59,12 @@ CONSTRUCT {
     # This part is mandatory, it gets the scientific name from TAXREF-LD
     {
         values ?bhl {UNDEF}
-        SERVICE <http://taxref.mnhn.fr/sparql> {
+        SERVICE <https://taxref.mnhn.fr/sparql> {
             SELECT DISTINCT * WHERE {
                 ?taxon a owl:Class;
                     rdfs:label ?taxonName;
                     taxrefprop:hasReferenceName [ rdfs:label ?scientificName ];
-                    rdfs:isDefinyBy <http://taxref.mnhn.fr/lod/taxref-ld/13.0>.
+                    rdfs:isDefinedBy <http://taxref.mnhn.fr/lod/taxref-ld>.
             }
         }
     }
@@ -127,26 +112,6 @@ CONSTRUCT {
     }
 
     UNION {
-        VALUES ?bhl {UNDEF}
-        SERVICE SILENT <https://sparql-micro-services.org/service/eol/getTraitsByTaxon_sd>
-        { SELECT * WHERE {
-            []  a dwc:Taxon;
-                dwc:scientificName      ?taxonName;     # input parameter
-                dct:relation            ?measure.
-
-            ?measure a dwc:MeasurementOrFact;
-                dwc:measurementType     ?measurementType;
-                dwc:measurementValue    ?measurementValue.
-            OPTIONAL { ?measure dwc:measurementUnit ?measurementUnit }
-            OPTIONAL { ?measure dwciri:measurementUnit ?measurementUnitUri }
-
-            FILTER (!strStarts(?measurementType, "harvested") && !strStarts(?measurementType, "habitat") && ! strStarts(?measurementType, "water"))
-
-          } LIMIT 20
-        }
-    }
-
-    UNION {
         values ?taxonName {UNDEF}
         SERVICE SILENT ?bhl
         { SELECT * WHERE {
@@ -162,21 +127,6 @@ CONSTRUCT {
           } LIMIT 9
         }
         BIND( CONCAT(?articleTitle, ". ", ?articleContainerTitle, " (", ?articleDate, ").") AS ?articleCitation )
-    }
-
-    UNION {
-        VALUES ?bhl {UNDEF}
-        SERVICE SILENT <https://sparql-micro-services.org/service/macaulaylibrary/getAudioByTaxon_sd>
-        { SELECT * WHERE {
-            []  a dwc:Taxon;
-                dwc:scientificName      ?taxonName;     # input parameter
-                schema:audio            ?audio.
-
-            ?audio
-                schema:contentUrl ?audioUrl; schema:thumbnailUrl ?audioThumbnail;
-                schema:mainEntityOfPage ?audioPage; schema:author ?audioAuthor; schema:description ?audioDesc.
-          } limit 6
-        }
     }
 }
 

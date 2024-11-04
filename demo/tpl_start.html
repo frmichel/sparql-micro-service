@@ -36,12 +36,14 @@
                  <li>taxonomic information from the TAXREF-LD Linked Data taxonomic register <a href="https://hal.archives-ouvertes.fr/hal-01617708" target="hal">[3]</a>,</li>
                  <li>occurrences from the <a href="https://www.gbif.org/" target="flickr">Global Biodiversity Information Framework (GBIF)</a>,</li>
                  <li>photos from <a href="https://www.flickr.com/" target="flickr">Flickr</a>,</li>
-                 <li>articles from the <a href="https://www.biodiversitylibrary.org/" target="bhl">Biodiversity Heritage Library</a>,</li>
-                 <li>traits from the <a href="http://eol.org/traitbank" target="eol">Encyclopedia of Life</a> trait bank, and </li>
-                 <li>audio recordings from the <a href="http://macaulaylibrary.org/" target="mac">Macaulay Library</a>.
+                 <li>articles from the <a href="https://www.biodiversitylibrary.org/" target="bhl">Biodiversity Heritage Library</a>.</li>
              </ul></p>
+
+           In a former version it also integrated traits from the <a href="http://eol.org/traitbank" target="eol">Encyclopedia of Life</a> trait bank, and audio recordings from the <a href="http://macaulaylibrary.org/" target="mac">Macaulay Library</a>.
+           However these two APIs were decommissioned or not maintained.
+
            <p>To test with another taxon, simply enter the taxon name (without authority) as parameter <i>param</i> in the page URL. The taxon must be present in <a href="https://inpn.mnhn.fr/programme/referentiel-taxonomique-taxref?lg=en" target="taxref">TAXREF</a>, hence it must have  been inventoried in French territories. For instance enter <i>Delphinus delphis</i> or <i>Aegolius acadicus</i> (loading the page may take a few seconds).</p>
-           <p>The SPARQL results are transformed into HTML using the SPARQL Template Transformation Language <a href="https://hal.inria.fr/hal-01150623/" target="hal">[4]</a>.
+           <p>The SPARQL results are transformed into HTML using the <a href="https://hal.inria.fr/hal-01150623/" target="hal">SPARQL Template Transformation Language</a> (STTL).
            The code of this demo is available at <a href="https://github.com/frmichel/sparql-micro-service/tree/master/demo" target="gh_demo">https://github.com/frmichel/sparql-micro-service/tree/master/demo</a>.</p>
         </div>
 

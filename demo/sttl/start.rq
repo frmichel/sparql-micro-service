@@ -6,9 +6,7 @@ template st:start {
     
     st:call-template(st:occurrences)
     st:call-template(st:imgs)
-    st:call-template(st:traits)
     st:call-template(st:articles)
-    st:call-template(st:audios)
     st:call-template(st:others)
     
     format { <http://localhost/sttl/demo/tpl_end.html> }
